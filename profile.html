@@ -34,6 +34,7 @@
       line-height:1.6;
     }
     a{color:inherit}
+
     header{
       position:sticky; top:0; z-index:20;
       backdrop-filter: blur(10px);
@@ -41,12 +42,16 @@
       border-bottom:1px solid var(--border);
     }
     .wrap{max-width:var(--max); margin:0 auto; padding:18px;}
+
     .nav{
       display:flex; align-items:center; justify-content:space-between; gap:14px;
+      flex-wrap:wrap;
     }
+
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:900;
       text-decoration:none;
+      flex:0 0 auto;
     }
     .logo{
       width:38px; height:38px; border-radius:12px;
@@ -54,16 +59,37 @@
       box-shadow: 0 12px 30px rgba(124,92,255,.25);
       flex:0 0 auto;
     }
-    .navlinks{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+    /* ✅ NEW: better navlinks for phone (scrollable pills) */
+    .navlinks{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex: 1 1 520px;
+      min-width: 240px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
     .navlinks a{
       text-decoration:none;
-      font-weight:800;
+      font-weight:900;
       font-size:13px;
-      opacity:.9;
+      opacity:.95;
       padding:10px 12px;
-      border-radius:12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
     }
     .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
+    .navlinks a.active{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
+    }
+
     .pill{
       font-size:12px; font-weight:900;
       padding:7px 10px; border-radius:999px;
@@ -71,6 +97,7 @@
       background: rgba(255,255,255,.04);
       color: var(--text);
       white-space:nowrap;
+      flex:0 0 auto;
     }
 
     .grid{
@@ -219,6 +246,24 @@
       .grid{grid-template-columns:1fr}
       .row2{grid-template-columns:1fr}
     }
+
+    /* ✅ PHONE: bar becomes scrollable + pill stays visible */
+    @media (max-width: 560px){
+      .wrap{padding:14px;}
+      .nav{gap:10px; align-items:flex-start;}
+      .navlinks{
+        order:3;
+        width:100%;
+        justify-content:flex-start;
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom:6px;
+      }
+      .navlinks::-webkit-scrollbar{height:6px}
+      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
+      .pill{order:2;}
+    }
   </style>
 </head>
 
@@ -233,11 +278,12 @@
         </div>
       </a>
 
+      <!-- ✅ NEW NAV: profile/settings/trade/wallet -->
       <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html">Wallet</a>
-        <a href="profile.html" style="background: rgba(255,255,255,.06);">Profile</a>
-        <a href="settings.html">Settings</a>
-        <a href="#logout">Logout</a>
+        <a href="wallet.html" data-page="wallet.html">Wallet</a>
+        <a href="trade.html" data-page="trade.html">Trade</a>
+        <a href="settings.html" data-page="settings.html">Settings</a>
+        <a href="profile.html" data-page="profile.html">Profile</a>
       </div>
 
       <span class="pill" id="kycPill">KYC: Pending</span>
@@ -455,6 +501,14 @@
       alerts: true
     };
 
+    function setActiveNav(){
+      const file = (location.pathname.split("/").pop() || "profile.html").toLowerCase();
+      document.querySelectorAll(".navlinks a").forEach(a=>{
+        const p = (a.getAttribute("data-page")||"").toLowerCase();
+        if(p === file) a.classList.add("active");
+      });
+    }
+
     function render(){
       document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -510,11 +564,11 @@
     }
 
     function logout(){
-      // replace with real logout (clear token + redirect)
       toast("Logged out (UI)");
       setTimeout(() => { window.location.href = "login.html"; }, 700);
     }
 
+    setActiveNav();
     render();
   </script>
 </body>
