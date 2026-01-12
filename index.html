@@ -40,10 +40,14 @@
       background: rgba(11,16,32,.65);
       border-bottom: 1px solid var(--border);
     }
+
+    /* ✅ FIX: allow wrap so buttons won't get pushed out */
     .nav{
       display:flex; align-items:center; justify-content:space-between;
       gap:16px;
+      flex-wrap:wrap;
     }
+
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:800;
       letter-spacing:.3px;
@@ -56,6 +60,9 @@
       box-shadow: 0 12px 30px rgba(124,92,255,.25);
       flex:0 0 auto;
     }
+
+    /* ✅ FIX: nav gets flexible space but doesn't kill auth */
+    nav{flex: 1 1 520px; min-width: 260px;}
 
     nav ul{
       list-style:none;
@@ -93,14 +100,12 @@
     }
     .btn:hover{transform: translateY(-1px)}
 
-    /* ✅ NEW: auth buttons in header (login / create) */
+    /* ✅ auth buttons always visible */
     .auth{
       display:flex; gap:10px; align-items:center;
       flex:0 0 auto;
     }
-    .btn.ghost{
-      background: rgba(255,255,255,.04);
-    }
+    .btn.ghost{background: rgba(255,255,255,.04);}
 
     .hero{ padding: 48px 0 22px; }
 
@@ -262,10 +267,32 @@
       .h1{font-size: 36px}
     }
 
-    /* ✅ phone header: scroll menu + buttons visible */
+    /* ✅ PHONE: show auth buttons clearly + menu below */
     @media (max-width: 560px){
       .wrap{padding:14px;}
-      .nav{align-items:flex-start; gap:12px;}
+
+      .nav{align-items:flex-start; gap:10px;}
+
+      .brand{order:1;}
+      .auth{
+        order:2;
+        width:100%;
+        justify-content:space-between;
+        gap:10px;
+      }
+      .auth .btn{
+        flex:1;
+        justify-content:center;
+        box-shadow:none;
+        padding:12px 12px;
+        border-radius:12px;
+      }
+
+      nav{
+        order:3;
+        width:100%;
+        min-width: 0;
+      }
       nav ul{
         flex-wrap: nowrap;
         overflow-x: auto;
@@ -276,8 +303,7 @@
       }
       nav ul::-webkit-scrollbar{height:6px}
       nav ul::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
-      .auth{gap:8px;}
-      .btn{padding:10px 12px; border-radius:12px; box-shadow:none;}
+
       .hero{padding-top: 24px;}
       .card{padding:16px;}
       .h1{font-size: 30px; line-height:1.2;}
@@ -313,7 +339,6 @@
         </ul>
       </nav>
 
-      <!-- ✅ NEW: header buttons (instead of bars) -->
       <div class="auth" aria-label="Account">
         <a class="btn ghost" href="login.html">تسجيل دخول</a>
         <a class="btn primary" href="create-account.html">إنشاء حساب</a>
