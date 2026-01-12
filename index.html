@@ -47,34 +47,63 @@
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:800;
       letter-spacing:.3px;
+      text-decoration:none;
+      flex: 0 0 auto;
     }
     .logo{
       width:38px; height:38px; border-radius:12px;
       background: linear-gradient(135deg, var(--brand), var(--brand2));
       box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex:0 0 auto;
     }
-    nav ul{list-style:none; display:flex; gap:14px; padding:0; margin:0; flex-wrap:wrap;}
-    nav a{opacity:.9; text-decoration:none; font-weight:600; font-size:14px; padding:10px 12px; border-radius:12px;}
+
+    nav ul{
+      list-style:none;
+      display:flex;
+      gap:14px;
+      padding:0;
+      margin:0;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    nav a{
+      opacity:.9; text-decoration:none; font-weight:700; font-size:14px;
+      padding:10px 12px; border-radius:12px;
+      display:inline-flex;
+      white-space:nowrap;
+    }
     nav a:hover{background: rgba(255,255,255,.06); opacity:1}
+
     .btn{
       border:1px solid var(--border);
       background: rgba(255,255,255,.06);
       color:var(--text);
       padding:10px 14px;
       border-radius:14px;
-      font-weight:700;
+      font-weight:800;
       text-decoration:none;
       display:inline-flex; align-items:center; gap:10px;
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: .15s ease;
+      white-space:nowrap;
     }
     .btn.primary{
       border-color: rgba(124,92,255,.45);
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
     }
     .btn:hover{transform: translateY(-1px)}
-    .hero{
-      padding: 48px 0 22px;
+
+    /* ✅ NEW: auth buttons in header (login / create) */
+    .auth{
+      display:flex; gap:10px; align-items:center;
+      flex:0 0 auto;
     }
+    .btn.ghost{
+      background: rgba(255,255,255,.04);
+    }
+
+    .hero{ padding: 48px 0 22px; }
+
     .grid{
       display:grid; gap:18px;
       grid-template-columns: 1.15fr .85fr;
@@ -93,7 +122,7 @@
       background: rgba(124,92,255,.14);
       border:1px solid rgba(124,92,255,.25);
       color: var(--text);
-      font-weight:700;
+      font-weight:800;
       font-size:13px;
     }
     .h1{
@@ -158,7 +187,7 @@
     .mini h3{margin:0 0 8px; font-size:16px}
     .mini p{margin:0; color:var(--muted); font-size:14px}
     .tag{
-      display:inline-block; font-size:12px; font-weight:800;
+      display:inline-block; font-size:12px; font-weight:900;
       padding:6px 10px; border-radius:999px; margin-bottom:10px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
@@ -186,7 +215,7 @@
       padding: 12px 14px;
     }
     details + details{margin-top:10px}
-    summary{cursor:pointer; font-weight:800}
+    summary{cursor:pointer; font-weight:900}
     footer{
       padding: 28px 0 44px;
       border-top: 1px solid var(--border);
@@ -221,6 +250,8 @@
       background: rgba(239,68,68,.08);
     }
     .fineprint b{color: #fff}
+
+    /* ✅ IMPROVED MOBILE */
     @media (max-width: 980px){
       .grid{grid-template-columns: 1fr}
       .cards{grid-template-columns: 1fr}
@@ -230,19 +261,47 @@
       .form{grid-template-columns: 1fr}
       .h1{font-size: 36px}
     }
+
+    /* ✅ phone header: scroll menu + buttons visible */
+    @media (max-width: 560px){
+      .wrap{padding:14px;}
+      .nav{align-items:flex-start; gap:12px;}
+      nav ul{
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap:10px;
+        padding-bottom: 6px;
+        max-width: 100%;
+      }
+      nav ul::-webkit-scrollbar{height:6px}
+      nav ul::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
+      .auth{gap:8px;}
+      .btn{padding:10px 12px; border-radius:12px; box-shadow:none;}
+      .hero{padding-top: 24px;}
+      .card{padding:16px;}
+      .h1{font-size: 30px; line-height:1.2;}
+      .sub{font-size: 14px;}
+    }
+
+    /* ✅ very small phones: hide long subtitle under brand */
+    @media (max-width: 420px){
+      .brand div div:last-child{display:none;}
+      .logo{width:34px; height:34px;}
+    }
   </style>
 </head>
 
 <body>
   <header>
     <div class="wrap nav">
-      <div class="brand" aria-label="AI MARKETING">
+      <a class="brand" href="index.html" aria-label="AI MARKETING">
         <div class="logo" aria-hidden="true"></div>
         <div>
           <div style="font-size:16px;">AI MARKETING</div>
           <div style="font-size:12px; opacity:.8;">Automation • Analytics • Risk</div>
         </div>
-      </div>
+      </a>
 
       <nav aria-label="Main">
         <ul>
@@ -254,7 +313,11 @@
         </ul>
       </nav>
 
-      <a class="btn primary" href="#contact">اطلب عرض / Demo</a>
+      <!-- ✅ NEW: header buttons (instead of bars) -->
+      <div class="auth" aria-label="Account">
+        <a class="btn ghost" href="login.html">تسجيل دخول</a>
+        <a class="btn primary" href="create-account.html">إنشاء حساب</a>
+      </div>
     </div>
   </header>
 
@@ -493,10 +556,7 @@
       e.preventDefault();
       const form = e.target;
       const data = Object.fromEntries(new FormData(form).entries());
-
-      // Demo-only: replace with your backend endpoint.
-      alert("تم الاستلام ✅\\n\\nالاسم: " + data.name + "\\nالإيميل: " + data.email + "\\n\\nالرسالة: " + data.message);
-
+      alert("تم الاستلام ✅\n\nالاسم: " + data.name + "\nالإيميل: " + data.email + "\n\nالرسالة: " + data.message);
       form.reset();
       return false;
     }
