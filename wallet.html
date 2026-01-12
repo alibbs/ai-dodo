@@ -34,19 +34,23 @@
       line-height:1.6;
     }
     a{color:inherit}
+
     header{
       position:sticky; top:0; z-index:20;
       backdrop-filter: blur(10px);
       background: rgba(11,16,32,.65);
       border-bottom:1px solid var(--border);
     }
-    .wrap{max-width:var(--max); margin:0 auto; padding:18px 18px;}
+    .wrap{max-width:var(--max); margin:0 auto; padding:16px;}
+
     .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      flex-wrap:wrap;
     }
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:900;
       text-decoration:none;
+      flex:0 0 auto;
     }
     .logo{
       width:38px; height:38px; border-radius:12px;
@@ -54,31 +58,53 @@
       box-shadow: 0 12px 30px rgba(124,92,255,.25);
       flex:0 0 auto;
     }
-    .navlinks{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .navlinks a{
-      text-decoration:none;
-      font-weight:800;
-      font-size:13px;
-      opacity:.9;
-      padding:10px 12px;
-      border-radius:12px;
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
     .pill{
       font-size:12px; font-weight:900;
       padding:7px 10px; border-radius:999px;
       border:1px solid var(--border);
       background: rgba(255,255,255,.04);
       color: var(--text);
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    /* ✅ SCROLL NAV (Wallet/Trade/Settings/Profile) */
+    .navlinks{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex: 1 1 520px;
+      min-width: 240px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .navlinks a{
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      opacity:.95;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--text);
+      transition:.15s ease;
+    }
+    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
+    .navlinks a.active{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
     }
 
     .grid{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
       gap:14px;
-      padding:18px;
+      padding:16px;
       max-width:var(--max);
       margin:0 auto;
     }
@@ -94,8 +120,9 @@
     .titleRow{
       display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
       margin-bottom:10px;
+      flex-wrap:wrap;
     }
-    h1{margin:0; font-size:24px; line-height:1.2}
+    h1{margin:0; font-size:22px; line-height:1.2}
     .sub{margin:6px 0 0; color:var(--muted); font-size:13px}
 
     .kpis{
@@ -130,6 +157,7 @@
       cursor:pointer;
       text-decoration:none;
       min-width: 120px;
+      transition:.15s ease;
     }
     .btn.primary{
       border-color: rgba(124,92,255,.45);
@@ -181,6 +209,7 @@
       background: rgba(255,255,255,.04);
       font-size:12px;
       font-weight:900;
+      white-space:nowrap;
     }
     .tag.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
     .tag.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
@@ -239,7 +268,24 @@
       .twoCol{grid-template-columns:1fr}
       th, td{font-size:12px}
     }
-    @media (max-width: 520px){
+
+    /* ✅ PHONE: scroll bar + stacking */
+    @media (max-width: 560px){
+      .wrap{padding:14px;}
+      .grid{padding:14px; gap:12px;}
+      .card{padding:14px;}
+
+      .navlinks{
+        width:100%;
+        justify-content:flex-start;
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom:6px;
+      }
+      .navlinks::-webkit-scrollbar{height:6px}
+      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
+
       .kpis{grid-template-columns: 1fr}
       .btn{width:100%}
     }
@@ -258,9 +304,10 @@
       </a>
 
       <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html" style="background: rgba(255,255,255,.06);">Wallet</a>
-        <a href="profile.html">Profile</a>
-        <a href="settings.html">Settings</a>
+        <a href="wallet.html" data-page="wallet.html">Wallet</a>
+        <a href="trade.html" data-page="trade.html">Trade</a>
+        <a href="settings.html" data-page="settings.html">Settings</a>
+        <a href="profile.html" data-page="profile.html">Profile</a>
         <a href="login.html">Logout</a>
       </div>
 
@@ -328,9 +375,7 @@
                 <th>24h</th>
               </tr>
             </thead>
-            <tbody id="assetsTbody">
-              <!-- filled by JS -->
-            </tbody>
+            <tbody id="assetsTbody"></tbody>
           </table>
         </div>
 
@@ -349,9 +394,7 @@
                 <th>Time</th>
               </tr>
             </thead>
-            <tbody id="activityTbody">
-              <!-- filled by JS -->
-            </tbody>
+            <tbody id="activityTbody"></tbody>
           </table>
 
           <div class="note" role="note">
@@ -432,9 +475,7 @@
 
       <div class="note" style="margin-top:16px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
         <b>Important:</b>
-        <div>
-          Always verify the network before sending funds. Wrong network can cause permanent loss.
-        </div>
+        <div>Always verify the network before sending funds. Wrong network can cause permanent loss.</div>
       </div>
     </aside>
   </div>
@@ -462,9 +503,18 @@
   </div>
 
   <script>
+    // ✅ Active tab auto-highlight
+    function setActiveNav(){
+      const file = (location.pathname.split("/").pop() || "wallet.html").toLowerCase();
+      document.querySelectorAll(".navlinks a[data-page]").forEach(a=>{
+        const p = (a.getAttribute("data-page")||"").toLowerCase();
+        if(p === file) a.classList.add("active");
+      });
+    }
+
     // ====== Sample data (replace with backend/API) ======
     const state = {
-      kyc: "Pending",              // Pending | Verified | Rejected
+      kyc: "Pending",
       totalBalance: 12540.25,
       availableBalance: 10120.10,
       lockedBalance: 2420.15,
@@ -493,7 +543,6 @@
     function money(x){
       return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
     }
-
     function setText(id, text){ document.getElementById(id).textContent = text; }
 
     function render(){
@@ -502,16 +551,19 @@
       setText("totalBalance", money(state.totalBalance));
       setText("availableBalance", money(state.availableBalance));
       setText("lockedBalance", money(state.lockedBalance));
-      setText("profit30d", money(state.profit30d) + " ");
+
+      // profit
+      document.getElementById("profit30d").firstChild
+        ? (document.getElementById("profit30d").childNodes[0].textContent = money(state.profit30d) + " ")
+        : (document.getElementById("profit30d").textContent = money(state.profit30d) + " ");
       const pctEl = document.getElementById("profitPct");
       pctEl.textContent = `(${state.profitPct >= 0 ? "+" : ""}${state.profitPct.toFixed(2)}%)`;
       pctEl.className = "delta " + (state.profitPct >= 0 ? "up" : "down");
 
-      // KYC pill
-      const kycPill = document.getElementById("kycPill");
-      kycPill.textContent = "KYC: " + state.kyc;
+      // KYC
+      setText("kycPill", "KYC: " + state.kyc);
 
-      // 2FA / whitelist tags
+      // 2FA / whitelist
       const twofaTag = document.getElementById("twofaTag");
       twofaTag.textContent = state.twofaEnabled ? "Enabled" : "Disabled";
       twofaTag.className = "tag " + (state.twofaEnabled ? "ok" : "warn");
@@ -522,10 +574,9 @@
 
       setText("dailyLimit", money(state.dailyLimit));
       setText("fees", state.fees);
-
       setText("lastLogin", new Date(Date.now() - 3600*1000*6).toLocaleString());
 
-      // Assets table
+      // assets
       const a = document.getElementById("assetsTbody");
       a.innerHTML = "";
       state.assets.forEach(row => {
@@ -540,7 +591,7 @@
         a.appendChild(tr);
       });
 
-      // Activity table
+      // activity
       const t = document.getElementById("activityTbody");
       t.innerHTML = "";
       state.activity.slice(0,7).forEach(row => {
@@ -566,34 +617,28 @@
       navigator.clipboard.writeText(text).then(() => {
         el.style.color = "var(--text)";
         setTimeout(() => el.style.color = "var(--muted)", 700);
-      }).catch(() => {
-        alert("Copy failed. Please copy manually.");
-      });
+      }).catch(() => alert("Copy failed. Please copy manually."));
     }
 
     function openModal(type){
       const modal = document.getElementById("modal");
       const title = document.getElementById("modalTitle");
       const sub = document.getElementById("modalSub");
-
       const map = {
         deposit:  ["Deposit",  "Show deposit methods & networks + confirmations."],
         withdraw: ["Withdraw", "Withdrawal request, fee preview, 2FA confirmation."],
         transfer: ["Transfer", "Internal transfer to another user or sub-wallet."],
         security: ["Security", "Enable 2FA, whitelist, session management."]
       };
-
       const x = map[type] || ["Action", "—"];
       title.textContent = x[0];
       sub.textContent = x[1];
       modal.style.display = "block";
     }
-
-    function closeModal(){
-      document.getElementById("modal").style.display = "none";
-    }
+    function closeModal(){ document.getElementById("modal").style.display = "none"; }
 
     // init
+    setActiveNav();
     render();
   </script>
 </body>
