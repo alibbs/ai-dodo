@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI MARKETING | Create Account</title>
+  <meta name="description" content="Create an account for AI MARKETING." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --text:#e8ecff;
+      --muted:#b8c0e6;
+      --brand:#7c5cff;
+      --brand2:#22d3ee;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:100%; max-width: 720px;}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
+      text-decoration:none;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex: 0 0 auto;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h1{margin:0 0 6px; font-size: 28px; line-height:1.2;}
+    .sub{margin:0 0 14px; color:var(--muted); font-size: 14px;}
+    form{margin-top:14px;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    label{
+      display:block;
+      font-weight:700;
+      font-size: 13px;
+      margin-bottom:6px;
+    }
+    .field{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 12px;
+      width:100%;
+      outline:none;
+    }
+    .field:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+    }
+    .row{grid-column: 1 / -1;}
+    .phone{
+      display:grid;
+      grid-template-columns: 140px 1fr;
+      gap:10px;
+    }
+    .hint{margin-top:6px; color:var(--muted); font-size:12px;}
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 14px;
+      align-items:center;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+    }
+    .btn:active{transform: translateY(1px);}
+    .link{
+      color: var(--muted);
+      text-decoration:none;
+      font-weight:700;
+    }
+    .link:hover{color:var(--text)}
+    .msg{
+      margin-top:12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(34,211,238,.08);
+      color: var(--text);
+      display:none;
+      white-space: pre-wrap;
+    }
+    .footnote{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 720px){
+      .grid{grid-template-columns: 1fr;}
+      .phone{grid-template-columns: 1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:16px;">AI MARKETING</div>
+          <div style="font-size:12px; opacity:.8;">Create Account</div>
+        </div>
+      </a>
+
+      <a class="link" href="login.html">Already have an account? Login</a>
+    </div>
+
+    <div class="card">
+      <h1>Create your account</h1>
+      <p class="sub">Fill in the details below to get started.</p>
+
+      <form id="createForm" onsubmit="return handleSubmit(event)">
+        <div class="grid">
+          <div>
+            <label for="username">Username</label>
+            <input class="field" id="username" name="username" autocomplete="username" required
+                   minlength="3" maxlength="24" placeholder="e.g. teshrij" />
+            <div class="hint">3–24 chars, letters/numbers/underscore recommended.</div>
+          </div>
+
+          <div>
+            <label for="birthdate">Date of birth</label>
+            <input class="field" id="birthdate" name="birthdate" type="date" required />
+          </div>
+
+          <div class="row">
+            <label>Phone number</label>
+            <div class="phone">
+              <select class="field" name="countryCode" id="countryCode" required>
+                <option value="+961">Lebanon (+961)</option>
+                <option value="+971">UAE (+971)</option>
+                <option value="+966">Saudi Arabia (+966)</option>
+                <option value="+965">Kuwait (+965)</option>
+                <option value="+973">Bahrain (+973)</option>
+                <option value="+968">Oman (+968)</option>
+                <option value="+962">Jordan (+962)</option>
+                <option value="+963">Syria (+963)</option>
+                <option value="+964">Iraq (+964)</option>
+                <option value="+20">Egypt (+20)</option>
+                <option value="+212">Morocco (+212)</option>
+                <option value="+213">Algeria (+213)</option>
+                <option value="+216">Tunisia (+216)</option>
+                <option value="+1">USA/Canada (+1)</option>
+                <option value="+44">UK (+44)</option>
+                <option value="+33">France (+33)</option>
+                <option value="+49">Germany (+49)</option>
+                <option value="+90">Turkey (+90)</option>
+              </select>
+
+              <input class="field" id="phone" name="phone" type="tel" required
+                     inputmode="tel" placeholder="e.g. 70123456"
+                     pattern="[0-9]{6,15}" />
+            </div>
+            <div class="hint">Digits only. Example: 70123456</div>
+          </div>
+
+          <div>
+            <label for="password">Password</label>
+            <input class="field" id="password" name="password" type="password" required
+                   minlength="8" autocomplete="new-password"
+                   placeholder="Minimum 8 characters" />
+            <div class="hint">Use a strong password (mix letters & numbers).</div>
+          </div>
+
+          <div>
+            <label for="location">Place of residence</label>
+            <input class="field" id="location" name="location" required
+                   placeholder="e.g. Beirut, Lebanon" />
+            <div class="hint">City + country recommended.</div>
+          </div>
+
+          <div class="row">
+            <label for="referral">Referral code (optional)</label>
+            <input class="field" id="referral" name="referral" maxlength="32"
+                   placeholder="e.g. AI-REF-12345" />
+            <div class="hint">If you have a code, enter it here.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Create Account</button>
+          <button class="btn" type="button" onclick="fillDemo()">Fill demo</button>
+        </div>
+
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+
+        <div class="footnote">
+          By creating an account, you agree to the Terms & Privacy Policy.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function handleSubmit(e){
+      e.preventDefault();
+
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // Basic client-side check: combine phone code + number
+      const fullPhone = (data.countryCode || "") + (data.phone || "");
+      const msg = document.getElementById("msg");
+
+      // Demo-only output (replace with fetch() to your backend)
+      msg.style.display = "block";
+      msg.textContent =
+        "Account payload (demo):\\n" +
+        "- Username: " + data.username + "\\n" +
+        "- Phone: " + fullPhone + "\\n" +
+        "- DOB: " + data.birthdate + "\\n" +
+        "- Residence: " + data.location + "\\n" +
+        "- Referral: " + (data.referral || "(none)") + "\\n\\n" +
+        "Replace this demo with an API request to your server.";
+
+      // form.reset(); // uncomment after wiring backend
+      return false;
+    }
+
+    function fillDemo(){
+      document.getElementById("username").value = "teshrij";
+      document.getElementById("birthdate").value = "1998-01-01";
+      document.getElementById("countryCode").value = "+961";
+      document.getElementById("phone").value = "70123456";
+      document.getElementById("password").value = "DemoPass123";
+      document.getElementById("location").value = "Beirut, Lebanon";
+      document.getElementById("referral").value = "AI-REF-12345";
+    }
+  </script>
+</body>
+</html>

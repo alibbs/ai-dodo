@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI MARKETING | Login</title>
+  <meta name="description" content="Login to AI MARKETING." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --text:#e8ecff;
+      --muted:#b8c0e6;
+      --brand:#7c5cff;
+      --brand2:#22d3ee;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:100%; max-width: 720px;}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
+      text-decoration:none;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex: 0 0 auto;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h1{margin:0 0 6px; font-size: 28px; line-height:1.2;}
+    .sub{margin:0 0 14px; color:var(--muted); font-size: 14px;}
+    form{margin-top:14px;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    label{
+      display:block;
+      font-weight:700;
+      font-size: 13px;
+      margin-bottom:6px;
+    }
+    .field{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 12px;
+      width:100%;
+      outline:none;
+    }
+    .field:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+    }
+    .row{grid-column: 1 / -1;}
+    .hint{margin-top:6px; color:var(--muted); font-size:12px;}
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+    }
+    .btn:active{transform: translateY(1px);}
+    .link{
+      color: var(--muted);
+      text-decoration:none;
+      font-weight:700;
+    }
+    .link:hover{color:var(--text)}
+    .msg{
+      margin-top:12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(34,211,238,.08);
+      color: var(--text);
+      display:none;
+      white-space: pre-wrap;
+    }
+    .footnote{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .split{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:6px;
+    }
+    @media (max-width: 720px){
+      .grid{grid-template-columns: 1fr;}
+      .actions{justify-content:flex-start;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:16px;">AI MARKETING</div>
+          <div style="font-size:12px; opacity:.8;">Login</div>
+        </div>
+      </a>
+
+      <a class="link" href="create-account.html">Create account</a>
+    </div>
+
+    <div class="card">
+      <h1>Welcome back</h1>
+      <p class="sub">Login using your username or phone number.</p>
+
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="grid">
+          <div class="row">
+            <label for="identifier">Username or Phone</label>
+            <input class="field" id="identifier" name="identifier" required
+                   autocomplete="username"
+                   placeholder="e.g. teshrij or +96170123456" />
+            <div class="hint">Tip: you can enter full phone with country code.</div>
+          </div>
+
+          <div class="row">
+            <label for="password">Password</label>
+            <input class="field" id="password" name="password" type="password" required
+                   autocomplete="current-password"
+                   placeholder="Enter your password" />
+            <div class="split">
+              <span class="hint" style="margin:0;">Minimum 8 characters recommended.</span>
+              <a class="link" href="forgot-password.html">Forgot password?</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Login</button>
+          <button class="btn" type="button" onclick="fillDemo()">Fill demo</button>
+        </div>
+
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+
+        <div class="footnote">
+          By logging in, you agree to the Terms & Privacy Policy.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(e){
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const msg = document.getElementById("msg");
+
+      // Demo-only (replace with fetch() to your backend login endpoint)
+      msg.style.display = "block";
+      msg.textContent =
+        "Login payload (demo):\\n" +
+        "- Identifier: " + data.identifier + "\\n" +
+        "- Password: " + "*".repeat(Math.min((data.password || '').length, 12)) + "\\n\\n" +
+        "Replace this demo with an API request to your server.";
+
+      return false;
+    }
+
+    function fillDemo(){
+      document.getElementById("identifier").value = "teshrij";
+      document.getElementById("password").value = "DemoPass123";
+    }
+  </script>
+</body>
+</html>

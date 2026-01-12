@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI MARKETING | Trades</title>
+  <meta name="description" content="Trades dashboard with live TradingView chart and analytics." />
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --panel2:#0e1730;
+      --text:#e8ecff;
+      --muted:#b8c0e6;
+      --brand:#7c5cff;
+      --brand2:#22d3ee;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --max:1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,16,32,.65);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px;}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:14px;}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900; text-decoration:none; color:var(--text);}
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex:0 0 auto;
+    }
+    .navlinks{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .navlinks a{
+      text-decoration:none;
+      font-weight:800;
+      font-size:13px;
+      opacity:.9;
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+    }
+    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
+
+    .grid{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap:14px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .titleRow{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
+    h1{margin:0; font-size:22px;}
+    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
+    label{display:block; font-weight:900; font-size:13px; margin-bottom:6px;}
+    .field{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+    }
+    .field:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      width:100%;
+    }
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    .kpi{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+    }
+    .kpi b{display:block; font-size:16px}
+    .kpi span{color:var(--muted); font-size:12px}
+    .note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(245,158,11,.10);
+      border-right: 4px solid rgba(245,158,11,.55);
+      color: var(--text);
+    }
+    .note small{color:var(--muted)}
+    .tvbox{
+      border:1px solid var(--border);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.20);
+    }
+    .tvhead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+    }
+    .pill{
+      font-size:12px; font-weight:900;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .muted{color:var(--muted)}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div>
+          <div style="font-size:16px;">AI MARKETING</div>
+          <div style="font-size:12px; opacity:.8;">Trades</div>
+        </div>
+      </a>
+
+      <div class="navlinks">
+        <a href="wallet.html">Wallet</a>
+        <a href="trades.html" style="background: rgba(255,255,255,.06);">Trades</a>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: TradingView -->
+    <section class="card">
+      <div class="titleRow">
+        <div>
+          <h1>Live Chart</h1>
+          <div class="sub">Embedded TradingView widget (live). Change symbol as needed.</div>
+        </div>
+        <span class="pill" id="symbolPill">BINANCE:BTCUSDT</span>
+      </div>
+
+      <div class="tvbox" style="margin-top:12px;">
+        <div class="tvhead">
+          <div class="muted" style="font-size:13px;">
+            Source: TradingView Widget
+          </div>
+          <div class="pill">Live</div>
+        </div>
+
+        <!-- TradingView Widget -->
+        <div class="tradingview-widget-container" style="height:520px;">
+          <div id="tv_chart" style="height:520px;"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script>
+            // Default symbol
+            window.__tvSymbol = "BINANCE:BTCUSDT";
+
+            function loadTV(symbol){
+              document.getElementById("symbolPill").textContent = symbol;
+              window.__tvSymbol = symbol;
+
+              // Clear container
+              const el = document.getElementById("tv_chart");
+              el.innerHTML = "";
+
+              // TradingView Advanced Chart (tv.js)
+              new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol,
+                "interval": "60",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "hide_legend": false,
+                "withdateranges": true,
+                "save_image": false,
+                "container_id": "tv_chart"
+              });
+            }
+
+            // initial
+            window.addEventListener("load", () => loadTV(window.__tvSymbol));
+          </script>
+        </div>
+      </div>
+
+      <div class="note" role="note">
+        <b>Important:</b>
+        <div>
+          This page shows a live chart only. It does not guarantee any profit or returns.
+          <small>Trading is risky and can result in loss.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Controls + Profit scenario -->
+    <aside class="card">
+      <div class="titleRow">
+        <div>
+          <h1>Trade Setup</h1>
+          <div class="sub">Set symbol + simulate a profit scenario (hypothetical).</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label for="exchange">Exchange</label>
+        <select class="field" id="exchange">
+          <option value="BINANCE" selected>BINANCE</option>
+          <option value="COINBASE">COINBASE</option>
+          <option value="BYBIT">BYBIT</option>
+          <option value="KRAKEN">KRAKEN</option>
+        </select>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label for="pair">Pair / Symbol</label>
+        <input class="field" id="pair" placeholder="BTCUSDT" value="BTCUSDT" />
+        <div class="sub">Example formats: BTCUSDT, ETHUSDT, SOLUSDT</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn primary" type="button" onclick="applySymbol()">Load Chart</button>
+      </div>
+
+      <hr style="border:none; border-top:1px solid rgba(255,255,255,.10); margin:16px 0;">
+
+      <div>
+        <label for="capital">Capital (USD)</label>
+        <input class="field" id="capital" type="number" min="0" step="0.01" placeholder="e.g. 1000" />
+      </div>
+
+      <div style="margin-top:12px;">
+        <label for="rate">Daily scenario rate (for simulation)</label>
+        <input class="field" id="rate" type="number" min="-100" max="100" step="0.01" value="2.00" />
+        <div class="sub">This is a scenario calculator, not a promise.</div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <span>Projected (1 day)</span>
+          <b id="p1">$0.00</b>
+          <span class="muted" id="p1pct">0.00%</span>
+        </div>
+        <div class="kpi">
+          <span>Projected (7 days)</span>
+          <b id="p7">$0.00</b>
+          <span class="muted">compounded</span>
+        </div>
+        <div class="kpi">
+          <span>Projected (30 days)</span>
+          <b id="p30">$0.00</b>
+          <span class="muted">compounded</span>
+        </div>
+        <div class="kpi">
+          <span>Projected final (30d)</span>
+          <b id="final30">$0.00</b>
+          <span class="muted">capital + scenario</span>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn" type="button" onclick="calc()">Calculate</button>
+      </div>
+
+      <div class="note" role="note" style="margin-top:12px;">
+        <b>Disclaimer:</b>
+        <div>
+          The calculator is hypothetical. Real markets can move against you and you may lose capital.
+          <small>No fixed daily returns are guaranteed.</small>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    function applySymbol(){
+      const ex = document.getElementById("exchange").value.trim();
+      const pair = document.getElementById("pair").value.trim().toUpperCase();
+      if(!pair) return alert("Enter a symbol like BTCUSDT");
+      const symbol = `${ex}:${pair}`;
+      if(typeof loadTV === "function"){
+        loadTV(symbol);
+      } else {
+        alert("TradingView widget is still loading. Refresh if needed.");
+      }
+    }
+
+    function money(x){
+      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function calc(){
+      const c = Number(document.getElementById("capital").value || 0);
+      const r = Number(document.getElementById("rate").value || 0) / 100;
+
+      // hypothetical compounding
+      const oneDayProfit = c * r;
+      const final7 = c * Math.pow(1 + r, 7);
+      const final30 = c * Math.pow(1 + r, 30);
+
+      const profit7 = final7 - c;
+      const profit30 = final30 - c;
+
+      document.getElementById("p1").textContent = money(oneDayProfit);
+      document.getElementById("p1pct").textContent = (r*100).toFixed(2) + "%";
+
+      document.getElementById("p7").textContent = money(profit7);
+      document.getElementById("p30").textContent = money(profit30);
+      document.getElementById("final30").textContent = money(final30);
+    }
+
+    // initial calc
+    calc();
+  </script>
+</body>
+</html>

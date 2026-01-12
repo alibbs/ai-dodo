@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI MARKETING | Wallet</title>
+  <meta name="description" content="AI MARKETING wallet dashboard: balance, profit, assets, and transaction history." />
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --panel2:#0e1730;
+      --text:#e8ecff;
+      --muted:#b8c0e6;
+      --brand:#7c5cff;
+      --brand2:#22d3ee;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --max:1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:inherit}
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,16,32,.65);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 18px;}
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; font-weight:900;
+      text-decoration:none;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex:0 0 auto;
+    }
+    .navlinks{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .navlinks a{
+      text-decoration:none;
+      font-weight:800;
+      font-size:13px;
+      opacity:.9;
+      padding:10px 12px;
+      border-radius:12px;
+    }
+    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
+    .pill{
+      font-size:12px; font-weight:900;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      padding:18px;
+      max-width:var(--max);
+      margin:0 auto;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .titleRow{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      margin-bottom:10px;
+    }
+    h1{margin:0; font-size:24px; line-height:1.2}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:13px}
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    .kpi{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+    }
+    .kpi b{display:block; font-size:16px}
+    .kpi span{color:var(--muted); font-size:12px}
+    .delta.up{color:var(--ok); font-weight:900}
+    .delta.down{color:var(--bad); font-weight:900}
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      min-width: 120px;
+    }
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+    }
+    .btn.danger{
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.12);
+    }
+    .btn:hover{transform: translateY(-1px)}
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin: 2px 0 10px;
+    }
+    .sectionTitle h2{margin:0; font-size:16px}
+    .sectionTitle small{color:var(--muted)}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,.02);
+    }
+    th, td{
+      padding:10px 10px;
+      font-size:13px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align:top;
+    }
+    th{color:var(--muted); font-weight:900; background: rgba(255,255,255,.03)}
+    tr:last-child td{border-bottom:none}
+    .tag{
+      display:inline-block;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size:12px;
+      font-weight:900;
+    }
+    .tag.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
+    .tag.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
+    .tag.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10)}
+
+    .note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(245,158,11,.10);
+      border-right: 4px solid rgba(245,158,11,.55);
+      color: var(--text);
+    }
+    .note small{color:var(--muted)}
+
+    .copyRow{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:10px 10px;
+      margin-top:10px;
+    }
+    .addr{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      color: var(--muted);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 100%;
+    }
+    .miniBtn{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .footer{
+      max-width:var(--max);
+      margin: 0 auto;
+      padding: 0 18px 28px;
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .kpis{grid-template-columns: 1fr 1fr}
+      .twoCol{grid-template-columns:1fr}
+      th, td{font-size:12px}
+    }
+    @media (max-width: 520px){
+      .kpis{grid-template-columns: 1fr}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:16px;">AI MARKETING</div>
+          <div style="font-size:12px; opacity:.8;">Wallet</div>
+        </div>
+      </a>
+
+      <div class="navlinks" aria-label="Navigation">
+        <a href="wallet.html" style="background: rgba(255,255,255,.06);">Wallet</a>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+        <a href="login.html">Logout</a>
+      </div>
+
+      <span class="pill" id="kycPill">KYC: Pending</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: Main Wallet Overview -->
+    <section class="card">
+      <div class="titleRow">
+        <div>
+          <h1>Wallet Overview</h1>
+          <div class="sub">Balances, profit (P&L), and activity history.</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="sub">Last updated</div>
+          <div style="font-weight:900;" id="updatedAt">—</div>
+        </div>
+      </div>
+
+      <div class="kpis" aria-label="Key metrics">
+        <div class="kpi">
+          <span>Total Balance</span>
+          <b id="totalBalance">$0.00</b>
+          <span class="sub">Estimated in USD</span>
+        </div>
+        <div class="kpi">
+          <span>Available</span>
+          <b id="availableBalance">$0.00</b>
+          <span class="sub">Withdrawable</span>
+        </div>
+        <div class="kpi">
+          <span>Locked</span>
+          <b id="lockedBalance">$0.00</b>
+          <span class="sub">In orders/holds</span>
+        </div>
+        <div class="kpi">
+          <span>Profit (30d)</span>
+          <b id="profit30d">$0.00 <span id="profitPct" class="delta up">(+0.00%)</span></b>
+          <span class="sub">Unrealized + realized</span>
+        </div>
+      </div>
+
+      <div class="actions" aria-label="Quick actions">
+        <button class="btn primary" type="button" onclick="openModal('deposit')">Deposit</button>
+        <button class="btn" type="button" onclick="openModal('withdraw')">Withdraw</button>
+        <button class="btn" type="button" onclick="openModal('transfer')">Transfer</button>
+        <button class="btn danger" type="button" onclick="openModal('security')">Security</button>
+      </div>
+
+      <div class="twoCol">
+        <div>
+          <div class="sectionTitle">
+            <h2>Assets</h2>
+            <small>Portfolio summary</small>
+          </div>
+
+          <table aria-label="Assets table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Amount</th>
+                <th>Value (USD)</th>
+                <th>24h</th>
+              </tr>
+            </thead>
+            <tbody id="assetsTbody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="sectionTitle">
+            <h2>Recent Activity</h2>
+            <small>Last 7 entries</small>
+          </div>
+
+          <table aria-label="Activity table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="activityTbody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+
+          <div class="note" role="note">
+            <b>Risk notice:</b>
+            <div>
+              Crypto markets are highly volatile. Values and P&L can change quickly.
+              <small>Past performance does not guarantee future results.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Addresses + Security + Limits -->
+    <aside class="card">
+      <div class="sectionTitle">
+        <h2>Deposit Addresses</h2>
+        <small>Copy the right network</small>
+      </div>
+
+      <div>
+        <div class="sub">USDT (TRC20)</div>
+        <div class="copyRow">
+          <div class="addr" id="addr1">TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div>
+          <button class="miniBtn" onclick="copyText('addr1')">Copy</button>
+        </div>
+
+        <div class="sub" style="margin-top:10px;">USDT (ERC20)</div>
+        <div class="copyRow">
+          <div class="addr" id="addr2">0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div>
+          <button class="miniBtn" onclick="copyText('addr2')">Copy</button>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="sectionTitle">
+          <h2>Security</h2>
+          <small>Protect your account</small>
+        </div>
+
+        <table aria-label="Security table">
+          <tbody>
+            <tr>
+              <td><b>2FA</b><div class="sub">Authenticator / SMS</div></td>
+              <td style="text-align:right;"><span class="tag warn" id="twofaTag">Disabled</span></td>
+            </tr>
+            <tr>
+              <td><b>Withdrawal whitelist</b><div class="sub">Only approved addresses</div></td>
+              <td style="text-align:right;"><span class="tag ok" id="wlTag">Enabled</span></td>
+            </tr>
+            <tr>
+              <td><b>Last login</b><div class="sub" id="lastLogin">—</div></td>
+              <td style="text-align:right;"><span class="tag">Session</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="sectionTitle">
+          <h2>Limits & Fees</h2>
+          <small>Example values</small>
+        </div>
+
+        <table aria-label="Limits table">
+          <tbody>
+            <tr>
+              <td><b>Daily withdrawal limit</b><div class="sub">Depends on KYC</div></td>
+              <td style="text-align:right;"><b id="dailyLimit">$0</b></td>
+            </tr>
+            <tr>
+              <td><b>Estimated fees</b><div class="sub">Network + service</div></td>
+              <td style="text-align:right;"><b id="fees">—</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note" style="margin-top:16px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
+        <b>Important:</b>
+        <div>
+          Always verify the network before sending funds. Wrong network can cause permanent loss.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">
+    © <span id="year"></span> AI MARKETING — Wallet UI. Connect data via your backend/API.
+  </div>
+
+  <!-- Simple modal (UI only) -->
+  <div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50;">
+    <div style="max-width:560px; margin:8vh auto; padding:18px;">
+      <div class="card" style="box-shadow: var(--shadow);">
+        <div class="titleRow">
+          <div>
+            <h1 style="font-size:18px; margin:0;" id="modalTitle">—</h1>
+            <div class="sub" id="modalSub">—</div>
+          </div>
+          <button class="miniBtn" onclick="closeModal()">Close</button>
+        </div>
+        <div class="sub" style="margin-top:8px;">
+          This is UI-only. Replace with real flows (API + validation + confirmations).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Sample data (replace with backend/API) ======
+    const state = {
+      kyc: "Pending",              // Pending | Verified | Rejected
+      totalBalance: 12540.25,
+      availableBalance: 10120.10,
+      lockedBalance: 2420.15,
+      profit30d: 840.55,
+      profitPct: 7.18,
+      twofaEnabled: false,
+      whitelistEnabled: true,
+      dailyLimit: 1000,
+      fees: "0.5% service + network fee",
+      assets: [
+        { sym:"USDT", amount: 8200.00, usd: 8200.00, chg24h: "+0.00%" },
+        { sym:"BTC",  amount: 0.0824,  usd: 3560.25, chg24h: "+1.24%" },
+        { sym:"ETH",  amount: 0.72,    usd: 780.00,  chg24h: "-0.80%" }
+      ],
+      activity: [
+        { type:"Deposit",  status:"Completed", amount:"+500 USDT", time:"Today 12:14" },
+        { type:"Trade",    status:"Filled",    amount:"-0.01 BTC", time:"Yesterday 19:02" },
+        { type:"Fee",      status:"Charged",   amount:"-2.5 USDT", time:"Yesterday 19:02" },
+        { type:"Withdraw", status:"Pending",   amount:"-150 USDT", time:"2 days ago" },
+        { type:"Deposit",  status:"Completed", amount:"+250 USDT", time:"4 days ago" },
+        { type:"Trade",    status:"Filled",    amount:"+0.02 BTC", time:"5 days ago" },
+        { type:"Transfer", status:"Completed", amount:"-50 USDT",  time:"6 days ago" }
+      ]
+    };
+
+    function money(x){
+      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function setText(id, text){ document.getElementById(id).textContent = text; }
+
+    function render(){
+      document.getElementById("year").textContent = new Date().getFullYear();
+      setText("updatedAt", new Date().toLocaleString());
+      setText("totalBalance", money(state.totalBalance));
+      setText("availableBalance", money(state.availableBalance));
+      setText("lockedBalance", money(state.lockedBalance));
+      setText("profit30d", money(state.profit30d) + " ");
+      const pctEl = document.getElementById("profitPct");
+      pctEl.textContent = `(${state.profitPct >= 0 ? "+" : ""}${state.profitPct.toFixed(2)}%)`;
+      pctEl.className = "delta " + (state.profitPct >= 0 ? "up" : "down");
+
+      // KYC pill
+      const kycPill = document.getElementById("kycPill");
+      kycPill.textContent = "KYC: " + state.kyc;
+
+      // 2FA / whitelist tags
+      const twofaTag = document.getElementById("twofaTag");
+      twofaTag.textContent = state.twofaEnabled ? "Enabled" : "Disabled";
+      twofaTag.className = "tag " + (state.twofaEnabled ? "ok" : "warn");
+
+      const wlTag = document.getElementById("wlTag");
+      wlTag.textContent = state.whitelistEnabled ? "Enabled" : "Disabled";
+      wlTag.className = "tag " + (state.whitelistEnabled ? "ok" : "warn");
+
+      setText("dailyLimit", money(state.dailyLimit));
+      setText("fees", state.fees);
+
+      setText("lastLogin", new Date(Date.now() - 3600*1000*6).toLocaleString());
+
+      // Assets table
+      const a = document.getElementById("assetsTbody");
+      a.innerHTML = "";
+      state.assets.forEach(row => {
+        const tr = document.createElement("tr");
+        const chgClass = (String(row.chg24h).trim().startsWith("-")) ? "down" : "up";
+        tr.innerHTML = `
+          <td><b>${row.sym}</b><div class="sub">Spot</div></td>
+          <td>${row.amount}</td>
+          <td><b>${money(row.usd)}</b></td>
+          <td><span class="delta ${chgClass}">${row.chg24h}</span></td>
+        `;
+        a.appendChild(tr);
+      });
+
+      // Activity table
+      const t = document.getElementById("activityTbody");
+      t.innerHTML = "";
+      state.activity.slice(0,7).forEach(row => {
+        const status = String(row.status).toLowerCase();
+        let tagClass = "tag";
+        if (status.includes("complete") || status.includes("filled")) tagClass = "tag ok";
+        if (status.includes("pending")) tagClass = "tag warn";
+        if (status.includes("failed") || status.includes("rejected")) tagClass = "tag bad";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><b>${row.type}</b></td>
+          <td><span class="${tagClass}">${row.status}</span></td>
+          <td>${row.amount}</td>
+          <td class="muted">${row.time}</td>
+        `;
+        t.appendChild(tr);
+      });
+    }
+
+    function copyText(id){
+      const el = document.getElementById(id);
+      const text = el.textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        el.style.color = "var(--text)";
+        setTimeout(() => el.style.color = "var(--muted)", 700);
+      }).catch(() => {
+        alert("Copy failed. Please copy manually.");
+      });
+    }
+
+    function openModal(type){
+      const modal = document.getElementById("modal");
+      const title = document.getElementById("modalTitle");
+      const sub = document.getElementById("modalSub");
+
+      const map = {
+        deposit:  ["Deposit",  "Show deposit methods & networks + confirmations."],
+        withdraw: ["Withdraw", "Withdrawal request, fee preview, 2FA confirmation."],
+        transfer: ["Transfer", "Internal transfer to another user or sub-wallet."],
+        security: ["Security", "Enable 2FA, whitelist, session management."]
+      };
+
+      const x = map[type] || ["Action", "—"];
+      title.textContent = x[0];
+      sub.textContent = x[1];
+      modal.style.display = "block";
+    }
+
+    function closeModal(){
+      document.getElementById("modal").style.display = "none";
+    }
+
+    // init
+    render();
+  </script>
+</body>
+</html>
