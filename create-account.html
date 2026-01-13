@@ -169,7 +169,6 @@
             <input class="field" id="birthdate" name="birthdate" type="date" required />
           </div>
 
-          <!-- ✅ Added Email -->
           <div class="row">
             <label for="email">Email</label>
             <input class="field" id="email" name="email" type="email" required
@@ -245,7 +244,6 @@
     </div>
   </div>
 
-  <!-- Firebase Signup Script (Auth + Firestore) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
@@ -295,7 +293,6 @@
 
       const fullPhone = `${countryCode}${phone}`;
 
-      // simple username check
       const validUser = /^[a-z0-9_]{3,24}$/.test(username);
       if (!validUser){
         showMsg("❌ Username must be 3–24 chars and only: a-z, 0-9, underscore.");
@@ -303,14 +300,11 @@
       }
 
       try {
-        // 1) Create Auth user
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // 2) Optional: set displayName in Auth
         await updateProfile(user, { displayName: username });
 
-        // 3) Store extra profile in Firestore (users/{uid})
         await setDoc(doc(db, "users", user.uid), {
           username,
           email,
@@ -323,9 +317,9 @@
 
         showMsg("✅ Account created successfully! Redirecting...", true);
 
-        // redirect
+        // ✅ Redirect to profile.html
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "profile.html";
         }, 700);
 
       } catch (err) {
