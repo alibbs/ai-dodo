@@ -40,6 +40,7 @@
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
       text-decoration:none;
+      color: var(--text);
     }
     .logo{
       width:38px; height:38px; border-radius:12px;
@@ -154,16 +155,16 @@
 
     <div class="card">
       <h1>Welcome back</h1>
-      <p class="sub">Login using your username or phone number.</p>
+      <p class="sub">Login using your email (Firebase Email/Password).</p>
 
-      <form id="loginForm" onsubmit="return handleLogin(event)">
+      <form id="loginForm">
         <div class="grid">
           <div class="row">
-            <label for="identifier">Username or Phone</label>
+            <label for="identifier">Email</label>
             <input class="field" id="identifier" name="identifier" required
                    autocomplete="username"
-                   placeholder="e.g. teshrij or +96170123456" />
-            <div class="hint">Tip: you can enter full phone with country code.</div>
+                   placeholder="e.g. you@example.com" />
+            <div class="hint">Note: Firebase Email/Password uses email (not username/phone).</div>
           </div>
 
           <div class="row">
@@ -180,7 +181,7 @@
 
         <div class="actions">
           <button class="btn primary" type="submit">Login</button>
-          <button class="btn" type="button" onclick="fillDemo()">Fill demo</button>
+          <button class="btn" type="button" id="demoBtn">Fill demo</button>
         </div>
 
         <div id="msg" class="msg" role="status" aria-live="polite"></div>
@@ -192,28 +193,70 @@
     </div>
   </div>
 
-  <script>
-    function handleLogin(e){
-      e.preventDefault();
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      const msg = document.getElementById("msg");
+  <!-- Firebase Login Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-      // Demo-only (replace with fetch() to your backend login endpoint)
+    // ✅ Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDY7q15093piylwNsLA5L7FM_qOj94idtw",
+      authDomain: "ai-marketing-561de.firebaseapp.com",
+      projectId: "ai-marketing-561de",
+      storageBucket: "ai-marketing-561de.firebasestorage.app",
+      messagingSenderId: "1024997344963",
+      appId: "1:1024997344963:web:4204363fdddef7eca60476",
+      measurementId: "G-99S756PJVG"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("loginForm");
+    const msg = document.getElementById("msg");
+    const demoBtn = document.getElementById("demoBtn");
+
+    function showMsg(text, ok=false){
       msg.style.display = "block";
-      msg.textContent =
-        "Login payload (demo):\\n" +
-        "- Identifier: " + data.identifier + "\\n" +
-        "- Password: " + "*".repeat(Math.min((data.password || '').length, 12)) + "\\n\\n" +
-        "Replace this demo with an API request to your server.";
-
-      return false;
+      msg.style.background = ok ? "rgba(34,211,238,.10)" : "rgba(255,0,80,.10)";
+      msg.textContent = text;
     }
 
-    function fillDemo(){
-      document.getElementById("identifier").value = "teshrij";
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("identifier").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        showMsg("✅ Logged in successfully!\nUser: " + (userCredential.user.email || ""), true);
+
+        // ✅ Redirect after login (غيرها حسب موقعك)
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        // رسائل واضحة بدل error.message الطويلة
+        const code = err?.code || "";
+        if (code === "auth/invalid-credential" || code === "auth/wrong-password") {
+          showMsg("❌ Email or password is incorrect.");
+        } else if (code === "auth/user-not-found") {
+          showMsg("❌ No account found with this email.");
+        } else if (code === "auth/too-many-requests") {
+          showMsg("⚠️ Too many attempts. Try again later.");
+        } else {
+          showMsg("❌ Login failed:\n" + (err?.message || "Unknown error"));
+        }
+        console.error(err);
+      }
+    });
+
+    demoBtn.addEventListener("click", () => {
+      document.getElementById("identifier").value = "test@example.com";
       document.getElementById("password").value = "DemoPass123";
-    }
+    });
   </script>
 </body>
 </html>
