@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI MARKETING | Login</title>
   <meta name="description" content="Login to AI MARKETING." />
+
+  <!-- ================== STYLE ================== -->
   <style>
     :root{
       --bg:#0b1020;
@@ -25,7 +27,6 @@
                   radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
                   var(--bg);
       color:var(--text);
-      line-height:1.6;
       min-height:100vh;
       display:flex;
       align-items:center;
@@ -33,21 +34,6 @@
       padding:24px;
     }
     .wrap{width:100%; max-width: 720px;}
-    .top{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      margin-bottom:14px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
-      text-decoration:none;
-      color: var(--text);
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex: 0 0 auto;
-    }
     .card{
       background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
       border:1px solid var(--border);
@@ -55,208 +41,113 @@
       box-shadow: var(--shadow);
       padding: 22px;
     }
-    h1{margin:0 0 6px; font-size: 28px; line-height:1.2;}
+    h1{margin:0 0 6px; font-size: 28px;}
     .sub{margin:0 0 14px; color:var(--muted); font-size: 14px;}
-    form{margin-top:14px;}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    label{
-      display:block;
-      font-weight:700;
-      font-size: 13px;
-      margin-bottom:6px;
-    }
+    label{font-weight:700; font-size:13px}
     .field{
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 12px 12px;
       width:100%;
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
-    }
-    .row{grid-column: 1 / -1;}
-    .hint{margin-top:6px; color:var(--muted); font-size:12px;}
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top: 14px;
-      align-items:center;
-      justify-content:space-between;
+      margin-top:6px;
+      margin-bottom:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.2);
+      color:var(--text);
     }
     .btn{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 14px;
+      width:100%;
+      padding:12px;
       border-radius:14px;
       font-weight:800;
       cursor:pointer;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
+      border:1px solid var(--border);
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+      color:#fff;
     }
-    .btn:active{transform: translateY(1px);}
-    .link{
-      color: var(--muted);
-      text-decoration:none;
-      font-weight:700;
-    }
-    .link:hover{color:var(--text)}
     .msg{
       margin-top:12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(34,211,238,.08);
-      color: var(--text);
+      padding:12px;
+      border-radius:14px;
       display:none;
-      white-space: pre-wrap;
-    }
-    .footnote{
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .split{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-top:6px;
-    }
-    @media (max-width: 720px){
-      .grid{grid-template-columns: 1fr;}
-      .actions{justify-content:flex-start;}
+      white-space:pre-wrap;
+      border:1px solid var(--border);
     }
   </style>
 </head>
 
 <body>
+
   <div class="wrap">
-    <div class="top">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Login</div>
-        </div>
-      </a>
-
-      <a class="link" href="create-account.html">Create account</a>
-    </div>
-
     <div class="card">
       <h1>Welcome back</h1>
-      <p class="sub">Login using your email (Firebase Email/Password).</p>
+      <p class="sub">Login using your email</p>
 
       <form id="loginForm">
-        <div class="grid">
-          <div class="row">
-            <label for="identifier">Email</label>
-            <input class="field" id="identifier" name="identifier" required
-                   autocomplete="username"
-                   placeholder="e.g. you@example.com" />
-            <div class="hint">Note: Firebase Email/Password uses email (not username/phone).</div>
-          </div>
+        <label>Email</label>
+        <input id="email" class="field" type="email" required placeholder="you@example.com">
 
-          <div class="row">
-            <label for="password">Password</label>
-            <input class="field" id="password" name="password" type="password" required
-                   autocomplete="current-password"
-                   placeholder="Enter your password" />
-            <div class="split">
-              <span class="hint" style="margin:0;">Minimum 8 characters recommended.</span>
-              <a class="link" href="forgot-password.html">Forgot password?</a>
-            </div>
-          </div>
-        </div>
+        <label>Password</label>
+        <input id="password" class="field" type="password" required placeholder="Your password">
 
-        <div class="actions">
-          <button class="btn primary" type="submit">Login</button>
-          <button class="btn" type="button" id="demoBtn">Fill demo</button>
-        </div>
-
-        <div id="msg" class="msg" role="status" aria-live="polite"></div>
-
-        <div class="footnote">
-          By logging in, you agree to the Terms & Privacy Policy.
-        </div>
+        <button class="btn" type="submit">Login</button>
+        <div id="msg" class="msg"></div>
       </form>
     </div>
   </div>
 
-  <!-- Firebase Login Script -->
+  <!-- ================== FIREBASE ================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-    // ✅ Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDY7q15093piylwNsLA5L7FM_qOj94idtw",
       authDomain: "ai-marketing-561de.firebaseapp.com",
       projectId: "ai-marketing-561de",
       storageBucket: "ai-marketing-561de.firebasestorage.app",
       messagingSenderId: "1024997344963",
-      appId: "1:1024997344963:web:4204363fdddef7eca60476",
-      measurementId: "G-99S756PJVG"
+      appId: "1:1024997344963:web:4204363fdddef7eca60476"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
 
     const form = document.getElementById("loginForm");
-    const msg = document.getElementById("msg");
-    const demoBtn = document.getElementById("demoBtn");
+    const msg  = document.getElementById("msg");
 
-    function showMsg(text, ok=false){
+    function show(text, ok=false){
       msg.style.display = "block";
-      msg.style.background = ok ? "rgba(34,211,238,.10)" : "rgba(255,0,80,.10)";
+      msg.style.background = ok ? "rgba(34,211,238,.15)" : "rgba(255,0,80,.15)";
       msg.textContent = text;
     }
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const email = document.getElementById("identifier").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        showMsg("✅ Logged in successfully!\nUser: " + (userCredential.user.email || ""), true);
+        await signInWithEmailAndPassword(auth, email, password);
+        show("✅ Login successful! Redirecting...", true);
 
-        // ✅ Redirect after login (غيرها حسب موقعك)
-        window.location.href = "dashboard.html";
+        // ✅ REDIRECT HERE
+        setTimeout(() => {
+          window.location.href = "profile.html";
+        }, 500);
+
       } catch (err) {
-        // رسائل واضحة بدل error.message الطويلة
-        const code = err?.code || "";
-        if (code === "auth/invalid-credential" || code === "auth/wrong-password") {
-          showMsg("❌ Email or password is incorrect.");
+        const code = err.code || "";
+        if (code === "auth/wrong-password" || code === "auth/invalid-credential") {
+          show("❌ Wrong email or password");
         } else if (code === "auth/user-not-found") {
-          showMsg("❌ No account found with this email.");
-        } else if (code === "auth/too-many-requests") {
-          showMsg("⚠️ Too many attempts. Try again later.");
+          show("❌ Account not found");
         } else {
-          showMsg("❌ Login failed:\n" + (err?.message || "Unknown error"));
+          show("❌ Login error:\n" + err.message);
         }
-        console.error(err);
       }
     });
-
-    demoBtn.addEventListener("click", () => {
-      document.getElementById("identifier").value = "test@example.com";
-      document.getElementById("password").value = "DemoPass123";
-    });
   </script>
+
 </body>
 </html>
