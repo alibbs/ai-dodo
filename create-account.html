@@ -41,6 +41,7 @@
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
       text-decoration:none;
+      color: var(--text);
     }
     .logo{
       width:38px; height:38px; border-radius:12px;
@@ -152,9 +153,9 @@
 
     <div class="card">
       <h1>Create your account</h1>
-      <p class="sub">Fill in the details below to get started.</p>
+      <p class="sub">Create a real account using Firebase (Email/Password).</p>
 
-      <form id="createForm" onsubmit="return handleSubmit(event)">
+      <form id="createForm">
         <div class="grid">
           <div>
             <label for="username">Username</label>
@@ -166,6 +167,14 @@
           <div>
             <label for="birthdate">Date of birth</label>
             <input class="field" id="birthdate" name="birthdate" type="date" required />
+          </div>
+
+          <!-- ✅ Added Email -->
+          <div class="row">
+            <label for="email">Email</label>
+            <input class="field" id="email" name="email" type="email" required
+                   autocomplete="email" placeholder="e.g. you@example.com" />
+            <div class="hint">This email will be used to login.</div>
           </div>
 
           <div class="row">
@@ -224,7 +233,7 @@
 
         <div class="actions">
           <button class="btn primary" type="submit">Create Account</button>
-          <button class="btn" type="button" onclick="fillDemo()">Fill demo</button>
+          <button class="btn" type="button" id="demoBtn">Fill demo</button>
         </div>
 
         <div id="msg" class="msg" role="status" aria-live="polite"></div>
@@ -236,41 +245,114 @@
     </div>
   </div>
 
-  <script>
-    function handleSubmit(e){
-      e.preventDefault();
+  <!-- Firebase Signup Script (Auth + Firestore) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
+    const firebaseConfig = {
+      apiKey: "AIzaSyDY7q15093piylwNsLA5L7FM_qOj94idtw",
+      authDomain: "ai-marketing-561de.firebaseapp.com",
+      projectId: "ai-marketing-561de",
+      storageBucket: "ai-marketing-561de.firebasestorage.app",
+      messagingSenderId: "1024997344963",
+      appId: "1:1024997344963:web:4204363fdddef7eca60476",
+      measurementId: "G-99S756PJVG"
+    };
 
-      // Basic client-side check: combine phone code + number
-      const fullPhone = (data.countryCode || "") + (data.phone || "");
-      const msg = document.getElementById("msg");
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-      // Demo-only output (replace with fetch() to your backend)
+    const form = document.getElementById("createForm");
+    const msg = document.getElementById("msg");
+    const demoBtn = document.getElementById("demoBtn");
+
+    function showMsg(text, ok=false){
       msg.style.display = "block";
-      msg.textContent =
-        "Account payload (demo):\\n" +
-        "- Username: " + data.username + "\\n" +
-        "- Phone: " + fullPhone + "\\n" +
-        "- DOB: " + data.birthdate + "\\n" +
-        "- Residence: " + data.location + "\\n" +
-        "- Referral: " + (data.referral || "(none)") + "\\n\\n" +
-        "Replace this demo with an API request to your server.";
-
-      // form.reset(); // uncomment after wiring backend
-      return false;
+      msg.style.background = ok ? "rgba(34,211,238,.10)" : "rgba(255,0,80,.10)";
+      msg.textContent = text;
     }
 
-    function fillDemo(){
+    function normalizeUsername(u){
+      return (u || "").trim().toLowerCase();
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = normalizeUsername(document.getElementById("username").value);
+      const birthdate = document.getElementById("birthdate").value;
+      const email = document.getElementById("email").value.trim();
+      const countryCode = document.getElementById("countryCode").value;
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value;
+      const location = document.getElementById("location").value.trim();
+      const referral = document.getElementById("referral").value.trim();
+
+      const fullPhone = `${countryCode}${phone}`;
+
+      // simple username check
+      const validUser = /^[a-z0-9_]{3,24}$/.test(username);
+      if (!validUser){
+        showMsg("❌ Username must be 3–24 chars and only: a-z, 0-9, underscore.");
+        return;
+      }
+
+      try {
+        // 1) Create Auth user
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 2) Optional: set displayName in Auth
+        await updateProfile(user, { displayName: username });
+
+        // 3) Store extra profile in Firestore (users/{uid})
+        await setDoc(doc(db, "users", user.uid), {
+          username,
+          email,
+          phone: fullPhone,
+          birthdate,
+          location,
+          referral: referral || null,
+          createdAt: serverTimestamp()
+        });
+
+        showMsg("✅ Account created successfully! Redirecting...", true);
+
+        // redirect
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 700);
+
+      } catch (err) {
+        const code = err?.code || "";
+        if (code === "auth/email-already-in-use"){
+          showMsg("❌ This email is already used. Try login instead.");
+        } else if (code === "auth/weak-password"){
+          showMsg("❌ Weak password. Use at least 8 characters (better 10+).");
+        } else if (code === "auth/invalid-email"){
+          showMsg("❌ Invalid email address.");
+        } else {
+          showMsg("❌ Signup failed:\n" + (err?.message || "Unknown error"));
+        }
+        console.error(err);
+      }
+    });
+
+    demoBtn.addEventListener("click", () => {
       document.getElementById("username").value = "teshrij";
       document.getElementById("birthdate").value = "1998-01-01";
+      document.getElementById("email").value = "test@example.com";
       document.getElementById("countryCode").value = "+961";
       document.getElementById("phone").value = "70123456";
       document.getElementById("password").value = "DemoPass123";
       document.getElementById("location").value = "Beirut, Lebanon";
       document.getElementById("referral").value = "AI-REF-12345";
-    }
+    });
   </script>
 </body>
 </html>
