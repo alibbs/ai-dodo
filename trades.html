@@ -56,7 +56,7 @@
       flex:0 0 auto;
     }
 
-    /* ✅ TOP BAR (same style) */
+    /* ✅ TOP BAR */
     .navlinks{
       display:flex;
       gap:10px;
@@ -80,6 +80,7 @@
       align-items:center;
       gap:8px;
       color:var(--text);
+      transition:.15s ease;
     }
     .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
     .navlinks a.active{
@@ -102,6 +103,7 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 16px;
+      overflow:hidden; /* ✅ prevents widgets overflow on phone */
     }
 
     .titleRow{
@@ -140,11 +142,13 @@
       cursor:pointer;
       text-decoration:none;
       width:100%;
+      transition:.15s ease;
     }
     .btn.primary{
       border-color: rgba(124,92,255,.45);
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
     }
+    .btn:hover{transform: translateY(-1px)}
 
     .kpis{
       display:grid;
@@ -186,23 +190,20 @@
     }
     .muted{color:var(--muted)}
 
-    /* ✅ Desktop defaults */
+    /* heights */
     .tvH1{height:520px;}
     .tvH2{height:460px;}
 
-    /* ✅ Responsive */
     @media (max-width: 980px){
       .grid{grid-template-columns:1fr;}
     }
-
-    /* ✅ PHONE: stronger mobile layout */
     @media (max-width: 560px){
       .wrap{padding:14px;}
       .grid{padding:14px; gap:12px;}
       .card{padding:14px;}
       h1{font-size:16px;}
 
-      /* bar scroll */
+      /* ✅ bar scroll */
       .navlinks{
         width:100%;
         justify-content:flex-start;
@@ -214,11 +215,10 @@
       .navlinks::-webkit-scrollbar{height:6px}
       .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
 
-      /* ✅ Smaller charts on phone */
+      /* ✅ smaller charts */
       .tvH1{height:380px;}
       .tvH2{height:360px;}
 
-      /* ✅ KPIs stack nicer if needed */
       .kpis{grid-template-columns:1fr;}
     }
   </style>
@@ -263,33 +263,6 @@
 
         <div class="tradingview-widget-container tvH1">
           <div id="tv_chart" class="tvH1"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-          <script>
-            window.__tvSymbol = "BINANCE:BTCUSDT";
-
-            function loadTV(symbol){
-              document.getElementById("symbolPill").textContent = symbol;
-              window.__tvSymbol = symbol;
-              const el = document.getElementById("tv_chart");
-              el.innerHTML = "";
-              new TradingView.widget({
-                autosize: true,
-                symbol: symbol,
-                interval: "60",
-                timezone: "Etc/UTC",
-                theme: "dark",
-                style: "1",
-                locale: "en",
-                enable_publishing: false,
-                hide_top_toolbar: false,
-                hide_legend: false,
-                withdateranges: true,
-                save_image: false,
-                container_id: "tv_chart"
-              });
-            }
-            window.addEventListener("load", () => loadTV(window.__tvSymbol));
-          </script>
         </div>
       </div>
 
@@ -308,34 +281,8 @@
             <div class="pill">Crypto</div>
           </div>
 
-          <div class="tradingview-widget-container tvH2">
+          <div class="tradingview-widget-container tvH2" id="marketOverviewBox">
             <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-            {
-              "colorTheme": "dark",
-              "dateRange": "12M",
-              "showChart": true,
-              "locale": "en",
-              "isTransparent": true,
-              "showSymbolLogo": true,
-              "showFloatingTooltip": true,
-              "width": "100%",
-              "height": "100%",
-              "tabs": [
-                {
-                  "title": "Crypto",
-                  "symbols": [
-                    {"s":"BINANCE:BTCUSDT","d":"BTC"},
-                    {"s":"BINANCE:ETHUSDT","d":"ETH"},
-                    {"s":"BINANCE:SOLUSDT","d":"SOL"},
-                    {"s":"BINANCE:XRPUSDT","d":"XRP"},
-                    {"s":"BINANCE:BNBUSDT","d":"BNB"},
-                    {"s":"BINANCE:ADAUSDT","d":"ADA"}
-                  ]
-                }
-              ]
-            }
-            </script>
           </div>
         </div>
       </div>
@@ -428,12 +375,46 @@
     </aside>
   </div>
 
+  <!-- ✅ load scripts ONCE -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
+
   <script>
+    // ===== NAV ACTIVE =====
     function setActiveNav(){
       const file = (location.pathname.split("/").pop() || "trade.html").toLowerCase();
-      document.querySelectorAll(".navlinks a").forEach(a=>{
+      document.querySelectorAll(".navlinks a[data-page]").forEach(a=>{
         const p = (a.getAttribute("data-page")||"").toLowerCase();
         if(p === file) a.classList.add("active");
+      });
+    }
+
+    // ===== TradingView Advanced Chart =====
+    window.__tvSymbol = "BINANCE:BTCUSDT";
+    let __tvWidget = null;
+
+    function loadTV(symbol){
+      document.getElementById("symbolPill").textContent = symbol;
+      window.__tvSymbol = symbol;
+
+      // clear container
+      const el = document.getElementById("tv_chart");
+      el.innerHTML = "";
+
+      // create widget
+      __tvWidget = new TradingView.widget({
+        autosize: true,
+        symbol: symbol,
+        interval: "60",
+        timezone: "Etc/UTC",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        withdateranges: true,
+        save_image: false,
+        container_id: "tv_chart"
       });
     }
 
@@ -441,14 +422,51 @@
       const ex = document.getElementById("exchange").value.trim();
       const pair = document.getElementById("pair").value.trim().toUpperCase();
       if(!pair) return alert("Enter a symbol like BTCUSDT");
-      const symbol = `${ex}:${pair}`;
-      if(typeof loadTV === "function"){
-        loadTV(symbol);
-      } else {
-        alert("TradingView is still loading. Refresh if needed.");
-      }
+      loadTV(`${ex}:${pair}`);
     }
 
+    // ===== Market Overview (multi symbols) =====
+    function loadMarketOverview(){
+      const box = document.getElementById("marketOverviewBox");
+      if(!box) return;
+
+      // remove old widget if any
+      box.querySelectorAll("script").forEach(s => s.remove());
+
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
+      script.async = true;
+
+      script.text = JSON.stringify({
+        colorTheme: "dark",
+        dateRange: "12M",
+        showChart: true,
+        locale: "en",
+        isTransparent: true,
+        showSymbolLogo: true,
+        showFloatingTooltip: true,
+        width: "100%",
+        height: "100%",
+        tabs: [
+          {
+            title: "Crypto",
+            symbols: [
+              { s:"BINANCE:BTCUSDT", d:"BTC" },
+              { s:"BINANCE:ETHUSDT", d:"ETH" },
+              { s:"BINANCE:SOLUSDT", d:"SOL" },
+              { s:"BINANCE:XRPUSDT", d:"XRP" },
+              { s:"BINANCE:BNBUSDT", d:"BNB" },
+              { s:"BINANCE:ADAUSDT", d:"ADA" }
+            ]
+          }
+        ]
+      });
+
+      box.appendChild(script);
+    }
+
+    // ===== Scenario calculator =====
     function money(x){
       return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
     }
@@ -468,8 +486,13 @@
       document.getElementById("final30").textContent = money(final30);
     }
 
-    setActiveNav();
-    calc();
+    // ===== init =====
+    window.addEventListener("load", () => {
+      setActiveNav();
+      loadTV(window.__tvSymbol);
+      loadMarketOverview();
+      calc();
+    });
   </script>
 </body>
 </html>
