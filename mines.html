@@ -6,7 +6,6 @@
 <title>AI MARKETING | Mines Casino Pro</title>
 
 <style>
-/* (نفس الستايل تبعك بدون تغيير) */
 :root{
   --bg:#0b1020;
   --panel:#101a33;
@@ -27,26 +26,127 @@ body{
   color:#fff;
   padding-top:70px;
 }
-header{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(11,16,32,.92);border-bottom:1px solid var(--border);backdrop-filter: blur(8px);}
+header{
+  position:fixed; top:0; left:0; right:0; z-index:9999;
+  background:rgba(11,16,32,.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
 .wrap{max-width:520px;margin:0 auto;padding:10px 12px;}
 .headerBar{display:flex;align-items:center;justify-content:space-between;}
-.logoLink{padding:6px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);}
-.topLogo{height:34px;}
-.balanceCenter{padding:8px 14px;border-radius:999px;border:1px solid rgba(34,197,94,.6);background:rgba(34,197,94,.12);font-weight:900;}
-.card{margin:12px auto;max-width:520px;background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);}
-.grid{display:grid;grid-template-columns: repeat(5, 1fr);gap:12px;}
-.cell{aspect-ratio:1/1;border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.35));display:grid;place-items:center;cursor:pointer;}
+.logoText{
+  font-weight:1000;
+  letter-spacing:1px;
+  font-size:18px;
+}
+.balanceCenter{
+  padding:8px 14px;border-radius:999px;
+  border:1px solid rgba(34,197,94,.6);
+  background:rgba(34,197,94,.12);
+  font-weight:900;
+}
+
+.card{
+  margin:12px auto;
+  max-width:520px;
+  background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:12px;
+}
+
+.cell{
+  aspect-ratio:1/1;
+  border-radius:16px;
+  border:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.35));
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
 .cell.revealed{cursor:default;}
-.cell .icon{width:70%;height:70%;transform:scale(.3);opacity:0;transition:.3s;}
-.cell.revealed .icon{transform:scale(1);opacity:1;}
-.gem{background:#00e5ff;}
-.mine{background:#b91c1c;}
-.field{width:100%;padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:#fff;}
-.btn{width:100%;padding:16px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;font-weight:900;font-size:18px;}
+
+.icon{
+  width:70%;
+  height:70%;
+  transform:scale(.2);
+  opacity:0;
+  transition:.35s cubic-bezier(.2,.9,.2,1);
+}
+.cell.revealed .icon{
+  transform:scale(1);
+  opacity:1;
+}
+
+/* 💎 GEM */
+.gem .icon{
+  clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);
+  background:
+    linear-gradient(135deg, #eaffff, #3cf2ff 40%, #00bcd4 70%, #006064);
+  box-shadow: 0 0 25px rgba(0,255,255,.8), inset 0 0 10px rgba(255,255,255,.8);
+  animation: gemSpin 3s linear infinite;
+}
+@keyframes gemSpin{
+  from{transform:scale(1) rotate(0deg)}
+  to{transform:scale(1) rotate(360deg)}
+}
+
+/* 💣 BOMB */
+.mine .icon{
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #555, #000 70%);
+  box-shadow: inset -6px -6px 10px rgba(0,0,0,.8), 0 0 15px rgba(255,0,0,.6);
+  position:relative;
+}
+.mine .icon::before{
+  content:"";
+  position:absolute;
+  top:-18%;
+  left:42%;
+  width:16%;
+  height:22%;
+  background:#aaa;
+  border-radius:4px;
+}
+.mine.explode .icon{
+  animation: explode .35s ease;
+}
+@keyframes explode{
+  0%{transform:scale(.5)}
+  60%{transform:scale(1.3)}
+  100%{transform:scale(1)}
+}
+
+/* UI */
+.field{
+  width:100%; padding:12px;
+  border-radius:14px; border:1px solid var(--border);
+  background:rgba(0,0,0,.25); color:#fff;
+}
+.btn{
+  width:100%; padding:16px;
+  border-radius:16px; border:1px solid var(--border);
+  background:rgba(255,255,255,.06);
+  color:#fff; font-weight:900; font-size:18px;
+}
 .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));}
 .btn.cashout{background: linear-gradient(135deg, #22c55e, #16a34a);}
-.badge{padding:10px;border-radius:12px;text-align:center;font-weight:900;margin-bottom:10px;background:rgba(34,197,94,.15);}
-.badge.lose{background:rgba(239,68,68,.2);}
+
+.badge{
+  padding:10px;border-radius:12px;text-align:center;
+  font-weight:900;margin-bottom:10px;
+  background:rgba(34,197,94,.15);
+}
+.badge.lose{background:rgba(239,68,68,.25);}
 </style>
 </head>
 
@@ -54,7 +154,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(11,16,32
 
 <header>
   <div class="wrap headerBar">
-    <a href="gamecenter.html" class="logoLink"><img src="logo.png" class="topLogo"></a>
+    <div class="logoText">AI ORIGINALS</div>
     <div id="balPill" class="balanceCenter">Balance: $0.00</div>
     <div style="width:40px;"></div>
   </div>
@@ -72,6 +172,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(11,16,32
 </div>
 
 <script>
+/* ===== BALANCE ===== */
 const LS_BAL="aimkt_balance_usd";
 function money(x){return Number(x).toFixed(2);}
 function getBalance(){return Number(localStorage.getItem(LS_BAL)||0);}
@@ -79,6 +180,34 @@ function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
 function renderBalance(){balPill.textContent="Balance: $"+money(getBalance());}
 if(!getBalance()) setBalance(1000);
 
+/* ===== SOUND ENGINE ===== */
+let AC=null;
+function audio(){
+  if(!AC){
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    AC=new Ctx();
+  }
+  if(AC.state==="suspended") AC.resume();
+  return AC;
+}
+function tone(freq,dur=0.1,vol=0.12){
+  const ac=audio();
+  const o=ac.createOscillator();
+  const g=ac.createGain();
+  o.frequency.value=freq;
+  o.type="sine";
+  g.gain.value=vol;
+  o.connect(g); g.connect(ac.destination);
+  o.start();
+  o.stop(ac.currentTime+dur);
+}
+function sndStart(){ tone(600); tone(900,0.12); }
+function sndGem(){ tone(1200); }
+function sndMine(){ tone(120,0.25,0.2); }
+function sndCash(){ tone(700); tone(1000,0.15); }
+function sndClick(){ tone(400,0.05,0.05); }
+
+/* ===== GAME ===== */
 const TOTAL=25;
 let game={active:false,bet:0,mines:5,revealed:0,layout:[]};
 
@@ -96,8 +225,12 @@ function buildGrid(){
     gridEl.appendChild(d);
   }
 }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
-
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
 function revealAll(){
   const cells=document.querySelectorAll(".cell");
   cells.forEach((c,i)=>{
@@ -107,18 +240,22 @@ function revealAll(){
     else c.classList.add("gem");
   });
 }
-
-function currentMultiplier(){ return (1 + game.revealed * 0.2); }
-
+function currentMultiplier(){
+  return 1 + game.revealed * 0.25;
+}
 function updateProfitBox(){
   const mult=currentMultiplier();
   const profit=game.bet*(mult-1);
   statusBox.textContent=`💰 Profit: +$${money(profit)} (x${mult.toFixed(2)})`;
+  statusBox.className="badge";
 }
 
 function startGame(){
   const b=+bet.value, m=+mines.value;
   if(b<=0||b>getBalance()) return alert("Invalid bet");
+  if(m<3||m>22) return alert("Mines 3 - 22");
+
+  audio(); sndStart();
 
   setBalance(getBalance()-b);
   game.active=true; game.bet=b; game.mines=m; game.revealed=0;
@@ -137,12 +274,12 @@ function startGame(){
 
 function cashOut(){
   if(!game.active || game.revealed < 3) return;
-  const mult=currentMultiplier();
-  const win=game.bet * mult;
+  sndCash();
+
+  const win=game.bet * currentMultiplier();
   setBalance(getBalance()+win);
 
-  revealAll(); // 👈 فتح كل الخريطة
-
+  revealAll();
   statusBox.textContent="💰 Cashed out: $"+money(win);
   endRound();
 }
@@ -160,15 +297,21 @@ function mainAction(){
 
 function onPick(i,el){
   if(!game.active||el.classList.contains("revealed")) return;
+  sndClick();
+
   el.classList.add("revealed");
+  const icon = el.querySelector(".icon");
+
   if(game.layout[i]){
-    el.classList.add("mine");
-    revealAll(); // 👈 فتح الكل لما يخسر
+    el.classList.add("mine","explode");
+    sndMine();
+    revealAll();
     statusBox.textContent="💥 BOOM!";
     statusBox.className="badge lose";
     endRound();
   }else{
     el.classList.add("gem");
+    sndGem();
     game.revealed++;
     updateProfitBox();
   }
