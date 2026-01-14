@@ -1,523 +1,168 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Settings</title>
-  <meta name="description" content="Account settings, security, preferences, notifications, invitation code, and logout." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI MARKETING | Settings</title>
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --panel2:#0e1730;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --max:1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-    }
-    a{color:inherit}
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.65);
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:var(--max); margin:0 auto; padding:18px;}
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:900;
-      text-decoration:none;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex:0 0 auto;
-    }
-    .navlinks{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .navlinks a{
-      text-decoration:none;
-      font-weight:800;
-      font-size:13px;
-      opacity:.9;
-      padding:10px 12px;
-      border-radius:12px;
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-    }
+<style>
+html{scroll-behavior:smooth}
+:root{
+--bg:#0b1020;--panel:#101a33;--text:#e8ecff;--muted:#b8c0e6;
+--brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+body{
+margin:0;padding-top:80px;padding-bottom:80px;
+font-family:system-ui;background:#0b1020;color:#fff;
+}
 
-    .container{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:18px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-    .sectionTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin: 2px 0 12px;
-    }
-    .sectionTitle h2{margin:0; font-size:16px}
-    .sectionTitle small{color:var(--muted)}
-    .sub{color:var(--muted); font-size:13px}
+/* HEADER */
+header{
+position:fixed;top:0;left:0;right:0;z-index:100;
+background:rgba(11,16,32,.85);backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+}
+.nav{max-width:1100px;margin:auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
+.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
+.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
 
-    .row2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    label{
-      display:block;
-      font-weight:900;
-      font-size:13px;
-      margin-bottom:6px;
-    }
-    .field, select.field{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color:var(--text);
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
-    }
+/* MOBILE MENU */
+.mobileMenu{
+position:fixed;top:0;left:-100%;width:80%;height:100%;
+background:#0e1730;z-index:200;padding:20px;transition:.3s;
+}
+.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
+.mobileMenu.show{left:0}
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
-      width:100%;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn.danger{
-      border-color: rgba(239,68,68,.45);
-      background: rgba(239,68,68,.12);
-    }
-    .btn.small{width:auto; padding:10px 12px; border-radius:12px; font-size:13px;}
+/* CONTENT */
+.container{max-width:1100px;margin:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{
+background:#101a33;border:1px solid var(--border);
+border-radius:16px;padding:16px;
+}
+.sectionTitle{font-weight:900;margin-bottom:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:#0b1020;color:#fff}
 
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .item{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:12px;
-    }
-    .item b{display:block}
-    .item .meta{color:var(--muted); font-size:12px; margin-top:4px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
 
-    .tag{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      font-size:12px;
-      font-weight:900;
-      white-space:nowrap;
-    }
-    .tag.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
-    .tag.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
-    .tag.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10)}
+/* TOGGLE */
+.toggle{width:50px;height:28px;border-radius:999px;border:1px solid var(--border);position:relative;cursor:pointer}
+.toggle::after{content:"";width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:3px;transition:.2s}
+.toggle.on{background:#22d3ee}
+.toggle.on::after{left:25px}
 
-    .toggle{
-      width:52px; height:30px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      position:relative;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
-    .toggle::after{
-      content:"";
-      width:24px; height:24px;
-      border-radius:999px;
-      background: rgba(255,255,255,.85);
-      position:absolute;
-      top:50%;
-      left:4px;
-      transform: translateY(-50%);
-      transition: .18s ease;
-    }
-    .toggle.on{
-      background: rgba(34,211,238,.16);
-      border-color: rgba(34,211,238,.35);
-    }
-    .toggle.on::after{
-      left: 24px;
-      background: rgba(34,211,238,.95);
-    }
+/* BOTTOM NAV */
+.bottomNav{
+position:fixed;bottom:0;left:0;right:0;height:64px;
+background:#0e1730;border-top:1px solid var(--border);
+display:flex;justify-content:space-around;align-items:center;
+}
+.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
 
-    .copyRow{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:10px 10px;
-    }
-    .code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:13px;
-      color: var(--text);
-      letter-spacing:.6px;
-    }
-    .miniBtn{
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
+/* BUTTONS */
+.btn{padding:12px;border-radius:12px;border:1px solid var(--border);background:#1f2a44;color:#fff;font-weight:800;cursor:pointer}
+.logoutBtn{background:#ef4444}
 
-    .note{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(245,158,11,.10);
-      border-right: 4px solid rgba(245,158,11,.55);
-      color: var(--text);
-    }
-    .note small{color:var(--muted)}
-
-    .footer{
-      max-width:var(--max);
-      margin: 0 auto;
-      padding: 0 18px 28px;
-      color: var(--muted);
-      font-size:12px;
-    }
-
-    @media (max-width: 980px){
-      .container{grid-template-columns:1fr}
-      .row2{grid-template-columns:1fr}
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+.container{grid-template-columns:1fr}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Settings</div>
-        </div>
-      </a>
 
-      <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html">Wallet</a>
-        <a href="profile.html">Profile</a>
-        <a href="settings.html" style="background: rgba(255,255,255,.06);">Settings</a>
-        <a href="#logout">Logout</a>
-      </div>
+<!-- MOBILE MENU -->
+<div class="mobileMenu" id="mobileMenu">
+  <a href="wallet.html">Wallet</a>
+  <a href="trades.html">Trades</a>
+  <a href="gamecenter.html">Game Center</a>
+  <a href="profile.html">Profile</a>
+  <a href="settings.html">Settings</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
 
-      <span class="pill" id="kycPill">KYC: Pending</span>
-    </div>
-  </header>
-
-  <div class="container">
-    <!-- LEFT COLUMN -->
-    <section class="card">
-      <div class="sectionTitle">
-        <h2>Account</h2>
-        <small>Basic information</small>
-      </div>
-
-      <div class="row2">
-        <div>
-          <label>Username</label>
-          <input class="field" id="username" value="teshrij" />
-        </div>
-        <div>
-          <label>Email</label>
-          <input class="field" id="email" value="user@email.com" />
-        </div>
-        <div>
-          <label>Phone</label>
-          <input class="field" id="phone" value="+96170123456" />
-        </div>
-        <div>
-          <label>Timezone</label>
-          <select class="field" id="timezone">
-            <option value="Asia/Beirut" selected>Asia/Beirut</option>
-            <option value="Europe/London">Europe/London</option>
-            <option value="Asia/Dubai">Asia/Dubai</option>
-            <option value="UTC">UTC</option>
-          </select>
-        </div>
-        <div>
-          <label>Language</label>
-          <select class="field" id="language">
-            <option selected>English</option>
-            <option>Arabic</option>
-            <option>French</option>
-          </select>
-        </div>
-        <div>
-          <label>Currency</label>
-          <select class="field" id="currency">
-            <option selected>USD</option>
-            <option>EUR</option>
-            <option>LBP</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button class="btn primary" type="button" onclick="toast('Settings saved (UI)')">Save changes</button>
-        <button class="btn" type="button" onclick="toast('Reset changes (UI)')">Reset</button>
-      </div>
-
-      <div class="note" role="note">
-        <b>Tip:</b>
-        <div>Connect this page to your backend and validate inputs server-side. <small>(UI demo only)</small></div>
-      </div>
-    </section>
-
-    <!-- RIGHT COLUMN -->
-    <aside class="card">
-      <div class="sectionTitle">
-        <h2>Notifications</h2>
-        <small>Alerts & updates</small>
-      </div>
-
-      <div class="list">
-        <div class="item">
-          <div>
-            <b>Login alerts</b>
-            <div class="meta">Notify me when a new device logs in</div>
-          </div>
-          <div class="toggle on" id="t_login" onclick="toggle('login')"></div>
-        </div>
-
-        <div class="item">
-          <div>
-            <b>Withdrawal confirmations</b>
-            <div class="meta">Extra confirmation before withdrawals</div>
-          </div>
-          <div class="toggle on" id="t_withdraw" onclick="toggle('withdraw')"></div>
-        </div>
-
-        <div class="item">
-          <div>
-            <b>Marketing updates</b>
-            <div class="meta">Product news and improvements</div>
-          </div>
-          <div class="toggle" id="t_marketing" onclick="toggle('marketing')"></div>
-        </div>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div class="sectionTitle">
-          <h2>Security shortcuts</h2>
-          <small>Quick access</small>
-        </div>
-
-        <div class="list">
-          <div class="item">
-            <div>
-              <b>2FA</b>
-              <div class="meta">Authenticator recommended</div>
-            </div>
-            <span class="tag warn" id="twofaTag">Disabled</span>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Withdrawal whitelist</b>
-              <div class="meta">Only approved addresses</div>
-            </div>
-            <span class="tag ok" id="wlTag">Enabled</span>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Active sessions</b>
-              <div class="meta">2 devices</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Manage sessions (UI)')">Manage</button>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Change password</b>
-              <div class="meta">Update your password regularly</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Change password (UI)')">Open</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div class="sectionTitle">
-          <h2>Invitation code</h2>
-          <small>Referrals</small>
-        </div>
-
-        <div class="copyRow">
-          <div class="code" id="inviteCode">AI-MKT-7H2K9</div>
-          <button class="miniBtn" type="button" onclick="copyText('inviteCode')">Copy</button>
-        </div>
-
-        <div class="sub" style="margin-top:8px;">
-          Share this code to link referrals.
-        </div>
-      </div>
-
-      <div id="logout" style="margin-top:18px;">
-        <div class="sectionTitle">
-          <h2>Logout</h2>
-          <small>End your session</small>
-        </div>
-        <button class="btn danger" type="button" onclick="logout()">Logout</button>
-
-        <div class="note" style="margin-top:12px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
-          <b>Tip:</b>
-          <div>Use logout on shared devices.</div>
-        </div>
-      </div>
-    </aside>
+<header>
+  <div class="nav">
+    <a class="brand" href="#">
+      <div class="logo"></div> AI MARKETING
+    </a>
+    <button class="menuBtn" onclick="toggleMenu()">☰</button>
   </div>
+</header>
 
-  <div class="footer">
-    © <span id="year"></span> AI MARKETING — Settings UI. Connect data via your backend/API.
+<div class="container">
+
+<div class="card">
+  <div class="sectionTitle">Account</div>
+  <div class="row2">
+    <input class="field" value="Username">
+    <input class="field" value="Email">
+    <input class="field" value="Phone">
+    <input class="field" value="Country">
   </div>
+</div>
 
-  <!-- toast -->
-  <div id="toast" style="position:fixed; left:18px; bottom:18px; display:none; z-index:60;">
-    <div class="card" style="padding:12px 14px; box-shadow: var(--shadow); max-width:420px;">
-      <b id="toastTitle">—</b>
-      <div class="sub" id="toastBody">—</div>
-    </div>
-  </div>
+<div class="card">
+  <div class="sectionTitle">Security</div>
+  <div class="item">2FA <div class="toggle on"></div></div>
+  <div class="item">Change Password <button class="btn">Open</button></div>
+  <div class="item">Sessions <button class="btn">Manage</button></div>
+</div>
 
-  <script>
-    const state = {
-      kyc: "Pending",
-      twofa: false,
-      whitelist: true,
-      toggles: {
-        login: true,
-        withdraw: true,
-        marketing: false
-      }
-    };
+<div class="card">
+  <div class="sectionTitle">Notifications</div>
+  <div class="item">Login Alerts <div class="toggle on"></div></div>
+  <div class="item">Withdraw Alerts <div class="toggle on"></div></div>
+  <div class="item">Marketing <div class="toggle"></div></div>
+</div>
 
-    function render(){
-      document.getElementById("year").textContent = new Date().getFullYear();
+<div class="card">
+  <div class="sectionTitle">Preferences</div>
+  <select class="field"><option>English</option><option>Arabic</option></select>
+  <select class="field"><option>USD</option><option>LBP</option></select>
+</div>
 
-      // kyc pill
-      document.getElementById("kycPill").textContent = "KYC: " + state.kyc;
+<div class="card">
+  <div class="sectionTitle">Referral</div>
+  <div class="item">AI-MKT-7H2K9 <button class="btn" onclick="copy()">Copy</button></div>
+</div>
 
-      // security tags
-      const twofaTag = document.getElementById("twofaTag");
-      twofaTag.textContent = state.twofa ? "Enabled" : "Disabled";
-      twofaTag.className = "tag " + (state.twofa ? "ok" : "warn");
+<div class="card">
+  <div class="sectionTitle">Logout</div>
+  <button class="btn logoutBtn" onclick="logout()">Logout</button>
+</div>
 
-      const wlTag = document.getElementById("wlTag");
-      wlTag.textContent = state.whitelist ? "Enabled" : "Disabled";
-      wlTag.className = "tag " + (state.whitelist ? "ok" : "warn");
+</div>
 
-      // toggles
-      setToggleUI("login");
-      setToggleUI("withdraw");
-      setToggleUI("marketing");
-    }
+<!-- BOTTOM NAV -->
+<div class="bottomNav">
+  <a href="wallet.html">💰<br>Wallet</a>
+  <a href="trades.html">📊<br>Trades</a>
+  <a href="gamecenter.html">🎮<br>Games</a>
+  <a href="profile.html">👤<br>Profile</a>
+  <a href="settings.html">⚙️<br>Settings</a>
+</div>
 
-    function setToggleUI(key){
-      const el = document.getElementById("t_" + key);
-      if(!el) return;
-      el.className = "toggle" + (state.toggles[key] ? " on" : "");
-    }
+<script>
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("show");
+}
+function logout(){
+  alert("Logged out");
+  location.href="login.html";
+}
+function copy(){
+  navigator.clipboard.writeText("AI-MKT-7H2K9");
+  alert("Copied!");
+}
+document.querySelectorAll(".toggle").forEach(t=>{
+  t.onclick=()=>t.classList.toggle("on");
+});
+</script>
 
-    function toggle(key){
-      state.toggles[key] = !state.toggles[key];
-      setToggleUI(key);
-      toast(key + ": " + (state.toggles[key] ? "ON" : "OFF"));
-    }
-
-    function toast(text){
-      const t = document.getElementById("toast");
-      document.getElementById("toastTitle").textContent = "Done";
-      document.getElementById("toastBody").textContent = text;
-      t.style.display = "block";
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => t.style.display = "none", 1600);
-    }
-
-    function copyText(id){
-      const el = document.getElementById(id);
-      const text = el.textContent.trim();
-      navigator.clipboard.writeText(text).then(() => {
-        toast("Copied: " + text);
-      }).catch(() => {
-        alert("Copy failed. Please copy manually.");
-      });
-    }
-
-    function logout(){
-      toast("Logged out (UI)");
-      setTimeout(() => { window.location.href = "login.html"; }, 700);
-    }
-
-    render();
-  </script>
 </body>
 </html>
