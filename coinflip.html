@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AI MARKETING | Coinflip</title>
+<title>AI ORIGINALS | Coinflip</title>
 
 <style>
 :root{
@@ -15,50 +15,168 @@
   --ok:#22c55e; --bad:#ef4444;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:#0b1020;color:#fff;}
-header{position:sticky;top:0;background:rgba(11,16,32,.8);border-bottom:1px solid var(--border);}
-.wrap{max-width:480px;margin:0 auto;padding:12px;}
+body{margin:0;font-family:system-ui;background:#0b1020;color:#fff;padding-top:70px;}
+header{
+  position:fixed; top:0; left:0; right:0; z-index:999;
+  background:rgba(11,16,32,.9); border-bottom:1px solid var(--border);
+}
+.wrap{max-width:480px;margin:0 auto;padding:10px 12px;}
 .nav{display:flex;justify-content:space-between;align-items:center;}
-.btnTop{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;text-decoration:none;font-weight:800;}
 
-.card{margin:12px auto;max-width:480px;background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);}
+.logoBtn{
+  text-decoration:none;
+  font-weight:1000;
+  letter-spacing:2px;
+  font-size:18px;
+  padding:6px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.6);
+  background: linear-gradient(180deg, #ffffff, #dcdcdc);
+  color:#000;
+}
+.logoBtn span{
+  font-family: "Times New Roman", serif;
+  letter-spacing:3px;
+}
 
-.coinStage{position:relative;display:grid;place-items:center;min-height:240px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.22));}
+.balanceCenter{
+  padding:8px 14px;border-radius:999px;
+  border:1px solid rgba(34,197,94,.6);
+  background:rgba(34,197,94,.12);
+  font-weight:900;
+}
+
+.card{
+  margin:12px auto;max-width:480px;
+  background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+  border:1px solid var(--border);
+  border-radius:18px;padding:14px;box-shadow:var(--shadow);
+}
+
+/* ===== COIN ===== */
+.coinStage{
+  position:relative;
+  display:grid;
+  place-items:center;
+  min-height:260px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.22));
+}
+
+.profitBadge{
+  position:absolute; top:12px;
+  padding:8px 14px; border-radius:999px;
+  font-weight:900; font-size:14px;
+  background:rgba(34,197,94,.18);
+  border:1px solid rgba(34,197,94,.6);
+}
 
 .resultBadge{
-  position:absolute; top:12px;
+  position:absolute; bottom:12px;
   padding:6px 12px; border-radius:999px;
   font-weight:900; font-size:13px;
-  opacity:0; transform:translateY(-10px);
+  opacity:0; transform:translateY(10px);
   transition:.25s ease;
 }
 .resultBadge.win{background:rgba(34,197,94,.2); border:1px solid rgba(34,197,94,.8); color:#22c55e;}
 .resultBadge.lose{background:rgba(239,68,68,.2); border:1px solid rgba(239,68,68,.8); color:#ef4444;}
 .resultBadge.show{opacity:1; transform:translateY(0);}
 
-.coin3d{width:150px;height:150px;position:relative;transform-style:preserve-3d;}
-.coin3d.idle{animation:spin 4s linear infinite;}
-@keyframes spin{from{transform:rotateY(0) rotateX(10deg)}to{transform:rotateY(360deg) rotateX(10deg)}}
-.coin3d.flipping{animation:flip 1s ease 1;}
-@keyframes flip{from{transform:rotateY(0) rotateX(10deg)}to{transform:rotateY(1440deg) rotateX(10deg)}}
-
-.coinFace{position:absolute;inset:0;border-radius:999px;backface-visibility:hidden;display:grid;place-items:center;font-weight:900;font-size:44px;}
-.gold{background:linear-gradient(135deg,#f7e08c,#caa03a);}
-.silver{background:linear-gradient(135deg,#f3f6ff,#8a93ad);}
-.faceGold{transform:translateZ(8px);}
-.faceSilver{transform:rotateY(180deg) translateZ(8px);}
-
-.progressBox{
-  margin-top:10px;padding:12px;border-radius:14px;
-  background:rgba(34,197,94,.15);
-  border:1px solid rgba(34,197,94,.6);
-  text-align:center;font-weight:900;
+.coin3d{
+  width:160px;height:160px;
+  position:relative;
+  transform-style:preserve-3d;
+}
+.coin3d.idle{animation:spin 5s linear infinite;}
+@keyframes spin{
+  from{transform:rotateY(0) rotateX(10deg)}
+  to{transform:rotateY(360deg) rotateX(10deg)}
+}
+.coin3d.flipping{animation:flip 1.1s cubic-bezier(.2,.9,.2,1) 1;}
+@keyframes flip{
+  from{transform:rotateY(0) rotateX(10deg)}
+  to{transform:rotateY(1440deg) rotateX(10deg)}
 }
 
-.field{width:100%;padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:#fff;}
-.btn{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;font-weight:900;}
-.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));}
+.coinFace{
+  position:absolute; inset:0;
+  border-radius:999px;
+  backface-visibility:hidden;
+  display:grid; place-items:center;
+  font-weight:1000;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.2);
+}
+.gold{
+  background:linear-gradient(135deg,#f7e08c,#caa03a,#9b7424);
+  color:#2b1b00;
+}
+.silver{
+  background:linear-gradient(135deg,#f3f6ff,#bfc6d8,#8a93ad);
+  color:#0b1020;
+}
+.faceGold{transform:translateZ(10px);}
+.faceSilver{transform:rotateY(180deg) translateZ(10px);}
+
+.coinTextBig{font-size:34px; line-height:1;}
+.coinTextSmall{font-size:14px; letter-spacing:1px;}
+
+/* ===== UI ===== */
+.betRow{
+  display:grid;
+  grid-template-columns:1fr 80px;
+  gap:10px;
+}
+
+.field{
+  width:100%;padding:14px;border-radius:16px;
+  border:1px solid var(--border);
+  background:rgba(0,0,0,.35);
+  color:#fff;font-size:16px;font-weight:700;
+}
+
+.x2Btn{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.25);
+  font-weight:1000;
+  font-size:18px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+/* ===== MAIN BUTTON ===== */
+.mainBtn{
+  width:100%;
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.25);
+  font-weight:1000;
+  font-size:20px;
+  cursor:pointer;
+  color:#fff;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0)),
+    linear-gradient(135deg, #7c5cff, #22d3ee);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    0 10px 25px rgba(0,0,0,.5);
+  transition:.12s ease;
+}
+.mainBtn:hover{transform:translateY(-1px);}
+.mainBtn:active{transform:translateY(1px);}
+.mainBtn.cashout{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0)),
+    linear-gradient(135deg, #22c55e, #16a34a);
+}
+
 .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.sideBtn{
+  padding:14px;border-radius:14px;border:1px solid var(--border);
+  background:rgba(255,255,255,.06);color:#fff;font-weight:900;
+}
 .kpi{margin-top:8px;font-size:13px;color:#b8c0e6}
 </style>
 </head>
@@ -67,39 +185,47 @@ header{position:sticky;top:0;background:rgba(11,16,32,.8);border-bottom:1px soli
 
 <header>
   <div class="wrap nav">
-    <a href="gamecenter.html" class="btnTop">↩ Game Center</a>
-    <div id="balPill">Balance: $0.00</div>
+    <a href="gamecenter.html" class="logoBtn"><span>AI ORIGINALS</span></a>
+    <div id="balPill" class="balanceCenter">Balance: $0.00</div>
+    <div style="width:40px"></div>
   </div>
 </header>
 
 <div class="card">
   <div class="coinStage">
+    <div class="profitBadge" id="profitBox">💰 Profit: +$0.00 (x1.00)</div>
     <div class="resultBadge" id="resultBadge">—</div>
 
     <div class="coin3d idle" id="coin3d">
-      <div class="coinFace gold faceGold">G</div>
-      <div class="coinFace silver faceSilver">S</div>
+      <div class="coinFace gold faceGold">
+        <div>
+          <div class="coinTextBig">AI</div>
+          <div class="coinTextSmall">GOLD</div>
+        </div>
+      </div>
+      <div class="coinFace silver faceSilver">
+        <div>
+          <div class="coinTextBig">AI</div>
+          <div class="coinTextSmall">SILVER</div>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="progressBox" id="progressBox">
-    Round: 0 / 20<br>
-    Multiplier: x1.93
   </div>
 </div>
 
 <div class="card">
   <label>Bet Amount</label>
-  <input class="field" id="bet" type="number" min="1" placeholder="10" />
-
-  <button class="btn primary" style="margin-top:10px;" onclick="startGame()">🎮 Start (Place Bet)</button>
-
-  <div class="twoCol">
-    <button class="btn primary" onclick="chooseSide('G')">Gold</button>
-    <button class="btn primary" onclick="chooseSide('S')">Silver</button>
+  <div class="betRow">
+    <input class="field" id="bet" type="number" min="1" value="10" />
+    <button class="x2Btn" onclick="doubleBet()">x2</button>
   </div>
 
-  <button class="btn" style="margin-top:10px;" onclick="cashOut()">💰 Cash Out</button>
+  <button class="mainBtn" id="mainBtn" style="margin-top:12px;" onclick="mainAction()">🎮 START</button>
+
+  <div class="twoCol">
+    <button class="sideBtn" onclick="chooseSide('G')">Gold</button>
+    <button class="sideBtn" onclick="chooseSide('S')">Silver</button>
+  </div>
 
   <div class="kpi" id="statusText">Enter bet and press Start...</div>
 </div>
@@ -128,7 +254,7 @@ function beep(freq=600, dur=0.1, vol=0.12){
   const o=ac.createOscillator();
   const g=ac.createGain();
   o.frequency.value=freq;
-  o.type="sine";
+  o.type="triangle";
   g.gain.value=vol;
   o.connect(g); g.connect(ac.destination);
   o.start();
@@ -137,21 +263,25 @@ function beep(freq=600, dur=0.1, vol=0.12){
 function sndStart(){beep(600,0.12); setTimeout(()=>beep(900,0.12),120);}
 function sndFlip(){beep(400,0.08); setTimeout(()=>beep(700,0.08),80);}
 function sndWin(){beep(900,0.12); setTimeout(()=>beep(1200,0.12),120);}
-function sndLose(){beep(200,0.25);}
+function sndLose(){beep(160,0.3,0.2);}
+function sndCash(){beep(700,0.12); setTimeout(()=>beep(1000,0.12),120);}
 
 /* ===== Game ===== */
 const coin=document.getElementById("coin3d");
 const badge=document.getElementById("resultBadge");
+const profitBox=document.getElementById("profitBox");
+const mainBtn=document.getElementById("mainBtn");
+
 const MAX_ROUNDS=20;
+const MIN_MULT=1.93;
+const MAX_MULT=777;
 
 function getMultiplier(round){
-  const min = 1.93;
-  const max = 777;
   const t = round / MAX_ROUNDS;
-  return min + (max - min) * Math.pow(t, 3);
+  return MIN_MULT + (MAX_MULT - MIN_MULT) * Math.pow(t, 3);
 }
 
-const game={active:false, bet:0, side:null, round:0, multiplier:1.93};
+const game={active:false, bet:0, side:null, round:0, multiplier:MIN_MULT};
 
 function showBadge(text, type){
   badge.textContent = text;
@@ -159,29 +289,49 @@ function showBadge(text, type){
   setTimeout(()=>{ badge.className = "resultBadge"; }, 900);
 }
 
-function updateProgress(){
-  progressBox.innerHTML = `Round: ${game.round} / ${MAX_ROUNDS}<br>Multiplier: x${game.multiplier.toFixed(2)}`;
+function updateProfit(){
+  const profit = game.bet * (game.multiplier - 1);
+  profitBox.textContent = `💰 Profit: +${money(profit)} (x${game.multiplier.toFixed(2)})`;
+}
+
+function doubleBet(){
+  if(game.active) return;
+  const current = Number(bet.value||0);
+  const doubled = current * 2;
+  if(doubled <= getBalance()){
+    bet.value = doubled.toFixed(2);
+  }else{
+    bet.value = getBalance().toFixed(2);
+  }
 }
 
 function resetGame(){
-  game.active=false; game.bet=0; game.side=null; game.round=0; game.multiplier=1.93;
+  game.active=false; game.bet=0; game.side=null; game.round=0; game.multiplier=MIN_MULT;
   statusText.textContent="Enter bet and press Start...";
-  updateProgress();
+  mainBtn.textContent="🎮 START";
+  mainBtn.className="mainBtn";
+  updateProfit();
   coin.className="coin3d idle";
 }
 
 function startGame(){
   const b=Number(bet.value||0);
   if(b<=0 || b>getBalance()) return alert("Invalid bet");
+
   setBalance(getBalance()-b);
-  game.bet=b; game.active=true; game.round=0; game.multiplier=1.93;
+  game.bet=b; game.active=true; game.round=0; game.multiplier=MIN_MULT;
+
   sndStart();
+
+  mainBtn.textContent="💰 CASH OUT";
+  mainBtn.className="mainBtn cashout";
+
   statusText.textContent="Choose Gold or Silver...";
-  updateProgress();
+  updateProfit();
 }
 
 function chooseSide(side){
-  if(!game.active) return alert("Press Start first");
+  if(!game.active) return;
   game.side=side;
   flipOnce();
 }
@@ -190,10 +340,11 @@ function flipOnce(){
   game.round++;
   game.multiplier=getMultiplier(game.round);
   sndFlip();
-  statusText.textContent="Flipping...";
-  updateProgress();
 
-  coin.classList.remove("flipping");
+  statusText.textContent="Flipping...";
+  updateProfit();
+
+  coin.classList.remove("flipping","idle");
   void coin.offsetWidth;
   coin.classList.add("flipping");
 
@@ -218,15 +369,22 @@ function flipOnce(){
     }
 
     statusText.textContent="✅ Win! Choose side for next round...";
-  },1000);
+  },1100);
 }
 
 function cashOut(){
   if(!game.active || game.round===0) return;
+  sndCash();
+
   const win = game.bet * game.multiplier;
   setBalance(getBalance() + win);
   alert("Cashed out: " + money(win));
   resetGame();
+}
+
+function mainAction(){
+  if(!game.active) startGame();
+  else cashOut();
 }
 
 renderBalance();
