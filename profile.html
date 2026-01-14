@@ -1,575 +1,238 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Profile & Settings</title>
-  <meta name="description" content="User profile, KYC, security center, settings, invitation code, and logout." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI MARKETING | Profile</title>
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --panel2:#0e1730;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --max:1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-    }
-    a{color:inherit}
+<style>
+html{scroll-behavior:smooth}
+:root{
+--bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
+--brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
+--shadow:0 20px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+padding-top:80px;
+padding-bottom:80px;
+font-family:system-ui;
+background:
+radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+#0b1020;
+color:#fff;
+}
 
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.65);
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:var(--max); margin:0 auto; padding:18px;}
+/* HEADER */
+header{
+position:fixed;top:0;left:0;right:0;z-index:100;
+background:rgba(11,16,32,.85);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+}
+.nav{
+max-width:1100px;margin:auto;padding:14px 18px;
+display:flex;justify-content:space-between;align-items:center;
+}
+.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
+.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
 
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-      flex-wrap:wrap;
-    }
+/* MOBILE MENU */
+.mobileMenu{
+position:fixed;top:0;left:-100%;width:80%;height:100%;
+background:#0e1730;z-index:200;padding:20px;transition:.3s;
+}
+.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
+.mobileMenu.show{left:0}
 
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:900;
-      text-decoration:none;
-      flex:0 0 auto;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex:0 0 auto;
-    }
+/* CONTENT */
+.container{
+max-width:1100px;
+margin:auto;
+padding:16px;
+display:grid;
+grid-template-columns:1fr;
+gap:14px;
+}
+.card{
+background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+border:1px solid var(--border);
+border-radius:16px;
+box-shadow:var(--shadow);
+padding:16px;
+}
 
-    /* ✅ NEW: better navlinks for phone (scrollable pills) */
-    .navlinks{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex: 1 1 520px;
-      min-width: 240px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .navlinks a{
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      opacity:.95;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
-    .navlinks a.active{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
-    }
+/* CREDIT CARD */
+.creditCard{
+position:relative;
+border-radius:20px;
+padding:20px;
+background:linear-gradient(135deg, rgba(124,92,255,.9), rgba(34,211,238,.7));
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+overflow:hidden;
+}
+.creditCard::after{
+content:"";
+position:absolute;inset:-40px;
+background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.25), transparent 60%);
+animation:shine 4s infinite;
+}
+@keyframes shine{
+0%{transform:translateX(-60%)}
+100%{transform:translateX(60%)}
+}
+.ccInner{position:relative}
+.ccBalance{font-size:26px;font-weight:900}
+.ccLabel{font-size:12px;opacity:.85}
+.ccRow{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.ccId{font-family:monospace;letter-spacing:1px;font-size:13px}
 
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
+/* ITEMS */
+.item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px;
+border:1px solid var(--border);
+border-radius:14px;
+background:rgba(255,255,255,.04);
+margin-bottom:10px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:14px;
-      max-width:var(--max);
-      margin:0 auto;
-      padding:18px;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-    .sectionTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin: 2px 0 12px;
-    }
-    .sectionTitle h2{margin:0; font-size:16px}
-    .sectionTitle small{color:var(--muted)}
-    .sub{color:var(--muted); font-size:13px}
+.btn{
+padding:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:#1f2a44;
+color:#fff;
+font-weight:900;
+cursor:pointer;
+}
+.btn.primary{background:linear-gradient(135deg,#7c5cff,#22d3ee)}
+.btn.logout{background:#ef4444}
 
-    .row2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    label{
-      display:block;
-      font-weight:900;
-      font-size:13px;
-      margin-bottom:6px;
-    }
-    .field{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color:var(--text);
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
-    }
+/* BOTTOM NAV */
+.bottomNav{
+position:fixed;bottom:0;left:0;right:0;height:64px;
+background:#0e1730;border-top:1px solid var(--border);
+display:flex;justify-content:space-around;align-items:center;
+z-index:100;
+}
+.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
-      width:100%;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn.danger{
-      border-color: rgba(239,68,68,.45);
-      background: rgba(239,68,68,.12);
-    }
-    .btn.small{width:auto; padding:10px 12px; border-radius:12px; font-size:13px;}
-
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .item{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:12px;
-    }
-    .item b{display:block}
-    .item .meta{color:var(--muted); font-size:12px; margin-top:4px}
-
-    .tag{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      font-size:12px;
-      font-weight:900;
-      white-space:nowrap;
-    }
-    .tag.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
-    .tag.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
-    .tag.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10)}
-
-    .copyRow{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:10px 10px;
-    }
-    .code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:13px;
-      color: var(--text);
-      letter-spacing:.6px;
-    }
-    .miniBtn{
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
-
-    .note{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(245,158,11,.10);
-      border-right: 4px solid rgba(245,158,11,.55);
-      color: var(--text);
-    }
-    .note small{color:var(--muted)}
-
-    .footer{
-      max-width:var(--max);
-      margin: 0 auto;
-      padding: 0 18px 28px;
-      color: var(--muted);
-      font-size:12px;
-    }
-
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .row2{grid-template-columns:1fr}
-    }
-
-    /* ✅ PHONE: bar becomes scrollable + pill stays visible */
-    @media (max-width: 560px){
-      .wrap{padding:14px;}
-      .nav{gap:10px; align-items:flex-start;}
-      .navlinks{
-        order:3;
-        width:100%;
-        justify-content:flex-start;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom:6px;
-      }
-      .navlinks::-webkit-scrollbar{height:6px}
-      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
-      .pill{order:2;}
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Profile</div>
-        </div>
-      </a>
 
-      <!-- ✅ NEW NAV: profile/settings/trade/wallet -->
-      <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html" data-page="wallet.html">Wallet</a>
-        <a href="trade.html" data-page="trade.html">Trade</a>
-        <a href="settings.html" data-page="settings.html">Settings</a>
-        <a href="profile.html" data-page="profile.html">Profile</a>
-      </div>
+<!-- MOBILE MENU -->
+<div class="mobileMenu" id="mobileMenu">
+  <a href="wallet.html">Wallet</a>
+  <a href="trade.html">Trade</a>
+  <a href="gamecenter.html">Game Center</a>
+  <a href="profile.html">Profile</a>
+  <a href="settings.html">Settings</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
 
-      <span class="pill" id="kycPill">KYC: Pending</span>
-    </div>
-  </header>
-
-  <div class="grid">
-    <!-- LEFT: Profile + KYC -->
-    <section class="card">
-      <div class="sectionTitle">
-        <h2>Profile</h2>
-        <small>Personal information</small>
-      </div>
-
-      <div class="row2">
-        <div>
-          <label>Full name</label>
-          <input class="field" id="fullName" value="Teshrij User" />
-        </div>
-        <div>
-          <label>Username</label>
-          <input class="field" id="username" value="teshrij" />
-        </div>
-        <div>
-          <label>Email</label>
-          <input class="field" id="email" value="user@email.com" />
-        </div>
-        <div>
-          <label>Phone</label>
-          <input class="field" id="phone" value="+96170123456" />
-        </div>
-        <div style="grid-column:1/-1;">
-          <label>Country / City</label>
-          <input class="field" id="location" value="Beirut, Lebanon" />
-        </div>
-      </div>
-
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button class="btn primary" type="button" onclick="toast('Profile saved (UI)')">Save changes</button>
-        <button class="btn" type="button" onclick="toast('Change password flow (UI)')">Change password</button>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div class="sectionTitle">
-          <h2>KYC Verification</h2>
-          <small>Identity & address</small>
-        </div>
-
-        <div class="list">
-          <div class="item">
-            <div>
-              <b>Status</b>
-              <div class="meta">Required for higher limits</div>
-            </div>
-            <span class="tag warn" id="kycTag">Pending</span>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Identity document</b>
-              <div class="meta">Passport / ID card (front & back)</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Upload ID (UI)')">Upload</button>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Selfie verification</b>
-              <div class="meta">Selfie holding your document</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Upload selfie (UI)')">Upload</button>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Proof of address</b>
-              <div class="meta">Utility bill / bank statement (last 3 months)</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Upload address proof (UI)')">Upload</button>
-          </div>
-        </div>
-
-        <div class="note" role="note">
-          <b>Privacy:</b>
-          <div>Documents are used for verification only. <small>Replace this with your real privacy policy text.</small></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT: Security Center + Settings + Invitation -->
-    <aside class="card">
-      <div class="sectionTitle">
-        <h2>Security Center</h2>
-        <small>Account protection</small>
-      </div>
-
-      <div class="list">
-        <div class="item">
-          <div>
-            <b>Two-Factor Authentication (2FA)</b>
-            <div class="meta">Recommended for withdrawals</div>
-          </div>
-          <span class="tag warn" id="twofaTag">Disabled</span>
-        </div>
-
-        <div class="item">
-          <div>
-            <b>Withdrawal whitelist</b>
-            <div class="meta">Only approved addresses can withdraw</div>
-          </div>
-          <span class="tag ok" id="wlTag">Enabled</span>
-        </div>
-
-        <div class="item">
-          <div>
-            <b>Active sessions</b>
-            <div class="meta" id="sessionsMeta">2 devices</div>
-          </div>
-          <button class="btn small" type="button" onclick="toast('Manage sessions (UI)')">Manage</button>
-        </div>
-
-        <div class="item">
-          <div>
-            <b>Login alerts</b>
-            <div class="meta">Email/SMS notifications</div>
-          </div>
-          <button class="btn small" type="button" onclick="toggleSetting('alerts')">Toggle</button>
-        </div>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div class="sectionTitle">
-          <h2>Settings</h2>
-          <small>Preferences</small>
-        </div>
-
-        <div class="list">
-          <div class="item">
-            <div>
-              <b>Notifications</b>
-              <div class="meta" id="notifMeta">Enabled</div>
-            </div>
-            <button class="btn small" type="button" onclick="toggleSetting('notif')">Toggle</button>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Language</b>
-              <div class="meta">English</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Language selector (UI)')">Change</button>
-          </div>
-
-          <div class="item">
-            <div>
-              <b>Theme</b>
-              <div class="meta">Dark</div>
-            </div>
-            <button class="btn small" type="button" onclick="toast('Theme switch (UI)')">Change</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div class="sectionTitle">
-          <h2>Invitation Code</h2>
-          <small>Invite friends</small>
-        </div>
-
-        <div class="copyRow">
-          <div class="code" id="inviteCode">AI-MKT-7H2K9</div>
-          <button class="miniBtn" type="button" onclick="copyText('inviteCode')">Copy</button>
-        </div>
-
-        <div class="sub" style="margin-top:8px;">
-          Share this code to link referrals. (Replace with real referral rules.)
-        </div>
-      </div>
-
-      <div id="logout" style="margin-top:18px;">
-        <div class="sectionTitle">
-          <h2>Logout</h2>
-          <small>End your session</small>
-        </div>
-
-        <button class="btn danger" type="button" onclick="logout()">Logout</button>
-
-        <div class="note" style="margin-top:12px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
-          <b>Tip:</b>
-          <div>Use logout on shared devices.</div>
-        </div>
-      </div>
-    </aside>
+<header>
+  <div class="nav">
+    <a class="brand" href="#">
+      <div class="logo"></div> AI MARKETING
+    </a>
+    <button class="menuBtn" onclick="toggleMenu()">☰</button>
   </div>
+</header>
 
-  <div class="footer">
-    © <span id="year"></span> AI MARKETING — Profile UI. Connect data via your backend/API.
-  </div>
+<div class="container">
 
-  <!-- tiny toast -->
-  <div id="toast" style="position:fixed; left:18px; bottom:18px; display:none; z-index:60;">
-    <div class="card" style="padding:12px 14px; box-shadow: var(--shadow); max-width:420px;">
-      <b id="toastTitle">—</b>
-      <div class="sub" id="toastBody">—</div>
+<!-- CARD -->
+<div class="creditCard">
+  <div class="ccInner">
+    <div class="ccLabel">Total Balance</div>
+    <div class="ccBalance" id="balance">$1,250.00</div>
+
+    <div class="ccRow">
+      <div>
+        <div class="ccLabel">Username</div>
+        <div><b id="username">teshrij</b></div>
+      </div>
+      <div style="text-align:right">
+        <div class="ccLabel">User ID</div>
+        <div class="ccId" id="userid">UID-984233</div>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // sample state (replace with backend/API)
-    const state = {
-      kyc: "Pending",          // Pending | Verified | Rejected
-      twofa: false,
-      whitelist: true,
-      notif: true,
-      alerts: true
-    };
+<!-- ACCOUNT INFO -->
+<div class="card">
+  <h3>Account Info</h3>
+  <div class="item"><span>Email</span><b id="email">user@email.com</b></div>
+  <div class="item"><span>Phone</span><b id="phone">+96170123456</b></div>
+  <div class="item"><span>Country</span><b id="country">Lebanon</b></div>
+</div>
 
-    function setActiveNav(){
-      const file = (location.pathname.split("/").pop() || "profile.html").toLowerCase();
-      document.querySelectorAll(".navlinks a").forEach(a=>{
-        const p = (a.getAttribute("data-page")||"").toLowerCase();
-        if(p === file) a.classList.add("active");
-      });
-    }
+<!-- KYC -->
+<div class="card">
+  <h3>KYC Verification</h3>
+  <div class="item">
+    <div>
+      <b>Status</b>
+      <div style="font-size:13px;color:#b8c0e6">Not verified</div>
+    </div>
+    <button class="btn primary" onclick="alert('Open KYC')">Verify Now</button>
+  </div>
+</div>
 
-    function render(){
-      document.getElementById("year").textContent = new Date().getFullYear();
+<!-- LOGOUT -->
+<div class="card">
+  <h3>Logout</h3>
+  <button class="btn logout" style="width:100%" onclick="logout()">Logout</button>
+</div>
 
-      // KYC
-      const kycPill = document.getElementById("kycPill");
-      const kycTag  = document.getElementById("kycTag");
-      kycPill.textContent = "KYC: " + state.kyc;
-      kycTag.textContent = state.kyc;
+</div>
 
-      kycTag.className = "tag " + (
-        state.kyc === "Verified" ? "ok" :
-        state.kyc === "Rejected" ? "bad" : "warn"
-      );
+<!-- BOTTOM NAV -->
+<div class="bottomNav">
+  <a href="wallet.html">💰<br>Wallet</a>
+  <a href="trade.html">📊<br>Trade</a>
+  <a href="gamecenter.html">🎮<br>Games</a>
+  <a href="profile.html">👤<br>Profile</a>
+  <a href="settings.html">⚙️<br>Settings</a>
+</div>
 
-      // 2FA
-      const twofaTag = document.getElementById("twofaTag");
-      twofaTag.textContent = state.twofa ? "Enabled" : "Disabled";
-      twofaTag.className = "tag " + (state.twofa ? "ok" : "warn");
+<script>
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("show");
+}
+function logout(){
+  alert("Logged out");
+  location.href="login.html";
+}
 
-      // whitelist
-      const wlTag = document.getElementById("wlTag");
-      wlTag.textContent = state.whitelist ? "Enabled" : "Disabled";
-      wlTag.className = "tag " + (state.whitelist ? "ok" : "warn");
+/* DEMO DATA (later replace with Firebase) */
+const demo = {
+  balance: 1250.00,
+  username: "teshrij",
+  userid: "UID-984233",
+  email: "user@email.com",
+  phone: "+96170123456",
+  country: "Lebanon"
+};
+balance.textContent = "$" + demo.balance.toFixed(2);
+username.textContent = demo.username;
+userid.textContent = demo.userid;
+email.textContent = demo.email;
+phone.textContent = demo.phone;
+country.textContent = demo.country;
+</script>
 
-      // notifications
-      document.getElementById("notifMeta").textContent = state.notif ? "Enabled" : "Disabled";
-    }
-
-    function toast(text){
-      const t = document.getElementById("toast");
-      document.getElementById("toastTitle").textContent = "Done";
-      document.getElementById("toastBody").textContent = text;
-      t.style.display = "block";
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => t.style.display = "none", 1600);
-    }
-
-    function copyText(id){
-      const el = document.getElementById(id);
-      const text = el.textContent.trim();
-      navigator.clipboard.writeText(text).then(() => {
-        toast("Copied: " + text);
-      }).catch(() => {
-        alert("Copy failed. Please copy manually.");
-      });
-    }
-
-    function toggleSetting(key){
-      state[key] = !state[key];
-      if(key === "notif") toast("Notifications: " + (state.notif ? "Enabled" : "Disabled"));
-      if(key === "alerts") toast("Login alerts: " + (state.alerts ? "Enabled" : "Disabled"));
-      render();
-    }
-
-    function logout(){
-      toast("Logged out (UI)");
-      setTimeout(() => { window.location.href = "login.html"; }, 700);
-    }
-
-    setActiveNav();
-    render();
-  </script>
 </body>
 </html>
