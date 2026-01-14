@@ -19,55 +19,62 @@
   --bad:#ef4444;
 }
 *{box-sizing:border-box}
-
-/* ===== BODY ===== */
 body{
   margin:0;
-  padding-top:70px; /* مهم حتى ما يغطّي الهيدر المحتوى */
   font-family:system-ui;
   background:radial-gradient(1200px 600px at 50% -10%, rgba(124,92,255,.25), transparent 60%), var(--bg);
   color:#fff;
+  padding-top:70px;
 }
 
-/* ===== HEADER FIXED ===== */
+/* ===== HEADER ===== */
 header{
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
+  top:0; left:0; right:0;
   z-index:9999;
   background:rgba(11,16,32,.92);
   border-bottom:1px solid var(--border);
   backdrop-filter: blur(8px);
 }
-
-.wrap{max-width:520px;margin:0 auto;padding:12px;}
-.nav{display:flex;justify-content:space-between;align-items:center;}
-
-/* ===== TOP BUTTON ===== */
-.btnTop{
-  padding:8px 12px;border-radius:10px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.06);
-  color:#fff;text-decoration:none;font-weight:800;
+.wrap{max-width:520px;margin:0 auto;padding:10px 12px;}
+.headerBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-/* ===== BALANCE CENTER ===== */
-.headerBar{position:relative;}
+/* ===== LOGO BUTTON ===== */
+.logoLink{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  text-decoration:none;
+  transition:.2s ease;
+}
+.logoLink:hover{ transform:scale(1.05); }
+
+.topLogo{
+  height:34px;
+  max-width:160px;
+  object-fit:contain;
+  filter: contrast(1.15) brightness(1.1);
+}
+
+/* ===== BALANCE ===== */
 .balanceCenter{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  font-weight:900;
-  padding:8px 16px;
+  padding:8px 14px;
   border-radius:999px;
-  border:1px solid var(--border);
-  background: linear-gradient(135deg, rgba(34,197,94,.25), rgba(34,197,94,.10));
-  box-shadow: 0 0 20px rgba(34,197,94,.25);
-  color:#fff;
+  border:1px solid rgba(34,197,94,.6);
+  background:rgba(34,197,94,.12);
+  box-shadow:0 0 18px rgba(34,197,94,.35);
+  font-weight:900;
 }
 
-/* ===== CARD ===== */
+/* ===== CARDS ===== */
 .card{
   margin:12px auto;
   max-width:520px;
@@ -121,7 +128,7 @@ header{
   clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);
   animation: spin 3s linear infinite;
 }
-@keyframes spin{from{transform:scale(1) rotate(0)}to{transform:scale(1) rotate(360deg)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
 /* ===== MINE ===== */
 .mine{
@@ -142,30 +149,28 @@ header{
   background:rgba(0,0,0,.25);
   color:#fff;
 }
+
 .btn{
   width:100%;
-  padding:14px;
-  border-radius:14px;
+  padding:16px;
+  border-radius:16px;
   border:1px solid var(--border);
   background:rgba(255,255,255,.06);
   color:#fff;
   font-weight:900;
+  font-size:18px;
 }
-.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));}
-.btn:disabled{opacity:.5; cursor:not-allowed;}
-.twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
 
-/* ===== CASHOUT ===== */
+.btn.primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+}
+
 .btn.cashout{
   background: linear-gradient(135deg, #22c55e, #16a34a);
   border-color: rgba(34,197,94,.6);
   box-shadow: 0 0 25px rgba(34,197,94,.45);
-  font-size: 18px;
-  padding: 16px;
 }
-.btn.cashout:hover{transform:scale(1.03);}
 
-/* ===== STATUS ===== */
 .badge{
   padding:10px 12px;
   border-radius:12px;
@@ -179,17 +184,20 @@ header{
   background:rgba(239,68,68,.15);
   border-color:rgba(239,68,68,.6);
 }
-.kpi{font-size:13px;color:#b8c0e6;margin-top:6px;}
 </style>
 </head>
 
 <body>
 
 <header>
-  <div class="wrap nav headerBar">
-    <a href="gamecenter.html" class="btnTop">↩ Game Center</a>
+  <div class="wrap headerBar">
+    <a href="gamecenter.html" class="logoLink">
+      <img src="logo.png" class="topLogo" alt="AI ORIGINALS">
+    </a>
+
     <div id="balPill" class="balanceCenter">Balance: $0.00</div>
-    <div style="width:90px;"></div>
+
+    <div style="width:40px;"></div>
   </div>
 </header>
 
@@ -200,22 +208,15 @@ header{
 
 <div class="card">
   <label>Bet Amount</label>
-  <input class="field" id="bet" type="number" min="1" placeholder="10">
+  <input class="field" id="bet" type="number" min="1" value="10">
 
   <label style="margin-top:10px;">Mines (3 - 22)</label>
   <input class="field" id="mines" type="number" min="3" max="22" value="5">
 
-  <button class="btn primary" id="startBtn" style="margin-top:10px;" onclick="startGame()">🎮 Start</button>
-
-  <div class="twoCol">
-    <button class="btn cashout" onclick="cashOut()">💰 Cash Out</button>
-  </div>
-
-  <div class="kpi" id="infoText">Pick tiles. Each crystal increases multiplier.</div>
+  <button class="btn primary" id="mainBtn" style="margin-top:10px;" onclick="mainAction()">🎮 Start</button>
 </div>
 
 <script>
-/* BALANCE */
 const LS_BAL="aimkt_balance_usd";
 function money(x){return "$"+Number(x).toFixed(2);}
 function getBalance(){return Number(localStorage.getItem(LS_BAL)||0);}
@@ -223,13 +224,12 @@ function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
 function renderBalance(){balPill.textContent="Balance: "+money(getBalance());}
 if(!getBalance()) setBalance(1000);
 
-/* GAME */
-const TOTAL=25, MAX_MULT=1001, HOUSE_EDGE=0.05;
+const TOTAL=25;
+let game={active:false,bet:0,mines:5,revealed:0,layout:[],multiplier:1};
+
 const gridEl=document.getElementById("grid");
 const statusBox=document.getElementById("statusBox");
-const startBtn=document.getElementById("startBtn");
-
-let game={active:false,bet:0,mines:5,revealed:0,layout:[],multiplier:1};
+const mainBtn=document.getElementById("mainBtn");
 
 function buildGrid(){
   gridEl.innerHTML="";
@@ -241,76 +241,78 @@ function buildGrid(){
     gridEl.appendChild(d);
   }
 }
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-function comb(n,k){if(k>n||k<0)return 0;let r=1;for(let i=1;i<=k;i++){r=r*(n-(k-i))/i;}return r;}
-function calcMultiplier(){
-  const r=game.revealed; if(r<=0) return 1;
-  const safe=TOTAL-game.mines;
-  const fair=comb(TOTAL,r)/comb(safe,r);
-  return Math.min(fair*(1-HOUSE_EDGE), MAX_MULT);
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
 }
 
 function startGame(){
-  if(game.active) return;
-  const b=Number(bet.value||0);
-  const m=Number(mines.value||0);
+  const b=+bet.value, m=+mines.value;
   if(b<=0||b>getBalance()) return alert("Invalid bet");
-  if(m<3||m>22) return alert("Mines 3-22");
+  if(m<3||m>22) return alert("Invalid mines");
 
   setBalance(getBalance()-b);
 
-  game.active=true; game.bet=b; game.mines=m; game.revealed=0;
+  game.active=true;
+  game.bet=b;
+  game.mines=m;
+  game.revealed=0;
+  game.multiplier=1;
+
   game.layout=[];
   for(let i=0;i<m;i++) game.layout.push(true);
   for(let i=0;i<TOTAL-m;i++) game.layout.push(false);
   shuffle(game.layout);
 
   buildGrid();
-  statusBox.textContent="Game started! Pick a tile...";
+  statusBox.textContent="Game started!";
   statusBox.className="badge";
-  updateInfo();
-  startBtn.disabled=true;
-}
 
-function updateInfo(){
-  game.multiplier=calcMultiplier();
-  infoText.textContent=`Crystals: ${game.revealed} | Multiplier: x${game.multiplier.toFixed(4)}`;
-}
-
-function revealAll(){
-  document.querySelectorAll(".cell").forEach((c,i)=>{
-    if(c.classList.contains("revealed")) return;
-    c.classList.add("revealed");
-    if(game.layout[i]) c.classList.add("mine"); else c.classList.add("gem");
-  });
-}
-function endRound(){game.active=false; startBtn.disabled=false;}
-
-function onPick(i,el){
-  if(!game.active||el.classList.contains("revealed")) return;
-  el.classList.add("revealed");
-  if(game.layout[i]){
-    el.classList.add("mine");
-    statusBox.textContent="💥 BOOM! You lost!";
-    statusBox.className="badge lose";
-    revealAll(); endRound();
-  }else{
-    el.classList.add("gem");
-    game.revealed++; updateInfo();
-  }
+  mainBtn.textContent="💰 Cash Out";
+  mainBtn.className="btn cashout";
 }
 
 function cashOut(){
   if(!game.active||game.revealed===0) return;
-  const win=game.bet*game.multiplier;
+  const win=game.bet*(1+game.revealed*0.2);
   setBalance(getBalance()+win);
   statusBox.textContent="💰 Cashed out: "+money(win);
   statusBox.className="badge";
-  revealAll(); endRound();
+  endRound();
 }
 
-/* INIT */
-renderBalance(); buildGrid();
+function endRound(){
+  game.active=false;
+  mainBtn.textContent="🎮 Start";
+  mainBtn.className="btn primary";
+}
+
+function mainAction(){
+  if(!game.active) startGame();
+  else cashOut();
+}
+
+function onPick(i,el){
+  if(!game.active) return;
+  if(el.classList.contains("revealed")) return;
+
+  el.classList.add("revealed");
+  if(game.layout[i]){
+    el.classList.add("mine");
+    statusBox.textContent="💥 BOOM!";
+    statusBox.className="badge lose";
+    endRound();
+  }else{
+    el.classList.add("gem");
+    game.revealed++;
+  }
+}
+
+renderBalance();
+buildGrid();
 </script>
 
 </body>
