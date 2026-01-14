@@ -27,7 +27,7 @@ body{
   padding-top:70px;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
   position:fixed;
   top:0; left:0; right:0;
@@ -37,13 +37,9 @@ header{
   backdrop-filter: blur(8px);
 }
 .wrap{max-width:520px;margin:0 auto;padding:10px 12px;}
-.headerBar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
+.headerBar{display:flex;align-items:center;justify-content:space-between;}
 
-/* ===== LOGO BUTTON ===== */
+/* LOGO */
 .logoLink{
   display:flex;
   align-items:center;
@@ -53,18 +49,10 @@ header{
   border:1px solid var(--border);
   background:rgba(255,255,255,.04);
   text-decoration:none;
-  transition:.2s ease;
 }
-.logoLink:hover{ transform:scale(1.05); }
+.topLogo{height:34px;max-width:160px;object-fit:contain;}
 
-.topLogo{
-  height:34px;
-  max-width:160px;
-  object-fit:contain;
-  filter: contrast(1.15) brightness(1.1);
-}
-
-/* ===== BALANCE ===== */
+/* BALANCE */
 .balanceCenter{
   padding:8px 14px;
   border-radius:999px;
@@ -74,7 +62,7 @@ header{
   font-weight:900;
 }
 
-/* ===== CARDS ===== */
+/* CARD */
 .card{
   margin:12px auto;
   max-width:520px;
@@ -85,12 +73,8 @@ header{
   box-shadow:var(--shadow);
 }
 
-/* ===== GRID ===== */
-.grid{
-  display:grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap:12px;
-}
+/* GRID */
+.grid{display:grid;grid-template-columns: repeat(5, 1fr);gap:12px;}
 .cell{
   aspect-ratio:1/1;
   border-radius:16px;
@@ -99,91 +83,25 @@ header{
   display:grid;
   place-items:center;
   cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:.15s ease;
 }
-.cell:hover{transform:translateY(-2px)}
-.cell.revealed{cursor:default; transform:none;}
+.cell.revealed{cursor:default;}
+.cell .icon{width:70%;height:70%;transform:scale(.3);opacity:0;transition:.3s;}
+.cell.revealed .icon{transform:scale(1);opacity:1;}
 
-.cell .icon{
-  width:70%;
-  height:70%;
-  transform:scale(.3) rotate(-20deg);
-  opacity:0;
-  transition:.35s cubic-bezier(.2,.9,.2,1);
-}
-.cell.revealed .icon{
-  transform:scale(1) rotate(0deg);
-  opacity:1;
-}
+.gem{background:radial-gradient(circle at 30% 30%, #6affff, #1fbfbf 60%, #064e4e);}
+.gem .icon{background:#00e5ff;clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);}
 
-/* ===== GEM ===== */
-.gem{
-  background:radial-gradient(circle at 30% 30%, #6affff, #1fbfbf 60%, #064e4e);
-  box-shadow:0 0 25px rgba(0,255,255,.6);
-}
-.gem .icon{
-  background: linear-gradient(135deg, #eaffff, #3cf2ff 40%, #00bcd4 70%, #006064);
-  clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);
-  animation: spin 3s linear infinite;
-}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.mine{background:radial-gradient(circle at 30% 30%, #ff8a8a, #b91c1c 60%, #450a0a);}
+.mine .icon{border-radius:50%;background:#000;}
 
-/* ===== MINE ===== */
-.mine{
-  background:radial-gradient(circle at 30% 30%, #ff8a8a, #b91c1c 60%, #450a0a);
-  box-shadow:0 0 25px rgba(255,80,80,.7);
-}
-.mine .icon{
-  border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #444, #000 70%);
-}
+/* CONTROLS */
+.field{width:100%;padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:#fff;}
+.btn{width:100%;padding:16px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;font-weight:900;font-size:18px;}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));}
+.btn.cashout{background: linear-gradient(135deg, #22c55e, #16a34a);box-shadow:0 0 25px rgba(34,197,94,.45);}
 
-/* ===== CONTROLS ===== */
-.field{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.25);
-  color:#fff;
-}
-
-.btn{
-  width:100%;
-  padding:16px;
-  border-radius:16px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.06);
-  color:#fff;
-  font-weight:900;
-  font-size:18px;
-}
-
-.btn.primary{
-  background:linear-gradient(135deg,var(--brand),var(--brand2));
-}
-
-.btn.cashout{
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  border-color: rgba(34,197,94,.6);
-  box-shadow: 0 0 25px rgba(34,197,94,.45);
-}
-
-.badge{
-  padding:10px 12px;
-  border-radius:12px;
-  background:rgba(34,197,94,.15);
-  border:1px solid rgba(34,197,94,.6);
-  text-align:center;
-  font-weight:900;
-  margin-bottom:10px;
-}
-.badge.lose{
-  background:rgba(239,68,68,.15);
-  border-color:rgba(239,68,68,.6);
-}
+.badge{padding:10px;border-radius:12px;text-align:center;font-weight:900;margin-bottom:10px;background:rgba(34,197,94,.15);}
+.badge.lose{background:rgba(239,68,68,.2);}
 </style>
 </head>
 
@@ -191,12 +109,8 @@ header{
 
 <header>
   <div class="wrap headerBar">
-    <a href="gamecenter.html" class="logoLink">
-      <img src="logo.png" class="topLogo" alt="AI ORIGINALS">
-    </a>
-
+    <a href="gamecenter.html" class="logoLink"><img src="logo.png" class="topLogo"></a>
     <div id="balPill" class="balanceCenter">Balance: $0.00</div>
-
     <div style="width:40px;"></div>
   </div>
 </header>
@@ -207,16 +121,25 @@ header{
 </div>
 
 <div class="card">
-  <label>Bet Amount</label>
-  <input class="field" id="bet" type="number" min="1" value="10">
-
-  <label style="margin-top:10px;">Mines (3 - 22)</label>
+  <label>Bet</label>
+  <input class="field" id="bet" type="number" value="10">
+  <label style="margin-top:10px;">Mines</label>
   <input class="field" id="mines" type="number" min="3" max="22" value="5">
-
   <button class="btn primary" id="mainBtn" style="margin-top:10px;" onclick="mainAction()">🎮 Start</button>
 </div>
 
 <script>
+/* ===== SOUND ENGINE ===== */
+let AC=null;
+function audio(){ if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();} if(AC.state==="suspended") AC.resume(); return AC;}
+function tone(f=600,d=0.1){const a=audio(),o=a.createOscillator(),g=a.createGain();o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.value=0.15;o.start();o.stop(a.currentTime+d);}
+function sndStart(){tone(600);tone(900,0.08);}
+function sndClick(){tone(400,0.05);}
+function sndGem(){tone(1200,0.12);}
+function sndMine(){tone(120,0.3);}
+function sndCash(){tone(800);tone(1200,0.1);}
+
+/* ===== BALANCE ===== */
 const LS_BAL="aimkt_balance_usd";
 function money(x){return "$"+Number(x).toFixed(2);}
 function getBalance(){return Number(localStorage.getItem(LS_BAL)||0);}
@@ -224,9 +147,9 @@ function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
 function renderBalance(){balPill.textContent="Balance: "+money(getBalance());}
 if(!getBalance()) setBalance(1000);
 
+/* ===== GAME ===== */
 const TOTAL=25;
-let game={active:false,bet:0,mines:5,revealed:0,layout:[],multiplier:1};
-
+let game={active:false,bet:0,mines:5,revealed:0,layout:[]};
 const gridEl=document.getElementById("grid");
 const statusBox=document.getElementById("statusBox");
 const mainBtn=document.getElementById("mainBtn");
@@ -241,26 +164,15 @@ function buildGrid(){
     gridEl.appendChild(d);
   }
 }
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 
 function startGame(){
   const b=+bet.value, m=+mines.value;
   if(b<=0||b>getBalance()) return alert("Invalid bet");
-  if(m<3||m>22) return alert("Invalid mines");
+  sndStart();
 
   setBalance(getBalance()-b);
-
-  game.active=true;
-  game.bet=b;
-  game.mines=m;
-  game.revealed=0;
-  game.multiplier=1;
+  game.active=true; game.bet=b; game.mines=m; game.revealed=0;
 
   game.layout=[];
   for(let i=0;i<m;i++) game.layout.push(true);
@@ -269,18 +181,16 @@ function startGame(){
 
   buildGrid();
   statusBox.textContent="Game started!";
-  statusBox.className="badge";
-
   mainBtn.textContent="💰 Cash Out";
   mainBtn.className="btn cashout";
 }
 
 function cashOut(){
   if(!game.active||game.revealed===0) return;
+  sndCash();
   const win=game.bet*(1+game.revealed*0.2);
   setBalance(getBalance()+win);
   statusBox.textContent="💰 Cashed out: "+money(win);
-  statusBox.className="badge";
   endRound();
 }
 
@@ -296,16 +206,17 @@ function mainAction(){
 }
 
 function onPick(i,el){
-  if(!game.active) return;
-  if(el.classList.contains("revealed")) return;
-
+  if(!game.active||el.classList.contains("revealed")) return;
+  sndClick();
   el.classList.add("revealed");
   if(game.layout[i]){
+    sndMine();
     el.classList.add("mine");
     statusBox.textContent="💥 BOOM!";
     statusBox.className="badge lose";
     endRound();
   }else{
+    sndGem();
     el.classList.add("gem");
     game.revealed++;
   }
