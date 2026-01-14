@@ -11,11 +11,6 @@
   --panel:#101a33;
   --text:#e8ecff;
   --muted:#b8c0e6;
-  --gold1:#f7e08c;
-  --gold2:#caa03a;
-  --gold3:#9b7424;
-  --brand:#7c5cff;
-  --brand2:#22d3ee;
   --border: rgba(255,255,255,.12);
   --shadow: 0 20px 60px rgba(0,0,0,.45);
   --ok:#22c55e;
@@ -26,7 +21,7 @@ body{
   margin:0;
   font-family:system-ui;
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(124,92,255,.25), transparent 60%),
+    radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.06), transparent 60%),
     var(--bg);
   color:#fff;
   padding-top:80px;
@@ -46,28 +41,34 @@ header{
   justify-content:space-between;
 }
 
-/* LOGO BUTTON */
+/* LOGO ITALIAN BLACK & WHITE */
 .logoBtn{
   text-decoration:none;
   font-weight:1000;
-  letter-spacing:1.2px;
+  letter-spacing:2px;
   font-size:20px;
-  padding:8px 14px;
+  padding:8px 16px;
   border-radius:14px;
-  border:1px solid rgba(255,215,120,.5);
-  background:
-    linear-gradient(135deg, var(--gold1), var(--gold2) 45%, var(--gold3));
-  color:#2b1b00;
-  box-shadow: 0 6px 18px rgba(202,160,58,.45);
+  border:1px solid rgba(255,255,255,.6);
+  background: linear-gradient(180deg, #ffffff, #dcdcdc);
+  color:#000;
+  box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  position:relative;
 }
 .logoBtn span{
-  background: linear-gradient(180deg, #fff6c9, #b8891f);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  font-family: "Times New Roman", serif;
+  letter-spacing:3px;
+}
+.logoBtn::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border:1px solid rgba(0,0,0,.6);
+  border-radius:10px;
 }
 .logoBtn:hover{
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(202,160,58,.6);
+  box-shadow: 0 10px 28px rgba(0,0,0,.6);
 }
 
 .balanceCenter{
@@ -123,9 +124,9 @@ header{
 .gem .icon{
   clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);
   background:
-    linear-gradient(135deg, #fff6c9, #f3d26c 40%, #caa03a 70%, #9b7424);
+    linear-gradient(135deg, #ffffff, #cfcfcf 40%, #9b9b9b 70%, #5a5a5a);
   box-shadow:
-    0 0 25px rgba(255,215,120,.9),
+    0 0 18px rgba(255,255,255,.9),
     inset 0 0 10px rgba(255,255,255,.8);
   animation: gemSpin 3.5s linear infinite;
 }
@@ -178,22 +179,15 @@ header{
   color:#fff;
   font-weight:1000;
   font-size:20px;
-  letter-spacing:.5px;
   cursor:pointer;
   transition:.15s ease;
 }
-
 .btn.primary{
   background: linear-gradient(135deg, #7c5cff, #22d3ee);
-  box-shadow: 0 10px 28px rgba(124,92,255,.5);
 }
-.btn.primary:hover{ transform:translateY(-1px); }
-
 .btn.cashout{
   background: linear-gradient(135deg, #22c55e, #16a34a);
-  box-shadow: 0 10px 28px rgba(34,197,94,.5);
 }
-.btn.cashout:hover{ transform:translateY(-1px); }
 
 .badge{
   padding:10px;
@@ -237,7 +231,7 @@ function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
 function renderBalance(){balPill.textContent="Balance: $"+money(getBalance());}
 if(!getBalance()) setBalance(1000);
 
-/* ===== SOUND ENGINE (Gold style) ===== */
+/* ===== SOUND ENGINE ===== */
 let AC=null;
 function audio(){
   if(!AC){
@@ -258,10 +252,10 @@ function tone(freq,dur=0.12,vol=0.12){
   o.start();
   o.stop(ac.currentTime+dur);
 }
-function sndStart(){ tone(600); setTimeout(()=>tone(900,0.14),80); }
-function sndGem(){ tone(1200,0.1); setTimeout(()=>tone(1600,0.12),60); } // gold coin style
+function sndStart(){ tone(600); tone(900,0.14); }
+function sndGem(){ tone(1200,0.1); tone(1600,0.12); }
 function sndMine(){ tone(140,0.3,0.25); }
-function sndCash(){ tone(700); setTimeout(()=>tone(1000,0.15),80); }
+function sndCash(){ tone(700); tone(1000,0.15); }
 function sndClick(){ tone(400,0.05,0.05); }
 
 /* ===== GAME ===== */
