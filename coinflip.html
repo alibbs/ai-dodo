@@ -1,239 +1,871 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Coin Flip</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI MARKETING | Coinflip (Gold vs Silver)</title>
+  <meta name="description" content="Coinflip demo: realistic gold vs silver coin, idle slow spin, fast flip spin + sounds (UI-only)." />
 
-<style>
-:root{
---bg:#0b1020;--panel:#101a33;--text:#fff;--muted:#b8c0e6;
---brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
-}
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family:system-ui;
-background:#0b1020;
-color:#fff;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.app{
-width:100%;
-max-width:420px;
-padding:16px;
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-/* TOP */
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-.balance{
-padding:10px 14px;
-border-radius:12px;
-border:1px solid var(--border);
-background:#101a33;
-font-weight:900;
-}
-
-/* MULTIPLIER */
-.mult{
-text-align:center;
-font-size:26px;
-font-weight:1000;
-}
-
-/* COIN */
-.coinWrap{
-flex:1;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-.coin{
-width:140px;
-height:140px;
-border-radius:50%;
-background:linear-gradient(135deg,#f7e08c,#caa03a);
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:36px;
-font-weight:1000;
-box-shadow:0 20px 50px rgba(0,0,0,.5);
-transition:.6s;
-}
-.coin.flip{
-transform:rotateY(720deg);
-}
-
-/* CONTROLS */
-.controls{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-input{
-grid-column:1/3;
-padding:12px;
-border-radius:12px;
-border:1px solid var(--border);
-background:#101a33;
-color:#fff;
-font-size:16px;
-font-weight:900;
-}
-
-button{
-padding:14px;
-border-radius:12px;
-border:none;
-font-weight:900;
-font-size:15px;
-cursor:pointer;
-}
-
-.betBtn{
-grid-column:1/3;
-background:linear-gradient(135deg,#7c5cff,#22d3ee);
-color:#000;
-}
-
-.doubleBtn{
-background:#1f2a44;
-color:#fff;
-}
-
-/* STATUS */
-.status{
-text-align:center;
-min-height:20px;
-font-weight:900;
-}
-
-</style>
-</head>
-<body>
-
-<div class="app">
-
-  <div class="top">
-    <div class="balance" id="bal">Balance: $1000.00</div>
-    <div></div>
-  </div>
-
-  <div class="mult" id="mult">x1.00</div>
-
-  <div class="coinWrap">
-    <div class="coin" id="coin">🪙</div>
-  </div>
-
-  <div class="status" id="status"></div>
-
-  <div class="controls">
-    <input id="bet" type="number" min="1" value="10">
-
-    <button class="doubleBtn" onclick="doubleBet()">x2</button>
-    <button class="doubleBtn" onclick="halfBet()">1/2</button>
-
-    <button class="betBtn" id="betBtn" onclick="betOrCashout()">BET</button>
-  </div>
-
-</div>
-
-<script>
-let balance = 1000;
-let currentBet = 0;
-let multiplier = 1;
-let inRound = false;
-
-function money(x){ return "$" + x.toFixed(2); }
-
-function updateUI(){
-  bal.textContent = "Balance: " + money(balance);
-  mult.textContent = "x" + multiplier.toFixed(2);
-}
-
-function doubleBet(){
-  bet.value = Number(bet.value || 0) * 2;
-}
-function halfBet(){
-  bet.value = Math.max(1, Number(bet.value || 0) / 2);
-}
-
-function betOrCashout(){
-  if(!inRound){
-    startBet();
-  }else{
-    cashOut();
-  }
-}
-
-function startBet(){
-  const amt = Number(bet.value);
-  if(amt <= 0) return;
-  if(amt > balance) return alert("Not enough balance");
-
-  balance -= amt;
-  currentBet = amt;
-  multiplier = 1;
-
-  inRound = true;
-  status.textContent = "Flipping...";
-  betBtn.textContent = "CASH OUT";
-
-  flip();
-}
-
-function flip(){
-  coin.classList.remove("flip");
-  void coin.offsetWidth;
-  coin.classList.add("flip");
-
-  setTimeout(()=>{
-    const win = Math.random() < 0.5;
-
-    if(win){
-      multiplier *= 2;
-      status.textContent = "✅ You won! Multiplier increased.";
-    }else{
-      status.textContent = "❌ You lost!";
-      inRound = false;
-      betBtn.textContent = "BET";
-      currentBet = 0;
-      multiplier = 1;
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --panel2:#0e1730;
+      --text:#e8ecff;
+      --muted:#b8c0e6;
+      --brand:#7c5cff;
+      --brand2:#22d3ee;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --max:1100px;
     }
-    updateUI();
-  },600);
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+        radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:inherit}
 
-function cashOut(){
-  const winAmount = currentBet * multiplier;
-  balance += winAmount;
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,16,32,.65);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:16px;}
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; font-weight:900;
+      text-decoration:none;
+      flex:0 0 auto;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 12px 30px rgba(124,92,255,.25);
+      flex:0 0 auto;
+    }
+    .navlinks{
+      display:flex; gap:10px; align-items:center;
+      flex: 1 1 520px; min-width:240px;
+      justify-content:center; flex-wrap:wrap;
+    }
+    .navlinks a{
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      opacity:.95;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--text);
+    }
+    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
+    .navlinks a.active{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
+    }
+    .pill{
+      font-size:12px; font-weight:900;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
 
-  status.textContent = "💰 Cashed out: " + money(winAmount);
+    .grid{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .titleRow{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{margin:0; font-size:18px;}
+    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
+    .muted{color:var(--muted)}
 
-  inRound = false;
-  betBtn.textContent = "BET";
-  currentBet = 0;
-  multiplier = 1;
+    label{display:block; font-weight:900; font-size:13px; margin-bottom:6px;}
+    .field, select.field{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+    }
+    .field:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      width:100%;
+      transition:.15s ease;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
+    }
+    .btn.ghost{background: rgba(255,255,255,.04)}
+    .btn.danger{
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.12);
+    }
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
 
-  updateUI();
-}
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    .kpi{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+    }
+    .kpi b{display:block; font-size:15px}
+    .kpi span{color:var(--muted); font-size:12px}
+    .delta.up{color:var(--ok); font-weight:900}
+    .delta.down{color:var(--bad); font-weight:900}
 
-// init
-updateUI();
-</script>
+    /* ===== Coin Arena ===== */
+    .arena{
+      margin-top:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .arena::before{
+      content:"";
+      position:absolute; inset:-60px;
+      background:
+        radial-gradient(300px 200px at 35% 30%, rgba(255,255,255,.10), transparent 65%),
+        radial-gradient(320px 240px at 70% 75%, rgba(124,92,255,.14), transparent 65%),
+        radial-gradient(320px 240px at 30% 85%, rgba(34,211,238,.10), transparent 65%);
+      filter: blur(6px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .arenaInner{position:relative; z-index:1;}
 
+    .coinStage{
+      perspective: 1100px;
+      perspective-origin: 50% 40%;
+      display:grid;
+      place-items:center;
+      min-height: 290px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.22));
+      overflow:hidden;
+    }
+
+    .coinShadow{
+      position:absolute;
+      width: 190px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 50% 50%, rgba(0,0,0,.55), transparent 70%);
+      transform: translateY(92px);
+      filter: blur(6px);
+      opacity:.75;
+    }
+
+    .coin3d{
+      width: 180px;
+      height: 180px;
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* Idle slow spin (always before bet) */
+    .coin3d.idle{
+      animation: idleSpin 4.6s linear infinite;
+    }
+    @keyframes idleSpin{
+      0%{transform: rotateY(0deg) rotateX(10deg);}
+      100%{transform: rotateY(360deg) rotateX(10deg);}
+    }
+
+    /* Fast flip (when clicking Flip) */
+    .coin3d.flipping{
+      animation: fastFlip 1.15s cubic-bezier(.2,.9,.2,1) 1;
+    }
+    @keyframes fastFlip{
+      0%{transform: rotateY(0deg) rotateX(10deg) scale(1);}
+      25%{transform: rotateY(360deg) rotateX(25deg) scale(1.05);}
+      70%{transform: rotateY(960deg) rotateX(-15deg) scale(1.05);}
+      100%{transform: rotateY(1440deg) rotateX(10deg) scale(1);}
+    }
+
+    /* Final orientation (we set inline style transform after animation) */
+    .coin3d.settle{transition: transform 260ms ease;}
+
+    .coinFace{
+      position:absolute;
+      inset:0;
+      border-radius: 999px;
+      backface-visibility: hidden;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow: 0 18px 70px rgba(0,0,0,.55);
+    }
+
+    /* Rim (edge thickness) */
+    .coinRim{
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      transform: translateZ(12px);
+      pointer-events:none;
+    }
+    .coinRim::before{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: inset 0 0 0 10px rgba(0,0,0,.10);
+      opacity:.75;
+    }
+
+    /* Gold / Silver materials */
+    .gold{
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%),
+        radial-gradient(circle at 70% 75%, rgba(0,0,0,.18), transparent 60%),
+        linear-gradient(135deg, #f7e08c, #caa03a 40%, #f3d26c 65%, #9b7424);
+      filter: saturate(1.08) contrast(1.05);
+    }
+    .silver{
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%),
+        radial-gradient(circle at 70% 75%, rgba(0,0,0,.18), transparent 60%),
+        linear-gradient(135deg, #f3f6ff, #bfc6d8 42%, #e8ecf7 65%, #8a93ad);
+      filter: saturate(0.95) contrast(1.08);
+    }
+
+    /* Shine sweep */
+    .shine{
+      position:absolute; inset:-60px;
+      background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,.22), transparent 62%);
+      transform: translateX(-40%) rotate(8deg);
+      animation: shine 2.6s ease-in-out infinite;
+      opacity:.75;
+      pointer-events:none;
+      filter: blur(.2px);
+    }
+    @keyframes shine{
+      0%{transform: translateX(-55%) rotate(8deg); opacity:.18}
+      40%{opacity:.65}
+      100%{transform: translateX(45%) rotate(8deg); opacity:.16}
+    }
+
+    /* Inner engraving ring */
+    .engrave{
+      width: 142px;
+      height: 142px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      box-shadow: inset 0 0 0 10px rgba(0,0,0,.16);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .engrave::before{
+      content:"";
+      position:absolute; inset:12px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,.22);
+      opacity:.55;
+    }
+
+    .symbol{
+      font-weight: 1000;
+      letter-spacing: .6px;
+      text-align:center;
+      text-shadow: 0 10px 22px rgba(0,0,0,.55);
+    }
+    .symbol .big{font-size:44px; line-height:1;}
+    .symbol .small{font-size:12px; opacity:.9; margin-top:6px}
+
+    .faceGold{transform: translateZ(12px);}
+    .faceSilver{transform: rotateY(180deg) translateZ(12px);}
+
+    .note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(245,158,11,.10);
+      border-right: 4px solid rgba(245,158,11,.55);
+      color: var(--text);
+    }
+    .note small{color:var(--muted)}
+
+    /* toast */
+    #toast{position:fixed; left:18px; bottom:18px; display:none; z-index:60;}
+    #toast .card{padding:12px 14px; box-shadow: var(--shadow); max-width:420px;}
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr;}
+    }
+    @media (max-width: 560px){
+      .wrap{padding:14px;}
+      .grid{padding:14px; gap:12px;}
+      .card{padding:14px;}
+      .navlinks{
+        width:100%;
+        justify-content:flex-start;
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom:6px;
+      }
+      .navlinks::-webkit-scrollbar{height:6px}
+      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
+      .twoCol{grid-template-columns:1fr;}
+      .coinStage{min-height: 260px;}
+      .coin3d{width:160px; height:160px;}
+      .coinShadow{width:170px; transform: translateY(82px);}
+      .engrave{width:128px; height:128px;}
+      .symbol .big{font-size:40px;}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:16px;">AI MARKETING</div>
+          <div style="font-size:12px; opacity:.8;">Coinflip</div>
+        </div>
+      </a>
+
+      <div class="navlinks" aria-label="Navigation">
+        <a href="wallet.html" data-page="wallet.html">Wallet</a>
+        <a href="trade.html" data-page="trade.html">Trade</a>
+        <a href="settings.html" data-page="settings.html">Settings</a>
+        <a href="profile.html" data-page="profile.html">Profile</a>
+        <a href="gamecenter.html" data-page="gamecenter.html">Game Center</a>
+        <a href="coinflip.html" data-page="coinflip.html">Coinflip</a>
+      </div>
+
+      <span class="pill" id="balPill">Balance: $0.00</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <section class="card">
+      <div class="titleRow">
+        <div>
+          <h1>Coinflip (Gold vs Silver)</h1>
+          <div class="sub">Coin spins slowly until you place a bet. Then it flips fast with sound.</div>
+        </div>
+        <span class="pill" id="statusPill">Ready</span>
+      </div>
+
+      <div class="arena">
+        <div class="arenaInner">
+          <div class="coinStage" aria-label="Coin stage">
+            <div class="coinShadow" aria-hidden="true"></div>
+
+            <div class="coin3d idle" id="coin3d" aria-label="coin">
+              <div class="coinFace gold faceGold" id="faceGold">
+                <div class="shine"></div>
+                <div class="coinRim"></div>
+                <div class="engrave">
+                  <div class="symbol">
+                    <div class="big">G</div>
+                    <div class="small">GOLD</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="coinFace silver faceSilver" id="faceSilver">
+                <div class="shine"></div>
+                <div class="coinRim"></div>
+                <div class="engrave">
+                  <div class="symbol">
+                    <div class="big">S</div>
+                    <div class="small">SILVER</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kpis" aria-label="Round info">
+            <div class="kpi">
+              <span>Bet</span>
+              <b id="betView">$0.00</b>
+              <span class="muted">This round</span>
+            </div>
+            <div class="kpi">
+              <span>Chosen Side</span>
+              <b id="sideView">—</b>
+              <span class="muted">Gold / Silver</span>
+            </div>
+            <div class="kpi">
+              <span>Status</span>
+              <b id="resultView">—</b>
+              <span class="muted">Win / Lose</span>
+            </div>
+            <div class="kpi">
+              <span>Payout</span>
+              <b id="payoutView">$0.00</b>
+              <span class="muted">Win pays 2.00x</span>
+            </div>
+          </div>
+
+          <div class="note" role="note">
+            <b>Note:</b>
+            <div>UI demo only. Balance stored locally (localStorage). <small>Sound needs first user click on mobile.</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="card">
+      <div class="titleRow">
+        <div>
+          <h1>Controls</h1>
+          <div class="sub">Choose side → Place bet → Flip. Cashout after win.</div>
+        </div>
+      </div>
+
+      <div>
+        <label for="bet">Bet Amount (USD)</label>
+        <input class="field" id="bet" type="number" min="1" step="0.01" placeholder="e.g. 10" />
+        <div class="sub">Must be ≤ balance.</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label>Choose Side</label>
+        <div class="twoCol">
+          <button class="btn primary" type="button" onclick="chooseSide('G')">Gold</button>
+          <button class="btn primary" type="button" onclick="chooseSide('S')">Silver</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="twoCol">
+          <button class="btn" id="flipBtn" type="button" onclick="flip()" disabled>Flip</button>
+          <button class="btn ghost" id="cashBtn" type="button" onclick="cashOut()" disabled>Cash Out</button>
+        </div>
+        <button class="btn danger" style="margin-top:10px;" type="button" onclick="resetRound(true)">Reset Round</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn ghost" id="soundBtn" type="button" onclick="toggleSound()">Sound: ON</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn" type="button" onclick="seedBalance()">Give me demo balance ($500)</button>
+      </div>
+
+      <div class="note" style="margin-top:12px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
+        <b>Safety:</b>
+        <div>Never treat this as real gambling logic. Backend required for real money.</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- toast -->
+  <div id="toast">
+    <div class="card">
+      <b id="toastTitle">—</b>
+      <div class="sub" id="toastBody">—</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== NAV active =====
+    function setActiveNav(){
+      const file = (location.pathname.split("/").pop() || "coinflip.html").toLowerCase();
+      document.querySelectorAll(".navlinks a").forEach(a=>{
+        const p = (a.getAttribute("data-page")||"").toLowerCase();
+        if(p === file) a.classList.add("active");
+      });
+    }
+
+    // ===== Balance shared =====
+    const LS_BAL = "aimkt_balance_usd";
+    function money(x){
+      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+    function getBalance(){
+      const v = Number(localStorage.getItem(LS_BAL));
+      return Number.isFinite(v) ? v : 0;
+    }
+    function setBalance(v){
+      localStorage.setItem(LS_BAL, String(Math.max(0, Number(v)||0)));
+      renderBalance();
+    }
+    function renderBalance(){
+      document.getElementById("balPill").textContent = "Balance: " + money(getBalance());
+    }
+    function seedBalance(){
+      setBalance(500);
+      toast("Demo balance set to $500");
+    }
+
+    // ===== Sound (WebAudio, no files) =====
+    let audioEnabled = true;
+    let AC = null;
+
+    function ensureAudio(){
+      if(!audioEnabled) return null;
+      if(!AC){
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if(!Ctx) return null;
+        AC = new Ctx();
+      }
+      if(AC.state === "suspended"){
+        AC.resume().catch(()=>{});
+      }
+      return AC;
+    }
+
+    function tone(freq=600, dur=0.07, gain=0.08, type="triangle"){
+      if(!audioEnabled) return;
+      const ac = ensureAudio();
+      if(!ac) return;
+      const now = ac.currentTime;
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, now);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(gain, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(now);
+      o.stop(now + dur + 0.02);
+    }
+
+    // coin whoosh / flip sound
+    function whoosh(){
+      if(!audioEnabled) return;
+      const ac = ensureAudio();
+      if(!ac) return;
+      const now = ac.currentTime;
+
+      // short noise burst (bandpass)
+      const bufferSize = ac.sampleRate * 0.22;
+      const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<bufferSize;i++){
+        const t = i / bufferSize;
+        data[i] = (Math.random()*2 - 1) * (1 - t) * 0.9;
+      }
+      const noise = ac.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ac.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(900, now);
+      filter.frequency.exponentialRampToValueAtTime(1800, now + 0.12);
+
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.16, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.20);
+
+      noise.connect(filter);
+      filter.connect(g);
+      g.connect(ac.destination);
+      noise.start(now);
+      noise.stop(now + 0.22);
+    }
+
+    // coin clink (win)
+    function clink(){
+      tone(920, 0.05, 0.10, "triangle");
+      setTimeout(()=>tone(1240, 0.06, 0.09, "triangle"), 40);
+      setTimeout(()=>tone(760, 0.07, 0.07, "sine"), 80);
+    }
+
+    // dull thud (lose)
+    function thud(){
+      if(!audioEnabled) return;
+      const ac = ensureAudio();
+      if(!ac) return;
+      const now = ac.currentTime;
+
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type="sine";
+      o.frequency.setValueAtTime(140, now);
+      o.frequency.exponentialRampToValueAtTime(60, now + 0.16);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.20);
+      o.connect(g); g.connect(ac.destination);
+      o.start(now);
+      o.stop(now + 0.22);
+    }
+
+    function toggleSound(){
+      audioEnabled = !audioEnabled;
+      document.getElementById("soundBtn").textContent = "Sound: " + (audioEnabled ? "ON" : "OFF");
+      if(audioEnabled) ensureAudio();
+    }
+
+    // ===== UI helpers =====
+    function toast(text, title="Done"){
+      const t = document.getElementById("toast");
+      document.getElementById("toastTitle").textContent = title;
+      document.getElementById("toastBody").textContent = text;
+      t.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>t.style.display="none", 1600);
+    }
+
+    function setStatus(t){ document.getElementById("statusPill").textContent = t; }
+
+    // ===== Game state =====
+    const round = {
+      active:false,
+      busy:false,
+      side:null,   // "G" | "S"
+      bet:0,
+      canCash:false,
+      lastResult:null // "WIN" | "LOSE"
+    };
+
+    const PAY_MULT = 2.00; // win pays 2x
+
+    function render(){
+      document.getElementById("betView").textContent = money(round.bet);
+      document.getElementById("sideView").textContent = round.side ? (round.side==="G" ? "Gold" : "Silver") : "—";
+      document.getElementById("resultView").textContent = round.lastResult ? round.lastResult : "—";
+      document.getElementById("payoutView").textContent = money(round.bet * PAY_MULT);
+
+      const flipBtn = document.getElementById("flipBtn");
+      flipBtn.disabled = !(round.active && !round.busy);
+
+      const cashBtn = document.getElementById("cashBtn");
+      cashBtn.disabled = !(round.canCash && !round.busy);
+    }
+
+    // ===== Coin animation control =====
+    const coin = document.getElementById("coin3d");
+
+    function startIdle(){
+      coin.classList.remove("flipping","settle");
+      coin.classList.add("idle");
+      coin.style.transform = ""; // let animation drive it
+    }
+
+    function settleTo(side){
+      // side "G" => show gold face front (rotateY 0)
+      // side "S" => show silver face front (rotateY 180)
+      coin.classList.remove("idle","flipping");
+      coin.classList.add("settle");
+      coin.style.transform = `rotateY(${side === "G" ? 0 : 180}deg) rotateX(10deg)`;
+    }
+
+    // ===== Game actions =====
+    function chooseSide(side){
+      ensureAudio();
+      if(round.busy) return;
+
+      round.side = side;
+      tone(side === "G" ? 660 : 520, 0.06, 0.09, "triangle");
+      toast("Selected: " + (side==="G" ? "Gold" : "Silver"));
+      render();
+    }
+
+    function beginRoundIfNeeded(){
+      const bet = Number(document.getElementById("bet").value || 0);
+      const bal = getBalance();
+
+      if(!round.side) { toast("Choose Gold or Silver first.", "Error"); tone(220,0.08,0.09,"sawtooth"); return false; }
+      if(!bet || bet <= 0) { toast("Enter bet amount first.", "Error"); tone(220,0.08,0.09,"sawtooth"); return false; }
+      if(bet > bal) { toast("Bet bigger than balance.", "Error"); tone(220,0.08,0.09,"sawtooth"); return false; }
+
+      // reserve bet once (only if not active)
+      if(!round.active){
+        setBalance(bal - bet);
+        round.active = true;
+        round.bet = +bet.toFixed(2);
+        round.canCash = false;
+        round.lastResult = null;
+        setStatus("Bet placed. Ready to flip.");
+        tone(480, 0.06, 0.08, "triangle");
+      }
+      return true;
+    }
+
+    function randomSide(){
+      return Math.random() < 0.5 ? "G" : "S";
+    }
+
+    function flip(){
+      ensureAudio();
+      if(round.busy) return;
+      if(!beginRoundIfNeeded()) return;
+
+      round.busy = true;
+      setStatus("Flipping...");
+      render();
+
+      // fast flip animation + whoosh + tick tones
+      coin.classList.remove("idle","settle");
+      coin.classList.add("flipping");
+      whoosh();
+
+      // tiny ticks during flip
+      tone(520,0.05,0.06,"triangle");
+      setTimeout(()=>tone(700,0.05,0.05,"triangle"), 180);
+      setTimeout(()=>tone(580,0.05,0.05,"triangle"), 360);
+
+      // Decide result near the end
+      setTimeout(() => {
+        const result = randomSide(); // "G" or "S"
+        settleTo(result);
+
+        const win = (result === round.side);
+        if(win){
+          round.lastResult = "WIN ✅";
+          round.canCash = true;
+          setStatus("WIN ✅ Cash out available");
+          clink();
+          toast("You won! Cash out to take profit.", "WIN");
+        } else {
+          round.lastResult = "LOSE ❌";
+          setStatus("LOSE ❌ Round ended");
+          thud();
+          toast("You lost this round.", "LOSS");
+          // bet already deducted, end round
+          round.active = false;
+          round.bet = 0;
+          round.canCash = false;
+        }
+
+        round.busy = false;
+        render();
+
+        // after losing, go back to idle after a short pause
+        if(!win){
+          setTimeout(()=>startIdle(), 650);
+        }
+      }, 1150);
+    }
+
+    function cashOut(){
+      ensureAudio();
+      if(round.busy) return;
+      if(!round.active || !round.canCash) return;
+
+      const payout = +(round.bet * PAY_MULT).toFixed(2);
+      setBalance(getBalance() + payout);
+
+      toast("Cashed out: " + money(payout), "Cash Out ✅");
+      tone(880,0.08,0.10,"sine");
+      setTimeout(()=>tone(1120,0.10,0.10,"sine"), 70);
+
+      setStatus("Cashed out ✅");
+      round.active = false;
+      round.bet = 0;
+      round.canCash = false;
+      round.lastResult = "WIN ✅";
+      render();
+
+      setTimeout(()=>startIdle(), 550);
+    }
+
+    function resetRound(showToast){
+      round.active = false;
+      round.busy = false;
+      round.bet = 0;
+      round.canCash = false;
+      round.lastResult = null;
+
+      setStatus("Ready");
+      render();
+      startIdle();
+      if(showToast) toast("Round reset.", "Reset");
+    }
+
+    // ===== init =====
+    setActiveNav();
+    renderBalance();
+    resetRound(false);
+
+    // Flip button enabled when: side chosen AND bet valid OR active round
+    const betEl = document.getElementById("bet");
+    betEl.addEventListener("input", () => {
+      // enable flip if side chosen and bet>0 and <=balance (or already active)
+      const bet = Number(betEl.value||0);
+      const ok = (round.active) || (round.side && bet > 0 && bet <= getBalance());
+      document.getElementById("flipBtn").disabled = !(ok && !round.busy);
+    });
+
+    // Also update flip enabled after choosing side
+    const _chooseSide = chooseSide;
+    chooseSide = function(side){
+      _chooseSide(side);
+      const bet = Number(betEl.value||0);
+      const ok = (round.active) || (round.side && bet > 0 && bet <= getBalance());
+      document.getElementById("flipBtn").disabled = !(ok && !round.busy);
+    };
+  </script>
 </body>
 </html>
