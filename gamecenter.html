@@ -1,660 +1,244 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Game Center</title>
-  <meta name="description" content="Game Center: coinflip, mines, 3 cups and more (UI demo)." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI MARKETING | Game Center</title>
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --panel2:#0e1730;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --max:1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-    }
-    a{color:inherit}
+<style>
+html{scroll-behavior:smooth}
+:root{
+--bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
+--brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+padding-top:80px;
+padding-bottom:80px;
+font-family:system-ui;
+background:
+radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+#0b1020;
+color:#fff;
+}
 
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.65);
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:var(--max); margin:0 auto; padding:16px;}
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:900;
-      text-decoration:none;
-      flex:0 0 auto;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex:0 0 auto;
-    }
+/* HEADER */
+header{
+position:fixed;top:0;left:0;right:0;z-index:100;
+background:rgba(11,16,32,.85);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+}
+.nav{
+max-width:1100px;margin:auto;padding:14px 18px;
+display:flex;justify-content:space-between;align-items:center;
+}
+.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
+.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
 
-    /* ✅ top bar scrollable on phone */
-    .navlinks{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex: 1 1 520px;
-      min-width: 240px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .navlinks a{
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      opacity:.95;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      color:var(--text);
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
-    .navlinks a.active{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
-    }
+/* MOBILE MENU */
+.mobileMenu{
+position:fixed;top:0;left:-100%;width:80%;height:100%;
+background:#0e1730;z-index:200;padding:20px;transition:.3s;
+}
+.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
+.mobileMenu.show{left:0}
 
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
+/* CONTENT */
+.container{max-width:1100px;margin:auto;padding:16px}
 
-    .grid{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-    }
+/* HERO */
+.hero{
+background:linear-gradient(135deg, rgba(124,92,255,.25), rgba(34,211,238,.15));
+border:1px solid var(--border);
+border-radius:20px;
+padding:24px;
+margin-bottom:20px;
+position:relative;
+overflow:hidden;
+}
+.hero::after{
+content:"";
+position:absolute;inset:-40px;
+background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.12), transparent 60%);
+animation:shine 5s infinite;
+}
+@keyframes shine{
+0%{transform:translateX(-60%)}
+100%{transform:translateX(60%)}
+}
+.hero h1{margin:0;font-size:26px}
+.hero p{color:var(--muted)}
 
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
+/* GAMES GRID */
+.games{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+margin-top:20px;
+}
+.game{
+position:relative;
+background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.95));
+border:1px solid var(--border);
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 20px 50px rgba(0,0,0,.5);
+transition:.25s;
+}
+.game:hover{
+transform:translateY(-8px) scale(1.02);
+box-shadow:0 30px 80px rgba(0,0,0,.8);
+border-color:rgba(124,92,255,.6);
+}
+.game::before{
+content:"";
+position:absolute;inset:-60px;
+background:radial-gradient(400px 200px at 30% 20%, rgba(124,92,255,.25), transparent 60%),
+radial-gradient(400px 200px at 80% 80%, rgba(34,211,238,.25), transparent 60%);
+opacity:.8;
+}
 
-    .hero{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
-      flex-wrap:wrap;
-    }
-    h1{margin:0; font-size:20px;}
-    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
-    .muted{color:var(--muted)}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.gameInner{
+position:relative;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:12px;
+min-height:260px;
+}
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
-      transition:.15s ease;
-      min-width:140px;
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn.ghost{background: rgba(255,255,255,.04)}
-    .btn.small{min-width:auto; padding:10px 12px; border-radius:12px; font-size:13px;}
+/* ICON */
+.gameIcon{
+width:72px;height:72px;
+border-radius:18px;
+display:grid;place-items:center;
+font-size:34px;
+background:linear-gradient(135deg, rgba(124,92,255,.6), rgba(34,211,238,.6));
+box-shadow:0 10px 30px rgba(0,0,0,.6);
+animation:float 3s ease-in-out infinite;
+}
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-6px)}
+}
 
-    .games{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-      margin-top:12px;
-    }
+/* BUTTON */
+.playBtn{
+margin-top:auto;
+padding:14px;
+border-radius:14px;
+border:none;
+font-weight:900;
+cursor:pointer;
+color:#fff;
+background:linear-gradient(135deg,#7c5cff,#22d3ee);
+box-shadow:0 10px 30px rgba(124,92,255,.5);
+transition:.2s;
+}
+.playBtn:hover{
+transform:scale(1.05);
+box-shadow:0 16px 40px rgba(124,92,255,.8);
+}
 
-    .game{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: 240px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.28);
-      transform: translateZ(0);
-    }
-    .game:hover{border-color: rgba(255,255,255,.18)}
-    .gameBody{
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      height:100%;
-    }
+/* BOTTOM NAV */
+.bottomNav{
+position:fixed;bottom:0;left:0;right:0;height:64px;
+background:#0e1730;border-top:1px solid var(--border);
+display:flex;justify-content:space-around;align-items:center;
+z-index:100;
+}
+.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
 
-    /* ====== COVER IMAGES (CSS ONLY) ====== */
-    .cover{
-      height:120px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      position:relative;
-      overflow:hidden;
-      background: rgba(0,0,0,.18);
-    }
-    .cover::before{
-      content:"";
-      position:absolute; inset:-50px;
-      background:
-        radial-gradient(220px 160px at 22% 22%, rgba(255,255,255,.14), transparent 62%),
-        radial-gradient(240px 180px at 70% 70%, rgba(124,92,255,.16), transparent 60%),
-        radial-gradient(260px 190px at 30% 85%, rgba(34,211,238,.12), transparent 62%);
-      filter: blur(6px);
-      opacity:.95;
-    }
-    .cover::after{
-      content:"";
-      position:absolute; inset:-40px;
-      background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.16), transparent 65%);
-      transform: translateX(-55%) rotate(10deg);
-      animation: shine 3.2s ease-in-out infinite;
-      opacity:.55;
-      pointer-events:none;
-    }
-    @keyframes shine{
-      0%{transform: translateX(-60%) rotate(10deg); opacity:.18}
-      40%{opacity:.6}
-      100%{transform: translateX(55%) rotate(10deg); opacity:.18}
-    }
-
-    /* coinflip cover */
-    .cover.coinflip{
-      background:
-        radial-gradient(240px 160px at 30% 25%, rgba(245,158,11,.18), transparent 60%),
-        radial-gradient(260px 180px at 70% 75%, rgba(226,232,240,.12), transparent 60%),
-        rgba(0,0,0,.18);
-    }
-    .coinIcon{
-      position:absolute;
-      width:74px; height:74px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow: 0 16px 40px rgba(0,0,0,.45);
-      display:grid; place-items:center;
-      top:50%; transform: translateY(-50%);
-      overflow:hidden;
-    }
-    .coinIcon.gold{
-      left:18px;
-      background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%),
-        linear-gradient(135deg, #f7e08c, #caa03a 42%, #f3d26c 70%, #9b7424);
-    }
-    .coinIcon.silver{
-      right:18px;
-      background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%),
-        linear-gradient(135deg, #f3f6ff, #bfc6d8 42%, #e8ecf7 70%, #8a93ad);
-    }
-    .coinIcon .txt{
-      font-weight:1000;
-      font-size:20px;
-      text-shadow: 0 10px 20px rgba(0,0,0,.45);
-      opacity:.95;
-    }
-    .coinArc{
-      position:absolute;
-      inset:-20px;
-      border-radius:999px;
-      border: 2px dashed rgba(255,255,255,.18);
-      opacity:.45;
-      animation: spin 5.6s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes spin{to{transform: rotate(360deg);}}
-    .vs{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      font-weight:1000;
-      font-size:12px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-    }
-
-    /* mines cover */
-    .cover.mines{
-      background:
-        radial-gradient(240px 170px at 30% 30%, rgba(34,211,238,.12), transparent 60%),
-        radial-gradient(260px 180px at 75% 75%, rgba(239,68,68,.14), transparent 60%),
-        rgba(0,0,0,.18);
-    }
-    .grid9{
-      position:absolute;
-      left:16px; right:16px; top:16px; bottom:16px;
-      display:grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap:8px;
-      opacity:.95;
-    }
-    .tile{
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      position:relative;
-      overflow:hidden;
-    }
-    .tile::after{
-      content:"";
-      position:absolute; inset:-30px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), transparent 55%);
-      opacity:.55;
-    }
-    .tile.gem{
-      background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.20), transparent 55%),
-        linear-gradient(135deg, rgba(34,211,238,.45), rgba(124,92,255,.22));
-      border-color: rgba(34,211,238,.22);
-    }
-    .tile.gem::before{
-      content:"💎";
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      font-size:16px;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
-    }
-    .tile.bomb{
-      background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), transparent 55%),
-        linear-gradient(135deg, rgba(239,68,68,.35), rgba(0,0,0,.05));
-      border-color: rgba(239,68,68,.22);
-    }
-    .tile.bomb::before{
-      content:"💣";
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      font-size:16px;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
-    }
-    .pulse{
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{transform: translateY(0); opacity:.95}
-      50%{transform: translateY(-2px); opacity:1}
-    }
-
-    /* 3 cups cover */
-    .cover.cups{
-      background:
-        radial-gradient(260px 180px at 30% 30%, rgba(124,92,255,.14), transparent 60%),
-        radial-gradient(260px 180px at 75% 75%, rgba(245,158,11,.12), transparent 60%),
-        rgba(0,0,0,.18);
-    }
-    .cupRow{
-      position:absolute;
-      left:16px; right:16px; top:50%;
-      transform: translateY(-50%);
-      display:flex; justify-content:space-between; gap:12px;
-      align-items:flex-end;
-    }
-    .cup3d{
-      width:72px; height:74px;
-      border-radius: 14px 14px 18px 18px;
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,.20), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.18));
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
-      position:relative;
-      overflow:hidden;
-    }
-    .cup3d::after{
-      content:"";
-      position:absolute; inset:-30px;
-      background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.14), transparent 65%);
-      transform: translateX(-55%) rotate(10deg);
-      opacity:.65;
-      animation: shine 3.6s ease-in-out infinite;
-    }
-    .cup3d:nth-child(2){transform: translateY(-8px);}
-    .cup3d:nth-child(1){animation: cupMove 1.9s ease-in-out infinite;}
-    .cup3d:nth-child(3){animation: cupMove2 2.1s ease-in-out infinite;}
-    @keyframes cupMove{
-      0%,100%{transform: translateY(0)}
-      50%{transform: translateY(-6px)}
-    }
-    @keyframes cupMove2{
-      0%,100%{transform: translateY(-2px)}
-      50%{transform: translateY(-10px)}
-    }
-    .coinDot{
-      position:absolute;
-      width:16px; height:16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.30), transparent 55%),
-        linear-gradient(135deg, #f7e08c, #caa03a 55%, #9b7424);
-      left:50%; bottom:10px;
-      transform: translateX(-50%);
-      box-shadow: 0 10px 24px rgba(0,0,0,.35);
-      animation: dot 1.8s ease-in-out infinite;
-    }
-    @keyframes dot{
-      0%,100%{opacity:.6; transform: translateX(-50%) scale(.95)}
-      50%{opacity:1; transform: translateX(-50%) scale(1.05)}
-    }
-
-    .gameTop{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    }
-    .badge{
-      font-size:12px; font-weight:1000;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      white-space:nowrap;
-    }
-    .badge.hot{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10)}
-    .badge.new{border-color: rgba(34,211,238,.35); background: rgba(34,211,238,.10)}
-    .badge.easy{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
-
-    .game h2{margin:0; font-size:16px;}
-    .game p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
-    .gameMeta{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top:auto;
-    }
-    .tag{
-      font-size:12px; font-weight:900;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      white-space:nowrap;
-    }
-    .actions{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-      margin-top:6px;
-    }
-
-    .note{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(245,158,11,.10);
-      border-right: 4px solid rgba(245,158,11,.55);
-      color: var(--text);
-    }
-    .note small{color:var(--muted)}
-
-    .footer{
-      max-width:var(--max);
-      margin: 0 auto;
-      padding: 0 16px 28px;
-      color: var(--muted);
-      font-size:12px;
-    }
-
-    @media (max-width: 980px){
-      .games{grid-template-columns: 1fr 1fr;}
-    }
-    @media (max-width: 560px){
-      .wrap{padding:14px;}
-      .grid{padding:14px;}
-      .navlinks{
-        width:100%;
-        justify-content:flex-start;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom:6px;
-      }
-      .navlinks::-webkit-scrollbar{height:6px}
-      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
-      .games{grid-template-columns: 1fr;}
-      .btn{width:100%;}
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+.games{grid-template-columns:1fr}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Game Center</div>
-        </div>
-      </a>
 
-      <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html" data-page="wallet.html">Wallet</a>
-        <a href="trade.html" data-page="trade.html">Trade</a>
-        <a href="settings.html" data-page="settings.html">Settings</a>
-        <a href="profile.html" data-page="profile.html">Profile</a>
-        <a href="gamecenter.html" data-page="gamecenter.html">Game Center</a>
-      </div>
+<!-- MOBILE MENU -->
+<div class="mobileMenu" id="mobileMenu">
+  <a href="wallet.html">Wallet</a>
+  <a href="trades.html">Trades</a>
+  <a href="gamecenter.html">Game Center</a>
+  <a href="profile.html">Profile</a>
+  <a href="settings.html">Settings</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
 
-      <span class="pill" id="balPill">Balance: $0.00</span>
+<header>
+  <div class="nav">
+    <a class="brand" href="#">
+      <div class="logo"></div> AI MARKETING
+    </a>
+    <button class="menuBtn" onclick="toggleMenu()">☰</button>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="hero">
+  <h1>🎰 Game Center</h1>
+  <p>اختر لعبتك وابدأ المتعة — تجربة كازينو UI كاملة</p>
+</div>
+
+<div class="games">
+
+  <div class="game">
+    <div class="gameInner">
+      <div class="gameIcon">🪙</div>
+      <h3>Coin Flip</h3>
+      <p style="color:#b8c0e6">Double or nothing. حظ سريع وربح سريع.</p>
+      <button class="playBtn" onclick="location.href='coinflip.html'">PLAY</button>
     </div>
-  </header>
-
-  <main class="grid">
-    <section class="card">
-      <div class="hero">
-        <div>
-          <h1>Game Center</h1>
-          <div class="sub">اختر لعبة وخوض تجربة UI Demo. الرصيد محفوظ بالمتصفح (localStorage).</div>
-        </div>
-        <div class="row">
-          <button class="btn primary" type="button" onclick="seedBalance()">Add Demo Balance ($500)</button>
-          <button class="btn ghost" type="button" onclick="resetBalance()">Reset Balance</button>
-        </div>
-      </div>
-
-      <div class="games" aria-label="Games list">
-        <!-- Coinflip -->
-        <div class="game">
-          <div class="cover coinflip" aria-hidden="true">
-            <div class="coinIcon gold"><div class="coinArc"></div><div class="txt">G</div></div>
-            <div class="vs">VS</div>
-            <div class="coinIcon silver"><div class="coinArc"></div><div class="txt">S</div></div>
-          </div>
-          <div class="gameBody">
-            <div class="gameTop">
-              <div>
-                <h2>Coinflip</h2>
-                <p>Gold vs Silver — اربح أو اخسر. Win pays 2x (demo) وكاش آوت.</p>
-              </div>
-              <span class="badge hot">HOT</span>
-            </div>
-            <div class="gameMeta">
-              <span class="tag">Fast</span>
-              <span class="tag">2x</span>
-              <span class="tag">Sound</span>
-            </div>
-            <div class="actions">
-              <a class="btn primary" href="coinflip.html">Play</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mines -->
-        <div class="game">
-          <div class="cover mines" aria-hidden="true">
-            <div class="grid9">
-              <!-- 5x? just decorative tiles -->
-              <div class="tile gem pulse"></div>
-              <div class="tile"></div>
-              <div class="tile"></div>
-              <div class="tile bomb pulse"></div>
-              <div class="tile"></div>
-
-              <div class="tile"></div>
-              <div class="tile"></div>
-              <div class="tile gem pulse"></div>
-              <div class="tile"></div>
-              <div class="tile"></div>
-
-              <div class="tile"></div>
-              <div class="tile bomb pulse"></div>
-              <div class="tile"></div>
-              <div class="tile"></div>
-              <div class="tile gem pulse"></div>
-            </div>
-          </div>
-          <div class="gameBody">
-            <div class="gameTop">
-              <div>
-                <h2>Mines</h2>
-                <p>افتح مربعات وخد 💎، وتجنب 💣. كل اختيار صح بيرفع الـ multiplier.</p>
-              </div>
-              <span class="badge new">NEW</span>
-            </div>
-            <div class="gameMeta">
-              <span class="tag">Risk</span>
-              <span class="tag">Cash Out</span>
-              <span class="tag">Strategy</span>
-            </div>
-            <div class="actions">
-              <a class="btn primary" href="mines.html">Play</a>
-              <a class="btn ghost" href="mines.html">Preview</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3 Cups -->
-        <div class="game">
-          <div class="cover cups" aria-hidden="true">
-            <div class="cupRow">
-              <div class="cup3d"></div>
-              <div class="cup3d"><div class="coinDot"></div></div>
-              <div class="cup3d"></div>
-            </div>
-          </div>
-          <div class="gameBody">
-            <div class="gameTop">
-              <div>
-                <h2>3 Cups</h2>
-                <p>اختار الكوب الصح بعد الخلط. لعبة سريعة وخفيفة.</p>
-              </div>
-              <span class="badge easy">EASY</span>
-            </div>
-            <div class="gameMeta">
-              <span class="tag">Quick</span>
-              <span class="tag">Luck</span>
-              <span class="tag">1 Tap</span>
-            </div>
-            <div class="actions">
-              <a class="btn primary" href="3cups.html">Play</a>
-              <a class="btn ghost" href="3cups.html">Preview</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="note" role="note">
-        <b>Disclaimer:</b>
-        <div>
-          هيدا UI Demo فقط. ما في “ربح حقيقي” ولا نظام دفع.
-          <small>إذا بدك حسابات حقيقية لازم backend (Firebase/Auth + DB rules).</small>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <div class="footer">
-    © <span id="year"></span> AI MARKETING — Game Center UI demo.
   </div>
 
-  <script>
-    function setActiveNav(){
-      const file = (location.pathname.split("/").pop() || "gamecenter.html").toLowerCase();
-      document.querySelectorAll(".navlinks a").forEach(a=>{
-        const p = (a.getAttribute("data-page")||"").toLowerCase();
-        if(p === file) a.classList.add("active");
-      });
-    }
+  <div class="game">
+    <div class="gameInner">
+      <div class="gameIcon">💣</div>
+      <h3>Mines</h3>
+      <p style="color:#b8c0e6">غامر وافتح المربعات وتجنّب القنابل.</p>
+      <button class="playBtn" onclick="location.href='mines.html'">PLAY</button>
+    </div>
+  </div>
 
-    const LS_BAL = "aimkt_balance_usd";
+  <div class="game">
+    <div class="gameInner">
+      <div class="gameIcon">🥤</div>
+      <h3>3 Cups</h3>
+      <p style="color:#b8c0e6">اختبر سرعتك وحدسك.</p>
+      <button class="playBtn" onclick="location.href='3cups.html'">PLAY</button>
+    </div>
+  </div>
 
-    function money(x){
-      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
-    function getBalance(){
-      const raw = localStorage.getItem(LS_BAL);
-      const v = Number(raw);
-      return Number.isFinite(v) ? v : 0;
-    }
-    function setBalance(v){
-      localStorage.setItem(LS_BAL, String(Math.max(0, Number(v)||0)));
-      renderBalance();
-    }
-    function renderBalance(){
-      document.getElementById("balPill").textContent = "Balance: " + money(getBalance());
-    }
+</div>
 
-    function seedBalance(){
-      setBalance(500);
-      alert("Demo balance set to $500");
-    }
-    function resetBalance(){
-      setBalance(0);
-      alert("Balance reset to $0");
-    }
+</div>
 
-    document.getElementById("year").textContent = new Date().getFullYear();
-    setActiveNav();
-    renderBalance();
-  </script>
+<!-- BOTTOM NAV -->
+<div class="bottomNav">
+  <a href="wallet.html">💰<br>Wallet</a>
+  <a href="trades.html">📊<br>Trades</a>
+  <a href="gamecenter.html">🎮<br>Games</a>
+  <a href="profile.html">👤<br>Profile</a>
+  <a href="settings.html">⚙️<br>Settings</a>
+</div>
+
+<script>
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("show");
+}
+function logout(){
+  alert("Logged out");
+  location.href="login.html";
+}
+</script>
+
 </body>
 </html>
