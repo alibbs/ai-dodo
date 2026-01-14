@@ -8,9 +8,10 @@
 <style>
 html{scroll-behavior:smooth}
 :root{
---bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
+--bg:#0b1020;--panel:#101a33;--text:#e8ecff;--muted:#b8c0e6;
 --brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
 --shadow:0 20px 60px rgba(0,0,0,.45);
+--ok:#22c55e;--bad:#ef4444;
 }
 *{box-sizing:border-box}
 body{
@@ -54,7 +55,7 @@ max-width:1100px;
 margin:auto;
 padding:16px;
 display:grid;
-grid-template-columns:1.3fr .7fr;
+grid-template-columns:1.2fr .8fr;
 gap:14px;
 }
 .card{
@@ -66,16 +67,13 @@ padding:16px;
 overflow:hidden;
 }
 
-.titleRow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 h1{margin:0;font-size:18px}
 .sub{color:var(--muted);font-size:13px}
 .pill{font-size:12px;font-weight:900;padding:6px 10px;border-radius:999px;border:1px solid var(--border)}
 
 .tvbox{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.2)}
 .tvhead{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between}
-
-.tvH1{height:520px}
-.tvH2{height:420px}
+.tvH1{height:300px}
 
 label{font-weight:900;font-size:13px}
 .field{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:#0b1020;color:#fff}
@@ -106,8 +104,6 @@ z-index:100;
 /* RESPONSIVE */
 @media(max-width:900px){
 .container{grid-template-columns:1fr}
-.tvH1{height:380px}
-.tvH2{height:340px}
 .kpis{grid-template-columns:1fr}
 }
 </style>
@@ -122,14 +118,11 @@ z-index:100;
   <a href="gamecenter.html">Game Center</a>
   <a href="profile.html">Profile</a>
   <a href="settings.html">Settings</a>
-  <a href="#" onclick="logout()">Logout</a>
 </div>
 
 <header>
   <div class="nav">
-    <a class="brand" href="#">
-      <div class="logo"></div> AI MARKETING
-    </a>
+    <a class="brand" href="#"><div class="logo"></div> AI MARKETING</a>
     <button class="menuBtn" onclick="toggleMenu()">☰</button>
   </div>
 </header>
@@ -138,73 +131,51 @@ z-index:100;
 
 <!-- LEFT -->
 <div class="card">
-  <div class="titleRow">
-    <div>
-      <h1>Live Chart</h1>
-      <div class="sub">TradingView</div>
-    </div>
+  <div class="tvhead">
+    <span>Live Chart</span>
     <span class="pill" id="symbolPill">BINANCE:BTCUSDT</span>
   </div>
-
-  <div class="tvbox" style="margin-top:10px">
-    <div class="tvhead"><span>Chart</span><span class="pill">Live</span></div>
+  <div class="tvbox">
     <div class="tradingview-widget-container tvH1">
       <div id="tv_chart" class="tvH1"></div>
     </div>
   </div>
-
-  <div class="tvbox" style="margin-top:14px">
-    <div class="tvhead"><span>Market</span><span class="pill">Live</span></div>
-    <div class="tradingview-widget-container tvH2" id="marketOverviewBox"></div>
-  </div>
-
 </div>
 
 <!-- RIGHT -->
 <div class="card">
-  <h1>Trade Setup</h1>
-  <div class="sub">Scenario calculator</div>
+  <h1>Auto Trade Plans</h1>
+  <div class="sub">Your funds will be used in automated trading (locked)</div>
+
+  <div class="kpis">
+    <div class="kpi">Available<br><b id="availBal">$1000.00</b></div>
+    <div class="kpi">Locked<br><b id="lockedBal">$0.00</b></div>
+  </div>
 
   <div style="margin-top:12px">
-    <label>Exchange</label>
-    <select class="field" id="exchange">
-      <option>BINANCE</option>
-      <option>BYBIT</option>
-      <option>COINBASE</option>
+    <label>Amount (USDT)</label>
+    <input class="field" id="investAmount" type="number" min="10" value="100">
+  </div>
+
+  <div style="margin-top:10px">
+    <label>Plan</label>
+    <select class="field" id="investDays">
+      <option value="15">15 Days (1.3% - 1.6% daily)</option>
+      <option value="30">30 Days (1.5% - 2% daily)</option>
     </select>
   </div>
 
   <div style="margin-top:12px">
-    <label>Pair</label>
-    <input class="field" id="pair" value="BTCUSDT">
+    <button class="btn primary" onclick="createInvestment()">🚀 Start Auto Trade</button>
   </div>
 
-  <div style="margin-top:12px">
-    <button class="btn primary" onclick="applySymbol()">Load Chart</button>
+  <div class="note">
+    Your USDT will be locked during the trading period.  
+    Profit is generated from automated and manual trading strategies.
   </div>
 
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:14px 0">
-
-  <label>Capital</label>
-  <input class="field" id="capital" type="number" value="1000">
-
-  <div style="margin-top:10px">
-    <label>Daily %</label>
-    <input class="field" id="rate" type="number" value="2">
-  </div>
-
-  <div class="kpis">
-    <div class="kpi">1 Day: <b id="p1">$0</b></div>
-    <div class="kpi">7 Days: <b id="p7">$0</b></div>
-    <div class="kpi">30 Days: <b id="p30">$0</b></div>
-    <div class="kpi">Final: <b id="final30">$0</b></div>
-  </div>
-
-  <div style="margin-top:12px">
-    <button class="btn" onclick="calc()">Calculate</button>
-  </div>
-
-  <div class="note">Simulation only — not real trading.</div>
+  <h1 style="margin-top:18px">Active Auto Trades</h1>
+  <div id="investList" class="sub">No active trades.</div>
 </div>
 
 </div>
@@ -224,66 +195,108 @@ z-index:100;
 function toggleMenu(){
   document.getElementById("mobileMenu").classList.toggle("show");
 }
-function logout(){
-  alert("Logged out");
-  location.href="login.html";
-}
 
 // ===== TradingView =====
-let symbol = "BINANCE:BTCUSDT";
 function loadTV(sym){
-  document.getElementById("symbolPill").textContent = sym;
+  document.getElementById("symbolPill").textContent = "BINANCE:"+sym;
   document.getElementById("tv_chart").innerHTML="";
   new TradingView.widget({
     autosize:true,
-    symbol:sym,
+    symbol:"BINANCE:"+sym,
     interval:"60",
     timezone:"Etc/UTC",
     theme:"dark",
     container_id:"tv_chart"
   });
 }
-function applySymbol(){
-  const ex = document.getElementById("exchange").value;
-  const pair = document.getElementById("pair").value.toUpperCase();
-  loadTV(ex+":"+pair);
-}
 
-// ===== Market Overview =====
-function loadMarket(){
-  const box = document.getElementById("marketOverviewBox");
-  const s = document.createElement("script");
-  s.src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
-  s.async=true;
-  s.text=JSON.stringify({
-    colorTheme:"dark",isTransparent:true,showChart:true,locale:"en",width:"100%",height:"100%",
-    tabs:[{title:"Crypto",symbols:[
-      {s:"BINANCE:BTCUSDT"},{s:"BINANCE:ETHUSDT"},{s:"BINANCE:SOLUSDT"},
-      {s:"BINANCE:XRPUSDT"},{s:"BINANCE:BNBUSDT"}
-    ]}]
+// ===== AUTO TRADE SYSTEM (DEMO) =====
+let availableBalance = 1000;
+let lockedBalance = 0;
+let investments = [];
+
+function money(x){ return "$" + (Number(x)||0).toFixed(2); }
+
+function renderInvest(){
+  availBal.textContent = money(availableBalance);
+  lockedBal.textContent = money(lockedBalance);
+
+  const box = document.getElementById("investList");
+  if(investments.length === 0){
+    box.innerHTML = "<div class='sub'>No active auto trades.</div>";
+    return;
+  }
+
+  box.innerHTML = "";
+  investments.forEach((inv, i)=>{
+    const daysLeft = Math.max(0, Math.ceil((inv.end - Date.now()) / 86400000));
+    const done = Date.now() >= inv.end;
+    const profit = inv.amount * inv.daily * inv.days;
+
+    const div = document.createElement("div");
+    div.className = "kpi";
+    div.style.marginTop = "10px";
+    div.innerHTML = `
+      <b>Auto Trade #${i+1}</b><br>
+      Amount: ${money(inv.amount)}<br>
+      Daily: ${(inv.daily*100).toFixed(2)}%<br>
+      Days left: ${daysLeft}<br>
+      Expected Profit: ${money(profit)}<br>
+      ${done ? `<button class="btn" onclick="finishInvestment(${i})">Claim</button>` : `<span class="sub">Running 🔄</span>`}
+    `;
+    box.appendChild(div);
   });
-  box.appendChild(s);
 }
 
-// ===== Calculator =====
-function money(x){return "$"+(Number(x)||0).toFixed(2)}
-function calc(){
-  const c = Number(capital.value||0);
-  const r = Number(rate.value||0)/100;
-  const d1 = c*r;
-  const f7 = c*Math.pow(1+r,7);
-  const f30 = c*Math.pow(1+r,30);
-  p1.textContent = money(d1);
-  p7.textContent = money(f7-c);
-  p30.textContent = money(f30-c);
-  final30.textContent = money(f30);
+function createInvestment(){
+  const amt = Number(investAmount.value);
+  const days = Number(investDays.value);
+
+  if(!amt || amt < 10) return alert("Minimum 10 USDT");
+  if(amt > availableBalance) return alert("Not enough balance");
+
+  let daily;
+  if(days == 15){
+    daily = 0.013 + Math.random() * (0.016 - 0.013);
+  }else{
+    daily = 0.015 + Math.random() * (0.02 - 0.015);
+  }
+
+  availableBalance -= amt;
+  lockedBalance += amt;
+
+  investments.push({
+    amount: amt,
+    days: days,
+    daily: daily,
+    start: Date.now(),
+    end: Date.now() + days * 86400000
+  });
+
+  renderInvest();
+  alert("Auto Trade started and funds locked 🔒");
+}
+
+function finishInvestment(i){
+  const inv = investments[i];
+  if(Date.now() < inv.end) return;
+
+  const profit = inv.amount * inv.daily * inv.days;
+  const total = inv.amount + profit;
+
+  lockedBalance -= inv.amount;
+  availableBalance += total;
+
+  investments.splice(i,1);
+  renderInvest();
+
+  alert("Auto Trade finished! You received " + money(total));
 }
 
 // INIT
 window.onload=()=>{
-  loadTV(symbol);
-  loadMarket();
-  calc();
+  loadTV("BTCUSDT");
+  renderInvest();
 }
 </script>
 
