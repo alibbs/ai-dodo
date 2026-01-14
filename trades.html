@@ -1,498 +1,291 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Trade</title>
-  <meta name="description" content="Trade dashboard with live TradingView charts." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI MARKETING | Trade</title>
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --panel2:#0e1730;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --max:1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-    }
-    a{color:inherit}
+<style>
+html{scroll-behavior:smooth}
+:root{
+--bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
+--brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
+--shadow:0 20px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+padding-top:80px;
+padding-bottom:80px;
+font-family:system-ui;
+background:
+radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+#0b1020;
+color:#fff;
+}
 
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.65);
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:var(--max); margin:0 auto; padding:16px;}
+/* HEADER */
+header{
+position:fixed;top:0;left:0;right:0;z-index:100;
+background:rgba(11,16,32,.85);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+}
+.nav{
+max-width:1100px;margin:auto;padding:14px 18px;
+display:flex;justify-content:space-between;align-items:center;
+}
+.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
+.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
 
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:900;
-      text-decoration:none;
-      flex:0 0 auto;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex:0 0 auto;
-    }
+/* MOBILE MENU */
+.mobileMenu{
+position:fixed;top:0;left:-100%;width:80%;height:100%;
+background:#0e1730;z-index:200;padding:20px;transition:.3s;
+}
+.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
+.mobileMenu.show{left:0}
 
-    /* ✅ TOP BAR */
-    .navlinks{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex: 1 1 520px;
-      min-width: 240px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .navlinks a{
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      opacity:.95;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      color:var(--text);
-      transition:.15s ease;
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
-    .navlinks a.active{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
-    }
+/* CONTENT */
+.container{
+max-width:1100px;
+margin:auto;
+padding:16px;
+display:grid;
+grid-template-columns:1.3fr .7fr;
+gap:14px;
+}
+.card{
+background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+border:1px solid var(--border);
+border-radius:16px;
+box-shadow:var(--shadow);
+padding:16px;
+overflow:hidden;
+}
 
-    /* ✅ GRID */
-    .grid{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      grid-template-columns: 1.3fr .7fr;
-      gap:14px;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      overflow:hidden; /* ✅ prevents widgets overflow on phone */
-    }
+.titleRow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:18px}
+.sub{color:var(--muted);font-size:13px}
+.pill{font-size:12px;font-weight:900;padding:6px 10px;border-radius:999px;border:1px solid var(--border)}
 
-    .titleRow{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    h1{margin:0; font-size:18px;}
-    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-    }
+.tvbox{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.2)}
+.tvhead{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between}
 
-    label{display:block; font-weight:900; font-size:13px; margin-bottom:6px;}
-    .field{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color:var(--text);
-      outline:none;
-    }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
-      width:100%;
-      transition:.15s ease;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn:hover{transform: translateY(-1px)}
+.tvH1{height:520px}
+.tvH2{height:420px}
 
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    .kpi{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:12px;
-    }
-    .kpi b{display:block; font-size:15px}
-    .kpi span{color:var(--muted); font-size:12px}
+label{font-weight:900;font-size:13px}
+.field{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:#0b1020;color:#fff}
+.btn{padding:12px;border-radius:12px;border:1px solid var(--border);background:#1f2a44;color:#fff;font-weight:900;cursor:pointer;width:100%}
+.btn.primary{background:linear-gradient(135deg,#7c5cff,#22d3ee)}
 
-    .note{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(245,158,11,.10);
-      border-right: 4px solid rgba(245,158,11,.55);
-      color: var(--text);
-    }
-    .note small{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kpi{border:1px solid var(--border);border-radius:14px;padding:10px;background:rgba(255,255,255,.03)}
 
-    .tvbox{
-      border:1px solid var(--border);
-      border-radius: 16px;
-      overflow:hidden;
-      background: rgba(0,0,0,.20);
-    }
-    .tvhead{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.02);
-    }
-    .muted{color:var(--muted)}
+.note{
+margin-top:12px;
+padding:12px;
+border-radius:14px;
+border:1px solid var(--border);
+background:rgba(245,158,11,.1);
+border-right:4px solid rgba(245,158,11,.6);
+}
 
-    /* heights */
-    .tvH1{height:520px;}
-    .tvH2{height:460px;}
+/* BOTTOM NAV */
+.bottomNav{
+position:fixed;bottom:0;left:0;right:0;height:64px;
+background:#0e1730;border-top:1px solid var(--border);
+display:flex;justify-content:space-around;align-items:center;
+z-index:100;
+}
+.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
 
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr;}
-    }
-    @media (max-width: 560px){
-      .wrap{padding:14px;}
-      .grid{padding:14px; gap:12px;}
-      .card{padding:14px;}
-      h1{font-size:16px;}
-
-      /* ✅ bar scroll */
-      .navlinks{
-        width:100%;
-        justify-content:flex-start;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom:6px;
-      }
-      .navlinks::-webkit-scrollbar{height:6px}
-      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
-
-      /* ✅ smaller charts */
-      .tvH1{height:380px;}
-      .tvH2{height:360px;}
-
-      .kpis{grid-template-columns:1fr;}
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+.container{grid-template-columns:1fr}
+.tvH1{height:380px}
+.tvH2{height:340px}
+.kpis{grid-template-columns:1fr}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Trade</div>
-        </div>
-      </a>
 
-      <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html" data-page="wallet.html">Wallet</a>
-        <a href="trade.html" data-page="trade.html">Trade</a>
-        <a href="settings.html" data-page="settings.html">Settings</a>
-        <a href="profile.html" data-page="profile.html">Profile</a>
-      </div>
+<!-- MOBILE MENU -->
+<div class="mobileMenu" id="mobileMenu">
+  <a href="wallet.html">Wallet</a>
+  <a href="trade.html">Trade</a>
+  <a href="gamecenter.html">Game Center</a>
+  <a href="profile.html">Profile</a>
+  <a href="settings.html">Settings</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#">
+      <div class="logo"></div> AI MARKETING
+    </a>
+    <button class="menuBtn" onclick="toggleMenu()">☰</button>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- LEFT -->
+<div class="card">
+  <div class="titleRow">
+    <div>
+      <h1>Live Chart</h1>
+      <div class="sub">TradingView</div>
     </div>
-  </header>
-
-  <div class="grid">
-    <!-- LEFT -->
-    <section class="card">
-      <div class="titleRow">
-        <div>
-          <h1>Live Chart</h1>
-          <div class="sub">TradingView advanced chart (live).</div>
-        </div>
-        <span class="pill" id="symbolPill">BINANCE:BTCUSDT</span>
-      </div>
-
-      <div class="tvbox" style="margin-top:12px;">
-        <div class="tvhead">
-          <div class="muted" style="font-size:13px;">Source: TradingView</div>
-          <div class="pill">Live</div>
-        </div>
-
-        <div class="tradingview-widget-container tvH1">
-          <div id="tv_chart" class="tvH1"></div>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;">
-        <div class="titleRow">
-          <div>
-            <h1>Market (Multi Symbols)</h1>
-            <div class="sub">Live prices for multiple pairs.</div>
-          </div>
-          <span class="pill">Live</span>
-        </div>
-
-        <div class="tvbox" style="margin-top:10px;">
-          <div class="tvhead">
-            <div class="muted" style="font-size:13px;">Overview</div>
-            <div class="pill">Crypto</div>
-          </div>
-
-          <div class="tradingview-widget-container tvH2" id="marketOverviewBox">
-            <div class="tradingview-widget-container__widget"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="note" role="note">
-        <b>Important:</b>
-        <div>
-          Live market data + scenario calculator only.
-          <small>No fixed returns are guaranteed.</small>
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT -->
-    <aside class="card">
-      <div class="titleRow">
-        <div>
-          <h1>Trade Setup</h1>
-          <div class="sub">Change symbol + scenario calculator.</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <label for="exchange">Exchange</label>
-        <select class="field" id="exchange">
-          <option value="BINANCE" selected>BINANCE</option>
-          <option value="COINBASE">COINBASE</option>
-          <option value="BYBIT">BYBIT</option>
-          <option value="KRAKEN">KRAKEN</option>
-        </select>
-      </div>
-
-      <div style="margin-top:12px;">
-        <label for="pair">Pair / Symbol</label>
-        <input class="field" id="pair" placeholder="BTCUSDT" value="BTCUSDT" />
-        <div class="sub">Example: BTCUSDT, ETHUSDT, SOLUSDT</div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <button class="btn primary" type="button" onclick="applySymbol()">Load Chart</button>
-      </div>
-
-      <hr style="border:none; border-top:1px solid rgba(255,255,255,.10); margin:16px 0;">
-
-      <div>
-        <label for="capital">Capital (USD)</label>
-        <input class="field" id="capital" type="number" min="0" step="0.01" placeholder="e.g. 1000" />
-      </div>
-
-      <div style="margin-top:12px;">
-        <label for="rate">Daily scenario rate (simulation)</label>
-        <input class="field" id="rate" type="number" min="-100" max="100" step="0.01" value="2.00" />
-        <div class="sub">Scenario only (not guaranteed).</div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi">
-          <span>Projected (1 day)</span>
-          <b id="p1">$0.00</b>
-          <span class="muted" id="p1pct">0.00%</span>
-        </div>
-        <div class="kpi">
-          <span>Projected (7 days)</span>
-          <b id="p7">$0.00</b>
-          <span class="muted">compounded</span>
-        </div>
-        <div class="kpi">
-          <span>Projected (30 days)</span>
-          <b id="p30">$0.00</b>
-          <span class="muted">compounded</span>
-        </div>
-        <div class="kpi">
-          <span>Projected final (30d)</span>
-          <b id="final30">$0.00</b>
-          <span class="muted">capital + scenario</span>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <button class="btn" type="button" onclick="calc()">Calculate</button>
-      </div>
-
-      <div class="note" role="note">
-        <b>Disclaimer:</b>
-        <div>
-          The calculator is hypothetical.
-          <small>Real markets can go against you.</small>
-        </div>
-      </div>
-    </aside>
+    <span class="pill" id="symbolPill">BINANCE:BTCUSDT</span>
   </div>
 
-  <!-- ✅ load scripts ONCE -->
-  <script src="https://s3.tradingview.com/tv.js"></script>
+  <div class="tvbox" style="margin-top:10px">
+    <div class="tvhead"><span>Chart</span><span class="pill">Live</span></div>
+    <div class="tradingview-widget-container tvH1">
+      <div id="tv_chart" class="tvH1"></div>
+    </div>
+  </div>
 
-  <script>
-    // ===== NAV ACTIVE =====
-    function setActiveNav(){
-      const file = (location.pathname.split("/").pop() || "trade.html").toLowerCase();
-      document.querySelectorAll(".navlinks a[data-page]").forEach(a=>{
-        const p = (a.getAttribute("data-page")||"").toLowerCase();
-        if(p === file) a.classList.add("active");
-      });
-    }
+  <div class="tvbox" style="margin-top:14px">
+    <div class="tvhead"><span>Market</span><span class="pill">Live</span></div>
+    <div class="tradingview-widget-container tvH2" id="marketOverviewBox"></div>
+  </div>
 
-    // ===== TradingView Advanced Chart =====
-    window.__tvSymbol = "BINANCE:BTCUSDT";
-    let __tvWidget = null;
+</div>
 
-    function loadTV(symbol){
-      document.getElementById("symbolPill").textContent = symbol;
-      window.__tvSymbol = symbol;
+<!-- RIGHT -->
+<div class="card">
+  <h1>Trade Setup</h1>
+  <div class="sub">Scenario calculator</div>
 
-      // clear container
-      const el = document.getElementById("tv_chart");
-      el.innerHTML = "";
+  <div style="margin-top:12px">
+    <label>Exchange</label>
+    <select class="field" id="exchange">
+      <option>BINANCE</option>
+      <option>BYBIT</option>
+      <option>COINBASE</option>
+    </select>
+  </div>
 
-      // create widget
-      __tvWidget = new TradingView.widget({
-        autosize: true,
-        symbol: symbol,
-        interval: "60",
-        timezone: "Etc/UTC",
-        theme: "dark",
-        style: "1",
-        locale: "en",
-        enable_publishing: false,
-        hide_top_toolbar: false,
-        hide_legend: false,
-        withdateranges: true,
-        save_image: false,
-        container_id: "tv_chart"
-      });
-    }
+  <div style="margin-top:12px">
+    <label>Pair</label>
+    <input class="field" id="pair" value="BTCUSDT">
+  </div>
 
-    function applySymbol(){
-      const ex = document.getElementById("exchange").value.trim();
-      const pair = document.getElementById("pair").value.trim().toUpperCase();
-      if(!pair) return alert("Enter a symbol like BTCUSDT");
-      loadTV(`${ex}:${pair}`);
-    }
+  <div style="margin-top:12px">
+    <button class="btn primary" onclick="applySymbol()">Load Chart</button>
+  </div>
 
-    // ===== Market Overview (multi symbols) =====
-    function loadMarketOverview(){
-      const box = document.getElementById("marketOverviewBox");
-      if(!box) return;
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:14px 0">
 
-      // remove old widget if any
-      box.querySelectorAll("script").forEach(s => s.remove());
+  <label>Capital</label>
+  <input class="field" id="capital" type="number" value="1000">
 
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
-      script.async = true;
+  <div style="margin-top:10px">
+    <label>Daily %</label>
+    <input class="field" id="rate" type="number" value="2">
+  </div>
 
-      script.text = JSON.stringify({
-        colorTheme: "dark",
-        dateRange: "12M",
-        showChart: true,
-        locale: "en",
-        isTransparent: true,
-        showSymbolLogo: true,
-        showFloatingTooltip: true,
-        width: "100%",
-        height: "100%",
-        tabs: [
-          {
-            title: "Crypto",
-            symbols: [
-              { s:"BINANCE:BTCUSDT", d:"BTC" },
-              { s:"BINANCE:ETHUSDT", d:"ETH" },
-              { s:"BINANCE:SOLUSDT", d:"SOL" },
-              { s:"BINANCE:XRPUSDT", d:"XRP" },
-              { s:"BINANCE:BNBUSDT", d:"BNB" },
-              { s:"BINANCE:ADAUSDT", d:"ADA" }
-            ]
-          }
-        ]
-      });
+  <div class="kpis">
+    <div class="kpi">1 Day: <b id="p1">$0</b></div>
+    <div class="kpi">7 Days: <b id="p7">$0</b></div>
+    <div class="kpi">30 Days: <b id="p30">$0</b></div>
+    <div class="kpi">Final: <b id="final30">$0</b></div>
+  </div>
 
-      box.appendChild(script);
-    }
+  <div style="margin-top:12px">
+    <button class="btn" onclick="calc()">Calculate</button>
+  </div>
 
-    // ===== Scenario calculator =====
-    function money(x){
-      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
+  <div class="note">Simulation only — not real trading.</div>
+</div>
 
-    function calc(){
-      const c = Number(document.getElementById("capital").value || 0);
-      const r = Number(document.getElementById("rate").value || 0) / 100;
+</div>
 
-      const oneDayProfit = c * r;
-      const final7 = c * Math.pow(1 + r, 7);
-      const final30 = c * Math.pow(1 + r, 30);
+<!-- BOTTOM NAV -->
+<div class="bottomNav">
+  <a href="wallet.html">💰<br>Wallet</a>
+  <a href="trade.html">📊<br>Trade</a>
+  <a href="gamecenter.html">🎮<br>Games</a>
+  <a href="profile.html">👤<br>Profile</a>
+  <a href="settings.html">⚙️<br>Settings</a>
+</div>
 
-      document.getElementById("p1").textContent = money(oneDayProfit);
-      document.getElementById("p1pct").textContent = (r*100).toFixed(2) + "%";
-      document.getElementById("p7").textContent = money(final7 - c);
-      document.getElementById("p30").textContent = money(final30 - c);
-      document.getElementById("final30").textContent = money(final30);
-    }
+<script src="https://s3.tradingview.com/tv.js"></script>
 
-    // ===== init =====
-    window.addEventListener("load", () => {
-      setActiveNav();
-      loadTV(window.__tvSymbol);
-      loadMarketOverview();
-      calc();
-    });
-  </script>
+<script>
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("show");
+}
+function logout(){
+  alert("Logged out");
+  location.href="login.html";
+}
+
+// ===== TradingView =====
+let symbol = "BINANCE:BTCUSDT";
+function loadTV(sym){
+  document.getElementById("symbolPill").textContent = sym;
+  document.getElementById("tv_chart").innerHTML="";
+  new TradingView.widget({
+    autosize:true,
+    symbol:sym,
+    interval:"60",
+    timezone:"Etc/UTC",
+    theme:"dark",
+    container_id:"tv_chart"
+  });
+}
+function applySymbol(){
+  const ex = document.getElementById("exchange").value;
+  const pair = document.getElementById("pair").value.toUpperCase();
+  loadTV(ex+":"+pair);
+}
+
+// ===== Market Overview =====
+function loadMarket(){
+  const box = document.getElementById("marketOverviewBox");
+  const s = document.createElement("script");
+  s.src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
+  s.async=true;
+  s.text=JSON.stringify({
+    colorTheme:"dark",isTransparent:true,showChart:true,locale:"en",width:"100%",height:"100%",
+    tabs:[{title:"Crypto",symbols:[
+      {s:"BINANCE:BTCUSDT"},{s:"BINANCE:ETHUSDT"},{s:"BINANCE:SOLUSDT"},
+      {s:"BINANCE:XRPUSDT"},{s:"BINANCE:BNBUSDT"}
+    ]}]
+  });
+  box.appendChild(s);
+}
+
+// ===== Calculator =====
+function money(x){return "$"+(Number(x)||0).toFixed(2)}
+function calc(){
+  const c = Number(capital.value||0);
+  const r = Number(rate.value||0)/100;
+  const d1 = c*r;
+  const f7 = c*Math.pow(1+r,7);
+  const f30 = c*Math.pow(1+r,30);
+  p1.textContent = money(d1);
+  p7.textContent = money(f7-c);
+  p30.textContent = money(f30-c);
+  final30.textContent = money(f30);
+}
+
+// INIT
+window.onload=()=>{
+  loadTV(symbol);
+  loadMarket();
+  calc();
+}
+</script>
+
 </body>
 </html>
