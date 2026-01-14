@@ -1,850 +1,310 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | 3 Cups</title>
-  <meta name="description" content="3 Cups game demo (UI-only): 3D shuffle + sound, pick the right cup, win 2x." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>AI MARKETING | 3 Cups</title>
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --panel2:#0e1730;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --max:1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-    }
-    a{color:inherit}
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.65);
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:var(--max); margin:0 auto; padding:16px;}
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:900;
-      text-decoration:none;
-      flex:0 0 auto;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex:0 0 auto;
-    }
-    .navlinks{
-      display:flex; gap:10px; align-items:center;
-      flex: 1 1 520px; min-width:240px;
-      justify-content:center; flex-wrap:wrap;
-    }
-    .navlinks a{
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      opacity:.95;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      color:var(--text);
-    }
-    .navlinks a:hover{background: rgba(255,255,255,.06); opacity:1}
-    .navlinks a.active{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,211,238,.18));
-    }
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#101a33;
+  --panel2:#0e1730;
+  --text:#e8ecff;
+  --muted:#b8c0e6;
+  --brand:#7c5cff;
+  --brand2:#22d3ee;
+  --border: rgba(255,255,255,.12);
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
+  --radius: 18px;
+  --ok:#22c55e;
+  --warn:#f59e0b;
+  --bad:#ef4444;
+  --max:1100px;
+}
+*{box-sizing:border-box}
 
-    .grid{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:14px;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-    .titleRow{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    h1{margin:0; font-size:18px;}
-    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
-    .muted{color:var(--muted)}
+html, body{
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+}
 
-    label{display:block; font-weight:900; font-size:13px; margin-bottom:6px;}
-    .field{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color:var(--text);
-      outline:none;
-    }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
+              radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
+              var(--bg);
+  color:var(--text);
+}
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
-      width:100%;
-      transition:.15s ease;
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn.danger{
-      border-color: rgba(239,68,68,.45);
-      background: rgba(239,68,68,.12);
-    }
-    .btn.ghost{background: rgba(255,255,255,.04)}
-    .twoCol{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      margin-top:12px;
-    }
+/* ===== HEADER ===== */
+header{
+  position:sticky; top:0; z-index:20;
+  backdrop-filter: blur(10px);
+  background: rgba(11,16,32,.65);
+  border-bottom:1px solid var(--border);
+}
+.wrap{max-width:var(--max); margin:0 auto; padding:16px;}
+.nav{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
 
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    .kpi{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:12px;
-    }
-    .kpi b{display:block; font-size:15px}
-    .kpi span{color:var(--muted); font-size:12px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:900; text-decoration:none;}
+.logo{
+  width:38px; height:38px; border-radius:12px;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  box-shadow: 0 12px 30px rgba(124,92,255,.25);
+}
 
-    /* ====== 3D ARENA ====== */
-    .arena{
-      margin-top:12px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
-      text-align:center;
-    }
-    .stage{
-      margin-top:14px;
-      perspective: 980px;
-      perspective-origin: 50% 35%;
-      position: relative;
-      height: 230px;
-      border-radius:16px;
-      overflow:hidden;
-      background:
-        radial-gradient(420px 220px at 50% 20%, rgba(124,92,255,.18), transparent 55%),
-        radial-gradient(380px 240px at 50% 80%, rgba(34,211,238,.14), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.20));
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .shadowFloor{
-      position:absolute;
-      left:8%;
-      right:8%;
-      bottom:18px;
-      height:48px;
-      filter: blur(12px);
-      background: radial-gradient(circle at 50% 50%, rgba(0,0,0,.55), transparent 62%);
-      opacity:.9;
-      transform: translateZ(-120px);
-    }
+.pill{
+  font-size:12px; font-weight:900;
+  padding:7px 10px; border-radius:999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.04);
+}
 
-    .cups3d{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      gap:18px;
-      padding-bottom:24px;
-      transform-style: preserve-3d;
-    }
+/* ===== LAYOUT ===== */
+.grid{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:16px;
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:14px;
+}
+.card{
+  background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
 
-    .cup3d{
-      width:128px;
-      height:160px;
-      border-radius:20px;
-      position:relative;
-      transform-style: preserve-3d;
-      transition: transform .28s ease, filter .28s ease, opacity .28s ease;
-      cursor:pointer;
-      user-select:none;
-    }
-    .cup3d.disabled{pointer-events:none; opacity:.72}
-    .cup3d:hover{transform: translateY(-5px) rotateX(10deg) rotateY(-8deg)}
+/* ===== STAGE ===== */
+.stage{
+  margin-top:14px;
+  perspective: 980px;
+  position: relative;
+  height: 260px;
+  border-radius:16px;
+  overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.20));
+  border:1px solid rgba(255,255,255,.08);
+}
 
-    /* more realistic cup look */
-    .cupBody{
-      position:absolute; inset:0;
-      border-radius:20px;
-      background:
-        radial-gradient(130px 160px at 28% 24%, rgba(255,255,255,.20), transparent 55%),
-        radial-gradient(160px 160px at 70% 80%, rgba(0,0,0,.25), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.20));
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: 0 22px 70px rgba(0,0,0,.52);
-      transform: translateZ(44px);
-      overflow:hidden;
-    }
-    .cupBody::before{
-      content:"";
-      position:absolute; inset:-20px;
-      background:
-        radial-gradient(120px 160px at 30% 10%, rgba(255,255,255,.18), transparent 55%),
-        radial-gradient(160px 200px at 70% 60%, rgba(124,92,255,.14), transparent 60%);
-      opacity:.9;
-      transform: rotate(10deg);
-    }
-    .cupBody::after{
-      content:"";
-      position:absolute;
-      left:16px; top:24px; bottom:24px;
-      width:18px;
-      border-radius:999px;
-      background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0));
-      opacity:.6;
-      filter: blur(.2px);
-    }
-    .cupRim{
-      position:absolute;
-      left:10px; right:10px; top:10px;
-      height:18px;
-      border-radius:999px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,.08));
-      border:1px solid rgba(255,255,255,.16);
-      transform: translateZ(62px);
-      box-shadow: 0 10px 20px rgba(0,0,0,.22);
-    }
-    .cupInnerHole{
-      position:absolute;
-      left:22px; right:22px; top:16px;
-      height:30px;
-      border-radius:999px;
-      background: radial-gradient(circle at 50% 55%, rgba(0,0,0,.45), rgba(0,0,0,.18));
-      border:1px solid rgba(255,255,255,.10);
-      transform: translateZ(58px);
-      opacity:.95;
-    }
+.cups3d{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:18px;
+  padding-bottom:24px;
+}
 
-    /* small handle to look more real */
-    .cupHandle{
-      position:absolute;
-      right:-14px;
-      top:58px;
-      width:34px;
-      height:56px;
-      border-radius:999px;
-      border:6px solid rgba(255,255,255,.12);
-      transform: translateZ(30px) rotateY(18deg);
-      box-shadow: 0 12px 22px rgba(0,0,0,.25);
-      opacity:.9;
-    }
+/* simplified cups for performance */
+.cup3d{
+  width:120px;
+  height:150px;
+  border-radius:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.15), rgba(0,0,0,.3));
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow: 0 20px 50px rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:1000;
+  cursor:pointer;
+  transition:.25s ease;
+}
+.cup3d.disabled{opacity:.6; pointer-events:none}
+.cup3d:hover{transform:translateY(-6px)}
 
-    .cupLabel{
-      position:absolute;
-      bottom:10px; left:0; right:0;
-      font-weight:1000;
-      font-size:13px;
-      letter-spacing:.3px;
-      color: rgba(232,236,255,.92);
-      transform: translateZ(70px);
-      text-shadow: 0 10px 22px rgba(0,0,0,.6);
-      pointer-events:none;
-    }
+.cup3d.win{border-color: rgba(34,197,94,.6); background: rgba(34,197,94,.18)}
+.cup3d.lose{border-color: rgba(239,68,68,.6); background: rgba(239,68,68,.18)}
 
-    /* coin inside (gold) */
-    .coin{
-      position:absolute;
-      left:50%;
-      top:86px;
-      width:62px;
-      height:62px;
-      border-radius:999px;
-      transform: translate(-50%, -50%) translateZ(14px) scale(.96);
-      opacity:0;
-      transition: .28s ease;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.42), transparent 55%),
-        radial-gradient(circle at 62% 70%, rgba(0,0,0,.18), transparent 62%),
-        linear-gradient(135deg, rgba(255,215,0,.98), rgba(255,140,0,.78));
-      border:1px solid rgba(255,255,255,.26);
-      box-shadow: 0 18px 54px rgba(0,0,0,.58);
-      display:grid;
-      place-items:center;
-      font-weight:1000;
-    }
-    .coin::before{
-      content:"";
-      position:absolute;
-      inset:8px;
-      border-radius:999px;
-      border:2px dashed rgba(0,0,0,.25);
-      opacity:.55;
-    }
-    .coin::after{
-      content:"★";
-      font-size:18px;
-      color: rgba(0,0,0,.55);
-      text-shadow: 0 2px 0 rgba(255,255,255,.18);
-      transform: translateY(-1px);
-    }
+.coin{
+  width:60px;height:60px;border-radius:50%;
+  background: linear-gradient(135deg, gold, orange);
+  box-shadow:0 0 30px rgba(255,200,0,.6);
+  display:none;
+}
+.cup3d.showCoin .coin{display:block}
 
-    .cup3d.showCoin .coin{
-      opacity:1;
-      transform: translate(-50%, -75%) translateZ(74px) scale(1);
-    }
+/* ===== UI ===== */
+.field{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.20);
+  color:var(--text);
+}
 
-    /* open animation */
-    .cup3d.openWin{
-      transform: translateY(-52px) rotateX(22deg) rotateY(-12deg);
-      filter: drop-shadow(0 24px 28px rgba(0,0,0,.55));
-    }
-    .cup3d.openLose{
-      transform: translateY(-28px) rotateX(14deg) rotateY(10deg);
-      filter: grayscale(.22) brightness(.95);
-    }
+.btn{
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  color:var(--text);
+  font-weight:900;
+  cursor:pointer;
+}
+.btn.primary{
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+}
+.btn.danger{background: rgba(239,68,68,.2)}
 
-    .cup3d.win .cupBody{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.10)}
-    .cup3d.lose .cupBody{border-color: rgba(239,68,68,.45); background: rgba(239,68,68,.12)}
-
-    /* shuffle motion */
-    .cup3d.moving{ transition: transform .17s ease; }
-
-    .note{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(245,158,11,.10);
-      border-right: 4px solid rgba(245,158,11,.55);
-      color: var(--text);
-    }
-    .note small{color:var(--muted)}
-
-    .footer{
-      max-width:var(--max);
-      margin: 0 auto;
-      padding: 0 16px 28px;
-      color: var(--muted);
-      font-size:12px;
-    }
-
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr;}
-    }
-    @media (max-width: 560px){
-      .wrap{padding:14px;}
-      .grid{padding:14px; gap:12px;}
-      .card{padding:14px;}
-      .navlinks{
-        width:100%;
-        justify-content:flex-start;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom:6px;
-      }
-      .navlinks::-webkit-scrollbar{height:6px}
-      .navlinks::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius:999px}
-      .kpis{grid-template-columns:1fr;}
-      .twoCol{grid-template-columns:1fr;}
-      .stage{height: 260px;}
-      .cup3d{width: 118px; height: 156px;}
-      .cupHandle{display:none;} /* phone: cleaner */
-    }
-  </style>
+@media (max-width: 900px){
+  .grid{grid-template-columns:1fr;}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">3 Cups</div>
-        </div>
-      </a>
 
-      <div class="navlinks" aria-label="Navigation">
-        <a href="wallet.html" data-page="wallet.html">Wallet</a>
-        <a href="trade.html" data-page="trade.html">Trade</a>
-        <a href="settings.html" data-page="settings.html">Settings</a>
-        <a href="profile.html" data-page="profile.html">Profile</a>
-        <a href="gamecenter.html" data-page="gamecenter.html">Game Center</a>
-        <a href="3cups.html" data-page="3cups.html">3 Cups</a>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="gamecenter.html">
+      <div class="logo"></div>
+      <div>AI MARKETING<br><small>3 Cups</small></div>
+    </a>
+    <span class="pill" id="balPill">Balance: $0.00</span>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h3>3 Cups</h3>
+    <div id="statusText">Ready</div>
+    <div id="hintText" style="color:#b8c0e6">Press Start Round</div>
+
+    <div class="stage">
+      <div class="cups3d">
+        <div class="cup3d disabled" id="cup1" onclick="pick(1)"><div class="coin"></div></div>
+        <div class="cup3d disabled" id="cup2" onclick="pick(2)"><div class="coin"></div></div>
+        <div class="cup3d disabled" id="cup3" onclick="pick(3)"><div class="coin"></div></div>
       </div>
-
-      <span class="pill" id="balPill">Balance: $0.00</span>
     </div>
-  </header>
+  </section>
 
-  <div class="grid">
-    <!-- LEFT: Game -->
-    <section class="card">
-      <div class="titleRow">
-        <div>
-          <h1>3 Cups (3D + Sound)</h1>
-          <div class="sub">Start round → cups shuffle fast (with sound) → pick a cup. Win pays <b>2.00x</b> (demo).</div>
-        </div>
-        <span class="pill" id="statusPill">Ready</span>
-      </div>
+  <aside class="card">
+    <label>Bet Amount</label>
+    <input class="field" id="bet" type="number" min="1" value="10" />
 
-      <div class="arena">
-        <div class="sub" id="hintText">Click “Start Round”, wait the shuffle, then choose a cup.</div>
+    <div style="margin-top:12px">
+      <button class="btn primary" id="startBtn" onclick="startRound()">START ROUND</button>
+      <button class="btn danger" onclick="resetRound()">RESET</button>
+    </div>
+  </aside>
+</div>
 
-        <div class="stage" aria-label="3D stage">
-          <div class="shadowFloor"></div>
-          <div class="cups3d" id="cups3d">
-            <div class="cup3d disabled" id="cup1" onclick="pick(1)">
-              <div class="cupBody"></div>
-              <div class="cupRim"></div>
-              <div class="cupInnerHole"></div>
-              <div class="cupHandle" aria-hidden="true"></div>
-              <div class="coin" aria-hidden="true"></div>
-              <div class="cupLabel">Cup 1</div>
-            </div>
+<script>
+/* ===== BALANCE ===== */
+const LS_BAL="aimkt_balance_usd";
+function money(x){return "$"+Number(x).toFixed(2);}
+function getBalance(){return Number(localStorage.getItem(LS_BAL)||0);}
+function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
+function renderBalance(){balPill.textContent="Balance: "+money(getBalance());}
+if(!getBalance()) setBalance(500);
 
-            <div class="cup3d disabled" id="cup2" onclick="pick(2)">
-              <div class="cupBody"></div>
-              <div class="cupRim"></div>
-              <div class="cupInnerHole"></div>
-              <div class="cupHandle" aria-hidden="true"></div>
-              <div class="coin" aria-hidden="true"></div>
-              <div class="cupLabel">Cup 2</div>
-            </div>
+/* ===== GAME ===== */
+const state={
+  inRound:false,
+  bet:0,
+  winCup:1
+};
 
-            <div class="cup3d disabled" id="cup3" onclick="pick(3)">
-              <div class="cupBody"></div>
-              <div class="cupRim"></div>
-              <div class="cupInnerHole"></div>
-              <div class="cupHandle" aria-hidden="true"></div>
-              <div class="coin" aria-hidden="true"></div>
-              <div class="cupLabel">Cup 3</div>
-            </div>
-          </div>
-        </div>
+function setStatus(t){ statusText.textContent=t; }
+function setHint(t){ hintText.textContent=t; }
 
-        <div class="kpis" style="margin-top:14px;">
-          <div class="kpi">
-            <span>Bet</span>
-            <b id="betView">$0.00</b>
-            <span class="muted">This round</span>
-          </div>
-          <div class="kpi">
-            <span>Payout (if win)</span>
-            <b id="payoutView">$0.00</b>
-            <span class="muted">Bet × 2.00</span>
-          </div>
-        </div>
-      </div>
+function lockCups(lock){
+  [1,2,3].forEach(i=>{
+    document.getElementById("cup"+i).classList.toggle("disabled", lock);
+  });
+}
 
-      <div class="note" role="note">
-        <b>Sound note:</b>
-        <div>
-          On mobile, sound works after you press a button (browser rule).
-          <small>Start Round will unlock audio.</small>
-        </div>
-      </div>
-    </section>
+function resetCups(){
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById("cup"+i);
+    el.className="cup3d disabled";
+  });
+}
 
-    <!-- RIGHT: Controls -->
-    <aside class="card">
-      <div class="titleRow">
-        <div>
-          <h1>Controls</h1>
-          <div class="sub">Balance stored in localStorage (shared across pages).</div>
-        </div>
-      </div>
+function startRound(){
+  if(state.inRound){
+    setStatus("Round already running");
+    return;
+  }
+  const b=Number(bet.value||0);
+  if(b<=0){
+    setStatus("Enter bet amount");
+    return;
+  }
+  if(b>getBalance()){
+    setStatus("Insufficient balance");
+    return;
+  }
 
-      <div>
-        <label for="bet">Bet Amount (USD)</label>
-        <input class="field" id="bet" type="number" min="1" step="0.01" placeholder="e.g. 10" />
-        <div class="sub">Must be ≤ balance.</div>
-      </div>
+  setBalance(getBalance()-b);
+  state.bet=b;
+  state.inRound=true;
+  state.winCup=1+Math.floor(Math.random()*3);
 
-      <div class="twoCol" style="margin-top:12px;">
-        <button class="btn primary" id="startBtn" type="button" onclick="startRound()">Start Round</button>
-        <button class="btn danger" type="button" onclick="resetRound(true)">Reset</button>
-      </div>
+  resetCups();
+  lockCups(false);
 
-      <div style="margin-top:12px;">
-        <button class="btn ghost" type="button" onclick="toggleSound()" id="soundBtn">Sound: ON</button>
-      </div>
+  setStatus("Pick a cup");
+  setHint("Choose wisely...");
+}
 
-      <div class="note" style="margin-top:12px; background: rgba(239,68,68,.08); border-right-color: rgba(239,68,68,.55);">
-        <b>Safety:</b>
-        <div>Never treat this as real gambling logic. UI only.</div>
-      </div>
+function pick(i){
+  if(!state.inRound){
+    setStatus("Press Start Round first");
+    return;
+  }
 
-      <div style="margin-top:14px;">
-        <button class="btn" type="button" onclick="seedBalance()">Give me demo balance ($500)</button>
-      </div>
-    </aside>
-  </div>
+  lockCups(true);
 
-  <div class="footer">
-    © <span id="year"></span> AI MARKETING — 3 Cups UI demo (localStorage).
-  </div>
-
-  <script>
-    // ===== NAV active =====
-    function setActiveNav(){
-      const file = (location.pathname.split("/").pop() || "3cups.html").toLowerCase();
-      document.querySelectorAll(".navlinks a").forEach(a=>{
-        const p = (a.getAttribute("data-page")||"").toLowerCase();
-        if(p === file) a.classList.add("active");
-      });
+  [1,2,3].forEach(n=>{
+    const el=document.getElementById("cup"+n);
+    if(n===state.winCup){
+      el.classList.add("showCoin");
     }
-
-    // ===== Balance =====
-    const LS_BAL = "aimkt_balance_usd";
-    function money(x){
-      return "$" + (Number(x)||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    if(n===i && n===state.winCup){
+      el.classList.add("win");
+    }else if(n===i){
+      el.classList.add("lose");
     }
-    function getBalance(){
-      const v = Number(localStorage.getItem(LS_BAL));
-      return Number.isFinite(v) ? v : 0;
-    }
-    function setBalance(v){
-      localStorage.setItem(LS_BAL, String(Math.max(0, Number(v)||0)));
-      renderBalance();
-    }
-    function renderBalance(){
-      document.getElementById("balPill").textContent = "Balance: " + money(getBalance());
-    }
-    function seedBalance(){
-      setBalance(500);
-      alert("Demo balance set to $500");
-    }
+  });
 
-    // ===== Sound (WebAudio, no external files) =====
-    let audioEnabled = true;
-    let AC = null;
+  if(i===state.winCup){
+    const win=state.bet*2;
+    setBalance(getBalance()+win);
+    setStatus("WIN ✅ Paid x2");
+    setHint("You won "+money(win));
+  }else{
+    setStatus("LOST ❌");
+    setHint("Wrong cup!");
+  }
 
-    function ensureAudio(){
-      if(!audioEnabled) return null;
-      if(!AC){
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if(!Ctx) return null;
-        AC = new Ctx();
-      }
-      if(AC.state === "suspended"){
-        // on mobile, user gesture required; this is called inside button click
-        AC.resume().catch(()=>{});
-      }
-      return AC;
-    }
+  state.inRound=false;
+}
 
-    function playTone(type){
-      if(!audioEnabled) return;
-      const ac = ensureAudio();
-      if(!ac) return;
+function resetRound(){
+  state.inRound=false;
+  state.bet=0;
+  resetCups();
+  lockCups(true);
+  setStatus("Ready");
+  setHint("Press Start Round");
+}
 
-      const now = ac.currentTime;
+/* INIT */
+renderBalance();
+resetRound();
+</script>
 
-      function osc(freq, dur, gainVal, wave="sine"){
-        const o = ac.createOscillator();
-        const g = ac.createGain();
-        o.type = wave;
-        o.frequency.setValueAtTime(freq, now);
-        g.gain.setValueAtTime(0.0001, now);
-        g.gain.exponentialRampToValueAtTime(gainVal, now + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        o.connect(g); g.connect(ac.destination);
-        o.start(now);
-        o.stop(now + dur + 0.02);
-      }
-
-      if(type === "shuffleTick"){
-        // small click-ish tick
-        osc(420 + Math.random()*180, 0.06, 0.06, "square");
-      }
-      if(type === "shuffleWhoosh"){
-        // short whoosh using low saw + quick decay
-        const o = ac.createOscillator();
-        const g = ac.createGain();
-        const f = 120 + Math.random()*40;
-        o.type = "sawtooth";
-        o.frequency.setValueAtTime(f, now);
-        o.frequency.exponentialRampToValueAtTime(360, now + 0.18);
-        g.gain.setValueAtTime(0.0001, now);
-        g.gain.exponentialRampToValueAtTime(0.10, now + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-        o.connect(g); g.connect(ac.destination);
-        o.start(now);
-        o.stop(now + 0.24);
-      }
-      if(type === "pick"){
-        osc(520, 0.08, 0.08, "triangle");
-      }
-      if(type === "win"){
-        // two notes up
-        osc(660, 0.10, 0.10, "sine");
-        setTimeout(()=>{ if(audioEnabled) playTone("win2"); }, 80);
-      }
-      if(type === "win2"){
-        const ac2 = ensureAudio(); if(!ac2) return;
-        const n2 = ac2.currentTime;
-        const o = ac2.createOscillator();
-        const g = ac2.createGain();
-        o.type = "sine";
-        o.frequency.setValueAtTime(880, n2);
-        g.gain.setValueAtTime(0.0001, n2);
-        g.gain.exponentialRampToValueAtTime(0.12, n2 + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, n2 + 0.18);
-        o.connect(g); g.connect(ac2.destination);
-        o.start(n2);
-        o.stop(n2 + 0.20);
-      }
-      if(type === "lose"){
-        // short low buzz
-        osc(170, 0.18, 0.10, "sawtooth");
-      }
-    }
-
-    function toggleSound(){
-      audioEnabled = !audioEnabled;
-      const b = document.getElementById("soundBtn");
-      b.textContent = "Sound: " + (audioEnabled ? "ON" : "OFF");
-      if(audioEnabled) ensureAudio();
-    }
-
-    // ===== Game state =====
-    const state = {
-      inRound:false,
-      shuffling:false,
-      bet:0,
-      winCup: 2,
-      payoutMult: 2.00
-    };
-
-    function setStatus(t){ document.getElementById("statusPill").textContent = t; }
-    function setHint(t){ document.getElementById("hintText").textContent = t; }
-
-    function lockCups(lock){
-      [1,2,3].forEach(i=>{
-        const el = document.getElementById("cup"+i);
-        el.classList.toggle("disabled", lock);
-      });
-    }
-
-    function resetCupStyles(){
-      [1,2,3].forEach(i=>{
-        const el = document.getElementById("cup"+i);
-        el.classList.remove("win","lose","openWin","openLose","showCoin","moving");
-        el.style.transform = "";
-      });
-    }
-
-    function renderViews(){
-      document.getElementById("betView").textContent = money(state.bet);
-      document.getElementById("payoutView").textContent = money(state.bet * state.payoutMult);
-    }
-
-    function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-
-    async function shuffleAnimation(){
-      const cups = [1,2,3].map(i => document.getElementById("cup"+i));
-      cups.forEach(c=>c.classList.add("moving"));
-
-      const steps = 14;      // more steps = more shuffle
-      const stepDelay = 80;  // faster
-      const spreadX = 92;
-      const lift = 28;
-      const zPop = 90;
-      const rot = 26;
-
-      playTone("shuffleWhoosh");
-
-      for(let s=0; s<steps; s++){
-        // tick sound on some steps
-        if(s % 2 === 0) playTone("shuffleTick");
-
-        const order = [0,1,2].sort(()=>Math.random()-0.5);
-        cups.forEach((cup, idx)=>{
-          const pos = idx - 1;
-          const x = pos * (spreadX + Math.random()*16);
-          const y = - (Math.random()*lift);
-          const rz = (Math.random()*rot - rot/2);
-          const rx = (Math.random()*18);
-          const ry = (Math.random()*44 - 22);
-          const z  = (Math.random()*zPop);
-
-          const mapped = cups[order[idx]];
-          mapped.style.transform =
-            `translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
-        });
-
-        await sleep(stepDelay);
-      }
-
-      // settle
-      cups.forEach(c=>{
-        c.style.transform = `translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
-      });
-
-      await sleep(260);
-      cups.forEach(c=>c.classList.remove("moving"));
-    }
-
-    async function startRound(){
-      // unlock audio on user gesture
-      ensureAudio();
-
-      if(state.inRound || state.shuffling) return alert("Round already running.");
-
-      const bet = Number(document.getElementById("bet").value || 0);
-      const bal = getBalance();
-
-      if(!bet || bet <= 0) return alert("Enter a bet amount.");
-      if(bet > bal) return alert("Bet is bigger than your balance.");
-
-      // reserve bet
-      setBalance(bal - bet);
-
-      state.inRound = true;
-      state.shuffling = true;
-      state.bet = +bet.toFixed(2);
-      state.winCup = 1 + Math.floor(Math.random()*3);
-
-      resetCupStyles();
-      lockCups(true);
-      renderViews();
-
-      setStatus("Shuffling...");
-      setHint("Shuffling fast... wait 👀");
-      document.getElementById("startBtn").disabled = true;
-
-      await shuffleAnimation();
-
-      state.shuffling = false;
-      lockCups(false);
-
-      setStatus("Pick a Cup");
-      setHint("Now choose a cup!");
-      document.getElementById("startBtn").disabled = false;
-    }
-
-    function endRoundResetBet(){
-      state.inRound = false;
-      state.bet = 0;
-      renderViews();
-      lockCups(true);
-      setHint("Click “Start Round” to play again.");
-    }
-
-    function pick(i){
-      if(!state.inRound) return alert("Start a round first.");
-      if(state.shuffling) return;
-
-      playTone("pick");
-
-      lockCups(true);
-
-      const payout = +(state.bet * state.payoutMult).toFixed(2);
-      const win = (i === state.winCup);
-
-      [1,2,3].forEach(n=>{
-        const el = document.getElementById("cup"+n);
-        if(n === state.winCup){
-          el.classList.add("win","openWin","showCoin");
-        } else {
-          el.classList.add("lose","openLose");
-        }
-      });
-
-      if(win){
-        setBalance(getBalance() + payout);
-        setStatus("WIN ✅ Paid 2.00x");
-        setHint("You found the coin! 🪙");
-        playTone("win");
-        setTimeout(()=>alert("You won! Paid: " + money(payout)), 120);
-      } else {
-        setStatus("LOST ❌");
-        setHint("Wrong cup. Coin was shown in the winning cup.");
-        playTone("lose");
-        setTimeout(()=>alert("You lost. Try again."), 120);
-      }
-
-      endRoundResetBet();
-    }
-
-    function resetRound(showAlert){
-      state.inRound = false;
-      state.shuffling = false;
-      state.bet = 0;
-      resetCupStyles();
-      lockCups(true);
-      setStatus("Ready");
-      setHint("Click “Start Round”, wait the shuffle, then choose a cup.");
-      renderViews();
-      document.getElementById("startBtn").disabled = false;
-      if(showAlert) alert("Round reset.");
-    }
-
-    // init
-    document.getElementById("year").textContent = new Date().getFullYear();
-    setActiveNav();
-    renderBalance();
-    resetRound(false);
-  </script>
 </body>
 </html>
