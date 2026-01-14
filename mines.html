@@ -19,25 +19,55 @@
   --bad:#ef4444;
 }
 *{box-sizing:border-box}
+
+/* ===== BODY ===== */
 body{
   margin:0;
+  padding-top:70px; /* مهم حتى ما يغطّي الهيدر المحتوى */
   font-family:system-ui;
   background:radial-gradient(1200px 600px at 50% -10%, rgba(124,92,255,.25), transparent 60%), var(--bg);
   color:#fff;
 }
+
+/* ===== HEADER FIXED ===== */
 header{
-  position:sticky; top:0;
-  background:rgba(11,16,32,.8);
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:9999;
+  background:rgba(11,16,32,.92);
   border-bottom:1px solid var(--border);
+  backdrop-filter: blur(8px);
 }
+
 .wrap{max-width:520px;margin:0 auto;padding:12px;}
 .nav{display:flex;justify-content:space-between;align-items:center;}
+
+/* ===== TOP BUTTON ===== */
 .btnTop{
   padding:8px 12px;border-radius:10px;
   border:1px solid var(--border);
   background:rgba(255,255,255,.06);
   color:#fff;text-decoration:none;font-weight:800;
 }
+
+/* ===== BALANCE CENTER ===== */
+.headerBar{position:relative;}
+.balanceCenter{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-weight:900;
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background: linear-gradient(135deg, rgba(34,197,94,.25), rgba(34,197,94,.10));
+  box-shadow: 0 0 20px rgba(34,197,94,.25);
+  color:#fff;
+}
+
+/* ===== CARD ===== */
 .card{
   margin:12px auto;
   max-width:520px;
@@ -81,23 +111,19 @@ header{
   opacity:1;
 }
 
-/* ===== CRYSTAL GEM ===== */
+/* ===== GEM ===== */
 .gem{
   background:radial-gradient(circle at 30% 30%, #6affff, #1fbfbf 60%, #064e4e);
   box-shadow:0 0 25px rgba(0,255,255,.6);
 }
 .gem .icon{
-  background:
-    linear-gradient(135deg, #eaffff, #3cf2ff 40%, #00bcd4 70%, #006064);
+  background: linear-gradient(135deg, #eaffff, #3cf2ff 40%, #00bcd4 70%, #006064);
   clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 50% 100%, 0% 60%, 15% 25%);
-  animation: crystalSpin 3s linear infinite;
+  animation: spin 3s linear infinite;
 }
-@keyframes crystalSpin{
-  from{transform:scale(1) rotate(0deg)}
-  to{transform:scale(1) rotate(360deg)}
-}
+@keyframes spin{from{transform:scale(1) rotate(0)}to{transform:scale(1) rotate(360deg)}}
 
-/* ===== BOMB ===== */
+/* ===== MINE ===== */
 .mine{
   background:radial-gradient(circle at 30% 30%, #ff8a8a, #b91c1c 60%, #450a0a);
   box-shadow:0 0 25px rgba(255,80,80,.7);
@@ -105,28 +131,9 @@ header{
 .mine .icon{
   border-radius:50%;
   background: radial-gradient(circle at 30% 30%, #444, #000 70%);
-  position:relative;
-}
-.mine .icon::before{
-  content:"";
-  position:absolute;
-  top:-15%;
-  left:40%;
-  width:20%;
-  height:20%;
-  background:#888;
-  border-radius:4px;
-}
-.mine.explode .icon{
-  animation: explode .35s ease;
-}
-@keyframes explode{
-  0%{transform:scale(.4)}
-  60%{transform:scale(1.3)}
-  100%{transform:scale(1)}
 }
 
-/* ===== Controls ===== */
+/* ===== CONTROLS ===== */
 .field{
   width:100%;
   padding:12px;
@@ -148,6 +155,17 @@ header{
 .btn:disabled{opacity:.5; cursor:not-allowed;}
 .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
 
+/* ===== CASHOUT ===== */
+.btn.cashout{
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: rgba(34,197,94,.6);
+  box-shadow: 0 0 25px rgba(34,197,94,.45);
+  font-size: 18px;
+  padding: 16px;
+}
+.btn.cashout:hover{transform:scale(1.03);}
+
+/* ===== STATUS ===== */
 .badge{
   padding:10px 12px;
   border-radius:12px;
@@ -168,9 +186,10 @@ header{
 <body>
 
 <header>
-  <div class="wrap nav">
+  <div class="wrap nav headerBar">
     <a href="gamecenter.html" class="btnTop">↩ Game Center</a>
-    <div id="balPill">Balance: $0.00</div>
+    <div id="balPill" class="balanceCenter">Balance: $0.00</div>
+    <div style="width:90px;"></div>
   </div>
 </header>
 
@@ -189,14 +208,14 @@ header{
   <button class="btn primary" id="startBtn" style="margin-top:10px;" onclick="startGame()">🎮 Start</button>
 
   <div class="twoCol">
-    <button class="btn" onclick="cashOut()">💰 Cash Out</button>
+    <button class="btn cashout" onclick="cashOut()">💰 Cash Out</button>
   </div>
 
   <div class="kpi" id="infoText">Pick tiles. Each crystal increases multiplier.</div>
 </div>
 
 <script>
-/* ================= BALANCE ================= */
+/* BALANCE */
 const LS_BAL="aimkt_balance_usd";
 function money(x){return "$"+Number(x).toFixed(2);}
 function getBalance(){return Number(localStorage.getItem(LS_BAL)||0);}
@@ -204,212 +223,94 @@ function setBalance(v){localStorage.setItem(LS_BAL,v); renderBalance();}
 function renderBalance(){balPill.textContent="Balance: "+money(getBalance());}
 if(!getBalance()) setBalance(1000);
 
-/* ================= SOUND ENGINE (new) ================= */
-let AC=null;
-function audio(){
-  if(!AC){
-    const Ctx=window.AudioContext||window.webkitAudioContext;
-    AC=new Ctx();
-  }
-  if(AC.state==="suspended") AC.resume();
-  return AC;
-}
-function noiseBurst(time=0.2, freq=200){
-  const ac=audio();
-  const buffer = ac.createBuffer(1, ac.sampleRate * time, ac.sampleRate);
-  const data = buffer.getChannelData(0);
-  for(let i=0;i<data.length;i++){
-    data[i]=(Math.random()*2-1)*(1-i/data.length);
-  }
-  const src = ac.createBufferSource();
-  src.buffer = buffer;
-  const filter = ac.createBiquadFilter();
-  filter.type="lowpass";
-  filter.frequency.value=freq;
-  src.connect(filter).connect(ac.destination);
-  src.start();
-}
-function chime(){
-  const ac=audio();
-  const now=ac.currentTime;
-  [800,1200,1600].forEach((f,i)=>{
-    const o=ac.createOscillator();
-    const g=ac.createGain();
-    o.frequency.value=f;
-    o.type="sine";
-    g.gain.value=0.12;
-    o.connect(g); g.connect(ac.destination);
-    o.start(now+i*0.05);
-    o.stop(now+i*0.05+0.12);
-  });
-}
-function sndStart(){chime();}
-function sndClick(){noiseBurst(0.03,800);}
-function sndGem(){chime();}
-function sndMine(){noiseBurst(0.35,200);}
-function sndCash(){chime();}
+/* GAME */
+const TOTAL=25, MAX_MULT=1001, HOUSE_EDGE=0.05;
+const gridEl=document.getElementById("grid");
+const statusBox=document.getElementById("statusBox");
+const startBtn=document.getElementById("startBtn");
 
-/* ================= GAME CORE ================= */
-const TOTAL = 25;
-const MAX_MULT = 1001;
-const HOUSE_EDGE = 0.05;
-
-const gridEl = document.getElementById("grid");
-const statusBox = document.getElementById("statusBox");
-const startBtn = document.getElementById("startBtn");
-
-let game = {
-  active:false,
-  bet:0,
-  mines:5,
-  revealed:0,
-  layout:[],
-  multiplier:1
-};
+let game={active:false,bet:0,mines:5,revealed:0,layout:[],multiplier:1};
 
 function buildGrid(){
   gridEl.innerHTML="";
   for(let i=0;i<TOTAL;i++){
     const d=document.createElement("div");
     d.className="cell";
-    d.innerHTML = `<div class="icon"></div>`;
-    d.onclick = ()=>onPick(i, d);
+    d.innerHTML=`<div class="icon"></div>`;
+    d.onclick=()=>onPick(i,d);
     gridEl.appendChild(d);
   }
 }
-
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-}
-
-function comb(n,k){
-  if(k>n || k<0) return 0;
-  let r=1;
-  for(let i=1;i<=k;i++){
-    r = r * (n - (k - i)) / i;
-  }
-  return r;
-}
-
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function comb(n,k){if(k>n||k<0)return 0;let r=1;for(let i=1;i<=k;i++){r=r*(n-(k-i))/i;}return r;}
 function calcMultiplier(){
-  const r = game.revealed;
-  if(r<=0) return 1;
-  const safe = TOTAL - game.mines;
-  const fair = comb(TOTAL, r) / comb(safe, r);
-  const withEdge = fair * (1 - HOUSE_EDGE);
-  return Math.min(withEdge, MAX_MULT);
+  const r=game.revealed; if(r<=0) return 1;
+  const safe=TOTAL-game.mines;
+  const fair=comb(TOTAL,r)/comb(safe,r);
+  return Math.min(fair*(1-HOUSE_EDGE), MAX_MULT);
 }
 
 function startGame(){
   if(game.active) return;
-
-  const b = Number(bet.value||0);
-  const m = Number(mines.value||0);
-
-  if(b<=0 || b>getBalance()) return alert("Invalid bet");
-  if(m<3 || m>22) return alert("Mines must be between 3 and 22");
-
-  audio();
-  sndStart();
+  const b=Number(bet.value||0);
+  const m=Number(mines.value||0);
+  if(b<=0||b>getBalance()) return alert("Invalid bet");
+  if(m<3||m>22) return alert("Mines 3-22");
 
   setBalance(getBalance()-b);
 
-  game.active=true;
-  game.bet=b;
-  game.mines=m;
-  game.revealed=0;
-  game.multiplier=1;
-
-  game.layout = [];
+  game.active=true; game.bet=b; game.mines=m; game.revealed=0;
+  game.layout=[];
   for(let i=0;i<m;i++) game.layout.push(true);
   for(let i=0;i<TOTAL-m;i++) game.layout.push(false);
   shuffle(game.layout);
 
   buildGrid();
-  statusBox.textContent = "Game started! Pick a tile...";
+  statusBox.textContent="Game started! Pick a tile...";
   statusBox.className="badge";
   updateInfo();
-
-  startBtn.disabled = true;
+  startBtn.disabled=true;
 }
 
 function updateInfo(){
-  game.multiplier = calcMultiplier();
-  infoText.textContent = `Crystals: ${game.revealed} | Multiplier: x${game.multiplier.toFixed(4)}`;
+  game.multiplier=calcMultiplier();
+  infoText.textContent=`Crystals: ${game.revealed} | Multiplier: x${game.multiplier.toFixed(4)}`;
 }
 
 function revealAll(){
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach((c,i)=>{
+  document.querySelectorAll(".cell").forEach((c,i)=>{
     if(c.classList.contains("revealed")) return;
     c.classList.add("revealed");
-    const icon = c.querySelector(".icon");
-    if(game.layout[i]){
-      c.classList.add("mine");
-      icon.parentElement.classList.add("mine");
-    }else{
-      c.classList.add("gem");
-      icon.parentElement.classList.add("gem");
-    }
+    if(game.layout[i]) c.classList.add("mine"); else c.classList.add("gem");
   });
 }
+function endRound(){game.active=false; startBtn.disabled=false;}
 
-function endRound(){
-  game.active = false;
-  startBtn.disabled = false;
-}
-
-function onPick(i, el){
-  if(!game.active) return;
-  if(el.classList.contains("revealed")) return;
-
-  sndClick();
-
+function onPick(i,el){
+  if(!game.active||el.classList.contains("revealed")) return;
   el.classList.add("revealed");
-  const icon = el.querySelector(".icon");
-
   if(game.layout[i]){
-    // MINE
-    el.classList.add("mine","explode");
-    icon.parentElement.classList.add("mine");
-    sndMine();
-    statusBox.textContent="💥 BOOM! You hit a bomb!";
+    el.classList.add("mine");
+    statusBox.textContent="💥 BOOM! You lost!";
     statusBox.className="badge lose";
-    revealAll();
-    endRound();
-    return;
+    revealAll(); endRound();
   }else{
-    // GEM
     el.classList.add("gem");
-    icon.parentElement.classList.add("gem");
-    sndGem();
-    game.revealed++;
-    updateInfo();
-
-    if(game.multiplier >= MAX_MULT){
-      statusBox.textContent="🏆 Max multiplier reached! Cash out!";
-      statusBox.className="badge";
-    }
+    game.revealed++; updateInfo();
   }
 }
 
 function cashOut(){
-  if(!game.active || game.revealed===0) return;
-  sndCash();
-  const win = game.bet * game.multiplier;
-  setBalance(getBalance() + win);
-  statusBox.textContent = "💰 Cashed out: " + money(win);
+  if(!game.active||game.revealed===0) return;
+  const win=game.bet*game.multiplier;
+  setBalance(getBalance()+win);
+  statusBox.textContent="💰 Cashed out: "+money(win);
   statusBox.className="badge";
-  revealAll();
-  endRound();
+  revealAll(); endRound();
 }
 
-/* ================= INIT ================= */
-renderBalance();
-buildGrid();
+/* INIT */
+renderBalance(); buildGrid();
 </script>
 
 </body>
