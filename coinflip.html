@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>AI ORIGINALS | Coinflip</title>
 
 <style>
@@ -15,11 +15,27 @@
   --ok:#22c55e; --bad:#ef4444;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:#0b1020;color:#fff;padding-top:70px;}
+
+html, body{
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+}
+
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#0b1020;
+  color:#fff;
+  padding-top:70px;
+}
+
 header{
   position:fixed; top:0; left:0; right:0; z-index:999;
-  background:rgba(11,16,32,.9); border-bottom:1px solid var(--border);
+  background:rgba(11,16,32,.95); border-bottom:1px solid var(--border);
 }
+
 .wrap{max-width:480px;margin:0 auto;padding:10px 12px;}
 .nav{display:flex;justify-content:space-between;align-items:center;}
 
@@ -123,11 +139,7 @@ header{
 .coinTextSmall{font-size:14px; letter-spacing:1px;}
 
 /* ===== UI ===== */
-.betRow{
-  display:grid;
-  grid-template-columns:1fr 80px;
-  gap:10px;
-}
+.betRow{display:grid;grid-template-columns:1fr 80px;gap:10px;}
 
 .field{
   width:100%;padding:14px;border-radius:16px;
@@ -164,7 +176,6 @@ header{
     0 10px 25px rgba(0,0,0,.5);
   transition:.12s ease;
 }
-.mainBtn:hover{transform:translateY(-1px);}
 .mainBtn:active{transform:translateY(1px);}
 .mainBtn.cashout{
   background:
@@ -198,16 +209,10 @@ header{
 
     <div class="coin3d idle" id="coin3d">
       <div class="coinFace gold faceGold">
-        <div>
-          <div class="coinTextBig">AI</div>
-          <div class="coinTextSmall">GOLD</div>
-        </div>
+        <div><div class="coinTextBig">AI</div><div class="coinTextSmall">GOLD</div></div>
       </div>
       <div class="coinFace silver faceSilver">
-        <div>
-          <div class="coinTextBig">AI</div>
-          <div class="coinTextSmall">SILVER</div>
-        </div>
+        <div><div class="coinTextBig">AI</div><div class="coinTextSmall">SILVER</div></div>
       </div>
     </div>
   </div>
@@ -294,6 +299,8 @@ function updateProfit(){
   profitBox.textContent = `💰 Profit: +${money(profit)} (x${game.multiplier.toFixed(2)})`;
 }
 
+function setStatus(t){ statusText.textContent = t; }
+
 function doubleBet(){
   if(game.active) return;
   const current = Number(bet.value||0);
@@ -307,7 +314,7 @@ function doubleBet(){
 
 function resetGame(){
   game.active=false; game.bet=0; game.side=null; game.round=0; game.multiplier=MIN_MULT;
-  statusText.textContent="Enter bet and press Start...";
+  setStatus("Enter bet and press Start...");
   mainBtn.textContent="🎮 START";
   mainBtn.className="mainBtn";
   updateProfit();
@@ -316,7 +323,10 @@ function resetGame(){
 
 function startGame(){
   const b=Number(bet.value||0);
-  if(b<=0 || b>getBalance()) return alert("Invalid bet");
+  if(b<=0 || b>getBalance()){
+    setStatus("❌ Invalid bet amount");
+    return;
+  }
 
   setBalance(getBalance()-b);
   game.bet=b; game.active=true; game.round=0; game.multiplier=MIN_MULT;
@@ -326,12 +336,15 @@ function startGame(){
   mainBtn.textContent="💰 CASH OUT";
   mainBtn.className="mainBtn cashout";
 
-  statusText.textContent="Choose Gold or Silver...";
+  setStatus("Choose Gold or Silver...");
   updateProfit();
 }
 
 function chooseSide(side){
-  if(!game.active) return;
+  if(!game.active){
+    setStatus("Press START first");
+    return;
+  }
   game.side=side;
   flipOnce();
 }
@@ -341,7 +354,7 @@ function flipOnce(){
   game.multiplier=getMultiplier(game.round);
   sndFlip();
 
-  statusText.textContent="Flipping...";
+  setStatus("Flipping...");
   updateProfit();
 
   coin.classList.remove("flipping","idle");
@@ -355,7 +368,7 @@ function flipOnce(){
     if(res!==game.side){
       sndLose();
       showBadge("LOSE","lose");
-      statusText.textContent="❌ You lost!";
+      setStatus("❌ You lost!");
       resetGame();
       return;
     }
@@ -364,21 +377,24 @@ function flipOnce(){
     showBadge("WIN","win");
 
     if(game.round>=MAX_ROUNDS){
-      statusText.textContent="🏆 Max rounds reached! Cash out!";
+      setStatus("🏆 Max rounds reached! Cash out!");
       return;
     }
 
-    statusText.textContent="✅ Win! Choose side for next round...";
+    setStatus("✅ Win! Choose side for next round...");
   },1100);
 }
 
 function cashOut(){
-  if(!game.active || game.round===0) return;
-  sndCash();
+  if(!game.active || game.round===0){
+    setStatus("Nothing to cash out");
+    return;
+  }
 
+  sndCash();
   const win = game.bet * game.multiplier;
   setBalance(getBalance() + win);
-  alert("Cashed out: " + money(win));
+  setStatus("💰 Cashed out: " + money(win));
   resetGame();
 }
 
