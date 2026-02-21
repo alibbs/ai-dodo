@@ -4,23 +4,24 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>AMANA GLOBAL | Digital Intelligence Platform</title>
-<meta name="description" content="AMANA GLOBAL منصة رقمية احترافية لإدارة التحليل، الأتمتة، وإدارة المخاطر ضمن بيئات رقمية متقلبة." />
+<title>AMANA GLOBAL | Crypto & Trading Intelligence</title>
+<meta name="description" content="AMANA GLOBAL منصة احترافية لتحليل الأسواق الرقمية، التداول، وبناء أنظمة Bot Trading بإدارة مخاطر متقدمة." />
 
 <style>
 :root{
-  --bg:#05070d;
+  --bg:#0b0f1f;
   --text:#ffffff;
-  --muted:#b4b9d6;
+  --muted:#b8b9d9;
 
-  /* Solana Inspired */
-  --brand:#9945FF;
-  --brand2:#14F195;
-  --brand3:#00FFA3;
+  /* Colors from AMANA logo */
+  --brand1:#a100ff;
+  --brand2:#ff00b8;
+  --brand3:#6c00ff;
 
+  --glass: rgba(255,255,255,.05);
   --border: rgba(255,255,255,.08);
   --shadow: 0 30px 80px rgba(0,0,0,.6);
-  --radius: 20px;
+  --radius: 18px;
   --max: 1150px;
 }
 
@@ -28,27 +29,27 @@
 
 body{
   margin:0;
-  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
-  background: linear-gradient(-45deg, #05070d, #0d0f1c, #120e25, #0a1a18);
-  background-size: 400% 400%;
-  animation: gradientMove 12s ease infinite;
+  font-family: system-ui, -apple-system, Tahoma, Arial;
+  background: linear-gradient(-45deg,#0b0f1f,#140b2d,#1c0833,#120822);
+  background-size:400% 400%;
+  animation:bgMove 12s ease infinite;
   color:var(--text);
   line-height:1.7;
 }
 
-@keyframes gradientMove {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+@keyframes bgMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
-.wrap{max-width:var(--max); margin:0 auto; padding:24px;}
+.wrap{max-width:var(--max);margin:auto;padding:24px;}
 
 header{
   position:sticky;
   top:0;
-  backdrop-filter: blur(20px);
-  background: rgba(0,0,0,.4);
+  backdrop-filter:blur(20px);
+  background:rgba(0,0,0,.5);
   border-bottom:1px solid var(--border);
   z-index:100;
 }
@@ -61,9 +62,9 @@ header{
 }
 
 .logo{
+  font-size:20px;
   font-weight:900;
-  font-size:18px;
-  background: linear-gradient(135deg,var(--brand),var(--brand2));
+  background: linear-gradient(135deg,var(--brand1),var(--brand2));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
@@ -87,25 +88,24 @@ nav a{
 nav a:hover{opacity:1}
 
 .btn{
-  padding:10px 16px;
+  padding:10px 18px;
   border-radius:14px;
-  text-decoration:none;
   font-weight:800;
-  display:inline-block;
+  text-decoration:none;
   transition:.3s;
 }
 
 .btn.primary{
-  background: linear-gradient(135deg,var(--brand),var(--brand2),var(--brand3));
-  color:#000;
+  background:linear-gradient(135deg,var(--brand1),var(--brand2));
+  color:#fff;
 }
 
 .btn.primary:hover{
-  box-shadow:0 0 25px rgba(20,241,149,.6);
+  box-shadow:0 0 25px rgba(255,0,184,.6);
 }
 
 .hero{
-  padding:80px 0;
+  padding:90px 0;
   text-align:center;
 }
 
@@ -116,22 +116,31 @@ nav a:hover{opacity:1}
 
 .hero p{
   color:var(--muted);
-  max-width:700px;
-  margin:0 auto 30px;
+  max-width:800px;
+  margin:auto;
+}
+
+.section{
+  padding:70px 0;
+}
+
+.section h2{
+  text-align:center;
+  margin-bottom:40px;
 }
 
 .card{
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(25px);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius: var(--radius);
+  background:var(--glass);
+  backdrop-filter:blur(25px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
   padding:25px;
-  box-shadow: var(--shadow);
+  box-shadow:var(--shadow);
   transition:.4s;
 }
 
 .card:hover{
-  transform:translateY(-8px) scale(1.02);
+  transform:translateY(-8px);
 }
 
 .grid{
@@ -140,25 +149,15 @@ nav a:hover{opacity:1}
   grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 }
 
-.section{
-  padding:60px 0;
-}
-
-.section h2{
-  text-align:center;
-  margin-bottom:40px;
-}
-
 footer{
-  border-top:1px solid var(--border);
-  padding:30px 0;
   text-align:center;
+  padding:30px;
+  border-top:1px solid var(--border);
   color:var(--muted);
-  margin-top:60px;
 }
 
 @media(max-width:768px){
-  .hero h1{font-size:34px;}
+.hero h1{font-size:34px;}
 }
 </style>
 </head>
@@ -166,69 +165,94 @@ footer{
 <body>
 
 <header>
-  <div class="wrap nav">
-    <div class="logo">AMANA GLOBAL</div>
+<div class="wrap nav">
+<div class="logo">AMANA GLOBAL</div>
 
-    <nav>
-      <ul>
-        <li><a href="#about">عنّا</a></li>
-        <li><a href="#services">الخدمات</a></li>
-        <li><a href="#contact">تواصل</a></li>
-      </ul>
-    </nav>
+<nav>
+<ul>
+<li><a href="#crypto">العملات الرقمية</a></li>
+<li><a href="#trading">التداول</a></li>
+<li><a href="#bot">Bot Trading</a></li>
+<li><a href="#contact">تواصل</a></li>
+</ul>
+</nav>
 
-    <a href="#" class="btn primary">ابدأ الآن</a>
-  </div>
+<a href="#" class="btn primary">ابدأ الآن</a>
+</div>
 </header>
 
 <main class="wrap">
 
 <section class="hero">
-  <h1>Digital Intelligence Reimagined</h1>
-  <p>
-    AMANA GLOBAL منصة احترافية لإدارة التحليل، الأتمتة، وإدارة المخاطر
-    ضمن بيئات رقمية متقلبة. بدون وعود أرباح مضمونة — فقط بيانات وانضباط.
-  </p>
-  <a href="#services" class="btn primary">اكتشف الحلول</a>
+<h1>AMANA GLOBAL</h1>
+<p>
+منصة احترافية لتحليل الأسواق الرقمية، التداول، وبناء أنظمة تداول آلي
+تعتمد على البيانات وإدارة المخاطر المتقدمة.
+</p>
 </section>
 
-<section id="about" class="section">
-  <h2>عن AMANA GLOBAL</h2>
-  <div class="card">
-    ندمج بين التكنولوجيا، التحليل الذكي، وإدارة المخاطر
-    لنقدّم بيئة احترافية تساعدك تتخذ قرارات مبنية على بيانات.
-  </div>
+<section id="crypto" class="section">
+<h2>ما هي العملات الرقمية (Crypto)؟</h2>
+<div class="card">
+العملات الرقمية هي أصول رقمية تعتمد على تقنية البلوكشين.
+تتميز باللامركزية والشفافية وإمكانية التداول العالمي 24/7.
+تتأثر الأسعار بالعرض والطلب، الأخبار، السيولة، والتقلبات السوقية.
+لذلك تُعتبر من الأسواق عالية المخاطر وتتطلب إدارة رأس مال صارمة.
+</div>
 </section>
 
-<section id="services" class="section">
-  <h2>الخدمات</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>Analytics Dashboard</h3>
-      لوحات تحكم متقدمة لقياس الأداء والمخاطر.
-    </div>
-    <div class="card">
-      <h3>Automation Rules</h3>
-      تنفيذ مبني على قواعد واضحة بدون عشوائية.
-    </div>
-    <div class="card">
-      <h3>Risk Management</h3>
-      حماية رأس المال عبر استراتيجيات انضباط ذكية.
-    </div>
-  </div>
+<section id="trading" class="section">
+<h2>ما هو التداول (Trading)؟</h2>
+<div class="card">
+التداول هو عملية شراء وبيع الأصول بهدف الاستفادة من فروقات الأسعار.
+يوجد عدة أنواع:
+<ul>
+<li>التداول اليومي (Day Trading)</li>
+<li>التداول قصير المدى (Scalping)</li>
+<li>التداول طويل المدى (Swing Trading)</li>
+</ul>
+يعتمد النجاح في التداول على:
+<ul>
+<li>التحليل الفني</li>
+<li>التحليل الأساسي</li>
+<li>إدارة المخاطر</li>
+<li>الانضباط النفسي</li>
+</ul>
+لا توجد أرباح مضمونة، والسوق قد يؤدي إلى خسارة رأس المال.
+</div>
+</section>
+
+<section id="bot" class="section">
+<h2>ما هو Bot Trading؟</h2>
+<div class="grid">
+<div class="card">
+Bot Trading هو نظام تداول آلي ينفذ أوامر البيع والشراء بناءً على قواعد مبرمجة مسبقاً.
+</div>
+<div class="card">
+يعتمد على خوارزميات تحليل البيانات والمؤشرات الفنية لتحديد نقاط الدخول والخروج.
+</div>
+<div class="card">
+يساعد على تقليل القرارات العاطفية ويعمل 24/7 دون توقف.
+</div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+⚠️ تنبيه مهم: أنظمة التداول الآلي لا تضمن الأرباح.
+جميع الاستراتيجيات معرضة للمخاطر ويجب اختبارها وإدارة رأس المال بحذر.
+</div>
 </section>
 
 <section id="contact" class="section">
-  <h2>تواصل معنا</h2>
-  <div class="card">
-    info@amanaglobal.com
-  </div>
+<h2>تواصل معنا</h2>
+<div class="card">
+info@amanaglobal.com
+</div>
 </section>
 
 </main>
 
 <footer>
-  © <span id="year"></span> AMANA GLOBAL. All Rights Reserved.
+© <span id="year"></span> AMANA GLOBAL. All Rights Reserved.
 </footer>
 
 <script>
