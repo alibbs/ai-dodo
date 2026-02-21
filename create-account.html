@@ -87,6 +87,30 @@ button{
   cursor:pointer;
   background:linear-gradient(135deg,var(--brand1),var(--brand2));
   color:#fff;
+  transition: transform 0.2s;
+}
+
+button:active { transform: scale(0.98); }
+
+/* التعديل الجديد هنا: رابط الدخول */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.login-link a {
+  color: var(--brand2);
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 5px;
+  transition: 0.3s;
+}
+
+.login-link a:hover {
+  color: var(--brand1);
+  text-decoration: underline;
 }
 
 .msg{
@@ -97,8 +121,8 @@ button{
   display:none;
 }
 
-.success{background:rgba(0,255,150,.1);}
-.error{background:rgba(255,0,80,.1);}
+.success{background:rgba(0,255,150,.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2);}
+.error{background:rgba(255,0,80,.1); color: #ff0050; border: 1px solid rgba(255,0,80,0.2);}
 </style>
 </head>
 
@@ -128,48 +152,16 @@ button{
 <label>Country</label>
 <select id="country" required>
 <option value="">Select Country</option>
-
-<!-- Arab Countries First -->
-<option value="+971">🇦🇪 United Arab Emirates (+971)</option>
-<option value="+966">🇸🇦 Saudi Arabia (+966)</option>
+<option value="+971">🇦🇪 UAE (+971)</option>
+<option value="+966">🇸🇦 KSA (+966)</option>
 <option value="+961">🇱🇧 Lebanon (+961)</option>
 <option value="+20">🇪🇬 Egypt (+20)</option>
 <option value="+962">🇯🇴 Jordan (+962)</option>
 <option value="+974">🇶🇦 Qatar (+974)</option>
 <option value="+965">🇰🇼 Kuwait (+965)</option>
-<option value="+968">🇴🇲 Oman (+968)</option>
-<option value="+973">🇧🇭 Bahrain (+973)</option>
-<option value="+964">🇮🇶 Iraq (+964)</option>
-<option value="+963">🇸🇾 Syria (+963)</option>
-<option value="+212">🇲🇦 Morocco (+212)</option>
-<option value="+213">🇩🇿 Algeria (+213)</option>
-<option value="+216">🇹🇳 Tunisia (+216)</option>
-
-<!-- Other Major Countries -->
-<option value="+1">🇺🇸 United States (+1)</option>
-<option value="+44">🇬🇧 United Kingdom (+44)</option>
-<option value="+49">🇩🇪 Germany (+49)</option>
-<option value="+33">🇫🇷 France (+33)</option>
-<option value="+39">🇮🇹 Italy (+39)</option>
-<option value="+34">🇪🇸 Spain (+34)</option>
+<option value="+1">🇺🇸 USA (+1)</option>
+<option value="+44">🇬🇧 UK (+44)</option>
 <option value="+90">🇹🇷 Turkey (+90)</option>
-<option value="+7">🇷🇺 Russia (+7)</option>
-<option value="+86">🇨🇳 China (+86)</option>
-<option value="+91">🇮🇳 India (+91)</option>
-<option value="+92">🇵🇰 Pakistan (+92)</option>
-<option value="+81">🇯🇵 Japan (+81)</option>
-<option value="+82">🇰🇷 South Korea (+82)</option>
-<option value="+61">🇦🇺 Australia (+61)</option>
-<option value="+55">🇧🇷 Brazil (+55)</option>
-<option value="+27">🇿🇦 South Africa (+27)</option>
-<option value="+234">🇳🇬 Nigeria (+234)</option>
-<option value="+62">🇮🇩 Indonesia (+62)</option>
-<option value="+63">🇵🇭 Philippines (+63)</option>
-<option value="+66">🇹🇭 Thailand (+66)</option>
-<option value="+60">🇲🇾 Malaysia (+60)</option>
-
-<!-- (You can easily expand to 200 countries later) -->
-
 </select>
 
 <label>Phone Number</label>
@@ -179,6 +171,10 @@ button{
 <input id="promo" placeholder="Enter promo code if any" />
 
 <button type="submit">Create Account</button>
+
+<div class="login-link">
+  Already have an account? <a href="login.html">Login</a>
+</div>
 
 <div id="msg" class="msg"></div>
 
@@ -192,6 +188,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// تأكد من وضع بياناتك الحقيقية هنا
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
@@ -208,6 +205,14 @@ const db = getFirestore(app);
 const form=document.getElementById("createForm");
 const msg=document.getElementById("msg");
 
+// استهداف الحقول من الـ ID مباشرة
+const usernameField = document.getElementById("username");
+const emailField = document.getElementById("email");
+const passwordField = document.getElementById("password");
+const countryField = document.getElementById("country");
+const phoneField = document.getElementById("phone");
+const promoField = document.getElementById("promo");
+
 function show(text,type){
   msg.style.display="block";
   msg.className="msg "+type;
@@ -217,25 +222,31 @@ function show(text,type){
 form.addEventListener("submit",async e=>{
 e.preventDefault();
 
+const btn = form.querySelector("button");
+btn.disabled = true;
+btn.textContent = "Processing...";
+
 try{
-const user=await createUserWithEmailAndPassword(auth,email.value,password.value);
+const userCredential = await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
 
-await updateProfile(user.user,{displayName:username.value});
+await updateProfile(userCredential.user, { displayName: usernameField.value });
 
-await setDoc(doc(db,"users",user.user.uid),{
-username:username.value,
-email:email.value,
-country:country.value,
-phone:country.value + phone.value,
-promo:promo.value || null,
-createdAt:serverTimestamp()
+await setDoc(doc(db, "users", userCredential.user.uid), {
+  username: usernameField.value,
+  email: emailField.value,
+  country: countryField.value,
+  phone: countryField.value + phoneField.value,
+  promo: promoField.value || null,
+  createdAt: serverTimestamp()
 });
 
-show("Account created successfully ✅","success");
-setTimeout(()=>window.location="profile.html",800);
+show("Account created successfully ✅", "success");
+setTimeout(()=> window.location.href = "profile.html", 800);
 
 }catch(err){
-show("Error: "+err.message,"error");
+btn.disabled = false;
+btn.textContent = "Create Account";
+show("Error: " + err.message, "error");
 }
 });
 </script>
