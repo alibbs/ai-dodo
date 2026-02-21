@@ -1,352 +1,223 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Create Account</title>
-  <meta name="description" content="Create an account for AI MARKETING." />
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --max: 980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.6;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-    .wrap{width:100%; max-width: 720px;}
-    .top{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      margin-bottom:14px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
-      text-decoration:none;
-      color: var(--text);
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 12px 30px rgba(124,92,255,.25);
-      flex: 0 0 auto;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
-    h1{margin:0 0 6px; font-size: 28px; line-height:1.2;}
-    .sub{margin:0 0 14px; color:var(--muted); font-size: 14px;}
-    form{margin-top:14px;}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    label{
-      display:block;
-      font-weight:700;
-      font-size: 13px;
-      margin-bottom:6px;
-    }
-    .field{
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.20);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 12px 12px;
-      width:100%;
-      outline:none;
-    }
-    .field:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 5px rgba(124,92,255,.12);
-    }
-    .row{grid-column: 1 / -1;}
-    .phone{
-      display:grid;
-      grid-template-columns: 140px 1fr;
-      gap:10px;
-    }
-    .hint{margin-top:6px; color:var(--muted); font-size:12px;}
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top: 14px;
-      align-items:center;
-    }
-    .btn{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 14px;
-      border-radius:14px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-    }
-    .btn:active{transform: translateY(1px);}
-    .link{
-      color: var(--muted);
-      text-decoration:none;
-      font-weight:700;
-    }
-    .link:hover{color:var(--text)}
-    .msg{
-      margin-top:12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(34,211,238,.08);
-      color: var(--text);
-      display:none;
-      white-space: pre-wrap;
-    }
-    .footnote{
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    @media (max-width: 720px){
-      .grid{grid-template-columns: 1fr;}
-      .phone{grid-template-columns: 1fr;}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>AMANA GLOBAL | Create Account</title>
+
+<style>
+:root{
+  --bg:#0b0f1f;
+  --text:#ffffff;
+  --muted:#b8b9d9;
+  --brand1:#a100ff;
+  --brand2:#ff00b8;
+  --glass: rgba(255,255,255,.06);
+  --border: rgba(255,255,255,.08);
+  --radius:16px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Tahoma, Arial;
+  background: linear-gradient(135deg,#0b0f1f,#1c0833);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+
+/* Container */
+.container{
+  width:100%;
+  max-width:420px;
+}
+
+/* Header */
+.header{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.brand{
+  font-size:22px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--brand1),var(--brand2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Card */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(18px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+}
+
+/* Form */
+label{
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+  display:block;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-bottom:16px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  font-size:15px;
+}
+
+input:focus{
+  border-color:var(--brand2);
+  outline:none;
+  box-shadow:0 0 0 3px rgba(255,0,184,.2);
+}
+
+/* Button */
+button{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--brand1),var(--brand2));
+  color:#fff;
+  transition:.3s;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+/* Message */
+.msg{
+  margin-top:15px;
+  padding:12px;
+  border-radius:12px;
+  font-size:14px;
+  display:none;
+}
+
+.success{background:rgba(0,255,150,.1);}
+.error{background:rgba(255,0,80,.1);}
+
+/* Desktop enhancement */
+@media(min-width:768px){
+  body{
+    background: linear-gradient(-45deg,#0b0f1f,#140b2d,#1c0833,#120822);
+    background-size:400% 400%;
+    animation:bgMove 12s ease infinite;
+  }
+
+  @keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  .container{
+    max-width:480px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="top">
-      <a class="brand" href="index.html" aria-label="AI MARKETING Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div style="font-size:16px;">AI MARKETING</div>
-          <div style="font-size:12px; opacity:.8;">Create Account</div>
-        </div>
-      </a>
 
-      <a class="link" href="login.html">Already have an account? Login</a>
-    </div>
+<div class="container">
 
-    <div class="card">
-      <h1>Create your account</h1>
-      <p class="sub">Create a real account using Firebase (Email/Password).</p>
-
-      <form id="createForm">
-        <div class="grid">
-          <div>
-            <label for="username">Username</label>
-            <input class="field" id="username" name="username" autocomplete="username" required
-                   minlength="3" maxlength="24" placeholder="e.g. teshrij" />
-            <div class="hint">3–24 chars, letters/numbers/underscore recommended.</div>
-          </div>
-
-          <div>
-            <label for="birthdate">Date of birth</label>
-            <input class="field" id="birthdate" name="birthdate" type="date" required />
-          </div>
-
-          <div class="row">
-            <label for="email">Email</label>
-            <input class="field" id="email" name="email" type="email" required
-                   autocomplete="email" placeholder="e.g. you@example.com" />
-            <div class="hint">This email will be used to login.</div>
-          </div>
-
-          <div class="row">
-            <label>Phone number</label>
-            <div class="phone">
-              <select class="field" name="countryCode" id="countryCode" required>
-                <option value="+961">Lebanon (+961)</option>
-                <option value="+971">UAE (+971)</option>
-                <option value="+966">Saudi Arabia (+966)</option>
-                <option value="+965">Kuwait (+965)</option>
-                <option value="+973">Bahrain (+973)</option>
-                <option value="+968">Oman (+968)</option>
-                <option value="+962">Jordan (+962)</option>
-                <option value="+963">Syria (+963)</option>
-                <option value="+964">Iraq (+964)</option>
-                <option value="+20">Egypt (+20)</option>
-                <option value="+212">Morocco (+212)</option>
-                <option value="+213">Algeria (+213)</option>
-                <option value="+216">Tunisia (+216)</option>
-                <option value="+1">USA/Canada (+1)</option>
-                <option value="+44">UK (+44)</option>
-                <option value="+33">France (+33)</option>
-                <option value="+49">Germany (+49)</option>
-                <option value="+90">Turkey (+90)</option>
-              </select>
-
-              <input class="field" id="phone" name="phone" type="tel" required
-                     inputmode="tel" placeholder="e.g. 70123456"
-                     pattern="[0-9]{6,15}" />
-            </div>
-            <div class="hint">Digits only. Example: 70123456</div>
-          </div>
-
-          <div>
-            <label for="password">Password</label>
-            <input class="field" id="password" name="password" type="password" required
-                   minlength="8" autocomplete="new-password"
-                   placeholder="Minimum 8 characters" />
-            <div class="hint">Use a strong password (mix letters & numbers).</div>
-          </div>
-
-          <div>
-            <label for="location">Place of residence</label>
-            <input class="field" id="location" name="location" required
-                   placeholder="e.g. Beirut, Lebanon" />
-            <div class="hint">City + country recommended.</div>
-          </div>
-
-          <div class="row">
-            <label for="referral">Referral code (optional)</label>
-            <input class="field" id="referral" name="referral" maxlength="32"
-                   placeholder="e.g. AI-REF-12345" />
-            <div class="hint">If you have a code, enter it here.</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn primary" type="submit">Create Account</button>
-          <button class="btn" type="button" id="demoBtn">Fill demo</button>
-        </div>
-
-        <div id="msg" class="msg" role="status" aria-live="polite"></div>
-
-        <div class="footnote">
-          By creating an account, you agree to the Terms & Privacy Policy.
-        </div>
-      </form>
-    </div>
+<div class="header">
+  <div class="brand">AMANA GLOBAL</div>
+  <div style="color:var(--muted);font-size:13px;margin-top:4px;">
+    Create Your Secure Account
   </div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div class="card">
+<form id="createForm">
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDY7q15093piylwNsLA5L7FM_qOj94idtw",
-      authDomain: "ai-marketing-561de.firebaseapp.com",
-      projectId: "ai-marketing-561de",
-      storageBucket: "ai-marketing-561de.firebasestorage.app",
-      messagingSenderId: "1024997344963",
-      appId: "1:1024997344963:web:4204363fdddef7eca60476",
-      measurementId: "G-99S756PJVG"
-    };
+<label>Username</label>
+<input id="username" required minlength="3" placeholder="Enter username" />
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+<label>Email</label>
+<input type="email" id="email" required placeholder="you@example.com" />
 
-    const form = document.getElementById("createForm");
-    const msg = document.getElementById("msg");
-    const demoBtn = document.getElementById("demoBtn");
+<label>Password</label>
+<input type="password" id="password" required minlength="8" placeholder="Minimum 8 characters" />
 
-    function showMsg(text, ok=false){
-      msg.style.display = "block";
-      msg.style.background = ok ? "rgba(34,211,238,.10)" : "rgba(255,0,80,.10)";
-      msg.textContent = text;
-    }
+<label>Location</label>
+<input id="location" required placeholder="City, Country" />
 
-    function normalizeUsername(u){
-      return (u || "").trim().toLowerCase();
-    }
+<button type="submit">Create Account</button>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+<div id="msg" class="msg"></div>
 
-      const username = normalizeUsername(document.getElementById("username").value);
-      const birthdate = document.getElementById("birthdate").value;
-      const email = document.getElementById("email").value.trim();
-      const countryCode = document.getElementById("countryCode").value;
-      const phone = document.getElementById("phone").value.trim();
-      const password = document.getElementById("password").value;
-      const location = document.getElementById("location").value.trim();
-      const referral = document.getElementById("referral").value.trim();
+</form>
+</div>
 
-      const fullPhone = `${countryCode}${phone}`;
+</div>
 
-      const validUser = /^[a-z0-9_]{3,24}$/.test(username);
-      if (!validUser){
-        showMsg("❌ Username must be 3–24 chars and only: a-z, 0-9, underscore.");
-        return;
-      }
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
 
-        await updateProfile(user, { displayName: username });
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        await setDoc(doc(db, "users", user.uid), {
-          username,
-          email,
-          phone: fullPhone,
-          birthdate,
-          location,
-          referral: referral || null,
-          createdAt: serverTimestamp()
-        });
+const form=document.getElementById("createForm");
+const msg=document.getElementById("msg");
 
-        showMsg("✅ Account created successfully! Redirecting...", true);
+function show(text,type){
+  msg.style.display="block";
+  msg.className="msg "+type;
+  msg.textContent=text;
+}
 
-        // ✅ Redirect to profile.html
-        setTimeout(() => {
-          window.location.href = "profile.html";
-        }, 700);
+form.addEventListener("submit",async e=>{
+e.preventDefault();
 
-      } catch (err) {
-        const code = err?.code || "";
-        if (code === "auth/email-already-in-use"){
-          showMsg("❌ This email is already used. Try login instead.");
-        } else if (code === "auth/weak-password"){
-          showMsg("❌ Weak password. Use at least 8 characters (better 10+).");
-        } else if (code === "auth/invalid-email"){
-          showMsg("❌ Invalid email address.");
-        } else {
-          showMsg("❌ Signup failed:\n" + (err?.message || "Unknown error"));
-        }
-        console.error(err);
-      }
-    });
+try{
+const user=await createUserWithEmailAndPassword(auth,email.value,password.value);
+await updateProfile(user.user,{displayName:username.value});
+await setDoc(doc(db,"users",user.user.uid),{
+username:username.value,
+email:email.value,
+location:location.value,
+createdAt:serverTimestamp()
+});
+show("Account created successfully ✅","success");
+setTimeout(()=>window.location="profile.html",800);
+}catch(err){
+show("Error: "+err.message,"error");
+}
+});
+</script>
 
-    demoBtn.addEventListener("click", () => {
-      document.getElementById("username").value = "teshrij";
-      document.getElementById("birthdate").value = "1998-01-01";
-      document.getElementById("email").value = "test@example.com";
-      document.getElementById("countryCode").value = "+961";
-      document.getElementById("phone").value = "70123456";
-      document.getElementById("password").value = "DemoPass123";
-      document.getElementById("location").value = "Beirut, Lebanon";
-      document.getElementById("referral").value = "AI-REF-12345";
-    });
-  </script>
 </body>
 </html>
