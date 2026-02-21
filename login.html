@@ -3,74 +3,146 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI MARKETING | Login</title>
-  <meta name="description" content="Login to AI MARKETING." />
+  <title>AMANA GLOBAL | Login</title>
+  <meta name="description" content="Secure login to AMANA GLOBAL dashboard." />
 
-  <!-- ================== STYLE ================== -->
   <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#101a33;
-      --text:#e8ecff;
-      --muted:#b8c0e6;
-      --brand:#7c5cff;
-      --brand2:#22d3ee;
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
+    :root {
+      --bg: #0b0f1f;
+      --text: #ffffff;
+      --muted: #b8b9d9;
+      --brand1: #a100ff; /* Purple */
+      --brand2: #ff00b8; /* Pink */
+      --brand3: #6c00ff; /* Deep Purple */
+      --glass: rgba(255, 255, 255, .05);
+      --border: rgba(255, 255, 255, .1);
+      --shadow: 0 30px 80px rgba(0, 0, 0, .6);
+      --radius: 20px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-                  radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+      /* الخلفية المتحركة مثل الموقع الأساسي */
+      background: linear-gradient(-45deg, #0b0f1f, #140b2d, #1c0833, #120822);
+      background-size: 400% 400%;
+      animation: bgMove 12s ease infinite;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
-    .wrap{width:100%; max-width: 720px;}
-    .card{
-      background: linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-      border:1px solid var(--border);
+
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .wrap { width: 100%; max-width: 420px; }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 40px 30px;
+      text-align: center;
     }
-    h1{margin:0 0 6px; font-size: 28px;}
-    .sub{margin:0 0 14px; color:var(--muted); font-size: 14px;}
-    label{font-weight:700; font-size:13px}
-    .field{
-      width:100%;
-      margin-top:6px;
-      margin-bottom:12px;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.2);
-      color:var(--text);
+
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--brand1), var(--brand2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
     }
-    .btn{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      font-weight:800;
-      cursor:pointer;
-      border:1px solid var(--border);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(34,211,238,.75));
-      color:#fff;
+
+    h1 { margin: 0 0 8px; font-size: 24px; font-weight: 800; }
+    .sub { margin: 0 0 30px; color: var(--muted); font-size: 14px; }
+
+    .form-group { text-align: left; margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      padding-left: 5px;
     }
-    .msg{
-      margin-top:12px;
-      padding:12px;
-      border-radius:14px;
-      display:none;
-      white-space:pre-wrap;
-      border:1px solid var(--border);
+
+    .field {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, .3);
+      color: var(--text);
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .field:focus {
+      outline: none;
+      border-color: var(--brand2);
+      background: rgba(0, 0, 0, .5);
+      box-shadow: 0 0 15px rgba(255, 0, 184, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(135deg, var(--brand1), var(--brand2));
+      color: #fff;
+      transition: .3s;
+      margin-top: 10px;
+      box-shadow: 0 10px 20px rgba(161, 0, 255, 0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(255, 0, 184, .5);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .msg {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 12px;
+      display: none;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg.error { background: rgba(255, 0, 80, 0.15); color: #ff4d8d; border-color: rgba(255, 0, 80, 0.2); }
+    .msg.success { background: rgba(0, 255, 184, 0.15); color: #00ffb8; border-color: rgba(0, 255, 184, 0.2); }
+
+    .footer-note {
+        margin-top: 25px;
+        font-size: 12px;
+        color: var(--muted);
     }
   </style>
 </head>
@@ -79,23 +151,31 @@
 
   <div class="wrap">
     <div class="card">
-      <h1>Welcome back</h1>
-      <p class="sub">Login using your email</p>
+      <div class="logo">AMANA GLOBAL</div>
+      <h1>Welcome Back</h1>
+      <p class="sub">Login to manage your trading bots</p>
 
       <form id="loginForm">
-        <label>Email</label>
-        <input id="email" class="field" type="email" required placeholder="you@example.com">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input id="email" class="field" type="email" required placeholder="name@example.com">
+        </div>
 
-        <label>Password</label>
-        <input id="password" class="field" type="password" required placeholder="Your password">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" class="field" type="password" required placeholder="••••••••">
+        </div>
 
-        <button class="btn" type="submit">Login</button>
+        <button class="btn" type="submit">Authorize Login</button>
         <div id="msg" class="msg"></div>
       </form>
+
+      <div class="footer-note">
+        &copy; 2026 AMANA GLOBAL. Secure Intelligence.
+      </div>
     </div>
   </div>
 
-  <!-- ================== FIREBASE ================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -117,7 +197,7 @@
 
     function show(text, ok=false){
       msg.style.display = "block";
-      msg.style.background = ok ? "rgba(34,211,238,.15)" : "rgba(255,0,80,.15)";
+      msg.className = ok ? "msg success" : "msg error";
       msg.textContent = text;
     }
 
@@ -126,24 +206,32 @@
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+      const btn = form.querySelector('.btn');
+
+      btn.textContent = "Verifying...";
+      btn.style.opacity = "0.7";
+      btn.disabled = true;
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        show("✅ Login successful! Redirecting...", true);
+        show("✅ Access Granted! Redirecting...", true);
 
-        // ✅ REDIRECT HERE
         setTimeout(() => {
           window.location.href = "profile.html";
-        }, 500);
+        }, 800);
 
       } catch (err) {
+        btn.textContent = "Authorize Login";
+        btn.style.opacity = "1";
+        btn.disabled = false;
+
         const code = err.code || "";
         if (code === "auth/wrong-password" || code === "auth/invalid-credential") {
-          show("❌ Wrong email or password");
+          show("❌ Invalid email or password");
         } else if (code === "auth/user-not-found") {
           show("❌ Account not found");
         } else {
-          show("❌ Login error:\n" + err.message);
+          show("❌ Error: " + err.message);
         }
       }
     });
