@@ -32,17 +32,8 @@ body{
   padding:16px;
 }
 
-/* Container */
-.container{
-  width:100%;
-  max-width:420px;
-}
-
-/* Header */
-.header{
-  text-align:center;
-  margin-bottom:20px;
-}
+.container{width:100%;max-width:420px;}
+.header{text-align:center;margin-bottom:20px;}
 
 .brand{
   font-size:22px;
@@ -52,7 +43,6 @@ body{
   -webkit-text-fill-color:transparent;
 }
 
-/* Card */
 .card{
   background:var(--glass);
   backdrop-filter:blur(18px);
@@ -61,7 +51,6 @@ body{
   padding:22px;
 }
 
-/* Form */
 label{
   font-size:13px;
   font-weight:700;
@@ -69,7 +58,7 @@ label{
   display:block;
 }
 
-input{
+input,select{
   width:100%;
   padding:14px;
   margin-bottom:16px;
@@ -80,13 +69,14 @@ input{
   font-size:15px;
 }
 
-input:focus{
+select option{color:#000;}
+
+input:focus,select:focus{
   border-color:var(--brand2);
   outline:none;
   box-shadow:0 0 0 3px rgba(255,0,184,.2);
 }
 
-/* Button */
 button{
   width:100%;
   padding:14px;
@@ -97,14 +87,8 @@ button{
   cursor:pointer;
   background:linear-gradient(135deg,var(--brand1),var(--brand2));
   color:#fff;
-  transition:.3s;
 }
 
-button:active{
-  transform:scale(.98);
-}
-
-/* Message */
 .msg{
   margin-top:15px;
   padding:12px;
@@ -115,25 +99,6 @@ button:active{
 
 .success{background:rgba(0,255,150,.1);}
 .error{background:rgba(255,0,80,.1);}
-
-/* Desktop enhancement */
-@media(min-width:768px){
-  body{
-    background: linear-gradient(-45deg,#0b0f1f,#140b2d,#1c0833,#120822);
-    background-size:400% 400%;
-    animation:bgMove 12s ease infinite;
-  }
-
-  @keyframes bgMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-  }
-
-  .container{
-    max-width:480px;
-  }
-}
 </style>
 </head>
 
@@ -160,8 +125,58 @@ button:active{
 <label>Password</label>
 <input type="password" id="password" required minlength="8" placeholder="Minimum 8 characters" />
 
-<label>Location</label>
-<input id="location" required placeholder="City, Country" />
+<label>Country</label>
+<select id="country" required>
+<option value="">Select Country</option>
+
+<!-- Arab Countries First -->
+<option value="+971">🇦🇪 United Arab Emirates (+971)</option>
+<option value="+966">🇸🇦 Saudi Arabia (+966)</option>
+<option value="+961">🇱🇧 Lebanon (+961)</option>
+<option value="+20">🇪🇬 Egypt (+20)</option>
+<option value="+962">🇯🇴 Jordan (+962)</option>
+<option value="+974">🇶🇦 Qatar (+974)</option>
+<option value="+965">🇰🇼 Kuwait (+965)</option>
+<option value="+968">🇴🇲 Oman (+968)</option>
+<option value="+973">🇧🇭 Bahrain (+973)</option>
+<option value="+964">🇮🇶 Iraq (+964)</option>
+<option value="+963">🇸🇾 Syria (+963)</option>
+<option value="+212">🇲🇦 Morocco (+212)</option>
+<option value="+213">🇩🇿 Algeria (+213)</option>
+<option value="+216">🇹🇳 Tunisia (+216)</option>
+
+<!-- Other Major Countries -->
+<option value="+1">🇺🇸 United States (+1)</option>
+<option value="+44">🇬🇧 United Kingdom (+44)</option>
+<option value="+49">🇩🇪 Germany (+49)</option>
+<option value="+33">🇫🇷 France (+33)</option>
+<option value="+39">🇮🇹 Italy (+39)</option>
+<option value="+34">🇪🇸 Spain (+34)</option>
+<option value="+90">🇹🇷 Turkey (+90)</option>
+<option value="+7">🇷🇺 Russia (+7)</option>
+<option value="+86">🇨🇳 China (+86)</option>
+<option value="+91">🇮🇳 India (+91)</option>
+<option value="+92">🇵🇰 Pakistan (+92)</option>
+<option value="+81">🇯🇵 Japan (+81)</option>
+<option value="+82">🇰🇷 South Korea (+82)</option>
+<option value="+61">🇦🇺 Australia (+61)</option>
+<option value="+55">🇧🇷 Brazil (+55)</option>
+<option value="+27">🇿🇦 South Africa (+27)</option>
+<option value="+234">🇳🇬 Nigeria (+234)</option>
+<option value="+62">🇮🇩 Indonesia (+62)</option>
+<option value="+63">🇵🇭 Philippines (+63)</option>
+<option value="+66">🇹🇭 Thailand (+66)</option>
+<option value="+60">🇲🇾 Malaysia (+60)</option>
+
+<!-- (You can easily expand to 200 countries later) -->
+
+</select>
+
+<label>Phone Number</label>
+<input type="tel" id="phone" required placeholder="Enter phone number" />
+
+<label>Promo Code (Optional)</label>
+<input id="promo" placeholder="Enter promo code if any" />
 
 <button type="submit">Create Account</button>
 
@@ -204,15 +219,21 @@ e.preventDefault();
 
 try{
 const user=await createUserWithEmailAndPassword(auth,email.value,password.value);
+
 await updateProfile(user.user,{displayName:username.value});
+
 await setDoc(doc(db,"users",user.user.uid),{
 username:username.value,
 email:email.value,
-location:location.value,
+country:country.value,
+phone:country.value + phone.value,
+promo:promo.value || null,
 createdAt:serverTimestamp()
 });
+
 show("Account created successfully ✅","success");
 setTimeout(()=>window.location="profile.html",800);
+
 }catch(err){
 show("Error: "+err.message,"error");
 }
