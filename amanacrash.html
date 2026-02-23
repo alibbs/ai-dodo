@@ -3,83 +3,86 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA CRASH PRO</title>
+    <title>AMANA CRASH | STAKE EDITION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --bg: #04060f;
-            --panel: #0d111c;
+            --bg: #060914;
+            --panel: #0f121d;
             --brand: #ff00b8;
             --up: #00ff96;
-            --usdt: #26a17b; /* لون التذر الرسمي */
-            --border: rgba(255, 255, 255, 0.05);
-            --input-bg: #161b28;
+            --usdt: #26a17b;
+            --border: #222635;
+            --input-bg: #1a1d29;
         }
 
-        /* قفل الشاشة ومنع التحريك */
-        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; position: fixed; /* قفل الـ Scroll */
-            font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff;
+            overflow: hidden; position: fixed;
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
         }
 
-        body { display: flex; flex-direction: column; }
-
-        /* --- Header --- */
-        header {
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
-        }
+        /* --- Header & USDT Balance --- */
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
         .balance-tag {
-            background: rgba(38, 161, 123, 0.1); border: 1px solid var(--usdt);
-            padding: 6px 14px; border-radius: 12px; font-weight: 800; color: #fff;
+            background: var(--panel); border: 2px solid var(--border);
+            padding: 8px 16px; border-radius: 8px; font-weight: 800; 
             display: flex; align-items: center; gap: 8px;
         }
-        .usdt-icon { color: var(--usdt); font-size: 18px; }
+        .usdt-icon { color: var(--usdt); font-size: 20px; }
 
         /* --- Game Viewport --- */
-        .game-viewport {
+        .game-area {
             flex: 1; position: relative; margin: 0 10px;
-            background: #000; border-radius: 20px;
+            background: #000; border-radius: 15px;
             border: 1px solid var(--border); overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .stars { position: absolute; width: 200%; height: 200%; background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.15; animation: spaceMove 40s linear infinite; }
-        @keyframes spaceMove { from { transform: translate(0,0); } to { transform: translate(-50%, -50%); } }
-
-        .multiplier-val { font-size: 60px; font-weight: 900; z-index: 10; text-shadow: 0 0 20px rgba(255, 0, 184, 0.4); }
-        #rocket { position: absolute; bottom: 20%; left: 10%; font-size: 38px; color: var(--brand); z-index: 5; transform: rotate(-45deg); text-shadow: 0 0 15px var(--brand); }
+        .multiplier-val { font-size: 65px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
+        #rocket { position: absolute; bottom: 15%; left: 10%; font-size: 35px; color: var(--brand); z-index: 5; transform: rotate(-45deg); text-shadow: 0 0 20px var(--brand); }
 
         /* --- History --- */
-        .history-lane { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; white-space: nowrap; }
-        .hist-chip { background: var(--panel); padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; border: 1px solid var(--border); }
+        .history-lane { display: flex; gap: 6px; padding: 10px 15px; overflow-x: auto; }
+        .hist-chip { background: var(--panel); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid var(--border); }
 
-        /* --- Betting Dashboard --- */
+        /* --- Stake Style Dashboard --- */
         .dashboard {
-            background: var(--panel); border-top: 1px solid var(--border);
-            border-radius: 30px 30px 0 0; padding: 20px; 
-            display: flex; flex-direction: column; gap: 12px;
-            padding-bottom: env(safe-area-inset-bottom); /* لدعم الـ Notch في الآيفون */
+            background: var(--panel); border-top: 2px solid var(--border);
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+            padding-bottom: 30px;
         }
 
-        .profit-status { text-align: center; height: 20px; color: var(--up); font-weight: 800; font-size: 14px; }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: #55607b; font-weight: 700; text-transform: uppercase; }
+        
+        .input-wrapper {
+            background: var(--input-bg); border: 2px solid var(--border);
+            border-radius: 6px; display: flex; align-items: center; padding-right: 5px;
+        }
+        .input-wrapper input { 
+            flex: 1; background: transparent; border: none; color: #fff; 
+            padding: 12px; font-size: 15px; font-weight: 700; 
+        }
 
-        .card-input { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; }
-        .card-input label { display: block; font-size: 10px; color: #555; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
-        .input-row { display: flex; align-items: center; justify-content: space-between; }
-        .input-row input { background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 700; outline: none; width: 50%; }
+        .quick-btns { display: flex; gap: 2px; }
+        .quick-btns button { 
+            background: #2f3749; border: none; color: #fff; 
+            padding: 8px 12px; font-size: 11px; font-weight: 800; border-radius: 4px;
+        }
 
-        .quick-actions { display: flex; gap: 5px; }
-        .quick-actions button { background: #232a3b; border: none; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-
+        /* --- Main Action Button --- */
         .main-btn {
-            width: 100%; padding: 18px; border-radius: 15px; border: none;
-            font-size: 18px; font-weight: 900; letter-spacing: 1px; transition: 0.2s;
+            width: 100%; padding: 18px; border-radius: 6px; border: none;
+            font-size: 16px; font-weight: 800; text-transform: uppercase;
+            cursor: pointer; transition: 0.1s;
         }
-        .btn-ready { background: linear-gradient(135deg, var(--brand), #b000ff); color: #fff; }
-        .btn-active { background: var(--up); color: #000; font-weight: 900; }
-        .btn-locked { background: #1a1f2e; color: #444; }
+        .btn-bet { background: var(--brand); color: #fff; }
+        .btn-bet:active { opacity: 0.8; }
+        .btn-cashout { background: var(--up); color: #000; }
+        .btn-waiting { background: #2f3749; color: #55607b; cursor: not-allowed; }
+
+        .profit-preview { text-align: center; height: 18px; color: var(--up); font-size: 14px; font-weight: 800; }
 
     </style>
 </head>
@@ -88,68 +91,77 @@
     <header>
         <a href="game.html" style="color:#fff;"><i class="fa-solid fa-chevron-left"></i></a>
         <div class="balance-tag">
-            <i class="fa-brands fa-ethereum usdt-icon"></i> <span id="userBalance">0.00</span>
+            <i class="fa-solid fa-circle-dollar-to-slot usdt-icon"></i>
+            <span id="userBalance">0.00</span>
         </div>
-        <i class="fa-solid fa-gear" style="color:#333"></i>
+        <i class="fa-solid fa-chart-line" style="color:#2f3749"></i>
     </header>
 
     <div class="history-lane" id="history"></div>
 
-    <div class="game-viewport">
-        <div class="stars"></div>
+    <div class="game-area">
         <i id="rocket" class="fa-solid fa-rocket"></i>
         <div id="multiplier" class="multiplier-val">1.00x</div>
     </div>
 
     <div class="dashboard">
-        <div class="profit-status" id="liveProfit"></div>
+        <div class="profit-preview" id="profitPreview"></div>
 
-        <div class="card-input">
-            <label>Amount (USDT)</label>
-            <div class="input-row">
-                <input type="number" id="betAmount" value="10.00">
-                <div class="quick-actions">
-                    <button onclick="adjust(0.5)">1/2</button>
-                    <button onclick="adjust(2)">x2</button>
+        <div class="control-group">
+            <div class="label-row"><span>Bet Amount</span><span>USDT</span></div>
+            <div class="input-wrapper">
+                <input type="number" id="betAmount" value="10.00" step="1">
+                <div class="quick-btns">
+                    <button onclick="mult(0.5)">½</button>
+                    <button onclick="mult(2)">2×</button>
                 </div>
             </div>
         </div>
 
-        <div class="card-input">
-            <label>Auto Cashout</label>
-            <div class="input-row">
+        <div class="control-group">
+            <div class="label-row"><span>Auto Cashout</span></div>
+            <div class="input-wrapper">
                 <input type="number" id="autoCash" value="2.00" step="0.1">
             </div>
         </div>
 
-        <button id="mainBtn" class="main-btn btn-ready" onclick="handleBet()">PLACE BET</button>
-        <div style="text-align:center; font-size:9px; color:#333; margin-top:5px;">SECURE CRYPTO INTERFACE</div>
+        <button id="actionBtn" class="main-btn btn-bet" onclick="handleAction()">Place Bet</button>
+        
+        <div id="statusInfo" style="text-align:center; font-size:10px; color:#2f3749; font-weight:700; margin-top:5px;">NETWORK SECURE</div>
     </div>
 
 <script>
-    // --- Balance Management ---
+    // --- Balance Sync ---
     let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
-    function updateBalanceUI() {
-        document.getElementById('userBalance').textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+    const balanceEl = document.getElementById('userBalance');
+    
+    function syncBal() {
+        balanceEl.textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
         localStorage.setItem('balance', balance);
     }
-    updateBalanceUI();
+    syncBal();
 
+    // --- Game Logic ---
     let multi = 1.00, state = "IDLE", hasBet = false, cashed = false, myBet = 0;
     let startT, anim;
 
-    const multiEl = document.getElementById('multiplier');
-    const rocketEl = document.getElementById('rocket');
-    const mainBtn = document.getElementById('mainBtn');
-    const profitEl = document.getElementById('liveProfit');
+    const multiText = document.getElementById('multiplier');
+    const rocket = document.getElementById('rocket');
+    const actionBtn = document.getElementById('actionBtn');
+    const profitPreview = document.getElementById('profitPreview');
 
-    function launchRound() {
+    function launch() {
         state = "RUNNING";
         startT = Date.now();
         multi = 1.00;
-        if(!hasBet) {
-            mainBtn.className = "main-btn btn-locked";
-            mainBtn.textContent = "FLYING...";
+        multiText.style.color = "#fff";
+        
+        if(hasBet) {
+            actionBtn.className = "main-btn btn-cashout";
+            actionBtn.textContent = "Cash Out";
+        } else {
+            actionBtn.className = "main-btn btn-waiting";
+            actionBtn.textContent = "Flying...";
         }
         tick();
     }
@@ -157,60 +169,71 @@
     function tick() {
         if(state !== "RUNNING") return;
         let elapsed = (Date.now() - startT) / 1000;
-        multi = Math.pow(Math.E, 0.082 * elapsed);
-        multiEl.textContent = multi.toFixed(2) + "x";
+        
+        // معادلة الطيران (Stake-like curve)
+        multi = Math.pow(Math.E, 0.08 * elapsed);
+        multiText.textContent = multi.toFixed(2) + "x";
 
-        rocketEl.style.left = Math.min(10 + elapsed * 5, 80) + "%";
-        rocketEl.style.bottom = Math.min(20 + Math.pow(elapsed, 1.4) * 3, 75) + "%";
+        // Rocket Move
+        rocket.style.left = Math.min(10 + elapsed * 5, 80) + "%";
+        rocket.style.bottom = Math.min(15 + Math.pow(elapsed, 1.3) * 4, 75) + "%";
 
         if(hasBet && !cashed) {
-            let currentProfit = myBet * multi;
-            profitEl.textContent = "PROFIT: +" + currentProfit.toFixed(2) + " USDT";
+            profitPreview.textContent = "+" + (myBet * multi).toFixed(2) + " USDT";
+            // Auto Cashout check
             let auto = parseFloat(document.getElementById('autoCash').value);
-            if(auto > 1.01 && multi >= auto) processCashOut();
+            if(auto > 1.01 && multi >= auto) doCashOut();
         }
 
-        if(Math.random() < (0.0015 + multi * 0.0035)) crash();
-        else anim = requestAnimationFrame(tick);
+        // --- نظام الحماية الذكي (House Edge) ---
+        // 1. نسبة كراش فوري (1.00x) بنسبة 3% (مثل ستيك)
+        // 2. نسبة كراش بتزيد كل ما زاد الـ Multiplier
+        let crashChance = 0.0015 + (multi * 0.004); 
+        if(multi > 10) crashChance = 0.05; // حماية إضافية للأرقام العالية
+
+        if(Math.random() < crashChance) {
+            doCrash();
+        } else {
+            anim = requestAnimationFrame(tick);
+        }
     }
 
-    function handleBet() {
+    function handleAction() {
         if(state === "IDLE" && !hasBet) {
-            let amt = parseFloat(document.getElementById('betAmount').value);
-            if(amt > balance || amt <= 0) {
-                alert("Insufficient Balance!");
-                return;
-            }
-            // خصم الرصيد فوراً
-            balance -= amt;
-            myBet = amt;
+            let val = parseFloat(document.getElementById('betAmount').value);
+            if(val > balance || val <= 0) return alert("Low Balance!");
+            
+            balance -= val;
+            myBet = val;
             hasBet = true;
-            updateBalanceUI();
-            mainBtn.className = "main-btn btn-locked";
-            mainBtn.textContent = "BET PLACED";
+            syncBal();
+            actionBtn.className = "main-btn btn-waiting";
+            actionBtn.textContent = "Bet Placed";
         } else if(state === "RUNNING" && hasBet && !cashed) {
-            processCashOut();
+            doCashOut();
         }
     }
 
-    function processCashOut() {
+    function doCashOut() {
+        if(cashed) return;
         cashed = true;
-        let winAmount = myBet * multi;
-        balance += winAmount; // إضافة الربح
-        updateBalanceUI();
-        mainBtn.className = "main-btn btn-locked";
-        mainBtn.textContent = "WON +" + winAmount.toFixed(2);
-        profitEl.textContent = "CASHED OUT!";
+        let win = myBet * multi;
+        balance += win;
+        syncBal();
+        actionBtn.className = "main-btn btn-waiting";
+        actionBtn.textContent = "WIN +" + win.toFixed(2);
+        profitPreview.textContent = "CASHED OUT";
     }
 
-    function crash() {
+    function doCrash() {
         state = "CRASHED";
         cancelAnimationFrame(anim);
-        multiEl.style.color = "#ff3b3b";
-        mainBtn.className = "main-btn btn-locked";
-        mainBtn.textContent = "CRASHED";
-        profitEl.textContent = "";
+        multiText.style.color = "#ff3b3b";
+        actionBtn.className = "main-btn btn-waiting";
+        actionBtn.textContent = "Crashed";
+        profitPreview.textContent = "";
 
+        // Add history chip
         const chip = `<div class="hist-chip" style="color:${multi > 2 ? 'var(--up)' : '#ff3b3b'}">${multi.toFixed(2)}x</div>`;
         document.getElementById('history').insertAdjacentHTML('afterbegin', chip);
 
@@ -219,15 +242,15 @@
 
     function reset() {
         state = "IDLE"; hasBet = false; cashed = false;
-        multiEl.style.color = "#fff";
-        multiEl.textContent = "1.00x";
-        rocketEl.style.left = "10%"; rocketEl.style.bottom = "20%";
-        mainBtn.className = "main-btn btn-ready";
-        mainBtn.textContent = "PLACE BET";
-        setTimeout(launchRound, 2000);
+        multiText.style.color = "#fff";
+        multiText.textContent = "1.00x";
+        rocket.style.left = "10%"; rocket.style.bottom = "15%";
+        actionBtn.className = "main-btn btn-bet";
+        actionBtn.textContent = "Place Bet";
+        setTimeout(launch, 2000);
     }
 
-    function adjust(v) { document.getElementById('betAmount').value = (document.getElementById('betAmount').value * v).toFixed(2); }
+    function mult(v) { document.getElementById('betAmount').value = (document.getElementById('betAmount').value * v).toFixed(2); }
 
     reset();
 </script>
