@@ -2,104 +2,79 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AMANA GLOBAL | Create Account</title>
 
 <style>
 :root{
-  --bg:#0b0f1f;
-  --text:#ffffff;
-  --muted:#b8b9d9;
-  --brand1:#a100ff;
-  --brand2:#ff00b8;
-  --glass: rgba(255,255,255,.06);
-  --border: rgba(255,255,255,.08);
-  --radius:16px;
+--bg:#0b0f1f;
+--text:#ffffff;
+--muted:#b8b9d9;
+--brand1:#a100ff;
+--brand2:#ff00b8;
+--glass:rgba(255,255,255,.06);
+--border:rgba(255,255,255,.08);
+--radius:16px;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family: system-ui, -apple-system, Tahoma, Arial;
-  background: linear-gradient(135deg,#0b0f1f,#1c0833);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
+margin:0;
+font-family:system-ui,-apple-system,Tahoma,Arial;
+background:linear-gradient(135deg,#0b0f1f,#1c0833);
+color:var(--text);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:16px;
 }
 .container{width:100%;max-width:420px;}
 .header{text-align:center;margin-bottom:20px;}
 .brand{
-  font-size:22px;
-  font-weight:900;
-  background:linear-gradient(135deg,var(--brand1),var(--brand2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+font-size:22px;
+font-weight:900;
+background:linear-gradient(135deg,var(--brand1),var(--brand2));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 .card{
-  background:var(--glass);
-  backdrop-filter:blur(18px);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:22px;
+background:var(--glass);
+backdrop-filter:blur(18px);
+border:1px solid var(--border);
+border-radius:var(--radius);
+padding:22px;
 }
-label{
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:6px;
-  display:block;
-}
+label{font-size:13px;font-weight:700;margin-bottom:6px;display:block;}
 input,select{
-  width:100%;
-  padding:14px;
-  margin-bottom:16px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.4);
-  color:#fff;
-  font-size:15px;
-}
-select option{color:#000;}
-input:focus,select:focus{
-  border-color:var(--brand2);
-  outline:none;
-  box-shadow:0 0 0 3px rgba(255,0,184,.2);
+width:100%;
+padding:14px;
+margin-bottom:16px;
+border-radius:14px;
+border:1px solid var(--border);
+background:rgba(0,0,0,.4);
+color:#fff;
+font-size:15px;
 }
 button{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  font-weight:800;
-  font-size:15px;
-  cursor:pointer;
-  background:linear-gradient(135deg,var(--brand1),var(--brand2));
-  color:#fff;
-  transition: transform 0.2s;
-}
-button:active { transform: scale(0.98); }
-.login-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: var(--muted);
-}
-.login-link a {
-  color: var(--brand2);
-  text-decoration: none;
-  font-weight: 700;
+width:100%;
+padding:14px;
+border-radius:14px;
+border:none;
+font-weight:800;
+font-size:15px;
+cursor:pointer;
+background:linear-gradient(135deg,var(--brand1),var(--brand2));
+color:#fff;
 }
 .msg{
-  margin-top:15px;
-  padding:12px;
-  border-radius:12px;
-  font-size:14px;
-  display:none;
+margin-top:15px;
+padding:12px;
+border-radius:12px;
+font-size:14px;
+display:none;
 }
-.success{background:rgba(0,255,150,.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2);}
-.error{background:rgba(255,0,80,.1); color: #ff0050; border: 1px solid rgba(255,0,80,0.2);}
+.success{background:rgba(0,255,150,.1);color:#00ff96;}
+.error{background:rgba(255,0,80,.1);color:#ff0050;}
 </style>
 </head>
 
@@ -107,50 +82,39 @@ button:active { transform: scale(0.98); }
 
 <div class="container">
 <div class="header">
-  <div class="brand">AMANA GLOBAL</div>
-  <div style="color:var(--muted);font-size:13px;margin-top:4px;">
-    Create Your Secure Account
-  </div>
+<div class="brand">AMANA GLOBAL</div>
+<div style="color:var(--muted);font-size:13px;margin-top:4px;">
+Create Your Secure Account
+</div>
 </div>
 
 <div class="card">
 <form id="createForm">
 
 <label>Username</label>
-<input id="username" required minlength="3" placeholder="Enter username" />
+<input id="username" required minlength="3" />
 
 <label>Email</label>
-<input type="email" id="email" required placeholder="you@example.com" />
+<input type="email" id="email" required />
 
 <label>Password</label>
-<input type="password" id="password" required minlength="8" placeholder="Minimum 8 characters" />
+<input type="password" id="password" required minlength="8" />
 
 <label>Country</label>
 <select id="country" required>
 <option value="">Select Country</option>
-<option value="+971">🇦🇪 UAE (+971)</option>
-<option value="+966">🇸🇦 KSA (+966)</option>
-<option value="+961">🇱🇧 Lebanon (+961)</option>
-<option value="+20">🇪🇬 Egypt (+20)</option>
-<option value="+962">🇯🇴 Jordan (+962)</option>
-<option value="+974">🇶🇦 Qatar (+974)</option>
-<option value="+965">🇰🇼 Kuwait (+965)</option>
-<option value="+1">🇺🇸 USA (+1)</option>
-<option value="+44">🇬🇧 UK (+44)</option>
-<option value="+90">🇹🇷 Turkey (+90)</option>
+<option value="+1">USA (+1)</option>
+<option value="+971">UAE (+971)</option>
+<option value="+966">KSA (+966)</option>
 </select>
 
-<label>Phone Number</label>
-<input type="tel" id="phone" required placeholder="Enter phone number" />
+<label>Phone</label>
+<input type="tel" id="phone" required />
 
-<label>Promo Code (Optional)</label>
-<input id="promo" placeholder="Enter promo code if any" />
+<label>Promo Code</label>
+<input id="promo" />
 
 <button type="submit">Create Account</button>
-
-<div class="login-link">
-  Already have an account? <a href="login.html">Login</a>
-</div>
 
 <div id="msg" class="msg"></div>
 
@@ -164,12 +128,12 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://
 import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "PUT_YOUR_API_KEY",
-  authDomain: "PUT_YOUR_AUTH_DOMAIN",
-  projectId: "PUT_YOUR_PROJECT_ID",
-  storageBucket: "PUT_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "PUT_YOUR_SENDER_ID",
-  appId: "PUT_YOUR_APP_ID"
+apiKey: "PUT_YOUR_API_KEY",
+authDomain: "PUT_YOUR_AUTH_DOMAIN",
+projectId: "PUT_YOUR_PROJECT_ID",
+storageBucket: "PUT_YOUR_STORAGE_BUCKET",
+messagingSenderId: "PUT_YOUR_SENDER_ID",
+appId: "PUT_YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -180,38 +144,40 @@ const form = document.getElementById("createForm");
 const msg = document.getElementById("msg");
 
 function show(text,type){
-  msg.style.display="block";
-  msg.className="msg "+type;
-  msg.textContent=text;
+msg.style.display="block";
+msg.className="msg "+type;
+msg.textContent=text;
 }
 
-form.addEventListener("submit",async e=>{
+form.addEventListener("submit",async(e)=>{
 e.preventDefault();
 
 const btn=form.querySelector("button");
 btn.disabled=true;
 btn.textContent="Processing...";
 
-const username=username.value.trim();
-const email=email.value.trim();
-const password=password.value;
-const country=country.value;
-const phone=phone.value.trim();
-const promo=promo.value.trim();
+/* ✅ الحل الصحيح بدون تعارض أسماء */
+const usernameValue=document.getElementById("username").value.trim();
+const emailValue=document.getElementById("email").value.trim();
+const passwordValue=document.getElementById("password").value;
+const countryValue=document.getElementById("country").value;
+const phoneValue=document.getElementById("phone").value.trim();
+const promoValue=document.getElementById("promo").value.trim();
 
 try{
-const userCredential=await createUserWithEmailAndPassword(auth,email,password);
+
+const userCredential=await createUserWithEmailAndPassword(auth,emailValue,passwordValue);
 
 await updateProfile(userCredential.user,{
-displayName:username
+displayName:usernameValue
 });
 
 await setDoc(doc(db,"users",userCredential.user.uid),{
-username:username,
-email:email,
-country:country,
-phone:country+phone,
-promo:promo||null,
+username:usernameValue,
+email:emailValue,
+country:countryValue,
+phone:countryValue+phoneValue,
+promo:promoValue||null,
 createdAt:serverTimestamp()
 });
 
