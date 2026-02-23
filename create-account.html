@@ -65,6 +65,7 @@ font-size:15px;
 cursor:pointer;
 background:linear-gradient(135deg,var(--brand1),var(--brand2));
 color:#fff;
+margin-bottom:8px;
 }
 .msg{
 margin-top:15px;
@@ -75,6 +76,14 @@ display:none;
 }
 .success{background:rgba(0,255,150,.1);color:#00ff96;}
 .error{background:rgba(255,0,80,.1);color:#ff0050;}
+.login-btn{
+background:transparent;
+border:1px solid var(--border);
+color:var(--muted);
+}
+.login-btn:hover{
+background:rgba(255,255,255,0.05);
+}
 </style>
 </head>
 
@@ -115,6 +124,7 @@ Create Your Secure Account
 <input id="promo" />
 
 <button type="submit">Create Account</button>
+<button type="button" class="login-btn" onclick="window.location.href='login.html'">Login</button>
 
 <div id="msg" class="msg"></div>
 
@@ -198,4 +208,3 @@ show(err.message,"error");
 
 </body>
 </html>
-
