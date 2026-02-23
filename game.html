@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA HUB | Elite Games</title>
+    <title>AMANA CASINO | Games Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -12,167 +12,167 @@
             --accent: #00f2ff;
             --up: #00ff96;
             --gold: #ffcc00;
-            --border: rgba(255, 255, 255, 0.1);
-            --card-bg: rgba(255, 255, 255, 0.03);
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: #fff;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
             background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
         }
 
-        .container { padding: 20px; max-width: 480px; margin: auto; }
+        .container { padding: 20px; max-width: 450px; margin: auto; }
 
-        /* Header */
+        /* --- Header --- */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .user-bal { background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--up); font-weight: 800; font-size: 14px; color: var(--up); }
+        .bal-display { background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); padding: 8px 15px; border-radius: 20px; color: var(--up); font-weight: 800; font-size: 14px; }
 
-        /* Banner */
-        .promo-slider {
-            width: 100%; height: 140px; background: linear-gradient(90deg, #6200ff, var(--brand));
-            border-radius: 25px; margin-bottom: 30px; display: flex; align-items: center; padding: 20px;
-            box-sizing: border-box; position: relative; overflow: hidden;
+        /* --- Banner --- */
+        .casino-banner {
+            width: 100%; height: 120px; background: linear-gradient(135deg, #6200ff, #ff00b8);
+            border-radius: 25px; margin-bottom: 30px; display: flex; align-items: center;
+            padding: 20px; box-sizing: border-box; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255, 0, 184, 0.3);
         }
-        .promo-slider i { position: absolute; right: -10px; font-size: 120px; opacity: 0.1; }
-        .promo-slider h2 { font-size: 22px; margin: 0; font-weight: 900; position: relative; z-index: 1; }
+        .casino-banner i { position: absolute; right: -10px; font-size: 100px; opacity: 0.2; transform: rotate(-15deg); }
+        .casino-banner h2 { font-size: 20px; margin: 0; font-weight: 900; line-height: 1.2; z-index: 1; }
 
-        /* Game Grid */
-        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        /* --- Games Grid --- */
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+
+        .game-item {
+            background: var(--card); border: 1px solid var(--border); border-radius: 22px;
+            padding: 25px 15px; text-align: center; transition: 0.3s; cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .game-item:active { transform: scale(0.92); background: rgba(255,255,255,0.08); }
         
-        .game-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 24px; padding: 20px; text-align: center;
-            transition: 0.3s; cursor: pointer; position: relative;
-            overflow: hidden;
-        }
-        .game-card:active { transform: scale(0.95); }
-        .game-card i { font-size: 35px; margin-bottom: 12px; display: block; }
-        .game-card b { display: block; font-size: 15px; letter-spacing: 0.5px; }
-        .game-card span { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; }
+        .game-item i { font-size: 40px; margin-bottom: 12px; display: block; }
+        .game-item b { display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .game-item span { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; }
 
-        /* Hot Badge */
-        .hot { position: absolute; top: 10px; right: 10px; background: var(--brand); font-size: 8px; padding: 3px 7px; border-radius: 5px; font-weight: 900; }
+        /* Badge */
+        .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
 
-        /* Game Colors Customization */
-        .c-crash i { color: #ff3b3b; text-shadow: 0 0 15px rgba(255,59,59,0.4); }
-        .c-dice i { color: var(--up); text-shadow: 0 0 15px rgba(0,255,150,0.4); }
-        .c-plinko i { color: var(--accent); }
-        .c-chicken i { color: var(--gold); }
-        .c-tower i { color: #ff6b00; }
-        .c-wheel i { color: #a100ff; }
+        /* Custom Colors for Icons */
+        .color-crash { color: #ff3b3b; text-shadow: 0 0 15px rgba(255,59,59,0.3); }
+        .color-dice { color: var(--up); text-shadow: 0 0 15px rgba(0,255,150,0.3); }
+        .color-plinko { color: var(--accent); }
+        .color-chicken { color: var(--gold); }
+        .color-snake { color: #00ff00; }
+        .color-tower { color: #ff6b00; }
+        .color-wheel { color: #a100ff; }
+        .color-flip { color: #ffcc00; }
+        .color-slide { color: #ff0066; }
+        .color-balloon { color: #00f2ff; }
 
-        /* Navigation */
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(6,9,20,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { text-decoration: none; color: #444; text-align: center; font-size: 10px; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
-        .nav-item.active { color: var(--brand); }
+        /* --- Bottom Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-link { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
+        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-link.active { color: var(--brand); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1 style="font-size: 22px; font-weight: 900; margin: 0;">Amana<span style="color:var(--brand)">Games</span></h1>
-        <div class="user-bal"><i class="fa-solid fa-coins"></i> 2,840.15</div>
+        <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Amana<span style="color:var(--brand)">Casino</span></h1>
+        <div class="bal-display"><i class="fa-solid fa-coins"></i> 2,840.15</div>
     </div>
 
-    <div class="promo-slider">
-        <h2>PLAY & WIN<br><span style="font-size: 14px; opacity: 0.8;">Weekly Jackpot $10,000</span></h2>
-        <i class="fa-solid fa-trophy"></i>
+    <div class="casino-banner">
+        <h2>BIG WINS AWAIT!<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Try our new provably fair games</span></h2>
+        <i class="fa-solid fa-clover"></i>
     </div>
 
-    <div class="game-grid">
-        <div class="game-card c-crash" onclick="location.href='amanacrash.html'">
-            <div class="hot">HOT</div>
-            <i class="fa-solid fa-rocket"></i>
+    <div class="games-grid">
+        
+        <div class="game-item" onclick="location.href='amanacrash.html'">
+            <div class="badge">Hot</div>
+            <i class="fa-solid fa-rocket color-crash"></i>
             <b>Crash</b>
             <span>Multiplier</span>
         </div>
 
-        <div class="game-card c-dice" onclick="play('Dice')">
-            <i class="fa-solid fa-dice"></i>
+        <div class="game-item" onclick="location.href='dice.html'">
+            <i class="fa-solid fa-dice color-dice"></i>
             <b>Dice</b>
             <span>Over/Under</span>
         </div>
 
-        <div class="game-card c-plinko" onclick="play('Plinko')">
-            <div class="hot">POPULAR</div>
-            <i class="fa-solid fa-braille"></i>
-            <b>Plinko</b>
-            <span>Ball Drop</span>
-        </div>
-
-        <div class="game-card c-chicken" onclick="play('Chicken')">
-            <i class="fa-solid fa-drumstick-bite"></i>
-            <b>Chicken</b>
-            <span>Find the Bird</span>
-        </div>
-
-        <div class="game-card" style="color:#00ff00" onclick="play('Snake')">
-            <i class="fa-solid fa-worm"></i>
+        <div class="game-item" onclick="location.href='snake.html'">
+            <i class="fa-solid fa-worm color-snake"></i>
             <b>Snake</b>
-            <span>Classic Win</span>
+            <span>Retro Win</span>
         </div>
 
-        <div class="game-card" style="color:var(--brand)" onclick="play('Cards')">
-            <i class="fa-solid fa-spade"></i>
+        <div class="game-item" onclick="location.href='cards.html'">
+            <i class="fa-solid fa-spade" style="color:var(--brand)"></i>
             <b>Cards</b>
-            <span>Blackjack/Poker</span>
+            <span>Poker/BJ</span>
         </div>
 
-        <div class="game-card" style="color:#00f2ff" onclick="play('HiLo')">
-            <i class="fa-solid fa-up-down"></i>
+        <div class="game-item" onclick="location.href='plinko.html'">
+            <i class="fa-solid fa-braille color-plinko"></i>
+            <b>Plinko</b>
+            <span>Lucky Drop</span>
+        </div>
+
+        <div class="game-item" onclick="location.href='chicken.html'">
+            <i class="fa-solid fa-drumstick-bite color-chicken"></i>
+            <b>Chicken</b>
+            <span>Mines Style</span>
+        </div>
+
+        <div class="game-item" onclick="location.href='hilo.html'">
+            <i class="fa-solid fa-up-down" style="color:#ff0066"></i>
             <b>HiLo</b>
-            <span>High or Low</span>
+            <span>Next Card</span>
         </div>
 
-        <div class="game-card c-tower" onclick="play('Tower')">
-            <i class="fa-solid fa-chess-rook"></i>
+        <div class="game-item" onclick="location.href='tower.html'">
+            <i class="fa-solid fa-chess-rook color-tower"></i>
             <b>King Tower</b>
-            <span>Climb to Win</span>
+            <span>Climb Up</span>
         </div>
 
-        <div class="game-card" style="color:var(--gold)" onclick="play('Flip')">
-            <i class="fa-solid fa-circle-dollar-to-slot"></i>
+        <div class="game-item" onclick="location.href='flip.html'">
+            <i class="fa-solid fa-coins color-flip"></i>
             <b>Coin Flip</b>
-            <span>50/50 Chance</span>
+            <span>50/50</span>
         </div>
 
-        <div class="game-card c-wheel" onclick="play('Wheel')">
-            <i class="fa-solid fa-dharmachakra"></i>
+        <div class="game-item" onclick="location.href='wheel.html'">
+            <i class="fa-solid fa-dharmachakra color-wheel"></i>
             <b>Wheel</b>
-            <span>Spin & Win</span>
+            <span>Spin Fortune</span>
         </div>
 
-        <div class="game-card" style="color:#ff0066" onclick="play('Slide')">
-            <i class="fa-solid fa-sliders"></i>
+        <div class="game-item" onclick="location.href='slide.html'">
+            <i class="fa-solid fa-sliders color-slide"></i>
             <b>Slide</b>
-            <span>Instant Win</span>
+            <span>Instant</span>
         </div>
 
-        <div class="game-card" style="color:#ff3b3b" onclick="play('Balloon')">
-            <i class="fa-solid fa-🎈"></i>
+        <div class="game-item" onclick="location.href='balloon.html'">
+            <i class="fa-solid fa-🎈 color-balloon"></i>
             <b>Balloon</b>
-            <span>Don't Pop It</span>
+            <span>Hold & Release</span>
         </div>
+
     </div>
 </div>
 
-<nav class="nav">
-    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="game.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i><span>Games</span></a>
-    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Assets</span></a>
-    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+<nav class="bottom-nav">
+    <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="game.html" class="nav-link active"><i class="fa-solid fa-gamepad"></i><span>Games</span></a>
+    <a href="bot-trade.html" class="nav-link"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="overview.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Assets</span></a>
+    <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
-
-<script>
-    function play(game) {
-        alert(game + " game is being prepared for your account...");
-    }
-</script>
 
 </body>
 </html>
