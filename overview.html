@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA GLOBAL | Pro Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg: #060914;
+            --brand: #ff00b8;
+            --accent: #00f2ff;
+            --text: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --up: #00ff96;
+            --down: #ff3b3b;
+        }
+
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: var(--text);
+            padding-bottom: 110px;
+            background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
+        }
+
+        .container { padding: 20px; max-width: 450px; margin: auto; }
+
+        /* --- Wallet Card --- */
+        .wallet-card {
+            background: linear-gradient(135deg, #1e1e2d, #11111d);
+            border: 1px solid var(--border); border-radius: 25px; padding: 25px;
+            text-align: center; margin: 15px 0 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border-bottom: 3px solid var(--brand);
+        }
+        .wallet-card span { color: #888; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .wallet-card h1 { font-size: 36px; margin: 10px 0; font-weight: 900; }
+
+        /* --- Action Grid (Added History Button) --- */
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
+        .action-item {
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 15px 5px; border-radius: 18px; text-align: center;
+            cursor: pointer; transition: 0.3s;
+        }
+        .action-item i { font-size: 18px; margin-bottom: 8px; display: block; color: var(--accent); }
+        .action-item span { font-size: 10px; font-weight: 700; }
+        .action-item.hist-btn i { color: var(--brand); }
+
+        /* --- Live Markets List --- */
+        .market-header { display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 800; padding: 0 10px 10px; text-transform: uppercase; }
+        .asset-list { display: flex; flex-direction: column; gap: 10px; }
+        .asset-row {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            padding: 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .asset-left { display: flex; align-items: center; gap: 12px; }
+        .asset-icon { width: 38px; height: 38px; border-radius: 50%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--brand); border: 1px solid var(--border); }
+        .price-text { display: block; font-weight: 800; font-size: 15px; text-align: right; }
+        .change-text { font-size: 11px; font-weight: 700; }
+
+        /* --- Modal System (Unified) --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        .modal-content {
+            background: #11111d; border: 1px solid var(--border);
+            width: 85%; max-width: 380px; padding: 25px; border-radius: 30px;
+            position: relative; max-height: 80vh; overflow-y: auto;
+        }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #555; cursor: pointer; }
+        .modal h2 { font-size: 20px; margin-bottom: 20px; color: #fff; text-align: center; }
+        
+        .modal-input {
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border); border-radius: 15px;
+            color: white; margin-bottom: 15px; box-sizing: border-box; outline: none;
+        }
+        .modal-btn {
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: var(--brand); color: white; font-weight: 900; cursor: pointer;
+        }
+
+        /* --- History Rows inside Modal --- */
+        .hist-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .hist-row:last-child { border: none; }
+        .hist-tag { font-size: 13px; font-weight: 700; display: block; }
+        .hist-date { font-size: 10px; color: #555; }
+
+        /* --- Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--brand); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="wallet-card">
+        <span>Total Balance</span>
+        <h1 id="total-val">2,840.15 <small style="font-size:14px; color:var(--brand)">USDT</small></h1>
+    </div>
+
+    <div class="action-grid">
+        <div class="action-item" onclick="openModal('deposit')"><i class="fa-solid fa-circle-down"></i><span>Deposit</span></div>
+        <div class="action-item" onclick="openModal('withdraw')"><i class="fa-solid fa-circle-up"></i><span>Withdraw</span></div>
+        <div class="action-item" onclick="openModal('swap')"><i class="fa-solid fa-rotate"></i><span>Swap</span></div>
+        <div class="action-item hist-btn" onclick="openModal('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></div>
+    </div>
+
+    <div class="market-header"><span>Market Live</span><span>Price</span></div>
+    <div class="asset-list" id="marketList">
+        <div class="asset-row" id="r-btc"><div class="asset-left"><div class="asset-icon" style="color:#f7931a">₿</div><div><b>BTC</b></div></div><div class="asset-right"><span class="price-text" id="p-btc">...</span><span class="change-text" id="c-btc">0.00%</span></div></div>
+        <div class="asset-row" id="r-eth"><div class="asset-left"><div class="asset-icon" style="color:#627eea">Ξ</div><div><b>ETH</b></div></div><div class="asset-right"><span class="price-text" id="p-eth">...</span><span class="change-text" id="c-eth">0.00%</span></div></div>
+        <div class="asset-row" id="r-sol"><div class="asset-left"><div class="asset-icon" style="color:#14f195">S</div><div><b>SOL</b></div></div><div class="asset-right"><span class="price-text" id="p-sol">...</span><span class="change-text" id="c-sol">0.00%</span></div></div>
+        <div class="asset-row" id="r-bnb"><div class="asset-left"><div class="asset-icon" style="color:#f3ba2f">B</div><div><b>BNB</b></div></div><div class="asset-right"><span class="price-text" id="p-bnb">...</span><span class="change-text" id="c-bnb">0.00%</span></div></div>
+    </div>
+</div>
+
+<div id="actionModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Title</h2>
+        <div id="modalBody"></div>
+        <div id="modalFooter">
+            <button class="modal-btn" onclick="processAction()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
+    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="overview.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+</nav>
+
+<script>
+    const tracked = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"];
+
+    function openModal(type) {
+        const modal = document.getElementById('actionModal');
+        const title = document.getElementById('modalTitle');
+        const body = document.getElementById('modalBody');
+        const footer = document.getElementById('modalFooter');
+        
+        modal.style.display = 'flex';
+        footer.style.display = 'block';
+
+        if(type === 'deposit') {
+            title.textContent = "Deposit USDT (TRC20)";
+            body.innerHTML = `<div style="color:orange; font-size:11px; margin-bottom:10px;">Only send USDT-TRC20.</div>
+                              <div style="background:#000; padding:10px; border-radius:10px; font-size:11px; word-break:break-all; margin-bottom:15px; border:1px dashed #444;">T9zB4nmC7S9G6vBxT9zB4nmC7S9G6vBx</div>
+                              <input type="number" class="modal-input" placeholder="Amount">`;
+        } else if(type === 'withdraw') {
+            title.textContent = "Withdraw (TRC20)";
+            body.innerHTML = `<input type="text" class="modal-input" placeholder="Recipient TRC20 Address">
+                              <input type="number" class="modal-input" placeholder="Amount">`;
+        } else if(type === 'swap') {
+            title.textContent = "Instant Swap";
+            body.innerHTML = `<select class="modal-input"><option>USDT to BTC</option><option>USDT to ETH</option></select>
+                              <input type="number" class="modal-input" placeholder="Amount">`;
+        } else if(type === 'history') {
+            title.textContent = "Transaction History";
+            footer.style.display = 'none'; // No button for history
+            body.innerHTML = `
+                <div class="hist-row"><div><span class="hist-tag" style="color:var(--up)">Profit</span><small class="hist-date">Today, 10:20</small></div><b style="color:var(--up)">+$12.40</b></div>
+                <div class="hist-row"><div><span class="hist-tag" style="color:var(--down)">Withdraw</span><small class="hist-date">Yesterday</small></div><b style="color:var(--down)">-$50.00</b></div>
+                <div class="hist-row"><div><span class="hist-tag">Deposit</span><small class="hist-date">2 days ago</small></div><b style="color:var(--up)">+$200.00</b></div>
+            `;
+        }
+    }
+
+    function closeModal() { document.getElementById('actionModal').style.display = 'none'; }
+    function processAction() { alert("Request Sent!"); closeModal(); }
+
+    async function fetchPrices() {
+        try {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
+            const data = await res.json();
+            const filtered = data.filter(c => tracked.includes(c.symbol));
+            filtered.forEach(coin => {
+                const s = coin.symbol.replace('USDT','').toLowerCase();
+                document.getElementById(`p-${s}`).textContent = '$' + parseFloat(coin.lastPrice).toLocaleString();
+                const cEl = document.getElementById(`c-${s}`);
+                cEl.textContent = (parseFloat(coin.priceChangePercent) >= 0 ? '+' : '') + coin.priceChangePercent + '%';
+                cEl.style.color = parseFloat(coin.priceChangePercent) >= 0 ? 'var(--up)' : 'var(--down)';
+            });
+        } catch(e){}
+    }
+    setInterval(fetchPrices, 5000); fetchPrices();
+</script>
+</body>
+</html>
