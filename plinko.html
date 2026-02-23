@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | STAKE ENGINE</title>
+    <title>AMANA PLINKO | RIGGED EDITION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -28,17 +28,17 @@
 
         .multi-container {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 2px; width: 94%; justify-content: center;
+            display: flex; gap: 2px; width: 96%; justify-content: center;
         }
         .m-box {
             flex: 1; height: 26px; background: var(--red); border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
+            font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4);
         }
 
-        .dashboard { background: var(--panel); border-top: 2px solid var(--border); padding: 15px 20px 30px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .dashboard { background: var(--panel); border-top: 2px solid var(--border); padding: 15px 20px 30px 20px; display: flex; flex-direction: column; gap: 10px; }
         .risk-selector { display: flex; background: var(--input-bg); border-radius: 8px; padding: 4px; gap: 4px; }
-        .risk-btn { flex: 1; border: none; background: transparent; color: #55607b; padding: 10px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; }
+        .risk-btn { flex: 1; border: none; background: transparent; color: #55607b; padding: 10px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; }
         .risk-btn.active { background: #2f3749; color: #fff; }
 
         .input-wrapper { background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; padding-right: 8px; }
@@ -50,12 +50,10 @@
 <body>
 
     <header>
-        <a href="game.html" style="color:#fff;"><i class="fa-solid fa-chevron-left"></i></a>
         <div class="balance-tag">
             <i class="fa-solid fa-coins" style="color:#26a17b"></i>
             <span id="userBalance">0.00</span>
         </div>
-        <div style="width:20px"></div>
     </header>
 
     <div class="game-area">
@@ -72,7 +70,7 @@
         <div class="input-wrapper">
             <input type="number" id="betAmount" value="10.00">
         </div>
-        <button class="main-btn" onclick="dropCoin()">Bet</button>
+        <button class="main-btn" onclick="dropCoin()">Play</button>
     </div>
 
 <script>
@@ -82,13 +80,13 @@
     let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
     let currentRisk = 'medium';
     let balls = [], pegs = [];
-    const rows = 16; 
+    const rows = 16;
 
-    // إعدادات الربح (Stake Exact Probabilities)
+    // --- نظام احتمالات قاسي جداً (House Edge Optimized) ---
     const riskLevels = {
-        low:    { m: [16, 9, 2, 1.4, 1, 0.5, 1, 1.4, 2, 9, 16], prob: [1, 2, 5, 10, 20, 24, 20, 10, 5, 2, 1] },
-        medium: { m: [110, 41, 10, 5, 2, 0.5, 0.2, 0.5, 2, 5, 10, 41, 110], prob: [0.5, 1, 3, 7, 13, 25, 25, 13, 7, 3, 1, 0.5, 0.5] },
-        high:   { m: [1000, 130, 26, 9, 4, 0.2, 0, 0.2, 4, 9, 26, 130, 1000], prob: [0.1, 0.4, 1.5, 5, 10, 33, 33, 10, 5, 1.5, 0.4, 0.1, 0.1] }
+        low:    { m: [5, 2, 1.2, 1, 0.5, 1, 1.2, 2, 5], prob: [1, 5, 15, 20, 40, 20, 15, 5, 1] },
+        medium: { m: [20, 10, 5, 2, 0.2, 2, 5, 10, 20], prob: [0.5, 2, 5, 10, 70, 10, 5, 2, 0.5] },
+        high:   { m: [100, 50, 10, 0, 0, 0, 10, 50, 100], prob: [0.1, 0.5, 2, 10, 75, 10, 2, 0.5, 0.1] }
     };
 
     function sync() {
@@ -119,29 +117,13 @@
         canvas.height = canvas.offsetHeight;
         pegs = [];
         const spacing = canvas.width / (rows + 2);
-        for (let i = 2; i <= rows + 1; i++) {
-            const rowY = spacing * i;
+        for (let i = 3; i <= rows + 2; i++) {
+            const rowY = spacing * (i - 1);
             for (let j = 0; j < i; j++) {
                 const x = canvas.width / 2 + (j - (i - 1) / 2) * spacing;
                 pegs.push({ x, y: rowY, active: 0 });
             }
         }
-    }
-
-    function dropCoin() {
-        let amt = parseFloat(document.getElementById('betAmount').value);
-        if (amt > balance || amt <= 0) return;
-        balance -= amt; sync();
-
-        // 1. تحديد النتيجة مسبقاً بناءً على الاحتمالات
-        const targetIdx = getWeightedResult();
-        const spacing = canvas.width / (rows + 2);
-        const targetX = canvas.width / 2 + (targetIdx - (riskLevels[currentRisk].m.length - 1) / 2) * spacing;
-
-        balls.push({
-            x: canvas.width / 2, y: 30, vx: 0, vy: 0,
-            targetX: targetX, bet: amt, win: riskLevels[currentRisk].m[targetIdx]
-        });
     }
 
     function getWeightedResult() {
@@ -155,42 +137,55 @@
         return Math.floor(probs.length / 2);
     }
 
+    function dropCoin() {
+        let amt = parseFloat(document.getElementById('betAmount').value);
+        if (amt > balance || amt <= 0) return;
+        balance -= amt; sync();
+
+        const targetIdx = getWeightedResult();
+        const spacing = canvas.width / (rows + 2);
+        const targetX = canvas.width / 2 + (targetIdx - (riskLevels[currentRisk].m.length - 1) / 2) * spacing;
+
+        balls.push({
+            x: canvas.width / 2, y: 30, vx: 0, vy: 0,
+            targetX: targetX, bet: amt, win: riskLevels[currentRisk].m[targetIdx]
+        });
+    }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         pegs.forEach(peg => {
             ctx.beginPath(); ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = peg.active > 0 ? '#fff' : '#3d4459';
-            if(peg.active > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; }
+            ctx.fillStyle = peg.active > 0 ? '#fff' : '#333';
+            if(peg.active > 0) { ctx.shadowBlur = 15; ctx.shadowColor = '#fff'; }
             ctx.fill(); ctx.shadowBlur = 0;
             if(peg.active > 0) peg.active--;
         });
 
         balls.forEach((ball, index) => {
-            ball.vy += 0.4;
-            // توجيه سري نحو الهدف
-            let dx = (ball.targetX - ball.x) * 0.02;
-            ball.vx += dx;
-            ball.vx *= 0.95; 
-
-            ball.x += ball.vx;
-            ball.y += ball.vy;
+            ball.vy += 0.45;
+            // قوة جذب المركز (Rigged Logic)
+            let steer = (ball.targetX - ball.x) * 0.04;
+            ball.vx += steer;
+            ball.vx *= 0.94;
+            ball.x += ball.vx; ball.y += ball.vy;
 
             pegs.forEach(peg => {
                 const d = Math.hypot(ball.x - peg.x, ball.y - peg.y);
                 if (d < 8) {
                     peg.active = 10;
                     ball.vy *= -0.4;
-                    ball.vx += (ball.x - peg.x) * 0.5;
+                    ball.vx += (ball.x - peg.x) * 0.4;
                 }
             });
 
-            // Coin Design
+            // Moov Coin Design
             ctx.beginPath(); ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
             ctx.fillStyle = '#a333ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff'; ctx.fill();
             ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
             ctx.fillText('$', ball.x, ball.y + 3); ctx.shadowBlur = 0;
 
-            if (ball.y > canvas.height - 45) {
+            if (ball.y > canvas.height - 40) {
                 balance += ball.bet * ball.win;
                 sync();
                 balls.splice(index, 1);
@@ -199,9 +194,8 @@
         requestAnimationFrame(draw);
     }
 
-    setRisk('medium');
-    initBoard();
-    draw();
+    setRisk('medium'); initBoard(); draw();
+    window.addEventListener('resize', initBoard);
 </script>
 </body>
 </html>
