@@ -17,9 +17,7 @@
   --border: rgba(255,255,255,.08);
   --radius:16px;
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
   font-family: system-ui, -apple-system, Tahoma, Arial;
@@ -31,10 +29,8 @@ body{
   justify-content:center;
   padding:16px;
 }
-
 .container{width:100%;max-width:420px;}
 .header{text-align:center;margin-bottom:20px;}
-
 .brand{
   font-size:22px;
   font-weight:900;
@@ -42,7 +38,6 @@ body{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
 .card{
   background:var(--glass);
   backdrop-filter:blur(18px);
@@ -50,14 +45,12 @@ body{
   border-radius:var(--radius);
   padding:22px;
 }
-
 label{
   font-size:13px;
   font-weight:700;
   margin-bottom:6px;
   display:block;
 }
-
 input,select{
   width:100%;
   padding:14px;
@@ -68,15 +61,12 @@ input,select{
   color:#fff;
   font-size:15px;
 }
-
 select option{color:#000;}
-
 input:focus,select:focus{
   border-color:var(--brand2);
   outline:none;
   box-shadow:0 0 0 3px rgba(255,0,184,.2);
 }
-
 button{
   width:100%;
   padding:14px;
@@ -89,30 +79,18 @@ button{
   color:#fff;
   transition: transform 0.2s;
 }
-
 button:active { transform: scale(0.98); }
-
-/* التعديل الجديد هنا: رابط الدخول */
 .login-link {
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
   color: var(--muted);
 }
-
 .login-link a {
   color: var(--brand2);
   text-decoration: none;
   font-weight: 700;
-  margin-left: 5px;
-  transition: 0.3s;
 }
-
-.login-link a:hover {
-  color: var(--brand1);
-  text-decoration: underline;
-}
-
 .msg{
   margin-top:15px;
   padding:12px;
@@ -120,7 +98,6 @@ button:active { transform: scale(0.98); }
   font-size:14px;
   display:none;
 }
-
 .success{background:rgba(0,255,150,.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2);}
 .error{background:rgba(255,0,80,.1); color: #ff0050; border: 1px solid rgba(255,0,80,0.2);}
 </style>
@@ -129,7 +106,6 @@ button:active { transform: scale(0.98); }
 <body>
 
 <div class="container">
-
 <div class="header">
   <div class="brand">AMANA GLOBAL</div>
   <div style="color:var(--muted);font-size:13px;margin-top:4px;">
@@ -180,7 +156,6 @@ button:active { transform: scale(0.98); }
 
 </form>
 </div>
-
 </div>
 
 <script type="module">
@@ -188,30 +163,21 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// تأكد من وضع بياناتك الحقيقية هنا
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "PUT_YOUR_API_KEY",
+  authDomain: "PUT_YOUR_AUTH_DOMAIN",
+  projectId: "PUT_YOUR_PROJECT_ID",
+  storageBucket: "PUT_YOUR_STORAGE_BUCKET",
+  messagingSenderId: "PUT_YOUR_SENDER_ID",
+  appId: "PUT_YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const form=document.getElementById("createForm");
-const msg=document.getElementById("msg");
-
-// استهداف الحقول من الـ ID مباشرة
-const usernameField = document.getElementById("username");
-const emailField = document.getElementById("email");
-const passwordField = document.getElementById("password");
-const countryField = document.getElementById("country");
-const phoneField = document.getElementById("phone");
-const promoField = document.getElementById("promo");
+const form = document.getElementById("createForm");
+const msg = document.getElementById("msg");
 
 function show(text,type){
   msg.style.display="block";
@@ -222,31 +188,43 @@ function show(text,type){
 form.addEventListener("submit",async e=>{
 e.preventDefault();
 
-const btn = form.querySelector("button");
-btn.disabled = true;
-btn.textContent = "Processing...";
+const btn=form.querySelector("button");
+btn.disabled=true;
+btn.textContent="Processing...";
+
+const username=username.value.trim();
+const email=email.value.trim();
+const password=password.value;
+const country=country.value;
+const phone=phone.value.trim();
+const promo=promo.value.trim();
 
 try{
-const userCredential = await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
+const userCredential=await createUserWithEmailAndPassword(auth,email,password);
 
-await updateProfile(userCredential.user, { displayName: usernameField.value });
-
-await setDoc(doc(db, "users", userCredential.user.uid), {
-  username: usernameField.value,
-  email: emailField.value,
-  country: countryField.value,
-  phone: countryField.value + phoneField.value,
-  promo: promoField.value || null,
-  createdAt: serverTimestamp()
+await updateProfile(userCredential.user,{
+displayName:username
 });
 
-show("Account created successfully ✅", "success");
-setTimeout(()=> window.location.href = "profile.html", 800);
+await setDoc(doc(db,"users",userCredential.user.uid),{
+username:username,
+email:email,
+country:country,
+phone:country+phone,
+promo:promo||null,
+createdAt:serverTimestamp()
+});
+
+show("Account created successfully ✅","success");
+
+setTimeout(()=>{
+window.location.href="profile.html";
+},1000);
 
 }catch(err){
-btn.disabled = false;
-btn.textContent = "Create Account";
-show("Error: " + err.message, "error");
+btn.disabled=false;
+btn.textContent="Create Account";
+show(err.message,"error");
 }
 });
 </script>
