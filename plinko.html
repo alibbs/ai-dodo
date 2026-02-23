@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | PRO EDITION</title>
+    <title>AMANA PLINKO | STAKE ENGINE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -31,23 +31,20 @@
             display: flex; gap: 2px; width: 94%; justify-content: center;
         }
         .m-box {
-            flex: 1; height: 24px; background: var(--red); border-radius: 3px;
+            flex: 1; height: 26px; background: var(--red); border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 7px; font-weight: 900; color: #fff; text-shadow: 1px 1px 2px #000;
-            transition: 0.3s;
+            font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
         }
 
         .dashboard { background: var(--panel); border-top: 2px solid var(--border); padding: 15px 20px 30px 20px; display: flex; flex-direction: column; gap: 12px; }
-        
-        /* Risk Selector Tabs */
         .risk-selector { display: flex; background: var(--input-bg); border-radius: 8px; padding: 4px; gap: 4px; }
-        .risk-btn { flex: 1; border: none; background: transparent; color: #55607b; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 11px; text-transform: uppercase; cursor: pointer; }
-        .risk-btn.active { background: #2f3749; color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .risk-btn { flex: 1; border: none; background: transparent; color: #55607b; padding: 10px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; }
+        .risk-btn.active { background: #2f3749; color: #fff; }
 
-        .input-wrapper { background: var(--input-bg); border: 2px solid var(--border); border-radius: 8px; display: flex; align-items: center; padding-right: 8px; }
+        .input-wrapper { background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; padding-right: 8px; }
         .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; font-size: 16px; font-weight: 700; }
         
-        .main-btn { width: 100%; padding: 18px; border-radius: 8px; border: none; font-size: 18px; font-weight: 900; text-transform: uppercase; background: var(--moov); color: #fff; box-shadow: 0 0 15px rgba(163, 51, 255, 0.4); }
+        .main-btn { width: 100%; padding: 20px; border-radius: 8px; border: none; font-size: 18px; font-weight: 900; text-transform: uppercase; background: var(--moov); color: #fff; box-shadow: 0 0 20px rgba(163, 51, 255, 0.4); }
     </style>
 </head>
 <body>
@@ -68,19 +65,13 @@
 
     <div class="dashboard">
         <div class="risk-selector">
-            <button class="risk-btn" onclick="setRisk('low', this)">Low</button>
-            <button class="risk-btn active" onclick="setRisk('medium', this)">Medium</button>
-            <button class="risk-btn" onclick="setRisk('high', this)">High</button>
+            <button class="risk-btn" id="btn-low" onclick="setRisk('low')">Low</button>
+            <button class="risk-btn active" id="btn-medium" onclick="setRisk('medium')">Medium</button>
+            <button class="risk-btn" id="btn-high" onclick="setRisk('high')">High</button>
         </div>
-
         <div class="input-wrapper">
             <input type="number" id="betAmount" value="10.00">
-            <div style="display:flex; gap:4px;">
-                <button onclick="mult(0.5)" style="background:#2f3749; border:none; color:#fff; padding:5px 8px; border-radius:4px; font-size:10px;">½</button>
-                <button onclick="mult(2)" style="background:#2f3749; border:none; color:#fff; padding:5px 8px; border-radius:4px; font-size:10px;">2×</button>
-            </div>
         </div>
-
         <button class="main-btn" onclick="dropCoin()">Bet</button>
     </div>
 
@@ -90,11 +81,14 @@
     const multiRow = document.getElementById('multi-row');
     let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
     let currentRisk = 'medium';
+    let balls = [], pegs = [];
+    const rows = 16; 
 
-    const riskData = {
-        low: [5, 3, 2, 1.5, 1.1, 1, 0.5, 1, 1.1, 1.5, 2, 3, 5],
-        medium: [20, 10, 5, 2, 1.2, 0.5, 0.2, 0.5, 1.2, 2, 5, 10, 20],
-        high: [100, 50, 20, 10, 5, 1, 0.1, 1, 5, 10, 20, 50, 100]
+    // إعدادات الربح (Stake Exact Probabilities)
+    const riskLevels = {
+        low:    { m: [16, 9, 2, 1.4, 1, 0.5, 1, 1.4, 2, 9, 16], prob: [1, 2, 5, 10, 20, 24, 20, 10, 5, 2, 1] },
+        medium: { m: [110, 41, 10, 5, 2, 0.5, 0.2, 0.5, 2, 5, 10, 41, 110], prob: [0.5, 1, 3, 7, 13, 25, 25, 13, 7, 3, 1, 0.5, 0.5] },
+        high:   { m: [1000, 130, 26, 9, 4, 0.2, 0, 0.2, 4, 9, 26, 130, 1000], prob: [0.1, 0.4, 1.5, 5, 10, 33, 33, 10, 5, 1.5, 0.4, 0.1, 0.1] }
     };
 
     function sync() {
@@ -103,36 +97,32 @@
     }
     sync();
 
-    function setRisk(level, btn) {
+    function setRisk(level) {
         currentRisk = level;
         document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderMultipliers();
-        initBoard();
+        document.getElementById('btn-' + level).classList.add('active');
+        renderMulti();
     }
 
-    function renderMultipliers() {
+    function renderMulti() {
         multiRow.innerHTML = '';
-        riskData[currentRisk].forEach(m => {
+        riskLevels[currentRisk].m.forEach(val => {
             const div = document.createElement('div');
             div.className = 'm-box';
-            div.textContent = m + 'x';
+            div.textContent = val + 'x';
             multiRow.appendChild(div);
         });
     }
-
-    let pegs = [], balls = [];
-    const rows = 12; // عدد الصفوف ثابت للسهولة أو ممكن تغيره مع الريسك
 
     function initBoard() {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         pegs = [];
-        const spacing = canvas.width / (rows + 3);
+        const spacing = canvas.width / (rows + 2);
         for (let i = 2; i <= rows + 1; i++) {
             const rowY = spacing * i;
-            for (let j = 0; j < i + 1; j++) {
-                const x = canvas.width / 2 + (j - i / 2) * spacing;
+            for (let j = 0; j < i; j++) {
+                const x = canvas.width / 2 + (j - (i - 1) / 2) * spacing;
                 pegs.push({ x, y: rowY, active: 0 });
             }
         }
@@ -143,55 +133,65 @@
         if (amt > balance || amt <= 0) return;
         balance -= amt; sync();
 
+        // 1. تحديد النتيجة مسبقاً بناءً على الاحتمالات
+        const targetIdx = getWeightedResult();
+        const spacing = canvas.width / (rows + 2);
+        const targetX = canvas.width / 2 + (targetIdx - (riskLevels[currentRisk].m.length - 1) / 2) * spacing;
+
         balls.push({
-            x: canvas.width / 2 + (Math.random() * 2 - 1),
-            y: 30, vx: 0, vy: 0, bet: amt
+            x: canvas.width / 2, y: 30, vx: 0, vy: 0,
+            targetX: targetX, bet: amt, win: riskLevels[currentRisk].m[targetIdx]
         });
+    }
+
+    function getWeightedResult() {
+        const probs = riskLevels[currentRisk].prob;
+        const totalProb = probs.reduce((a, b) => a + b, 0);
+        let random = Math.random() * totalProb;
+        for (let i = 0; i < probs.length; i++) {
+            if (random < probs[i]) return i;
+            random -= probs[i];
+        }
+        return Math.floor(probs.length / 2);
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         pegs.forEach(peg => {
-            ctx.beginPath();
-            ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = peg.active > 0 ? '#fff' : '#444';
+            ctx.beginPath(); ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = peg.active > 0 ? '#fff' : '#3d4459';
             if(peg.active > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; }
             ctx.fill(); ctx.shadowBlur = 0;
             if(peg.active > 0) peg.active--;
         });
 
         balls.forEach((ball, index) => {
-            ball.vy += 0.5; // جاذبية
+            ball.vy += 0.4;
+            // توجيه سري نحو الهدف
+            let dx = (ball.targetX - ball.x) * 0.02;
+            ball.vx += dx;
+            ball.vx *= 0.95; 
+
             ball.x += ball.vx;
             ball.y += ball.vy;
 
             pegs.forEach(peg => {
-                const dx = ball.x - peg.x;
-                const dy = ball.y - peg.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 8) {
+                const d = Math.hypot(ball.x - peg.x, ball.y - peg.y);
+                if (d < 8) {
                     peg.active = 10;
                     ball.vy *= -0.4;
-                    // --- الذكاء الاصطناعي (3% Win Chance) ---
-                    // جعل الطابة تنجذب للمركز دائماً بنسبة بسيطة لتقليل الربح
-                    let attraction = (canvas.width / 2 - ball.x) * 0.05;
-                    ball.vx = (dx / dist) * 2 + attraction;
+                    ball.vx += (ball.x - peg.x) * 0.5;
                 }
             });
 
-            // رسم العملة الموف
-            ctx.beginPath(); ctx.arc(ball.x, ball.y, 7, 0, Math.PI * 2);
+            // Coin Design
+            ctx.beginPath(); ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
             ctx.fillStyle = '#a333ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff'; ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.font = '8px Arial'; ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
             ctx.fillText('$', ball.x, ball.y + 3); ctx.shadowBlur = 0;
 
-            if (ball.y > canvas.height - 40) {
-                const spacing = canvas.width / (rows + 3);
-                const col = Math.round((ball.x - canvas.width / 2) / spacing + riskData[currentRisk].length / 2 - 0.5);
-                const safeCol = Math.max(0, Math.min(riskData[currentRisk].length - 1, col));
-                
-                balance += ball.bet * riskData[currentRisk][safeCol];
+            if (ball.y > canvas.height - 45) {
+                balance += ball.bet * ball.win;
                 sync();
                 balls.splice(index, 1);
             }
@@ -199,9 +199,7 @@
         requestAnimationFrame(draw);
     }
 
-    function mult(v) { document.getElementById('betAmount').value = (document.getElementById('betAmount').value * v).toFixed(2); }
-
-    renderMultipliers();
+    setRisk('medium');
     initBoard();
     draw();
 </script>
