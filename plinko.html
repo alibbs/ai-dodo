@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | SOUND EDITION</title>
+    <title>AMANA PLINKO | ASMR EDITION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -27,15 +27,10 @@
         #plinko-canvas { width: 100%; height: 85%; }
 
         .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 25px; }
-        .m-box { flex: 1; height: 24px; background: var(--red); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4); }
+        .m-box { flex: 1; height: 26px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4); }
 
         .controls { background: var(--sidebar); padding: 20px 20px 40px 20px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; }
-        .input-label { font-size: 11px; color: var(--text-gray); font-weight: 800; text-transform: uppercase; }
-        .input-field { background: var(--input); border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; padding: 0 12px; margin-bottom: 5px; }
-        .input-field input, .input-field select { flex: 1; background: transparent; border: none; color: #fff; padding: 14px 0; font-weight: 800; font-size: 15px; }
-        
         .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
-        .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
     </style>
 </head>
 <body>
@@ -53,25 +48,10 @@
     </div>
 
     <div class="controls">
-        <div class="input-label">Bet Amount</div>
-        <div class="input-field"><input type="number" id="betAmount" value="10.00"></div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="input-group">
-                <div class="input-label">Risk</div>
-                <div class="input-field">
-                    <select id="riskSelect" onchange="renderMultis()">
-                        <option value="high" selected>High</option>
-                        <option value="medium">Medium</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group">
-                <div class="input-label">Rows</div>
-                <div class="input-field"><select disabled><option>16 Rows</option></select></div>
-            </div>
+        <div style="background:var(--input); border:1px solid var(--border); padding:10px; border-radius:6px; margin-bottom:10px;">
+            <div style="font-size:10px; color:var(--text-gray); margin-bottom:5px;">BET AMOUNT</div>
+            <input type="number" id="betAmount" value="10.00" style="background:transparent; border:none; color:#fff; width:100%; font-weight:800; font-size:16px;">
         </div>
-
         <button class="bet-btn" onclick="placeBet()">Play</button>
     </div>
 
@@ -83,40 +63,37 @@
     let balls = [], pegs = [];
     const rows = 16;
 
-    // Audio Context Setup
+    // --- Soft ASMR Sound Engine ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function playTick() {
+    function playSoftTick() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine'; // Sine wave is softer than square/triangle
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime); // Low frequency for "thud"
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function playSoftWin() {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.2);
         gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
+        osc.stop(audioCtx.currentTime + 0.2);
     }
 
-    function playResult(win) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(win > 1 ? 440 : 220, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(win > 1 ? 880 : 110, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-    }
-
-    const stakeData = {
-        high: [1000, 130, 26, 9, 4, 2, 0.2, 0, 0, 0, 0.2, 2, 4, 9, 26, 130, 1000],
-        medium: [110, 41, 10, 5, 2, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.5, 2, 5, 10, 41, 110]
-    };
+    const stakeData = [1000, 130, 26, 9, 4, 2, 0.2, 0, 0, 0, 0.2, 2, 4, 9, 26, 130, 1000];
 
     function sync() {
         document.getElementById('userBalance').textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
@@ -136,13 +113,8 @@
                 pegs.push({ x, y: rowY, active: 0 });
             }
         }
-        renderMultis();
-    }
-
-    function renderMultis() {
-        const risk = document.getElementById('riskSelect').value;
         multiRow.innerHTML = '';
-        stakeData[risk].forEach(m => {
+        stakeData.forEach(m => {
             const div = document.createElement('div');
             div.className = 'm-box';
             div.textContent = m + 'x';
@@ -150,25 +122,22 @@
         });
     }
 
-    function getWeightedSlot(risk) {
-        const r = Math.random() * 1000;
-        const riskArr = stakeData[risk];
-        const center = Math.floor(riskArr.length / 2);
-        if (r < 4) return Math.random() > 0.5 ? 0 : riskArr.length - 1; // 0.4% chance
-        const deadOffsets = [-2, -1, 0, 1, 2];
-        return center + deadOffsets[Math.floor(Math.random() * deadOffsets.length)];
-    }
-
     function placeBet() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         let amt = parseFloat(document.getElementById('betAmount').value);
         if (amt > balance || amt <= 0) return;
         balance -= amt; sync();
-        const risk = document.getElementById('riskSelect').value;
-        const target = getWeightedSlot(risk);
+
+        // House Edge Logic (99% center)
+        const r = Math.random() * 100;
+        let target = Math.floor(stakeData.length / 2);
+        if (r < 0.5) target = Math.random() > 0.5 ? 0 : stakeData.length - 1;
+        else if (r < 10) target = Math.random() > 0.5 ? 4 : 12;
+
         const spacing = canvas.width / (rows + 4);
-        const targetX = canvas.width / 2 + (target - (stakeData[risk].length - 1) / 2) * (spacing * 1.1);
-        balls.push({ x: canvas.width / 2, y: 40, vx: 0, vy: 0, targetX: targetX, bet: amt, win: stakeData[risk][target] });
+        const targetX = canvas.width / 2 + (target - (stakeData.length - 1) / 2) * (spacing * 1.1);
+
+        balls.push({ x: canvas.width / 2, y: 30, vx: 0, vy: 0, targetX, bet: amt, win: stakeData[target] });
     }
 
     function draw() {
@@ -181,27 +150,30 @@
         });
 
         balls.forEach((b, i) => {
-            b.vy += 0.45;
-            b.vx += (b.targetX - b.x) * 0.045;
-            b.vx *= 0.92;
+            b.vy += 0.5; // Gravity
+            b.vx += (b.targetX - b.x) * 0.04;
+            b.vx *= 0.93;
             b.x += b.vx; b.y += b.vy;
 
             pegs.forEach(p => {
                 const d = Math.hypot(b.x - p.x, b.y - p.y);
-                if (d < 9) {
+                if (d < 10) {
                     p.active = 10;
-                    b.vy *= -0.45;
-                    b.vx += (b.x - p.x) * 0.4;
-                    playTick(); // صوت المسمار
+                    b.vy *= -0.55; // Basket-ball bounce effect
+                    b.vx += (b.x - p.x) * 0.5;
+                    playSoftTick();
                 }
             });
 
-            ctx.beginPath(); ctx.arc(b.x, b.y, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#a333ff'; ctx.fill();
+            // Coin UI
+            ctx.beginPath(); ctx.arc(b.x, b.y, 9, 0, Math.PI * 2);
+            ctx.fillStyle = '#a333ff';
+            ctx.shadowBlur = 10; ctx.shadowColor = '#a333ff';
+            ctx.fill(); ctx.shadowBlur = 0;
 
             if (b.y > canvas.height - 10) {
                 balance += (b.bet * b.win); sync();
-                playResult(b.win); // صوت النتيجة
+                playSoftWin();
                 balls.splice(i, 1);
             }
         });
