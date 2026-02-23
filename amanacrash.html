@@ -3,103 +3,45 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA CRASH PREMIUM</title>
+    <title>AMANA CRASH | GLOBAL LIVE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             --bg: #04060b;
             --panel: #0f121d;
             --brand: #ff00b8;
-            --up: #00e701; /* أخضر ستيك القوي */
+            --up: #00e701;
             --down: #ff3b3b;
-            --usdt: #26a17b;
             --border: #222635;
             --input-bg: #1a1d29;
         }
 
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; position: fixed;
-            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
-        }
-
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
         body { display: flex; flex-direction: column; }
 
-        /* --- Header --- */
-        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: var(--bg); }
-        .balance-tag {
-            background: var(--panel); border: 1px solid var(--border);
-            padding: 8px 14px; border-radius: 10px; font-weight: 800; 
-            display: flex; align-items: center; gap: 8px; font-size: 15px;
-        }
+        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .balance-tag { background: var(--panel); border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
 
-        /* --- شاشة العرض الكبيرة (Expanded Game Area) --- */
-        .game-area {
-            flex: 1.5; /* تكبير مساحة العرض */
-            position: relative; margin: 0;
-            background: radial-gradient(circle at center, #111524 0%, #04060b 100%);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
+        .game-area { flex: 1.5; position: relative; background: radial-gradient(circle at center, #111524 0%, #04060b 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        /* تأثير النيون للطيارة */
-        .rocket-container {
-            position: absolute; bottom: 15%; left: 10%; 
-            z-index: 5; transition: 0.1s linear;
-        }
-        #rocket { 
-            font-size: 45px; transform: rotate(-45deg); 
-            filter: drop-shadow(0 0 15px var(--brand));
-            transition: color 0.3s, filter 0.3s;
-        }
+        .rocket-container { position: absolute; bottom: 15%; left: 10%; z-index: 5; transition: 0.1s linear; }
+        #rocket { font-size: 45px; transform: rotate(-45deg); filter: drop-shadow(0 0 15px var(--brand)); transition: color 0.3s; }
 
-        .multiplier-val { 
-            font-size: 75px; font-weight: 900; z-index: 10; 
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-            font-variant-numeric: tabular-nums;
-        }
+        .multiplier-val { font-size: 70px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
+        .waiting-msg { position: absolute; top: 20%; font-size: 14px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 2px; }
 
-        /* --- History --- */
-        .history-lane { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: var(--bg); }
-        .hist-chip { background: var(--panel); padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; border: 1px solid var(--border); }
-
-        /* --- Dashboard --- */
-        .dashboard {
-            background: var(--panel); border-top: 2px solid var(--border);
-            padding: 20px; display: flex; flex-direction: column; gap: 12px;
-            padding-bottom: 35px;
-        }
-
-        .input-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .input-wrapper {
-            background: var(--input-bg); border: 2px solid var(--border);
-            border-radius: 8px; display: flex; align-items: center; padding: 4px 10px;
-        }
+        .dashboard { background: var(--panel); border-top: 2px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 12px; padding-bottom: 35px; }
+        .input-wrapper { background: var(--input-bg); border: 2px solid var(--border); border-radius: 8px; display: flex; align-items: center; padding: 4px 10px; }
         .input-wrapper label { font-size: 10px; color: #55607b; font-weight: 800; text-transform: uppercase; margin-right: 10px; }
         .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; padding: 10px 0; font-size: 16px; font-weight: 700; }
 
-        .quick-btns { display: flex; gap: 4px; }
-        .quick-btns button { background: #2f3749; border: none; color: #fff; padding: 8px 12px; font-size: 12px; font-weight: 800; border-radius: 5px; }
-
-        /* --- Buttons --- */
-        .main-btn {
-            width: 100%; padding: 20px; border-radius: 10px; border: none;
-            font-size: 18px; font-weight: 900; text-transform: uppercase;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-bet { background: var(--brand); color: #fff; box-shadow: 0 0 20px rgba(255, 0, 184, 0.3); }
-        
-        /* زر الكاش أوت الأخضر القوي */
-        .btn-cashout { 
-            background: var(--up) !important; 
-            color: #000 !important; 
-            box-shadow: 0 0 25px rgba(0, 231, 1, 0.4);
-        }
-
+        .main-btn { width: 100%; padding: 20px; border-radius: 10px; border: none; font-size: 18px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .btn-bet { background: var(--brand); color: #fff; }
+        .btn-cashout { background: var(--up) !important; color: #000 !important; box-shadow: 0 0 20px rgba(0, 231, 1, 0.4); }
         .btn-waiting { background: #242938; color: #55607b; }
 
         .profit-label { text-align: center; height: 22px; color: var(--up); font-size: 16px; font-weight: 800; }
-
     </style>
 </head>
 <body>
@@ -107,166 +49,149 @@
     <header>
         <a href="game.html" style="color:#fff;"><i class="fa-solid fa-chevron-left"></i></a>
         <div class="balance-tag">
-            <i class="fa-solid fa-circle-dollar-to-slot" style="color:var(--usdt)"></i>
+            <i class="fa-solid fa-circle-dollar-to-slot" style="color:#26a17b"></i>
             <span id="userBalance">0.00</span>
         </div>
-        <div style="width: 30px;"></div>
+        <div id="onlineCount" style="font-size: 10px; color: var(--up);"><i class="fa-solid fa-circle"></i> LIVE</div>
     </header>
 
     <div class="game-area">
+        <div id="waitingMsg" class="waiting-msg"></div>
         <div class="rocket-container" id="rocketBox">
             <i id="rocket" class="fa-solid fa-rocket"></i>
         </div>
         <div id="multiplier" class="multiplier-val">1.00x</div>
     </div>
 
-    <div class="history-lane" id="history"></div>
-
     <div class="dashboard">
         <div class="profit-label" id="profitLabel"></div>
-
         <div class="input-wrapper">
             <label>Amount</label>
             <input type="number" id="betAmount" value="10.00">
-            <div class="quick-btns">
-                <button onclick="mult(0.5)">½</button>
-                <button onclick="mult(2)">2×</button>
-            </div>
         </div>
-
-        <div class="input-wrapper">
-            <label>Auto</label>
-            <input type="number" id="autoCash" value="2.00">
-        </div>
-
         <button id="actionBtn" class="main-btn btn-bet" onclick="handleAction()">Place Bet</button>
-        <div style="text-align:center; font-size:10px; color:#242938; margin-top:5px; font-weight:800;">AMANA PROVABLY FAIR</div>
     </div>
 
 <script>
     let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
     const balanceEl = document.getElementById('userBalance');
-    
-    function sync() {
-        balanceEl.textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-        localStorage.setItem('balance', balance);
-    }
-    sync();
-
-    let multi = 1.00, state = "IDLE", hasBet = false, cashed = false, myBet = 0;
-    let startT, anim;
-
     const multiText = document.getElementById('multiplier');
     const rocket = document.getElementById('rocket');
     const rocketBox = document.getElementById('rocketBox');
     const actionBtn = document.getElementById('actionBtn');
+    const waitingMsg = document.getElementById('waitingMsg');
     const profitLabel = document.getElementById('profitLabel');
 
-    function launch() {
-        state = "RUNNING";
-        startT = Date.now();
-        multi = 1.00;
-        multiText.style.color = "#fff";
-        
-        // عند الانطلاق: الطيارة تضوي أخضر
-        rocket.style.color = "var(--up)";
-        rocket.style.filter = "drop-shadow(0 0 15px var(--up))";
+    function sync() { balanceEl.textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2}); localStorage.setItem('balance', balance); }
+    sync();
 
-        if(hasBet) {
-            actionBtn.className = "main-btn btn-cashout";
-            actionBtn.textContent = "Cash Out";
+    // --- Global Sync Logic (Multiplayer Simulation) ---
+    // الدورة مدتها 20 ثانية: 5 ثواني انتظار و 15 ثانية كحد أقصى للطيران
+    const ROUND_DURATION = 20000; 
+    const WAIT_TIME = 5000;
+
+    let hasBetInThisRound = false;
+    let cashedOutInThisRound = false;
+    let currentBet = 0;
+
+    function updateGame() {
+        const now = Date.now();
+        const cyclePos = now % ROUND_DURATION;
+
+        if (cyclePos < WAIT_TIME) {
+            // مرحلة الانتظار (الكل بيشوفها سوا)
+            const timeLeft = Math.ceil((WAIT_TIME - cyclePos) / 1000);
+            state = "IDLE";
+            multiText.textContent = "1.00x";
+            multiText.style.color = "#fff";
+            waitingMsg.textContent = `Next Round in ${timeLeft}s`;
+            rocketBox.style.display = "none";
+            rocket.style.color = "var(--brand)";
+            
+            if (!hasBetInThisRound) {
+                actionBtn.className = "main-btn btn-bet";
+                actionBtn.textContent = "Place Bet";
+            }
         } else {
-            actionBtn.className = "main-btn btn-waiting";
-            actionBtn.textContent = "Flying...";
+            // مرحلة الطيران (الكل بيشوف نفس الرقم)
+            state = "RUNNING";
+            waitingMsg.textContent = "";
+            rocketBox.style.display = "block";
+            
+            const flightTime = (cyclePos - WAIT_TIME) / 1000;
+            const currentMulti = Math.pow(Math.E, 0.08 * flightTime);
+            
+            // تحديد نقطة الكراش بناءً على الدقيقة الحالية (موحدة للكل)
+            const roundId = Math.floor(now / ROUND_DURATION);
+            const crashPoint = getCrashPoint(roundId);
+
+            if (currentMulti >= crashPoint) {
+                // الكراش بيصير عند الكل بنفس اللحظة
+                state = "CRASHED";
+                multiText.textContent = crashPoint.toFixed(2) + "x";
+                multiText.style.color = "var(--down)";
+                rocket.style.color = "var(--down)";
+                actionBtn.className = "main-btn btn-waiting";
+                actionBtn.textContent = "Crashed";
+                profitLabel.textContent = "";
+                hasBetInThisRound = false;
+                cashedOutInThisRound = false;
+            } else {
+                // الطيارة عم تطير
+                multiText.textContent = currentMulti.toFixed(2) + "x";
+                multiText.style.color = "#fff";
+                rocket.style.color = "var(--up)";
+                
+                rocketBox.style.left = Math.min(10 + flightTime * 6, 80) + "%";
+                rocketBox.style.bottom = Math.min(15 + Math.pow(flightTime, 1.3) * 5, 75) + "%";
+
+                if (hasBetInThisRound && !cashedOutInThisRound) {
+                    actionBtn.className = "main-btn btn-cashout";
+                    actionBtn.textContent = "Cash Out";
+                    profitLabel.textContent = "+" + (currentBet * currentMulti).toFixed(2);
+                }
+            }
         }
-        tick();
+        requestAnimationFrame(updateGame);
     }
 
-    function tick() {
-        if(state !== "RUNNING") return;
-        let elapsed = (Date.now() - startT) / 1000;
-        multi = Math.pow(Math.E, 0.08 * elapsed);
-        multiText.textContent = multi.toFixed(2) + "x";
-
-        // حركة الطيارة في المساحة الواسعة
-        rocketBox.style.left = Math.min(10 + elapsed * 6, 80) + "%";
-        rocketBox.style.bottom = Math.min(15 + Math.pow(elapsed, 1.3) * 5, 75) + "%";
-
-        if(hasBet && !cashed) {
-            profitLabel.textContent = "+" + (myBet * multi).toFixed(2) + " USDT";
-            let auto = parseFloat(document.getElementById('autoCash').value);
-            if(auto > 1.01 && multi >= auto) doCashOut();
-        }
-
-        // خوارزمية الكراش
-        let risk = 0.0015 + (multi * 0.004); 
-        if(Math.random() < risk) crash();
-        else anim = requestAnimationFrame(tick);
+    // خوارزمية توليد نقطة كراش موحدة بناءً على رقم الجولة
+    function getCrashPoint(seed) {
+        const x = Math.sin(seed) * 10000;
+        const random = x - Math.floor(x);
+        // المعادلة تضمن إن أغلب الكراش بين 1.1 و 3، ومع فرص نادرة لأرقام عالية
+        return Math.max(1.00, 0.99 / (1 - random));
     }
 
     function handleAction() {
-        if(state === "IDLE" && !hasBet) {
-            let val = parseFloat(document.getElementById('betAmount').value);
-            if(val > balance || val <= 0) return;
-            balance -= val;
-            myBet = val;
-            hasBet = true;
+        const now = Date.now();
+        const cyclePos = now % ROUND_DURATION;
+
+        if (cyclePos < WAIT_TIME && !hasBetInThisRound) {
+            // المراهنة مسموحة فقط في وقت الانتظار
+            let amt = parseFloat(document.getElementById('betAmount').value);
+            if (amt > balance || amt <= 0) return;
+            balance -= amt;
+            currentBet = amt;
+            hasBetInThisRound = true;
             sync();
             actionBtn.className = "main-btn btn-waiting";
-            actionBtn.textContent = "Waiting...";
-        } else if(state === "RUNNING" && hasBet && !cashed) {
-            doCashOut();
+            actionBtn.textContent = "Waiting for Start...";
+        } else if (state === "RUNNING" && hasBetInThisRound && !cashedOutInThisRound) {
+            // الكاش أوت أثناء الطيران
+            cashedOutInThisRound = true;
+            const flightTime = (cyclePos - WAIT_TIME) / 1000;
+            const currentMulti = Math.pow(Math.E, 0.08 * flightTime);
+            let win = currentBet * currentMulti;
+            balance += win;
+            sync();
+            actionBtn.className = "main-btn btn-waiting";
+            actionBtn.textContent = "Won +" + win.toFixed(2);
+            profitLabel.textContent = "WINNER!";
         }
     }
 
-    function doCashOut() {
-        if(cashed) return;
-        cashed = true;
-        let win = myBet * multi;
-        balance += win;
-        sync();
-        actionBtn.className = "main-btn btn-waiting";
-        actionBtn.textContent = "Won +" + win.toFixed(2);
-        profitLabel.textContent = "WINNER!";
-        
-        // عند الكاش أوت: الطيارة تضوي زهري/براند كدليل نجاح
-        rocket.style.color = "var(--brand)";
-        rocket.style.filter = "drop-shadow(0 0 15px var(--brand))";
-    }
-
-    function crash() {
-        state = "CRASHED";
-        cancelAnimationFrame(anim);
-        
-        // عند الكراش: الطيارة تضوي أحمر
-        rocket.style.color = "var(--down)";
-        rocket.style.filter = "drop-shadow(0 0 15px var(--down))";
-        multiText.style.color = "var(--down)";
-        
-        actionBtn.className = "main-btn btn-waiting";
-        actionBtn.textContent = "Crashed";
-        profitLabel.textContent = "";
-
-        const chip = `<div class="hist-chip" style="color:${multi > 2 ? 'var(--up)' : 'var(--down)'}">${multi.toFixed(2)}x</div>`;
-        document.getElementById('history').insertAdjacentHTML('afterbegin', chip);
-
-        setTimeout(reset, 3000);
-    }
-
-    function reset() {
-        state = "IDLE"; hasBet = false; cashed = false;
-        multiText.style.color = "#fff";
-        multiText.textContent = "1.00x";
-        rocketBox.style.left = "10%"; rocketBox.style.bottom = "15%";
-        rocket.style.color = "var(--brand)"; // لون الانتظار
-        rocket.style.filter = "drop-shadow(0 0 15px var(--brand))";
-        actionBtn.className = "main-btn btn-bet";
-        actionBtn.textContent = "Place Bet";
-        setTimeout(launch, 2000);
-    }
-
-    function mult(v) { document.getElementById('betAmount').value = (document.getElementById('betAmount').value * v).toFixed(2); }
-    reset();
+    updateGame();
 </script>
 </body>
 </html>
