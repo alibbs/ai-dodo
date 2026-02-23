@@ -1,238 +1,294 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI MARKETING | Profile</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA GLOBAL | Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-<style>
-html{scroll-behavior:smooth}
-:root{
---bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
---brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
---shadow:0 20px 60px rgba(0,0,0,.45);
-}
-*{box-sizing:border-box}
-body{
-margin:0;
-padding-top:80px;
-padding-bottom:80px;
-font-family:system-ui;
-background:
-radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-#0b1020;
-color:#fff;
-}
+    <style>
+        :root {
+            --bg: #0b0f1f;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.1);
+            --brand1: #a100ff;
+            --brand2: #ff00b8;
+            --text: #ffffff;
+            --muted: #b8c0e6;
+            --danger: #ff0050;
+            --nav-bg: rgba(15, 23, 42, 0.95);
+        }
 
-/* HEADER */
-header{
-position:fixed;top:0;left:0;right:0;z-index:100;
-background:rgba(11,16,32,.85);
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-}
-.nav{
-max-width:1100px;margin:auto;padding:14px 18px;
-display:flex;justify-content:space-between;align-items:center;
-}
-.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
-.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
-.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* MOBILE MENU */
-.mobileMenu{
-position:fixed;top:0;left:-100%;width:80%;height:100%;
-background:#0e1730;z-index:200;padding:20px;transition:.3s;
-}
-.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
-.mobileMenu.show{left:0}
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 100px;
+            background: radial-gradient(circle at bottom left, #1c0833, #0b0f1f);
+            min-height: 100vh;
+        }
 
-/* CONTENT */
-.container{
-max-width:1100px;
-margin:auto;
-padding:16px;
-display:grid;
-grid-template-columns:1fr;
-gap:14px;
-}
-.card{
-background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.92));
-border:1px solid var(--border);
-border-radius:16px;
-box-shadow:var(--shadow);
-padding:16px;
-}
+        .container { padding: 20px; }
 
-/* CREDIT CARD */
-.creditCard{
-position:relative;
-border-radius:20px;
-padding:20px;
-background:linear-gradient(135deg, rgba(124,92,255,.9), rgba(34,211,238,.7));
-box-shadow:0 20px 60px rgba(0,0,0,.6);
-overflow:hidden;
-}
-.creditCard::after{
-content:"";
-position:absolute;inset:-40px;
-background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.25), transparent 60%);
-animation:shine 4s infinite;
-}
-@keyframes shine{
-0%{transform:translateX(-60%)}
-100%{transform:translateX(60%)}
-}
-.ccInner{position:relative}
-.ccBalance{font-size:26px;font-weight:900}
-.ccLabel{font-size:12px;opacity:.85}
-.ccRow{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
-.ccId{font-family:monospace;letter-spacing:1px;font-size:13px}
+        /* --- Profile Header --- */
+        .profile-header {
+            text-align: center;
+            padding: 30px 0;
+        }
 
-/* ITEMS */
-.item{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px;
-border:1px solid var(--border);
-border-radius:14px;
-background:rgba(255,255,255,.04);
-margin-bottom:10px;
-}
+        .avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
 
-.btn{
-padding:12px;
-border-radius:12px;
-border:1px solid var(--border);
-background:#1f2a44;
-color:#fff;
-font-weight:900;
-cursor:pointer;
-}
-.btn.primary{background:linear-gradient(135deg,#7c5cff,#22d3ee)}
-.btn.logout{background:#ef4444}
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--brand2);
+            padding: 3px;
+            object-fit: cover;
+            background: var(--card-bg);
+        }
 
-/* BOTTOM NAV */
-.bottomNav{
-position:fixed;bottom:0;left:0;right:0;height:64px;
-background:#0e1730;border-top:1px solid var(--border);
-display:flex;justify-content:space-around;align-items:center;
-z-index:100;
-}
-.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #00ff96;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid var(--bg);
+        }
 
-/* RESPONSIVE */
-@media(max-width:900px){
-}
-</style>
+        .user-name { font-size: 22px; font-weight: 800; margin: 0; }
+        .user-id { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+        /* --- Stats Row --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 18px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+        .stat-value { font-size: 16px; font-weight: 700; color: var(--brand2); }
+
+        /* --- Menu List --- */
+        .menu-group {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            text-decoration: none;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: rgba(255,255,255,0.05); }
+
+        .menu-left { display: flex; align-items: center; gap: 15px; }
+        .menu-left i { font-size: 18px; width: 24px; text-align: center; color: var(--brand1); }
+        .menu-item span { font-size: 15px; font-weight: 500; }
+        .menu-right { color: var(--muted); font-size: 14px; }
+
+        .logout-btn {
+            color: var(--danger);
+            border: 1px solid rgba(255, 0, 80, 0.2);
+            background: rgba(255, 0, 80, 0.05);
+            margin-top: 10px;
+        }
+
+        .logout-btn i { color: var(--danger); }
+
+        /* --- BOTTOM NAV BAR (Shared) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 75px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 1000;
+        }
+
+        .nav-tab {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .nav-tab i { font-size: 20px; margin-bottom: 5px; }
+        .nav-tab.active { color: var(--brand2); }
+    </style>
 </head>
-
 <body>
 
-<!-- MOBILE MENU -->
-<div class="mobileMenu" id="mobileMenu">
-  <a href="wallet.html">Wallet</a>
-  <a href="trade.html">Trade</a>
-  <a href="gamecenter.html">Game Center</a>
-  <a href="profile.html">Profile</a>
-  <a href="settings.html">Settings</a>
-  <a href="#" onclick="logout()">Logout</a>
-</div>
+    <div class="container">
+        <div class="profile-header">
+            <div class="avatar-wrapper">
+                <img src="https://ui-avatars.com/api/?name=User&background=a100ff&color=fff&size=128" alt="User Avatar" class="avatar" id="userAvatar">
+                <div class="status-badge"></div>
+            </div>
+            <h1 class="user-name" id="profileName">Loading...</h1>
+            <div class="user-id">UID: <span id="userUID">8429103</span></div>
+        </div>
 
-<header>
-  <div class="nav">
-    <a class="brand" href="#">
-      <div class="logo"></div> AI MARKETING
-    </a>
-    <button class="menuBtn" onclick="toggleMenu()">☰</button>
-  </div>
-</header>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Account Level</div>
+                <div class="stat-value">VIP 1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">KYC Status</div>
+                <div class="stat-value" style="color: #00ff96;">Verified</div>
+            </div>
+        </div>
 
-<div class="container">
+        <div class="menu-group">
+            <a href="#" class="menu-item">
+                <div class="menu-left">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>My Wallet</span>
+                </div>
+                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="menu-left">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Security Settings</span>
+                </div>
+                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="menu-left">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>Identity Verification</span>
+                </div>
+                <div class="menu-right">Verified</div>
+            </a>
+        </div>
 
-<!-- CARD -->
-<div class="creditCard">
-  <div class="ccInner">
-    <div class="ccLabel">Total Balance</div>
-    <div class="ccBalance" id="balance">$1,250.00</div>
+        <div class="menu-group">
+            <a href="#" class="menu-item">
+                <div class="menu-left">
+                    <i class="fa-solid fa-language"></i>
+                    <span>Language</span>
+                </div>
+                <div class="menu-right">English <i class="fa-solid fa-chevron-right" style="margin-left: 5px;"></i></div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="menu-left">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>About Amana Global</span>
+                </div>
+                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+        </div>
 
-    <div class="ccRow">
-      <div>
-        <div class="ccLabel">Username</div>
-        <div><b id="username">teshrij</b></div>
-      </div>
-      <div style="text-align:right">
-        <div class="ccLabel">User ID</div>
-        <div class="ccId" id="userid">UID-984233</div>
-      </div>
+        <div class="menu-group">
+            <a href="#" class="menu-item logout-btn" id="logoutBtn">
+                <div class="menu-left">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout Account</span>
+                </div>
+            </a>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ACCOUNT INFO -->
-<div class="card">
-  <h3>Account Info</h3>
-  <div class="item"><span>Email</span><b id="email">user@email.com</b></div>
-  <div class="item"><span>Phone</span><b id="phone">+96170123456</b></div>
-  <div class="item"><span>Country</span><b id="country">Lebanon</b></div>
-</div>
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-tab">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="game-center.html" class="nav-tab">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Game</span>
+        </a>
+        <a href="bot-trade.html" class="nav-tab">
+            <i class="fa-solid fa-robot"></i>
+            <span>Bot Trade</span>
+        </a>
+        <a href="overview.html" class="nav-tab">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Overview</span>
+        </a>
+        <a href="profile.html" class="nav-tab active">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
 
-<!-- KYC -->
-<div class="card">
-  <h3>KYC Verification</h3>
-  <div class="item">
-    <div>
-      <b>Status</b>
-      <div style="font-size:13px;color:#b8c0e6">Not verified</div>
-    </div>
-    <button class="btn primary" onclick="alert('Open KYC')">Verify Now</button>
-  </div>
-</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-<!-- LOGOUT -->
-<div class="card">
-  <h3>Logout</h3>
-  <button class="btn logout" style="width:100%" onclick="logout()">Logout</button>
-</div>
+        // Firebase Config (Same as your other pages)
+        const firebaseConfig = {
+            apiKey: "YOUR_KEY",
+            authDomain: "YOUR_DOMAIN",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_BUCKET",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-</div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-<!-- BOTTOM NAV -->
-<div class="bottomNav">
-  <a href="wallet.html">💰<br>Wallet</a>
-  <a href="trade.html">📊<br>Trade</a>
-  <a href="gamecenter.html">🎮<br>Games</a>
-  <a href="profile.html">👤<br>Profile</a>
-  <a href="settings.html">⚙️<br>Settings</a>
-</div>
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('profileName').textContent = user.displayName || "User";
+                document.getElementById('userUID').textContent = user.uid.substring(0, 8).toUpperCase();
+            } else {
+                window.location.href = "login.html";
+            }
+        });
 
-<script>
-function toggleMenu(){
-  document.getElementById("mobileMenu").classList.toggle("show");
-}
-function logout(){
-  alert("Logged out");
-  location.href="login.html";
-}
-
-/* DEMO DATA (later replace with Firebase) */
-const demo = {
-  balance: 1250.00,
-  username: "teshrij",
-  userid: "UID-984233",
-  email: "user@email.com",
-  phone: "+96170123456",
-  country: "Lebanon"
-};
-balance.textContent = "$" + demo.balance.toFixed(2);
-username.textContent = demo.username;
-userid.textContent = demo.userid;
-email.textContent = demo.email;
-phone.textContent = demo.phone;
-country.textContent = demo.country;
-</script>
-
+        // Logout function
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.href = "login.html";
+            });
+        });
+    </script>
 </body>
 </html>
