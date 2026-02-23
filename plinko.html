@@ -3,90 +3,113 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | RIGGED EDITION</title>
+    <title>STAKE CLONE | PLINKO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --bg: #04060b;
-            --panel: #0f121d;
+            --bg: #0f172a;
+            --sidebar: #212631;
+            --input: #0f121d;
             --moov: #a333ff;
-            --peg: #ffffff;
             --red: #ff3b3b;
-            --border: #222635;
-            --input-bg: #1a1d29;
+            --border: #2f3749;
+            --text-gray: #b1bad3;
         }
 
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
+        
         body { display: flex; flex-direction: column; }
 
-        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .balance-tag { background: var(--panel); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        /* Balance Header */
+        header { padding: 10px 15px; display: flex; justify-content: center; background: var(--bg); }
+        .balance-box { background: var(--input); padding: 8px 15px; border-radius: 4px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); min-width: 150px; justify-content: center; }
+        .balance-box span { font-weight: 800; color: #fff; }
 
-        .game-area { flex: 1.8; position: relative; background: radial-gradient(circle at center, #111524 0%, #04060b 100%); overflow: hidden; }
-        #plinko-canvas { width: 100%; height: 100%; }
-
-        .multi-container {
-            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 2px; width: 96%; justify-content: center;
-        }
-        .m-box {
-            flex: 1; height: 26px; background: var(--red); border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4);
-        }
-
-        .dashboard { background: var(--panel); border-top: 2px solid var(--border); padding: 15px 20px 30px 20px; display: flex; flex-direction: column; gap: 10px; }
-        .risk-selector { display: flex; background: var(--input-bg); border-radius: 8px; padding: 4px; gap: 4px; }
-        .risk-btn { flex: 1; border: none; background: transparent; color: #55607b; padding: 10px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; }
-        .risk-btn.active { background: #2f3749; color: #fff; }
-
-        .input-wrapper { background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; padding-right: 8px; }
-        .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; font-size: 16px; font-weight: 700; }
+        /* Game Container */
+        .main-container { flex: 1; display: flex; flex-direction: column; position: relative; }
         
-        .main-btn { width: 100%; padding: 20px; border-radius: 8px; border: none; font-size: 18px; font-weight: 900; text-transform: uppercase; background: var(--moov); color: #fff; box-shadow: 0 0 20px rgba(163, 51, 255, 0.4); }
+        .game-canvas-area { flex: 1.5; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+        #plinko-canvas { width: 100%; height: 100%; max-width: 500px; }
+
+        .multiplier-row { display: flex; gap: 2px; width: 92%; max-width: 480px; margin-bottom: 10px; }
+        .m-box { flex: 1; height: 26px; background: var(--red); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: 0.1s; }
+
+        /* Sidebar/Controls Area */
+        .controls { background: var(--sidebar); padding: 15px; border-radius: 10px 10px 0 0; display: flex; flex-direction: column; gap: 12px; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-label { font-size: 11px; color: var(--text-gray); font-weight: 800; text-transform: uppercase; }
+        
+        .input-field { background: var(--input); border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; padding: 4px 10px; }
+        .input-field input, .input-field select { flex: 1; background: transparent; border: none; color: #fff; padding: 10px 0; font-weight: 800; font-size: 14px; }
+        
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 4px; font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
+        .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <div class="balance-tag">
+        <div class="balance-box">
             <i class="fa-solid fa-coins" style="color:#26a17b"></i>
             <span id="userBalance">0.00</span>
         </div>
     </header>
 
-    <div class="game-area">
-        <canvas id="plinko-canvas"></canvas>
-        <div class="multi-container" id="multi-row"></div>
-    </div>
+    <div class="main-container">
+        <div class="game-canvas-area">
+            <canvas id="plinko-canvas"></canvas>
+            <div class="multiplier-row" id="multiplierRow"></div>
+        </div>
 
-    <div class="dashboard">
-        <div class="risk-selector">
-            <button class="risk-btn" id="btn-low" onclick="setRisk('low')">Low</button>
-            <button class="risk-btn active" id="btn-medium" onclick="setRisk('medium')">Medium</button>
-            <button class="risk-btn" id="btn-high" onclick="setRisk('high')">High</button>
+        <div class="controls">
+            <div class="input-group">
+                <div class="input-label">Bet Amount</div>
+                <div class="input-field">
+                    <input type="number" id="betAmount" value="10.00">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="input-group">
+                    <div class="input-label">Risk</div>
+                    <div class="input-field">
+                        <select id="riskSelect" onchange="initGame()">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-label">Rows</div>
+                    <div class="input-field">
+                        <select id="rowsSelect" onchange="initGame()">
+                            <option value="8">8</option>
+                            <option value="12">12</option>
+                            <option value="16" selected>16</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="bet-btn" onclick="placeBet()">Bet</button>
         </div>
-        <div class="input-wrapper">
-            <input type="number" id="betAmount" value="10.00">
-        </div>
-        <button class="main-btn" onclick="dropCoin()">Play</button>
     </div>
 
 <script>
     const canvas = document.getElementById('plinko-canvas');
     const ctx = canvas.getContext('2d');
-    const multiRow = document.getElementById('multi-row');
     let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
-    let currentRisk = 'medium';
     let balls = [], pegs = [];
-    const rows = 16;
-
-    // --- نظام احتمالات قاسي جداً (House Edge Optimized) ---
-    const riskLevels = {
-        low:    { m: [5, 2, 1.2, 1, 0.5, 1, 1.2, 2, 5], prob: [1, 5, 15, 20, 40, 20, 15, 5, 1] },
-        medium: { m: [20, 10, 5, 2, 0.2, 2, 5, 10, 20], prob: [0.5, 2, 5, 10, 70, 10, 5, 2, 0.5] },
-        high:   { m: [100, 50, 10, 0, 0, 0, 10, 50, 100], prob: [0.1, 0.5, 2, 10, 75, 10, 2, 0.5, 0.1] }
+    
+    // Stake Official Multipliers (16 Rows)
+    const stakeMultipliers = {
+        low:    [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], // Simplified for example
+        medium: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110],
+        high:   [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000]
     };
 
     function sync() {
@@ -95,107 +118,115 @@
     }
     sync();
 
-    function setRisk(level) {
-        currentRisk = level;
-        document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + level).classList.add('active');
-        renderMulti();
-    }
-
-    function renderMulti() {
-        multiRow.innerHTML = '';
-        riskLevels[currentRisk].m.forEach(val => {
-            const div = document.createElement('div');
-            div.className = 'm-box';
-            div.textContent = val + 'x';
-            multiRow.appendChild(div);
-        });
-    }
-
-    function initBoard() {
+    function initGame() {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         pegs = [];
-        const spacing = canvas.width / (rows + 2);
-        for (let i = 3; i <= rows + 2; i++) {
-            const rowY = spacing * (i - 1);
-            for (let j = 0; j < i; j++) {
-                const x = canvas.width / 2 + (j - (i - 1) / 2) * spacing;
+        const rowCount = parseInt(document.getElementById('rowsSelect').value);
+        const spacing = canvas.width / (rowCount + 4);
+        
+        for (let i = 2; i <= rowCount + 1; i++) {
+            const rowY = spacing * (i + 1);
+            for (let j = 0; j <= i; j++) {
+                const x = canvas.width / 2 + (j - i / 2) * (spacing * 1.1);
                 pegs.push({ x, y: rowY, active: 0 });
             }
         }
+        renderMultis();
     }
 
-    function getWeightedResult() {
-        const probs = riskLevels[currentRisk].prob;
-        const totalProb = probs.reduce((a, b) => a + b, 0);
-        let random = Math.random() * totalProb;
-        for (let i = 0; i < probs.length; i++) {
-            if (random < probs[i]) return i;
-            random -= probs[i];
-        }
-        return Math.floor(probs.length / 2);
+    function renderMultis() {
+        const risk = document.getElementById('riskSelect').value;
+        const container = document.getElementById('multiplierRow');
+        container.innerHTML = '';
+        stakeMultipliers[risk].forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'm-box';
+            div.textContent = m + 'x';
+            container.appendChild(div);
+        });
     }
 
-    function dropCoin() {
+    function placeBet() {
         let amt = parseFloat(document.getElementById('betAmount').value);
         if (amt > balance || amt <= 0) return;
         balance -= amt; sync();
 
-        const targetIdx = getWeightedResult();
-        const spacing = canvas.width / (rows + 2);
-        const targetX = canvas.width / 2 + (targetIdx - (riskLevels[currentRisk].m.length - 1) / 2) * spacing;
+        const risk = document.getElementById('riskSelect').value;
+        const rowCount = parseInt(document.getElementById('rowsSelect').value);
+        
+        // Stake Logic: النتيجة تختار بناءً على احتمالية حقيقية (Binomial)
+        let directions = [];
+        for(let i=0; i<rowCount; i++) directions.push(Math.random() > 0.5 ? 1 : -1);
+        const finalSlot = directions.filter(d => d === 1).length;
 
         balls.push({
-            x: canvas.width / 2, y: 30, vx: 0, vy: 0,
-            targetX: targetX, bet: amt, win: riskLevels[currentRisk].m[targetIdx]
+            x: canvas.width / 2 + (Math.random() * 4 - 2),
+            y: 40, vx: 0, vy: 0,
+            directions: directions,
+            currentStep: 0,
+            bet: amt,
+            targetSlot: finalSlot
         });
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         pegs.forEach(peg => {
-            ctx.beginPath(); ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = peg.active > 0 ? '#fff' : '#333';
-            if(peg.active > 0) { ctx.shadowBlur = 15; ctx.shadowColor = '#fff'; }
+            ctx.beginPath();
+            ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = peg.active > 0 ? '#fff' : '#4d5568';
+            if(peg.active > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; }
             ctx.fill(); ctx.shadowBlur = 0;
             if(peg.active > 0) peg.active--;
         });
 
         balls.forEach((ball, index) => {
-            ball.vy += 0.45;
-            // قوة جذب المركز (Rigged Logic)
-            let steer = (ball.targetX - ball.x) * 0.04;
-            ball.vx += steer;
-            ball.vx *= 0.94;
-            ball.x += ball.vx; ball.y += ball.vy;
+            ball.vy += 0.5; // Gravity
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            ball.vx *= 0.95;
 
             pegs.forEach(peg => {
-                const d = Math.hypot(ball.x - peg.x, ball.y - peg.y);
-                if (d < 8) {
+                const dx = ball.x - peg.x;
+                const dy = ball.y - peg.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist < 9) {
                     peg.active = 10;
                     ball.vy *= -0.4;
-                    ball.vx += (ball.x - peg.x) * 0.4;
+                    // Physics Guiding
+                    const force = ball.directions[ball.currentStep] || (Math.random() > 0.5 ? 1 : -1);
+                    ball.vx += force * 1.5;
+                    ball.currentStep++;
                 }
             });
 
-            // Moov Coin Design
-            ctx.beginPath(); ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#a333ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff'; ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
-            ctx.fillText('$', ball.x, ball.y + 3); ctx.shadowBlur = 0;
+            // Moov Coin UI
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#a333ff';
+            ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff';
+            ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 9px Inter'; ctx.textAlign = 'center';
+            ctx.fillText('$', ball.x, ball.y + 3);
+            ctx.shadowBlur = 0;
 
-            if (ball.y > canvas.height - 40) {
-                balance += ball.bet * ball.win;
-                sync();
+            if (ball.y > canvas.height - 20) {
+                const risk = document.getElementById('riskSelect').value;
+                const mArr = stakeMultipliers[risk];
+                const win = ball.bet * mArr[Math.min(ball.targetSlot, mArr.length-1)];
+                balance += win; sync();
                 balls.splice(index, 1);
             }
         });
+
         requestAnimationFrame(draw);
     }
 
-    setRisk('medium'); initBoard(); draw();
-    window.addEventListener('resize', initBoard);
+    initGame();
+    draw();
+    window.addEventListener('resize', initGame);
 </script>
 </body>
 </html>
