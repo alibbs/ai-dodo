@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>STAKE CLONE | PLINKO</title>
+    <title>STAKE PLINKO | RIGGED PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -18,35 +18,24 @@
 
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
-        
         body { display: flex; flex-direction: column; }
 
-        /* Balance Header */
-        header { padding: 10px 15px; display: flex; justify-content: center; background: var(--bg); }
-        .balance-box { background: var(--input); padding: 8px 15px; border-radius: 4px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); min-width: 150px; justify-content: center; }
-        .balance-box span { font-weight: 800; color: #fff; }
+        header { padding: 15px; display: flex; justify-content: center; background: var(--bg); }
+        .balance-box { background: var(--input); padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); font-weight: 800; }
 
-        /* Game Container */
-        .main-container { flex: 1; display: flex; flex-direction: column; position: relative; }
-        
-        .game-canvas-area { flex: 1.5; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
-        #plinko-canvas { width: 100%; height: 100%; max-width: 500px; }
+        .game-screen { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; justify-content: flex-end; }
+        #plinko-canvas { width: 100%; height: 85%; }
 
-        .multiplier-row { display: flex; gap: 2px; width: 92%; max-width: 480px; margin-bottom: 10px; }
-        .m-box { flex: 1; height: 26px; background: var(--red); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: 0.1s; }
+        .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 25px; z-index: 10; }
+        .m-box { flex: 1; height: 24px; background: var(--red); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4); }
 
-        /* Sidebar/Controls Area */
-        .controls { background: var(--sidebar); padding: 15px; border-radius: 10px 10px 0 0; display: flex; flex-direction: column; gap: 12px; }
+        .controls { background: var(--sidebar); padding: 20px 20px 40px 20px; display: flex; flex-direction: column; gap: 12px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.3); }
+        .input-label { font-size: 11px; color: var(--text-gray); font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .input-field { background: var(--input); border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; padding: 0 12px; }
+        .input-field input, .input-field select { flex: 1; background: transparent; border: none; color: #fff; padding: 14px 0; font-weight: 800; font-size: 15px; }
         
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-label { font-size: 11px; color: var(--text-gray); font-weight: 800; text-transform: uppercase; }
-        
-        .input-field { background: var(--input); border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; padding: 4px 10px; }
-        .input-field input, .input-field select { flex: 1; background: transparent; border: none; color: #fff; padding: 10px 0; font-weight: 800; font-size: 14px; }
-        
-        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 4px; font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 20px; border-radius: 6px; font-size: 18px; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; transition: 0.1s; }
         .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
-
     </style>
 </head>
 <body>
@@ -58,74 +47,75 @@
         </div>
     </header>
 
-    <div class="main-container">
-        <div class="game-canvas-area">
-            <canvas id="plinko-canvas"></canvas>
-            <div class="multiplier-row" id="multiplierRow"></div>
+    <div class="game-screen">
+        <canvas id="plinko-canvas"></canvas>
+        <div class="multiplier-row" id="multiplierRow"></div>
+    </div>
+
+    <div class="controls">
+        <div class="input-group">
+            <div class="input-label">Bet Amount</div>
+            <div class="input-field">
+                <input type="number" id="betAmount" value="10.00">
+            </div>
         </div>
 
-        <div class="controls">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="input-group">
-                <div class="input-label">Bet Amount</div>
+                <div class="input-label">Risk</div>
                 <div class="input-field">
-                    <input type="number" id="betAmount" value="10.00">
+                    <select id="riskSelect" onchange="renderMultis()">
+                        <option value="high" selected>High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
                 </div>
             </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="input-group">
-                    <div class="input-label">Risk</div>
-                    <div class="input-field">
-                        <select id="riskSelect" onchange="initGame()">
-                            <option value="low">Low</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <div class="input-label">Rows</div>
-                    <div class="input-field">
-                        <select id="rowsSelect" onchange="initGame()">
-                            <option value="8">8</option>
-                            <option value="12">12</option>
-                            <option value="16" selected>16</option>
-                        </select>
-                    </div>
+            <div class="input-group">
+                <div class="input-label">Rows</div>
+                <div class="input-field">
+                    <select id="rowsSelect" onchange="initBoard()">
+                        <option value="8">8 Rows</option>
+                        <option value="12">12 Rows</option>
+                        <option value="16" selected>16 Rows</option>
+                    </select>
                 </div>
             </div>
-
-            <button class="bet-btn" onclick="placeBet()">Bet</button>
         </div>
+
+        <button class="bet-btn" onclick="placeBet()">Play</button>
     </div>
 
 <script>
     const canvas = document.getElementById('plinko-canvas');
     const ctx = canvas.getContext('2d');
-    let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
-    let balls = [], pegs = [];
+    const multiRow = document.getElementById('multiplierRow');
     
-    // Stake Official Multipliers (16 Rows)
-    const stakeMultipliers = {
-        low:    [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], // Simplified for example
+    let balance = parseFloat(localStorage.getItem('balance')) || 1000.00;
+    let betCount = parseInt(localStorage.getItem('plinko_counter')) || 0; // العداد السري
+    let balls = [], pegs = [];
+
+    const stakeData = {
+        high: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000],
         medium: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110],
-        high:   [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000]
+        low: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16]
     };
 
     function sync() {
         document.getElementById('userBalance').textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
         localStorage.setItem('balance', balance);
+        localStorage.setItem('plinko_counter', betCount);
     }
     sync();
 
-    function initGame() {
+    function initBoard() {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         pegs = [];
-        const rowCount = parseInt(document.getElementById('rowsSelect').value);
-        const spacing = canvas.width / (rowCount + 4);
+        const rows = parseInt(document.getElementById('rowsSelect').value);
+        const spacing = canvas.width / (rows + 4);
         
-        for (let i = 2; i <= rowCount + 1; i++) {
+        for (let i = 2; i <= rows + 1; i++) {
             const rowY = spacing * (i + 1);
             for (let j = 0; j <= i; j++) {
                 const x = canvas.width / 2 + (j - i / 2) * (spacing * 1.1);
@@ -137,14 +127,31 @@
 
     function renderMultis() {
         const risk = document.getElementById('riskSelect').value;
-        const container = document.getElementById('multiplierRow');
-        container.innerHTML = '';
-        stakeMultipliers[risk].forEach(m => {
+        multiRow.innerHTML = '';
+        stakeData[risk].forEach(m => {
             const div = document.createElement('div');
             div.className = 'm-box';
             div.textContent = m + 'x';
-            container.appendChild(div);
+            multiRow.appendChild(div);
         });
+    }
+
+    // --- الـ Rigged Logic (واحد من 50 بيربح) ---
+    function getTargetSlot(risk) {
+        betCount++; // نزيد العداد مع كل كبسة
+        const mArray = stakeData[risk];
+        const center = Math.floor(mArray.length / 2);
+
+        // إذا العداد وصل لـ 50، بنعطيه ربح عشوائي (ممكن طرف وممكن لا)
+        if (betCount >= 50) {
+            betCount = 0; // تصفير العداد
+            sync();
+            return Math.random() > 0.5 ? 1 : mArray.length - 2; // أطراف قوية
+        }
+
+        // باقي المستخدمين (أو المرات) بيروحوا دايماً عالنص (خسارة)
+        const deadZones = [-1, 0, 1]; 
+        return center + deadZones[Math.floor(Math.random() * deadZones.length)];
     }
 
     function placeBet() {
@@ -153,80 +160,61 @@
         balance -= amt; sync();
 
         const risk = document.getElementById('riskSelect').value;
-        const rowCount = parseInt(document.getElementById('rowsSelect').value);
-        
-        // Stake Logic: النتيجة تختار بناءً على احتمالية حقيقية (Binomial)
-        let directions = [];
-        for(let i=0; i<rowCount; i++) directions.push(Math.random() > 0.5 ? 1 : -1);
-        const finalSlot = directions.filter(d => d === 1).length;
+        const target = getTargetSlot(risk);
+        const rows = parseInt(document.getElementById('rowsSelect').value);
+        const spacing = canvas.width / (rows + 4);
+        const targetX = canvas.width / 2 + (target - (stakeData[risk].length - 1) / 2) * (spacing * 1.1);
 
         balls.push({
-            x: canvas.width / 2 + (Math.random() * 4 - 2),
+            x: canvas.width / 2 + (Math.random() * 6 - 3),
             y: 40, vx: 0, vy: 0,
-            directions: directions,
-            currentStep: 0,
-            bet: amt,
-            targetSlot: finalSlot
+            targetX: targetX,
+            win: stakeData[risk][target]
         });
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        pegs.forEach(peg => {
-            ctx.beginPath();
-            ctx.arc(peg.x, peg.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = peg.active > 0 ? '#fff' : '#4d5568';
-            if(peg.active > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; }
+        pegs.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = p.active > 0 ? '#fff' : '#3d4459';
+            if(p.active > 0) { ctx.shadowBlur = 15; ctx.shadowColor = '#fff'; }
             ctx.fill(); ctx.shadowBlur = 0;
-            if(peg.active > 0) peg.active--;
+            if(p.active > 0) p.active--;
         });
 
-        balls.forEach((ball, index) => {
-            ball.vy += 0.5; // Gravity
-            ball.x += ball.vx;
-            ball.y += ball.vy;
-            ball.vx *= 0.95;
+        balls.forEach((b, i) => {
+            b.vy += 0.45;
+            b.vx += (b.targetX - b.x) * 0.04; // الجذب المغناطيسي للهدف
+            b.vx *= 0.92;
+            b.x += b.vx; b.y += b.vy;
 
-            pegs.forEach(peg => {
-                const dx = ball.x - peg.x;
-                const dy = ball.y - peg.y;
-                const dist = Math.hypot(dx, dy);
-                if (dist < 9) {
-                    peg.active = 10;
-                    ball.vy *= -0.4;
-                    // Physics Guiding
-                    const force = ball.directions[ball.currentStep] || (Math.random() > 0.5 ? 1 : -1);
-                    ball.vx += force * 1.5;
-                    ball.currentStep++;
+            pegs.forEach(p => {
+                const d = Math.hypot(b.x - p.x, b.y - p.y);
+                if (d < 9) {
+                    p.active = 10;
+                    b.vy *= -0.45;
+                    b.vx += (b.x - p.x) * 0.3;
                 }
             });
 
-            // Moov Coin UI
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#a333ff';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff';
-            ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 9px Inter'; ctx.textAlign = 'center';
-            ctx.fillText('$', ball.x, ball.y + 3);
-            ctx.shadowBlur = 0;
+            // Coin Moov
+            ctx.beginPath(); ctx.arc(b.x, b.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#a333ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff'; ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
+            ctx.fillText('$', b.x, b.y + 3); ctx.shadowBlur = 0;
 
-            if (ball.y > canvas.height - 20) {
-                const risk = document.getElementById('riskSelect').value;
-                const mArr = stakeMultipliers[risk];
-                const win = ball.bet * mArr[Math.min(ball.targetSlot, mArr.length-1)];
-                balance += win; sync();
-                balls.splice(index, 1);
+            if (b.y > canvas.height - 10) {
+                balance += (parseFloat(document.getElementById('betAmount').value) * b.win);
+                sync();
+                balls.splice(i, 1);
             }
         });
-
         requestAnimationFrame(draw);
     }
 
-    initGame();
-    draw();
-    window.addEventListener('resize', initGame);
+    initBoard(); draw();
+    window.addEventListener('resize', initBoard);
 </script>
 </body>
 </html>
