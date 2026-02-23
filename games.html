@@ -1,243 +1,157 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI MARKETING | Game Center</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA GLOBAL | Casino & Games</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-<style>
-html{scroll-behavior:smooth}
-:root{
---bg:#0b1020;--panel:#101a33;--panel2:#0e1730;--text:#e8ecff;--muted:#b8c0e6;
---brand:#7c5cff;--brand2:#22d3ee;--border:rgba(255,255,255,.12);
-}
-*{box-sizing:border-box}
-body{
-margin:0;
-padding-top:80px;
-padding-bottom:80px;
-font-family:system-ui;
-background:
-radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.35), transparent 55%),
-radial-gradient(1000px 600px at 20% 10%, rgba(34,211,238,.22), transparent 55%),
-#0b1020;
-color:#fff;
-}
+    <style>
+        :root {
+            --bg: #060914;
+            --brand: #ff00b8;
+            --accent: #00f2ff;
+            --gold: #ffcc00;
+            --text: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
 
-/* HEADER */
-header{
-position:fixed;top:0;left:0;right:0;z-index:100;
-background:rgba(11,16,32,.85);
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-}
-.nav{
-max-width:1100px;margin:auto;padding:14px 18px;
-display:flex;justify-content:space-between;align-items:center;
-}
-.brand{display:flex;gap:10px;font-weight:900;text-decoration:none;color:#fff}
-.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#22d3ee);}
-.menuBtn{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: var(--text);
+            padding-bottom: 110px;
+            background: radial-gradient(circle at bottom left, #1a0b2e 0%, #060914 100%);
+        }
 
-/* MOBILE MENU */
-.mobileMenu{
-position:fixed;top:0;left:-100%;width:80%;height:100%;
-background:#0e1730;z-index:200;padding:20px;transition:.3s;
-}
-.mobileMenu a{display:block;padding:14px;border-bottom:1px solid var(--border);color:#fff;text-decoration:none;font-weight:800}
-.mobileMenu.show{left:0}
+        .container { padding: 20px; max-width: 450px; margin: auto; }
 
-/* CONTENT */
-.container{max-width:1100px;margin:auto;padding:16px}
+        /* --- Header --- */
+        .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .balance-badge { background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--brand); font-weight: 800; font-size: 14px; }
+        .balance-badge i { color: var(--gold); margin-right: 5px; }
 
-/* HERO */
-.hero{
-background:linear-gradient(135deg, rgba(124,92,255,.25), rgba(34,211,238,.15));
-border:1px solid var(--border);
-border-radius:20px;
-padding:24px;
-margin-bottom:20px;
-position:relative;
-overflow:hidden;
-}
-.hero::after{
-content:"";
-position:absolute;inset:-40px;
-background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.12), transparent 60%);
-animation:shine 5s infinite;
-}
-@keyframes shine{
-0%{transform:translateX(-60%)}
-100%{transform:translateX(60%)}
-}
-.hero h1{margin:0;font-size:26px}
-.hero p{color:var(--muted)}
+        /* --- Banner Area --- */
+        .promo-banner {
+            width: 100%; height: 160px;
+            background: linear-gradient(45deg, #6200ff, #ff00b8);
+            border-radius: 25px; margin-bottom: 30px;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(255, 0, 184, 0.3);
+        }
+        .promo-banner img { position: absolute; right: -20px; bottom: -10px; height: 120%; opacity: 0.4; }
+        .promo-text { position: relative; z-index: 2; text-align: center; }
+        .promo-text h2 { font-size: 24px; margin: 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        .promo-text p { font-size: 12px; margin: 5px 0 0; opacity: 0.9; }
 
-/* GAMES GRID */
-.games{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-margin-top:20px;
-}
-.game{
-position:relative;
-background:linear-gradient(180deg, rgba(16,26,51,.95), rgba(14,23,48,.95));
-border:1px solid var(--border);
-border-radius:20px;
-overflow:hidden;
-box-shadow:0 20px 50px rgba(0,0,0,.5);
-transition:.25s;
-}
-.game:hover{
-transform:translateY(-8px) scale(1.02);
-box-shadow:0 30px 80px rgba(0,0,0,.8);
-border-color:rgba(124,92,255,.6);
-}
-.game::before{
-content:"";
-position:absolute;inset:-60px;
-background:radial-gradient(400px 200px at 30% 20%, rgba(124,92,255,.25), transparent 60%),
-radial-gradient(400px 200px at 80% 80%, rgba(34,211,238,.25), transparent 60%);
-opacity:.8;
-}
+        /* --- Game Grid --- */
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--brand); }
 
-.gameInner{
-position:relative;
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:12px;
-min-height:260px;
-}
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        
+        .game-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 22px; overflow: hidden; position: relative;
+            transition: 0.3s; cursor: pointer;
+        }
+        .game-card:active { transform: scale(0.95); }
+        .game-img { width: 100%; height: 120px; background: #111; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .game-img i { font-size: 50px; opacity: 0.5; transition: 0.3s; }
+        .game-card:hover .game-img i { transform: scale(1.2); opacity: 1; color: var(--brand); }
+        
+        /* Specific Game Icons/Colors */
+        .crash { background: linear-gradient(135deg, #1d1d2d, #ff3b3b11); }
+        .dice { background: linear-gradient(135deg, #1d1d2d, #00ff9611); }
+        .slots { background: linear-gradient(135deg, #1d1d2d, #ffcc0011); }
+        .mines { background: linear-gradient(135deg, #1d1d2d, #00f2ff11); }
 
-/* ICON */
-.gameIcon{
-width:72px;height:72px;
-border-radius:18px;
-display:grid;place-items:center;
-font-size:34px;
-background:linear-gradient(135deg, rgba(124,92,255,.6), rgba(34,211,238,.6));
-box-shadow:0 10px 30px rgba(0,0,0,.6);
-animation:float 3s ease-in-out infinite;
-}
-@keyframes float{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-6px)}
-}
+        .game-info { padding: 12px; text-align: center; }
+        .game-info b { font-size: 14px; display: block; margin-bottom: 4px; }
+        .game-info span { font-size: 10px; color: #777; font-weight: 600; text-transform: uppercase; }
 
-/* BUTTON */
-.playBtn{
-margin-top:auto;
-padding:14px;
-border-radius:14px;
-border:none;
-font-weight:900;
-cursor:pointer;
-color:#fff;
-background:linear-gradient(135deg,#7c5cff,#22d3ee);
-box-shadow:0 10px 30px rgba(124,92,255,.5);
-transition:.2s;
-}
-.playBtn:hover{
-transform:scale(1.05);
-box-shadow:0 16px 40px rgba(124,92,255,.8);
-}
+        .hot-tag {
+            position: absolute; top: 10px; left: 10px; background: var(--brand);
+            color: white; font-size: 8px; font-weight: 900; padding: 4px 8px;
+            border-radius: 8px; text-transform: uppercase; z-index: 5;
+        }
 
-/* BOTTOM NAV */
-.bottomNav{
-position:fixed;bottom:0;left:0;right:0;height:64px;
-background:#0e1730;border-top:1px solid var(--border);
-display:flex;justify-content:space-around;align-items:center;
-z-index:100;
-}
-.bottomNav a{text-decoration:none;color:#fff;font-size:11px;text-align:center}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-.games{grid-template-columns:1fr}
-}
-</style>
+        /* --- Bottom Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--brand); }
+    </style>
 </head>
-
 <body>
 
-<!-- MOBILE MENU -->
-<div class="mobileMenu" id="mobileMenu">
-  <a href="wallet.html">Wallet</a>
-  <a href="trades.html">Trades</a>
-  <a href="gamecenter.html">Game Center</a>
-  <a href="profile.html">Profile</a>
-  <a href="settings.html">Settings</a>
-  <a href="#" onclick="logout()">Logout</a>
-</div>
-
-<header>
-  <div class="nav">
-    <a class="brand" href="#">
-      <div class="logo"></div> AI MARKETING
-    </a>
-    <button class="menuBtn" onclick="toggleMenu()">☰</button>
-  </div>
-</header>
-
 <div class="container">
-
-<div class="hero">
-  <h1>🎰 Game Center</h1>
-  <p>اختر لعبتك وابدأ المتعة — تجربة كازينو UI كاملة</p>
-</div>
-
-<div class="games">
-
-  <div class="game">
-    <div class="gameInner">
-      <div class="gameIcon">🪙</div>
-      <h3>Coin Flip</h3>
-      <p style="color:#b8c0e6">Double or nothing. حظ سريع وربح سريع.</p>
-      <button class="playBtn" onclick="location.href='coinflip.html'">PLAY</button>
+    <div class="game-header">
+        <h1 style="font-size: 20px; font-weight: 900; margin: 0;">Games Center</h1>
+        <div class="balance-badge"><i class="fa-solid fa-coins"></i> 2,840.15</div>
     </div>
-  </div>
 
-  <div class="game">
-    <div class="gameInner">
-      <div class="gameIcon">💣</div>
-      <h3>Mines</h3>
-      <p style="color:#b8c0e6">غامر وافتح المربعات وتجنّب القنابل.</p>
-      <button class="playBtn" onclick="location.href='mines.html'">PLAY</button>
+    <div class="promo-banner">
+        <div class="promo-text">
+            <h2>Win Big Weekly</h2>
+            <p>Participate in the $5,000 Slot Tournament</p>
+        </div>
+        <i class="fa-solid fa-clover" style="position: absolute; right: 10px; font-size: 100px; color: rgba(255,255,255,0.1);"></i>
     </div>
-  </div>
 
-  <div class="game">
-    <div class="gameInner">
-      <div class="gameIcon">🥤</div>
-      <h3>3 Cups</h3>
-      <p style="color:#b8c0e6">اختبر سرعتك وحدسك.</p>
-      <button class="playBtn" onclick="location.href='3cups.html'">PLAY</button>
+    <div class="section-title">
+        <i class="fa-solid fa-fire"></i> Most Popular
     </div>
-  </div>
 
+    <div class="game-grid">
+        <div class="game-card crash" onclick="playGame('Crash')">
+            <div class="hot-tag">Trending</div>
+            <div class="game-img"><i class="fa-solid fa-rocket" style="color: #ff3b3b;"></i></div>
+            <div class="game-info"><b>Amana Crash</b><span>Multipliers up to 100x</span></div>
+        </div>
+
+        <div class="game-card dice" onclick="playGame('Dice')">
+            <div class="game-img"><i class="fa-solid fa-dice" style="color: #00ff96;"></i></div>
+            <div class="game-info"><b>Crypto Dice</b><span>Instant 50/50 Wins</span></div>
+        </div>
+
+        <div class="game-card slots" onclick="playGame('Slots')">
+            <div class="hot-tag">New</div>
+            <div class="game-img"><i class="fa-solid fa-seven-icons" style="color: #ffcc00;">777</i></div>
+            <div class="game-info"><b>Neon Slots</b><span>Progressive Jackpot</span></div>
+        </div>
+
+        <div class="game-card mines" onclick="playGame('Mines')">
+            <div class="game-img"><i class="fa-solid fa-bomb" style="color: #00f2ff;"></i></div>
+            <div class="game-info"><b>Diamond Mines</b><span>Pick & Win Big</span></div>
+        </div>
+
+        <div class="game-card" style="background: linear-gradient(135deg, #1d1d2d, #6200ff11);" onclick="playGame('Roulette')">
+            <div class="game-img"><i class="fa-solid fa-circle-dot" style="color: #6200ff;"></i></div>
+            <div class="game-info"><b>Pro Roulette</b><span>Live European Table</span></div>
+        </div>
+
+        <div class="game-card" style="background: linear-gradient(135deg, #1d1d2d, #ff00b811);" onclick="playGame('Poker')">
+            <div class="game-img"><i class="fa-solid fa-spade" style="color: #ff00b8;"></i></div>
+            <div class="game-info"><b>Amana Poker</b><span>PvP Tournaments</span></div>
+        </div>
+    </div>
 </div>
 
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bottomNav">
-  <a href="wallet.html">💰<br>Wallet</a>
-  <a href="trades.html">📊<br>Trades</a>
-  <a href="gamecenter.html">🎮<br>Games</a>
-  <a href="profile.html">👤<br>Profile</a>
-  <a href="settings.html">⚙️<br>Settings</a>
-</div>
+<nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="game.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
+    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+</nav>
 
 <script>
-function toggleMenu(){
-  document.getElementById("mobileMenu").classList.toggle("show");
-}
-function logout(){
-  alert("Logged out");
-  location.href="login.html";
-}
+    function playGame(gameName) {
+        alert("Initializing " + gameName + "... Please wait for the AI dealer.");
+        // هنا يمكن توجيه المستخدم لصفحة اللعبة الفعلية
+        // window.location.href = gameName.toLowerCase() + ".html";
+    }
 </script>
 
 </body>
