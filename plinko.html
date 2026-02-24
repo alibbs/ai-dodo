@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | ASMR EDITION</title>
+    <title>AMANA PLINKO | TEASE EDITION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -63,34 +63,17 @@
     let balls = [], pegs = [];
     const rows = 16;
 
-    // --- Soft ASMR Sound Engine ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSoftTick() {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine'; // Sine wave is softer than square/triangle
-        osc.frequency.setValueAtTime(150, audioCtx.currentTime); // Low frequency for "thud"
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.05);
-    }
-
-    function playSoftWin() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
     }
 
     const stakeData = [1000, 130, 26, 9, 4, 2, 0.2, 0, 0, 0, 0.2, 2, 4, 9, 26, 130, 1000];
@@ -128,16 +111,30 @@
         if (amt > balance || amt <= 0) return;
         balance -= amt; sync();
 
-        // House Edge Logic (99% center)
+        // --- THE TEASE LOGIC ---
+        // بنحدد إذا كانت الطابة رح تعمل "حماس" (تروح عالأطراف وترجع)
+        const isTease = Math.random() < 0.7; // 70% من المرات رح يتحمس اللاعب عالفاضي
+        let targetSlot;
         const r = Math.random() * 100;
-        let target = Math.floor(stakeData.length / 2);
-        if (r < 0.5) target = Math.random() > 0.5 ? 0 : stakeData.length - 1;
-        else if (r < 10) target = Math.random() > 0.5 ? 4 : 12;
+
+        if (r < 0.5) targetSlot = (Math.random() > 0.5 ? 0 : 16); // ربح حقيقي نادر جداً
+        else targetSlot = Math.floor(Math.random() * 3) + 7; // الأغلبية الساحقة بالوسط (6-10)
 
         const spacing = canvas.width / (rows + 4);
-        const targetX = canvas.width / 2 + (target - (stakeData.length - 1) / 2) * (spacing * 1.1);
+        const finalTargetX = canvas.width / 2 + (targetSlot - 8) * (spacing * 1.1);
+        
+        // إذا كانت الرمية "حماسية"، رح نخليها تروح يمين كتير بالأول
+        const fakeSideX = isTease ? (Math.random() > 0.5 ? canvas.width * 0.1 : canvas.width * 0.9) : canvas.width / 2;
 
-        balls.push({ x: canvas.width / 2, y: 30, vx: 0, vy: 0, targetX, bet: amt, win: stakeData[target] });
+        balls.push({ 
+            x: canvas.width / 2, y: 30, vx: 0, vy: 0, 
+            finalTargetX, 
+            fakeSideX,
+            isTease,
+            progress: 0, // من 0 لـ 1
+            bet: amt, 
+            win: stakeData[targetSlot] 
+        });
     }
 
     function draw() {
@@ -150,22 +147,26 @@
         });
 
         balls.forEach((b, i) => {
-            b.vy += 0.5; // Gravity
-            b.vx += (b.targetX - b.x) * 0.04;
-            b.vx *= 0.93;
+            b.vy += 0.45;
+            b.progress = b.y / (canvas.height * 0.85);
+
+            // الحماس: أول 60% من الطريق بتروح للـ Fake Side، بآخر 40% بتكسر عالـ Target الحقيقي
+            let currentTargetX = b.progress < 0.6 ? b.fakeSideX : b.finalTargetX;
+            
+            b.vx += (currentTargetX - b.x) * 0.05;
+            b.vx *= 0.9;
             b.x += b.vx; b.y += b.vy;
 
             pegs.forEach(p => {
                 const d = Math.hypot(b.x - p.x, b.y - p.y);
                 if (d < 10) {
                     p.active = 10;
-                    b.vy *= -0.55; // Basket-ball bounce effect
-                    b.vx += (b.x - p.x) * 0.5;
+                    b.vy *= -0.5;
+                    b.vx += (b.x - p.x) * 0.6;
                     playSoftTick();
                 }
             });
 
-            // Coin UI
             ctx.beginPath(); ctx.arc(b.x, b.y, 9, 0, Math.PI * 2);
             ctx.fillStyle = '#a333ff';
             ctx.shadowBlur = 10; ctx.shadowColor = '#a333ff';
@@ -173,7 +174,6 @@
 
             if (b.y > canvas.height - 10) {
                 balance += (b.bet * b.win); sync();
-                playSoftWin();
                 balls.splice(i, 1);
             }
         });
