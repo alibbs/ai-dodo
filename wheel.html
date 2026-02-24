@@ -139,3 +139,86 @@
 
             // إضافة النص
             ctx.save();
+            ctx.translate(300, 300);
+            ctx.rotate(angle + angleStep/2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 30px Orbitron';
+            ctx.fillText(val + 'x', 250, 10);
+            ctx.restore();
+        });
+    }
+
+    function spinWheel() {
+        const amt = parseFloat(document.getElementById('betAmt').value);
+        if(isNaN(amt) || amt <= 0 || amt > balance || isSpinning) return;
+
+        balance -= amt;
+        updateUI();
+        isSpinning = true;
+        spinBtn.disabled = true;
+        document.getElementById('result-msg').innerText = "";
+
+        const segments = configs[currentRisk];
+        const segmentAngle = 360 / segments.length;
+        
+        // Rigged logic: اختيار النتيجة مسبقاً (تميل للخسارة في الصعب)
+        let randIdx;
+        const rand = Math.random();
+        if(currentRisk === 'high') randIdx = rand < 0.8 ? 0 : Math.floor(Math.random() * segments.length);
+        else randIdx = Math.floor(Math.random() * segments.length);
+
+        const targetRotation = (360 - (randIdx * segmentAngle)) - (segmentAngle/2);
+        const totalSpins = 3600 + targetRotation; // 10 لفات كاملة + الهدف
+
+        const start = performance.now();
+        const duration = 4000;
+
+        function animate(time) {
+            const elapsed = time - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            
+            const rotation = easeOut * totalSpins;
+            canvas.style.transform = `rotate(${rotation}deg)`;
+
+            if(progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                finishSpin(segments[randIdx], amt);
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    function finishSpin(mult, bet) {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        const win = bet * mult;
+        balance += win;
+        
+        const msg = document.getElementById('result-msg');
+        msg.innerText = mult + "x";
+        msg.style.color = mult > 0 ? "var(--up)" : "#ef4444";
+        
+        addHistory(mult);
+        updateUI();
+    }
+
+    function addHistory(m) {
+        const h = document.getElementById('history');
+        const item = document.createElement('div');
+        item.className = 'hist-item';
+        item.style.color = m > 0 ? '#10b981' : '#ef4444';
+        item.innerText = m + 'x';
+        h.prepend(item);
+    }
+
+    function updateUI() {
+        document.getElementById('bal').innerText = balance.toFixed(2);
+    }
+
+    drawWheel();
+</script>
+</body>
+</html>
