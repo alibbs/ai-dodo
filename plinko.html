@@ -3,126 +3,139 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>STAKE PLINKO | ORIGINAL CLONE</title>
+    <title>AMANA PLINKO | PRO PHYSICS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --bg: #0f212e;
-            --primary: #1a2c38;
-            --accent: #00e701;
-            --multiplier-red: #ff4d4d;
-            --text: #b1bad3;
+            --bg: #0f172a;
+            --sidebar: #212631;
+            --input: #0f121d;
+            --moov: #a333ff;
+            --red: #ff3b3b;
+            --border: #2f3749;
+            --text-gray: #b1bad3;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
+        
+        header { padding: 10px; display: flex; justify-content: center; background: var(--bg); z-index: 10; }
+        .balance-box { background: var(--input); padding: 8px 15px; border-radius: 6px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); font-weight: 800; }
 
-        /* Header & Balance */
-        header { height: 60px; display: flex; align-items: center; justify-content: center; background: #1a2c38; border-bottom: 2px solid #2f4553; }
-        .balance-container { background: #0f212e; padding: 8px 16px; border-radius: 4px; display: flex; align-items: center; gap: 8px; font-weight: bold; color: #fff; border: 1px solid #2f4553; }
-        .balance-container span { color: #fff; }
-        .balance-container i { color: var(--accent); font-style: normal; }
-
-        /* Canvas Area */
-        #game-container { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px; }
+        #game-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; overflow: hidden; }
         canvas { max-width: 100%; height: auto; }
 
-        /* Multipliers Bar */
-        #multipliers-wrapper { display: flex; gap: 4px; width: 90%; max-width: 500px; margin-top: 10px; }
-        .multi-slot { flex: 1; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #000; transition: transform 0.1s; }
+        .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; z-index: 5; }
+        .m-box { flex: 1; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s; }
 
-        /* Controls Area */
-        .controls { background: var(--primary); padding: 20px; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; gap: 15px; }
-        .input-box { background: #0f212e; border: 2px solid #2f4553; border-radius: 4px; padding: 12px; }
-        .input-box label { display: block; font-size: 12px; color: var(--text); font-weight: bold; margin-bottom: 5px; }
-        .input-box input { background: transparent; border: none; color: #fff; width: 100%; font-size: 16px; font-weight: bold; outline: none; }
+        .controls { background: var(--sidebar); padding: 15px 15px 30px 15px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
+        .input-group { background: var(--input); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; }
+        .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; }
+        .input-field input, .input-field select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
         
-        .play-btn { background: var(--accent); border: none; color: #000; padding: 18px; border-radius: 4px; font-size: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .play-btn:active { transform: scale(0.98); }
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 16px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
+        .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="balance-container">
-            <span id="balance">1000.00</span> <i>$</i>
+        <div class="balance-box">
+            <i class="fa-solid fa-coins" style="color:#00ffaa"></i>
+            <span id="userBalance">1000.00</span>
         </div>
     </header>
 
-    <div id="game-container">
+    <div id="game-area">
         <canvas id="plinkoCanvas"></canvas>
-        <div id="multipliers-wrapper"></div>
+        <div class="multiplier-row" id="multiplierRow"></div>
     </div>
 
     <div class="controls">
-        <div class="input-box">
-            <label>Bet Amount</label>
-            <input type="number" id="betAmount" value="10.00">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group">
+                <div class="input-label">BET AMOUNT</div>
+                <div class="input-field"><input type="number" id="betAmount" value="10.00"></div>
+            </div>
+            <div class="input-group">
+                <div class="input-label">RISK</div>
+                <div class="input-field">
+                    <select id="riskLevel" onchange="initBoard()">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high" selected>High</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <button class="play-btn" onclick="dropBall()">Bet</button>
+        <button class="bet-btn" onclick="dropBall()">PLAY</button>
     </div>
 
 <script>
     const canvas = document.getElementById('plinkoCanvas');
     const ctx = canvas.getContext('2d');
-    const multiWrapper = document.getElementById('multipliers-wrapper');
-    
     let balance = 1000.00;
+    let balls = [], pegs = [];
     const rows = 16;
-    const pins = [];
-    const balls = [];
     
-    // Stake High Risk Multipliers (16 Rows)
-    const multipliers = [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000];
-    const colors = ['#ff003f', '#ff1a33', '#ff4d26', '#ff7a1a', '#ff991a', '#ffb31a', '#ffd91a', '#fff21a', '#fff21a', '#fff21a', '#ffd91a', '#ffb31a', '#ff991a', '#ff7a1a', '#ff4d26', '#ff1a33', '#ff003f'];
+    const riskData = {
+        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: ['#00e701','#55e701','#aae701','#ffe701','#ffb000','#ff7000','#ff0000','#ff7000','#ffb000','#ffe701','#aae701','#55e701','#00e701'] },
+        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: ['#ffc800','#ffb000','#ff9800','#ff8000','#ff6800','#ff5000','#ff3800','#ff0000','#ff3800','#ff5000','#ff6800','#ff8000','#ff9800','#ffb000','#ffc800'] },
+        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: ['#ff003f','#ff1a33','#ff4d26','#ff7a1a','#ff991a','#ffb31a','#ffd91a','#fff21a','#fff21a','#fff21a','#ffd91a','#ffb31a','#ff991a','#ff7a1a','#ff4d26','#ff1a33','#ff003f'] }
+    };
 
-    function init() {
-        canvas.width = 600;
-        canvas.height = 500;
-        const spacing = 32;
+    function initBoard() {
+        canvas.width = 400;
+        canvas.height = 450;
+        pegs = [];
+        const risk = document.getElementById('riskLevel').value;
+        const currentMultis = riskData[risk].multis;
+        const spacing = canvas.width / (rows + 2);
         
-        // Create Pins
         for (let i = 0; i < rows; i++) {
             const rowPins = i + 3;
-            const rowWidth = rowPins * spacing;
             for (let j = 0; j < rowPins; j++) {
-                const x = canvas.width / 2 - rowWidth / 2 + j * spacing + spacing / 2;
-                const y = (i + 1) * spacing + 50;
-                pins.push({ x, y });
+                const x = canvas.width/2 - ((rowPins-1)*spacing)/2 + j*spacing;
+                const y = (i + 1) * 22 + 40;
+                pegs.push({ x, y });
             }
         }
 
-        // Render Multiplier Boxes
-        multiWrapper.innerHTML = '';
-        multipliers.forEach((val, i) => {
+        const mRow = document.getElementById('multiplierRow');
+        mRow.innerHTML = '';
+        currentMultis.forEach((m, i) => {
             const div = document.createElement('div');
-            div.className = 'multi-slot';
-            div.style.backgroundColor = colors[i];
-            div.innerHTML = val + 'x';
-            multiWrapper.appendChild(div);
+            div.className = 'm-box';
+            div.style.background = riskData[risk].colors[i] || '#ff003f';
+            div.textContent = m + 'x';
+            mRow.appendChild(div);
         });
     }
 
     function dropBall() {
-        const bet = parseFloat(document.getElementById('betAmount').value);
-        if (bet > balance) return;
-        balance -= bet;
-        document.getElementById('balance').innerText = balance.toFixed(2);
+        const amt = parseFloat(document.getElementById('betAmount').value);
+        if (amt > balance) return;
+        balance -= amt;
+        document.getElementById('userBalance').innerText = balance.toFixed(2);
 
-        // --- Casino Logic (House Edge 99%) ---
-        let resultIdx;
-        const rand = Math.random() * 100;
-        if (rand < 0.2) resultIdx = Math.random() > 0.5 ? 0 : 16; // 1000x (Very rare)
-        else if (rand < 2) resultIdx = Math.random() > 0.5 ? 2 : 14; // 26x
-        else resultIdx = Math.floor(Math.random() * 5) + 6; // Center 0.2x zones (Most common)
+        const risk = document.getElementById('riskLevel').value;
+        const mCount = riskData[risk].multis.length;
+        
+        // --- RIGGED CASINO LOGIC ---
+        let target;
+        const r = Math.random() * 100;
+        if (r < 0.3) target = Math.random() > 0.5 ? 0 : mCount-1; // Jackpot
+        else if (r < 5) target = Math.random() > 0.5 ? 2 : mCount-3; // Mid
+        else target = Math.floor(mCount/2) + (Math.floor(Math.random()*3)-1); // Loser center
+
+        const spacing = canvas.width / (rows + 2);
+        const targetX = canvas.width/2 + (target - (mCount-1)/2) * spacing;
 
         balls.push({
-            x: canvas.width / 2 + (Math.random() * 4 - 2),
-            y: 20,
-            vx: 0,
-            vy: 0,
-            radius: 6,
-            targetIdx: resultIdx,
-            settled: false
+            x: canvas.width/2 + (Math.random()*10-5),
+            y: 10, vx: 0, vy: 0, radius: 5,
+            targetX: targetX,
+            win: riskData[risk].multis[target]
         });
     }
 
@@ -130,69 +143,55 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw Pins
-        ctx.fillStyle = "#7ca3be";
-        pins.forEach(pin => {
-            ctx.beginPath();
-            ctx.arc(pin.x, pin.y, 3, 0, Math.PI * 2);
-            ctx.fill();
+        ctx.fillStyle = "#6781ad";
+        pegs.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
         });
 
-        // Update & Draw Balls
-        balls.forEach((ball, index) => {
-            ball.vy += 0.5; // Gravity
-            ball.x += ball.vx;
-            ball.y += ball.vy;
+        balls.forEach((b, i) => {
+            b.vy += 0.35; // Gravity
+            
+            // Hard Fix: Prevent ball from leaving screen
+            if (b.x < 10) { b.x = 10; b.vx *= -0.5; }
+            if (b.x > canvas.width - 10) { b.x = canvas.width - 10; b.vx *= -0.5; }
 
-            // Collision with Pins
-            pins.forEach(pin => {
-                const dx = ball.x - pin.x;
-                const dy = ball.y - pin.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < ball.radius + 3) {
+            // Guiding physics (Smooth pathing)
+            let pull = (b.targetX - b.x) * 0.02;
+            b.vx += pull;
+            b.vx *= 0.95;
+            b.x += b.vx; b.y += b.vy;
+
+            // Accurate Collision
+            pegs.forEach(p => {
+                const dx = b.x - p.x;
+                const dy = b.y - p.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < b.radius + 2.5) {
                     const angle = Math.atan2(dy, dx);
-                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    
-                    // Stake-style bouncy physics
-                    ball.vx += Math.cos(angle) * 1.5;
-                    ball.vy *= -0.4; 
-                    ball.y = pin.y + Math.sin(angle) * (ball.radius + 3);
+                    // Push out of pin
+                    b.x = p.x + Math.cos(angle) * (b.radius + 2.6);
+                    b.y = p.y + Math.sin(angle) * (b.radius + 2.6);
+                    // Bounce
+                    b.vx += Math.cos(angle) * 1.2;
+                    b.vy *= -0.4;
                 }
             });
 
-            // "Invisible Guide" to ensure ball hits the rigged target
-            const finalY = (rows + 1) * 32 + 50;
-            if (ball.y > 100) {
-                const spacing = 32;
-                const targetX = (canvas.width / 2 - ((multipliers.length + 2) * spacing) / 2) + (ball.targetIdx + 1.5) * spacing;
-                ball.vx += (targetX - ball.x) * 0.015;
-            }
-
             // Draw Ball
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctx.fillStyle = "#ff0000";
-            ctx.fill();
-            ctx.strokeStyle = "#fff";
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
+            ctx.fillStyle = "#ff00ff"; ctx.shadowBlur = 5; ctx.shadowColor = "#ff00ff";
+            ctx.fill(); ctx.shadowBlur = 0;
 
-            // Finish
-            if (ball.y > 480) {
-                const win = multipliers[ball.targetIdx];
-                balance += (parseFloat(document.getElementById('betAmount').value) * win);
-                document.getElementById('balance').innerText = balance.toFixed(2);
-                balls.splice(index, 1);
-                
-                // Animate Multiplier Slot
-                const slots = document.querySelectorAll('.multi-slot');
-                slots[ball.targetIdx].style.transform = "translateY(5px)";
-                setTimeout(() => slots[ball.targetIdx].style.transform = "translateY(0)", 100);
+            if (b.y > canvas.height) {
+                balance += (parseFloat(document.getElementById('betAmount').value) * b.win);
+                document.getElementById('userBalance').innerText = balance.toFixed(2);
+                balls.splice(i, 1);
             }
         });
-
         requestAnimationFrame(update);
     }
 
-    init();
+    initBoard();
     update();
 </script>
 </body>
