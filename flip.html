@@ -3,18 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | COIN FLIP STAKE</title>
+    <title>AMANA ELITE | PRO COIN FLIP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;800;900&display=swap');
 
         :root {
-            --bg: #02040a;
-            --panel: #0d111c;
+            --bg: #030712;
+            --panel: #0f172a;
             --accent: #8b5cf6;
-            --gold: #fbbf24;
-            --up: #00e701;
-            --down: #ff3b3b;
+            --gold: #f59e0b;
+            --up: #10b981;
             --border: rgba(255, 255, 255, 0.08);
         }
 
@@ -24,104 +23,134 @@
 
         /* Multiplier Top Bar */
         .multiplier-bar {
-            height: 55px; background: rgba(0,0,0,0.4); display: flex; align-items: center; 
-            justify-content: flex-start; gap: 8px; border-bottom: 1px solid var(--border);
+            height: 55px; background: rgba(0,0,0,0.6); display: flex; align-items: center; 
+            justify-content: flex-start; gap: 10px; border-bottom: 1px solid var(--border);
             padding: 0 15px; overflow-x: auto; scrollbar-width: none;
         }
         .m-chip { 
-            padding: 6px 15px; border-radius: 10px; font-family: 'Orbitron'; font-size: 12px; 
-            background: var(--panel); color: #475569; border: 1px solid var(--border); white-space: nowrap;
+            padding: 6px 18px; border-radius: 8px; font-family: 'Orbitron'; font-size: 11px; 
+            background: #1e293b; color: #64748b; border: 1px solid var(--border); transition: 0.3s;
         }
-        .m-chip.active { background: var(--accent); color: #fff; border-color: #fff; box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
+        .m-chip.active { background: var(--accent); color: #fff; border-color: #fff; box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
 
         header { height: 60px; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .balance-box { background: #000; padding: 8px 25px; border-radius: 50px; border: 2px solid var(--accent); display: flex; align-items: center; gap: 10px; }
+        .balance-box { background: #000; padding: 10px 25px; border-radius: 50px; border: 1px solid var(--accent); display: flex; align-items: center; gap: 10px; box-shadow: 0 0 20px rgba(139, 92, 246, 0.15); }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.1rem; letter-spacing: 1px; }
 
+        /* Game Area & 3D Coin */
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         
         #profitFloat {
-            position: absolute; top: 10%; font-family: 'Orbitron'; font-weight: 900;
-            color: var(--up); font-size: 28px; display: none; text-shadow: 0 0 20px var(--up);
+            position: absolute; top: 15%; font-family: 'Orbitron'; font-weight: 900;
+            color: var(--up); font-size: 32px; display: none; text-shadow: 0 0 25px var(--up); z-index: 10;
         }
 
-        .coin-container { width: 150px; height: 150px; perspective: 1000px; }
-        .coin { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s ease-out; }
-        .coin div {
+        .coin-wrapper {
+            width: 160px; height: 160px; perspective: 1500px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+        }
+        .coin {
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+        
+        /* تصميم وجوه العملة بشكل واقعي */
+        .coin-face {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            backface-visibility: hidden; display: flex; align-items: center; justify-content: center;
-            font-size: 50px; border: 6px solid;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 60px; backface-visibility: hidden;
+            border: 4px solid rgba(255,255,255,0.1);
         }
-        .heads { background: var(--panel); border-color: var(--accent); color: var(--accent); }
-        .tails { background: var(--panel); border-color: var(--gold); color: var(--gold); transform: rotateY(180deg); }
 
-        .controls { background: var(--panel); padding: 20px; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
-        
-        /* Buttons Logic */
-        .input-section { transition: 0.3s; }
-        .play-section { display: none; grid-template-columns: 1fr 1fr; gap: 12px; }
-        
-        .bet-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .bet-box label { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 5px; }
-        .bet-box input { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: 900; }
-
-        .main-btn {
-            width: 100%; padding: 20px; border-radius: 15px; border: none; font-weight: 900; 
-            font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: 0.2s;
+        .heads { 
+            background: radial-gradient(circle, #4c1d95 0%, #1e1b4b 100%);
+            color: var(--accent);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.2);
         }
-        .btn-bet { background: var(--accent); color: #fff; box-shadow: 0 5px 0 #5b21b6; }
-        .btn-h { background: var(--panel); border: 2px solid var(--accent); color: var(--accent); }
-        .btn-t { background: var(--panel); border: 2px solid var(--gold); color: var(--gold); }
+
+        .tails { 
+            background: radial-gradient(circle, #b45309 0%, #451a03 100%);
+            color: var(--gold);
+            transform: rotateY(180deg);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 40px rgba(245, 158, 11, 0.2);
+        }
+
+        /* حافة العملة لإعطاء سماكة واقعية */
+        .coin-edge {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            transform: translateZ(-1px); background: #334155;
+        }
+
+        /* Controls */
+        .controls { background: var(--panel); padding: 25px; border-radius: 40px 40px 0 0; border-top: 1px solid var(--border); box-shadow: 0 -10px 40px rgba(0,0,0,0.4); }
+        
+        .play-section { display: none; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .bet-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .bet-box label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 5px; }
+        .bet-box input { width: 100%; background: transparent; border: none; color: #fff; font-size: 24px; font-weight: 900; }
+
+        .btn {
+            width: 100%; border: none; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .btn-bet { background: var(--accent); color: #fff; padding: 22px; border-radius: 18px; font-size: 1.2rem; box-shadow: 0 6px 0 #5b21b6; }
+        .btn-bet:active { transform: translateY(3px); box-shadow: 0 3px 0 #5b21b6; }
+
+        .pick-btn { padding: 20px; border-radius: 18px; font-size: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+        .pick-btn i { font-size: 24px; margin-bottom: 5px; }
+        .btn-h { color: var(--accent); border-color: var(--accent); }
+        .btn-t { color: var(--gold); border-color: var(--gold); }
+
         .btn-cashout { 
-            grid-column: span 2; background: var(--up); color: #000; margin-top: 5px;
-            box-shadow: 0 5px 0 #059669; height: 65px;
+            grid-column: span 2; background: var(--up); color: #064e3b; padding: 15px; border-radius: 18px;
+            font-size: 1.1rem; box-shadow: 0 6px 0 #059669; margin-top: 10px;
         }
         
-        .disabled { opacity: 0.5; pointer-events: none; }
-        .winning { animation: pulse 0.5s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+        .disabled { opacity: 0.4; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div class="multiplier-bar" id="mBar">
-        <div class="m-chip">1.98x</div>
-        <div class="m-chip">3.92x</div>
-        <div class="m-chip">7.76x</div>
-        <div class="m-chip">15.3x</div>
-        <div class="m-chip">30.4x</div>
-        <div class="m-chip">60.2x</div>
+        <div class="m-chip">1.98x</div><div class="m-chip">3.92x</div><div class="m-chip">7.76x</div>
+        <div class="m-chip">15.3x</div><div class="m-chip">30.4x</div><div class="m-chip">60.2x</div>
     </div>
 
     <header>
         <div class="balance-box">
-            <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
-            <span id="balText">1000.00</span>
+            <i class="fa-solid fa-coins" style="color:var(--gold)"></i>
+            <span id="balText">1,000.00</span>
         </div>
     </header>
 
     <div class="game-area">
         <div id="profitFloat">1.98x</div>
-        <div class="coin-container">
+        <div class="coin-wrapper">
             <div id="coin" class="coin">
-                <div class="heads"><i class="fa-solid fa-bolt"></i></div>
-                <div class="tails"><i class="fa-solid fa-crown"></i></div>
+                <div class="coin-face heads"><i class="fa-solid fa-bolt-lightning"></i></div>
+                <div class="coin-face tails"><i class="fa-solid fa-crown"></i></div>
+                <div class="coin-edge"></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <div id="inputSection" class="input-section">
+        <div id="inputSection">
             <div class="bet-box">
                 <label>Bet Amount</label>
                 <input type="number" id="betAmt" value="10.00">
             </div>
-            <button class="main-btn btn-bet" onclick="placeBet()">Bet</button>
+            <button class="btn btn-bet" onclick="placeBet()">Place Bet</button>
         </div>
 
         <div id="playSection" class="play-section">
-            <button class="main-btn btn-h" id="hBtn" onclick="flip('H')">HEADS</button>
-            <button class="main-btn btn-t" id="tBtn" onclick="flip('T')">TAILS</button>
-            <button class="main-btn btn-cashout" id="cashBtn" onclick="cashout()">CASHOUT</button>
+            <button class="btn pick-btn btn-h" id="hBtn" onclick="flip('H')">
+                <i class="fa-solid fa-bolt-lightning"></i> HEADS
+            </button>
+            <button class="btn pick-btn btn-t" id="tBtn" onclick="flip('T')">
+                <i class="fa-solid fa-crown"></i> TAILS
+            </button>
+            <button class="btn btn-cashout" id="cashBtn" onclick="cashout()">CASHOUT</button>
         </div>
     </div>
 
@@ -129,6 +158,7 @@
     let balance = 1000.00;
     let currentBet = 0;
     let round = 0;
+    let rotationDeg = 0;
     const multipliers = [1.98, 3.92, 7.76, 15.36, 30.41, 60.21, 119.22];
 
     const coin = document.getElementById('coin');
@@ -139,7 +169,6 @@
     const profitFloat = document.getElementById('profitFloat');
     const mChips = document.querySelectorAll('.m-chip');
 
-    // 1. مرحلة وضع الرهان
     function placeBet() {
         const amt = parseFloat(document.getElementById('betAmt').value);
         if (isNaN(amt) || amt > balance || amt <= 0) return;
@@ -147,83 +176,76 @@
         balance -= amt;
         currentBet = amt;
         round = 0;
-        
         updateUI();
         
-        // تبديل الواجهة
         inputSection.style.display = "none";
         playSection.style.display = "grid";
-        cashBtn.classList.add('disabled'); // لا يمكن السحب قبل أول فوز
-        
-        // تصفير الشريط العلوي
+        cashBtn.classList.add('disabled');
         mChips.forEach(c => c.classList.remove('active'));
     }
 
-    // 2. مرحلة اختيار الوجه (اللعب)
     function flip(choice) {
-        disablePlayButtons(true);
+        disableBtns(true);
         
-        // Rigged Logic: احتمالية الفوز تقل تدريجياً
-        const baseWinChance = 0.48; 
-        const winChance = round === 0 ? baseWinChance : (baseWinChance - (round * 0.04));
+        // Rigged Logic: احتمال الخسارة يزيد بقوة بعد الربح الثاني
+        let winChance = 0.48;
+        if(round >= 1) winChance = 0.42;
+        if(round >= 3) winChance = 0.30;
+        
         const win = Math.random() < winChance;
-        
         const resultSide = win ? choice : (choice === 'H' ? 'T' : 'H');
-        const isHeads = resultSide === 'H';
         
-        // Animation دوران سريع
-        const rotation = isHeads ? (round * 1440 + 720) : (round * 1440 + 900);
-        coin.style.transform = `rotateY(${rotation}deg)`;
+        // حساب زاوية الدوران (اللفة الواقعية)
+        // نضيف 1080 درجة (3 لفات كاملة) + الزاوية المطلوبة للوجه
+        const spinRounds = 1080;
+        const targetSideDeg = (resultSide === 'H') ? 0 : 180;
+        
+        // نزيد دائماً على الدرجة الحالية لضمان استمرار الدوران للأمام
+        rotationDeg += spinRounds + (targetSideDeg - (rotationDeg % 360));
+        if(rotationDeg % 360 !== targetSideDeg) rotationDeg += 180;
+
+        coin.style.transform = `rotateY(${rotationDeg}deg)`;
 
         setTimeout(() => {
             if (win) {
                 round++;
-                const currentMult = multipliers[round-1];
-                
-                // تأثيرات بصرية للفوز
-                profitFloat.innerText = currentMult + "x";
+                const curMult = multipliers[round-1];
+                profitFloat.innerText = curMult + "x";
                 profitFloat.style.display = "block";
-                
                 updateMultiplierBar();
                 
-                // تحديث زر الكاش أوت
                 cashBtn.classList.remove('disabled');
-                cashBtn.innerHTML = `CASHOUT <br> <small>${(currentBet * currentMult).toFixed(2)} USDT</small>`;
-                
-                disablePlayButtons(false);
+                cashBtn.innerHTML = `CASHOUT <br> <b style="font-size:16px">${(currentBet * curMult).toFixed(2)}</b>`;
+                disableBtns(false);
             } else {
-                // خسارة: هزة حمراء وإعادة اللعبة
-                document.body.style.backgroundColor = "#450a0a";
+                // خسارة: وميض أحمر
+                document.body.style.boxShadow = "inset 0 0 100px #ff0000";
                 setTimeout(() => {
-                    document.body.style.backgroundColor = "var(--bg)";
-                    resetToStart();
-                }, 400);
+                    document.body.style.boxShadow = "none";
+                    resetGame();
+                }, 500);
             }
+        }, 850);
+    }
+
+    function cashout() {
+        const winAmt = currentBet * multipliers[round-1];
+        balance += winAmt;
+        document.body.style.boxShadow = "inset 0 0 100px #00ff00";
+        setTimeout(() => {
+            document.body.style.boxShadow = "none";
+            updateUI();
+            resetGame();
         }, 500);
     }
 
-    // 3. سحب الأرباح
-    function cashout() {
-        if (round === 0) return;
-        const winAmt = currentBet * multipliers[round-1];
-        balance += winAmt;
-        updateUI();
-        
-        // تأثير وميض أخضر عند الربح
-        document.body.style.backgroundColor = "#064e3b";
-        setTimeout(() => {
-            document.body.style.backgroundColor = "var(--bg)";
-            resetToStart();
-        }, 400);
-    }
-
-    function resetToStart() {
+    function resetGame() {
         inputSection.style.display = "block";
         playSection.style.display = "none";
         profitFloat.style.display = "none";
-        disablePlayButtons(false);
         round = 0;
         mChips.forEach(c => c.classList.remove('active'));
+        disableBtns(false);
     }
 
     function updateUI() {
@@ -234,16 +256,12 @@
         mChips.forEach((c, idx) => {
             c.className = (idx === round - 1) ? 'm-chip active' : 'm-chip';
         });
-        // Scroll to active chip
-        if(round > 3) {
-            document.getElementById('mBar').scrollLeft += 80;
-        }
     }
 
-    function disablePlayButtons(status) {
-        document.getElementById('hBtn').classList.toggle('disabled', status);
-        document.getElementById('tBtn').classList.toggle('disabled', status);
-        cashBtn.classList.toggle('disabled', status);
+    function disableBtns(s) {
+        document.getElementById('hBtn').classList.toggle('disabled', s);
+        document.getElementById('tBtn').classList.toggle('disabled', s);
+        cashBtn.classList.toggle('disabled', s);
     }
 
     updateUI();
