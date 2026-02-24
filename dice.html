@@ -1,6 +1,138 @@
-let currentBalance = 1000.00;
-    let rollCount = 0; // عداد اللفات لاستنزاف الرصيد مع الوقت
-    
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>AMANA ELITE | DICE RIGGED</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;800;900&display=swap');
+
+        :root {
+            --bg: #02040a;
+            --panel: #0d111c;
+            --accent: #8b5cf6;
+            --gold: #fbbf24;
+            --up: #00e701;
+            --down: #ff3b3b;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; outline: none; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
+        body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 20px); }
+
+        header { height: 60px; display: flex; align-items: center; justify-content: center; padding: 0 20px; }
+        .balance-box { 
+            background: #000; padding: 8px 20px; border-radius: 12px; 
+            border: 1px solid var(--accent); display: flex; align-items: center; gap: 10px;
+        }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.1rem; color: #fff; }
+
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        
+        .dice-hub {
+            width: 100%; max-width: 420px; background: var(--panel); border-radius: 28px;
+            padding: 30px 20px; position: relative; border: 1px solid var(--border);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+
+        .result-box {
+            height: 120px; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .result-val { 
+            font-size: 85px; font-weight: 900; font-family: 'Orbitron'; 
+            transition: 0.05s; letter-spacing: -3px; color: #fff;
+        }
+        
+        .slider-wrapper { width: 100%; position: relative; padding: 10px 0 30px 0; }
+        .track { height: 12px; background: var(--down); border-radius: 10px; position: relative; overflow: hidden; }
+        .track-win { position: absolute; height: 100%; background: var(--up); right: 0; transition: 0.2s ease; }
+        
+        input[type=range] {
+            position: absolute; width: 100%; top: 2px; appearance: none; background: transparent; cursor: pointer; z-index: 10; margin: 0;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none; height: 36px; width: 36px; border-radius: 10px; background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 4px solid var(--accent);
+        }
+
+        .stats-hub { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .s-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .s-box label { display: block; font-size: 8px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; font-weight: 800; }
+        .s-box span { font-family: 'Orbitron'; font-size: 13px; font-weight: 700; }
+
+        .controls { 
+            background: var(--panel); padding: 20px 20px 40px 20px; 
+            border-radius: 30px 30px 0 0; border-top: 1px solid var(--border);
+        }
+
+        .bet-input-wrap {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            padding: 12px; border-radius: 16px; margin-bottom: 15px;
+        }
+        .bet-input-wrap label { font-size: 9px; color: #64748b; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .bet-input-wrap input { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: 900; }
+
+        .roll-btn {
+            width: 100%; padding: 20px; border-radius: 16px; border: none;
+            background: var(--accent); color: #fff; font-size: 1.4rem; font-weight: 900;
+            text-transform: uppercase; cursor: pointer;
+            box-shadow: 0 6px 0 #5b21b6; transition: 0.1s;
+        }
+        .roll-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #5b21b6; }
+        .roll-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .win-pop { animation: popWin 0.2s ease-out; color: var(--up) !important; text-shadow: 0 0 25px var(--up); }
+        .loss-pop { animation: popLoss 0.2s ease-out; color: var(--down) !important; text-shadow: 0 0 25px var(--down); }
+
+        @keyframes popWin { 0% { transform: scale(0.8); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes popLoss { 0% { transform: scale(0.9); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="balance-box">
+            <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
+            <span id="balText">1,000.00</span>
+        </div>
+    </header>
+
+    <div class="game-area">
+        <div class="dice-hub">
+            <div class="result-box">
+                <div id="resDisplay" class="result-val">50.00</div>
+            </div>
+            
+            <div class="slider-wrapper">
+                <div class="track">
+                    <div id="winFill" class="track-win" style="width: 50%;"></div>
+                </div>
+                <input type="range" id="mainSlider" min="2" max="98" value="50" step="0.01">
+            </div>
+
+            <div class="stats-hub">
+                <div class="s-box"><label>Multiplier</label><span id="mVal">1.98x</span></div>
+                <div class="s-box"><label>Roll Over</label><span id="tVal">50.00</span></div>
+                <div class="s-box"><label>Win %</label><span id="cVal">50.00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="bet-input-wrap">
+            <label>Bet Amount</label>
+            <input type="number" id="betAmount" value="10.00">
+        </div>
+        <button class="roll-btn" id="rollBtn" onclick="executeRoll()">Roll Dice</button>
+    </div>
+
+<script>
+    let currentBalance = 1000.00;
+    let rollCount = 0; // عداد اللفات للاستنزاف
+
     const slider = document.getElementById('mainSlider');
     const winFill = document.getElementById('winFill');
     const resDisplay = document.getElementById('resDisplay');
@@ -23,10 +155,13 @@ let currentBalance = 1000.00;
 
     function executeRoll() {
         const bet = parseFloat(document.getElementById('betAmount').value);
-        if (bet > currentBalance || bet <= 0) return;
+        if (bet > currentBalance || bet <= 0 || isNaN(bet)) {
+            alert("رصيد غير كافٍ!");
+            return;
+        }
 
         currentBalance -= bet;
-        rollCount++; // زيادة عداد اللفات
+        rollCount++;
         updateUI();
         rollBtn.disabled = true;
 
@@ -34,32 +169,27 @@ let currentBalance = 1000.00;
         const winChance = 100 - target;
         const multiplier = 99 / winChance;
         
-        // --- منطق الاستنزاف (The Rigged Logic) ---
         let final;
         const luck = Math.random() * 100;
-        
-        // 1. إذا راهن بمبلغ كبير (أكثر من 20% من رصيده) -> خسرّه فوراً بخدعة بسيطة
+
+        // منطق الاستنزاف:
         if (bet > (currentBalance + bet) * 0.2) {
-            final = target - (Math.random() * 5); // يظهر رقم قريب من الهدف لكنه خاسر
-        } 
-        // 2. نظام الاستنزاف مع الوقت: كلما زاد اللعب، زادت صعوبة الفوز
-        else {
-            let houseEdge = rollCount * 0.05; // تزيد الصعوبة 0.05% كل لفة
-            if(houseEdge > 15) houseEdge = 15; // سقف الصعوبة المخفية 15%
-            
+            // إذا غامر بمبلغ كبير -> خسارة قريبة جداً
+            final = target - (Math.random() * 3); 
+        } else {
+            // تزيد الصعوبة مع كل لفة (0.1% لكل لفة)
+            let houseEdge = rollCount * 0.1; 
+            if(houseEdge > 12) houseEdge = 12; // أقصى حد للتلاعب 12%
+
             if (luck < (winChance - houseEdge)) {
-                // فوز حقيقي (نادر في اللفات المتقدمة)
-                final = target + (Math.random() * (100 - target));
+                final = target + (Math.random() * (100 - target)); // فوز
             } else {
-                // خسارة "قريبة" لإغراء اللاعب
-                final = target - (Math.random() * 10);
+                final = target - (Math.random() * 15); // خسارة
             }
         }
-        
-        // منع الأرقام من الخروج عن نطاق 0-100
+
         final = Math.max(0.01, Math.min(99.99, final));
 
-        // تأثير الدوران السريع
         let frames = 0;
         const speed = setInterval(() => {
             resDisplay.innerText = (Math.random() * 100).toFixed(2);
@@ -84,7 +214,10 @@ let currentBalance = 1000.00;
     }
 
     function updateUI() {
-        balText.innerText = currentBalance.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        balText.innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     refreshStats();
+</script>
+</body>
+</html>
