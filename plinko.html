@@ -3,209 +3,197 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA CASINO | PLINKO PRO</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <title>STAKE PLINKO | ORIGINAL CLONE</title>
     <style>
         :root {
-            --bg: #03060e;
-            --sidebar: #1a1f2e;
-            --input: #0a0e17;
-            --moov: #a333ff;
-            --red: #fe2247;
-            --border: #262c3d;
-            --text-gray: #8a96b1;
+            --bg: #0f212e;
+            --primary: #1a2c38;
+            --accent: #00e701;
+            --multiplier-red: #ff4d4d;
+            --text: #b1bad3;
         }
 
-        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
-        body { display: flex; flex-direction: column; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-        header { padding: 15px; display: flex; justify-content: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border); }
-        .balance-box { background: var(--input); padding: 10px 25px; border-radius: 50px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); box-shadow: 0 0 15px rgba(163, 51, 255, 0.1); }
-        .balance-box span { font-weight: 900; font-size: 18px; color: #00ffaa; letter-spacing: 1px; }
+        /* Header & Balance */
+        header { height: 60px; display: flex; align-items: center; justify-content: center; background: #1a2c38; border-bottom: 2px solid #2f4553; }
+        .balance-container { background: #0f212e; padding: 8px 16px; border-radius: 4px; display: flex; align-items: center; gap: 8px; font-weight: bold; color: #fff; border: 1px solid #2f4553; }
+        .balance-container span { color: #fff; }
+        .balance-container i { color: var(--accent); font-style: normal; }
 
-        .game-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; padding-bottom: 10px; }
-        #plinko-canvas { width: 100%; height: 85%; }
+        /* Canvas Area */
+        #game-container { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px; }
+        canvas { max-width: 100%; height: auto; }
 
-        .multiplier-row { display: flex; gap: 3px; width: 96%; max-width: 550px; margin-bottom: 20px; }
-        .m-box { flex: 1; height: 30px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: 0 4px 0 rgba(0,0,0,0.3); transition: transform 0.1s; }
+        /* Multipliers Bar */
+        #multipliers-wrapper { display: flex; gap: 4px; width: 90%; max-width: 500px; margin-top: 10px; }
+        .multi-slot { flex: 1; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #000; transition: transform 0.1s; }
 
-        .controls { background: var(--sidebar); padding: 25px 20px 45px 20px; display: flex; flex-direction: column; gap: 15px; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-        .input-label { font-size: 12px; color: var(--text-gray); font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .input-field { background: var(--input); border: 2px solid var(--border); border-radius: 10px; padding: 12px 15px; display: flex; align-items: center; }
-        .input-field input { background: transparent; border: none; color: #fff; width: 100%; font-weight: 800; font-size: 18px; }
+        /* Controls Area */
+        .controls { background: var(--primary); padding: 20px; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; gap: 15px; }
+        .input-box { background: #0f212e; border: 2px solid #2f4553; border-radius: 4px; padding: 12px; }
+        .input-box label { display: block; font-size: 12px; color: var(--text); font-weight: bold; margin-bottom: 5px; }
+        .input-box input { background: transparent; border: none; color: #fff; width: 100%; font-size: 16px; font-weight: bold; outline: none; }
         
-        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 20px; border-radius: 12px; font-size: 20px; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 0 #7a1fd1; transition: 0.1s; }
-        .bet-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #7a1fd1; }
+        .play-btn { background: var(--accent); border: none; color: #000; padding: 18px; border-radius: 4px; font-size: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .play-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="balance-box">
-            <i class="fa-solid fa-coins" style="color:#ffdf00"></i>
-            <span id="userBalance">0.00</span>
+        <div class="balance-container">
+            <span id="balance">1000.00</span> <i>$</i>
         </div>
     </header>
 
-    <div class="game-screen">
-        <canvas id="plinko-canvas"></canvas>
-        <div class="multiplier-row" id="multiplierRow"></div>
+    <div id="game-container">
+        <canvas id="plinkoCanvas"></canvas>
+        <div id="multipliers-wrapper"></div>
     </div>
 
     <div class="controls">
-        <div>
-            <div class="input-label">Amount</div>
-            <div class="input-field">
-                <input type="number" id="betAmount" value="10.00" step="1">
-            </div>
+        <div class="input-box">
+            <label>Bet Amount</label>
+            <input type="number" id="betAmount" value="10.00">
         </div>
-        <button class="bet-btn" onclick="placeBet()">Play Now</button>
+        <button class="play-btn" onclick="dropBall()">Bet</button>
     </div>
 
 <script>
-    const canvas = document.getElementById('plinko-canvas');
+    const canvas = document.getElementById('plinkoCanvas');
     const ctx = canvas.getContext('2d');
-    const multiRow = document.getElementById('multiplierRow');
-    let balance = parseFloat(localStorage.getItem('balance')) || 10000.00;
-    let balls = [], pegs = [];
-    const rows = 16;
-
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playPop() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    }
-
-    // مصفوفة الربح (Stake Style)
-    const multipliers = [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000];
+    const multiWrapper = document.getElementById('multipliers-wrapper');
     
-    // --- توزيع الاحتمالات (Casino Rigging) ---
-    // الأرقام الكبيرة إلها وزن قليل جداً، والأرقام اللي بالنص وزنها عالي
-    const weights = [1, 3, 10, 30, 80, 150, 450, 600, 750, 600, 450, 150, 80, 30, 10, 3, 1];
+    let balance = 1000.00;
+    const rows = 16;
+    const pins = [];
+    const balls = [];
+    
+    // Stake High Risk Multipliers (16 Rows)
+    const multipliers = [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000];
+    const colors = ['#ff003f', '#ff1a33', '#ff4d26', '#ff7a1a', '#ff991a', '#ffb31a', '#ffd91a', '#fff21a', '#fff21a', '#fff21a', '#ffd91a', '#ffb31a', '#ff991a', '#ff7a1a', '#ff4d26', '#ff1a33', '#ff003f'];
 
-    function getWeightedSlot() {
-        const totalWeight = weights.reduce((a, b) => a + b, 0);
-        let random = Math.random() * totalWeight;
-        for (let i = 0; i < weights.length; i++) {
-            if (random < weights[i]) return i;
-            random -= weights[i];
-        }
-        return 8; // Default to center
-    }
-
-    function sync() {
-        document.getElementById('userBalance').textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-        localStorage.setItem('balance', balance);
-    }
-    sync();
-
-    function initBoard() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        pegs = [];
-        const spacing = canvas.width / (rows + 4);
-        for (let i = 2; i <= rows + 1; i++) {
-            const rowY = spacing * (i + 1);
-            for (let j = 0; j <= i; j++) {
-                const x = canvas.width / 2 + (j - i / 2) * (spacing * 1.1);
-                pegs.push({ x, y: rowY, active: 0 });
+    function init() {
+        canvas.width = 600;
+        canvas.height = 500;
+        const spacing = 32;
+        
+        // Create Pins
+        for (let i = 0; i < rows; i++) {
+            const rowPins = i + 3;
+            const rowWidth = rowPins * spacing;
+            for (let j = 0; j < rowPins; j++) {
+                const x = canvas.width / 2 - rowWidth / 2 + j * spacing + spacing / 2;
+                const y = (i + 1) * spacing + 50;
+                pins.push({ x, y });
             }
         }
-        multiRow.innerHTML = '';
-        multipliers.forEach(m => {
+
+        // Render Multiplier Boxes
+        multiWrapper.innerHTML = '';
+        multipliers.forEach((val, i) => {
             const div = document.createElement('div');
-            div.className = 'm-box';
-            div.textContent = m + 'x';
-            multiRow.appendChild(div);
+            div.className = 'multi-slot';
+            div.style.backgroundColor = colors[i];
+            div.innerHTML = val + 'x';
+            multiWrapper.appendChild(div);
         });
     }
 
-    function placeBet() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        let amt = parseFloat(document.getElementById('betAmount').value);
-        if (amt > balance || amt <= 0) return;
-        balance -= amt; sync();
+    function dropBall() {
+        const bet = parseFloat(document.getElementById('betAmount').value);
+        if (bet > balance) return;
+        balance -= bet;
+        document.getElementById('balance').innerText = balance.toFixed(2);
 
-        const targetSlot = getWeightedSlot();
-        const spacing = canvas.width / (rows + 4);
-        const finalX = canvas.width / 2 + (targetSlot - 8) * (spacing * 1.1);
-        
-        // نظام "الحماس الخادع": الطابة بتروح لبعيد بالأول
-        const teaseIntensity = Math.random() > 0.5 ? 0.8 : 0.2;
-        const fakeX = Math.random() > 0.5 ? canvas.width * teaseIntensity : canvas.width * (1 - teaseIntensity);
+        // --- Casino Logic (House Edge 99%) ---
+        let resultIdx;
+        const rand = Math.random() * 100;
+        if (rand < 0.2) resultIdx = Math.random() > 0.5 ? 0 : 16; // 1000x (Very rare)
+        else if (rand < 2) resultIdx = Math.random() > 0.5 ? 2 : 14; // 26x
+        else resultIdx = Math.floor(Math.random() * 5) + 6; // Center 0.2x zones (Most common)
 
-        balls.push({ 
-            x: canvas.width / 2, y: 30, vx: (Math.random() - 0.5) * 2, vy: 0, 
-            finalX, fakeX,
-            progress: 0,
-            bet: amt, 
-            multiplier: multipliers[targetSlot] 
+        balls.push({
+            x: canvas.width / 2 + (Math.random() * 4 - 2),
+            y: 20,
+            vx: 0,
+            vy: 0,
+            radius: 6,
+            targetIdx: resultIdx,
+            settled: false
         });
     }
 
-    function draw() {
+    function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // رسم المسامير بتوهج
-        pegs.forEach(p => {
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = p.active > 0 ? '#fff' : '#32394e';
-            if(p.active > 0) {
-                ctx.shadowBlur = 10; ctx.shadowColor = '#fff';
-            }
-            ctx.fill(); ctx.shadowBlur = 0;
-            if(p.active > 0) p.active--;
+
+        // Draw Pins
+        ctx.fillStyle = "#7ca3be";
+        pins.forEach(pin => {
+            ctx.beginPath();
+            ctx.arc(pin.x, pin.y, 3, 0, Math.PI * 2);
+            ctx.fill();
         });
 
-        balls.forEach((b, i) => {
-            b.vy += 0.45; // جاذبية
-            b.progress = b.y / (canvas.height * 0.8);
+        // Update & Draw Balls
+        balls.forEach((ball, index) => {
+            ball.vy += 0.5; // Gravity
+            ball.x += ball.vx;
+            ball.y += ball.vy;
 
-            // منطق الحركة الحماسية: اذهب للطرف ثم عد للمركز
-            let targetX = b.progress < 0.65 ? b.fakeX : b.finalX;
-            let steer = (targetX - b.x) * (b.progress < 0.65 ? 0.03 : 0.08);
-            
-            b.vx += steer;
-            b.vx *= 0.92;
-            b.x += b.vx; b.y += b.vy;
-
-            pegs.forEach(p => {
-                const d = Math.hypot(b.x - p.x, b.y - p.y);
-                if (d < 11) {
-                    p.active = 15;
-                    b.vy *= -0.5; // ارتداد
-                    b.vx += (b.x - p.x) * 0.5;
-                    playPop();
+            // Collision with Pins
+            pins.forEach(pin => {
+                const dx = ball.x - pin.x;
+                const dy = ball.y - pin.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < ball.radius + 3) {
+                    const angle = Math.atan2(dy, dx);
+                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                    
+                    // Stake-style bouncy physics
+                    ball.vx += Math.cos(angle) * 1.5;
+                    ball.vy *= -0.4; 
+                    ball.y = pin.y + Math.sin(angle) * (ball.radius + 3);
                 }
             });
 
-            // رسم العملة الموف
-            ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, Math.PI * 2);
-            ctx.fillStyle = '#a333ff';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#a333ff';
-            ctx.fill();
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-            ctx.shadowBlur = 0;
+            // "Invisible Guide" to ensure ball hits the rigged target
+            const finalY = (rows + 1) * 32 + 50;
+            if (ball.y > 100) {
+                const spacing = 32;
+                const targetX = (canvas.width / 2 - ((multipliers.length + 2) * spacing) / 2) + (ball.targetIdx + 1.5) * spacing;
+                ball.vx += (targetX - ball.x) * 0.015;
+            }
 
-            if (b.y > canvas.height - 15) {
-                const winAmt = b.bet * b.multiplier;
-                balance += winAmt; sync();
-                balls.splice(i, 1);
+            // Draw Ball
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#ff0000";
+            ctx.fill();
+            ctx.strokeStyle = "#fff";
+            ctx.stroke();
+
+            // Finish
+            if (ball.y > 480) {
+                const win = multipliers[ball.targetIdx];
+                balance += (parseFloat(document.getElementById('betAmount').value) * win);
+                document.getElementById('balance').innerText = balance.toFixed(2);
+                balls.splice(index, 1);
+                
+                // Animate Multiplier Slot
+                const slots = document.querySelectorAll('.multi-slot');
+                slots[ball.targetIdx].style.transform = "translateY(5px)";
+                setTimeout(() => slots[ball.targetIdx].style.transform = "translateY(0)", 100);
             }
         });
-        requestAnimationFrame(draw);
+
+        requestAnimationFrame(update);
     }
 
-    initBoard(); draw();
-    window.addEventListener('resize', initBoard);
+    init();
+    update();
 </script>
 </body>
 </html>
