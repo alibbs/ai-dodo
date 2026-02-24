@@ -2,248 +2,278 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA CRASH | ULTIMATE SYNC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>AMANA ELITE | CRASH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@700;900&display=swap');
+
         :root {
-            --bg: #04060b;
-            --panel: #0f121d;
-            --brand: #ff00b8;
-            --up: #00e701;
-            --down: #ff3b3b;
-            --border: #222635;
-            --input-bg: #1a1d29;
-            --usdt: #26a17b;
+            --bg: #030712;
+            --panel: #0f172a;
+            --accent: #8b5cf6;
+            --gold: #fbbf24;
+            --up: #10b981;
+            --down: #ef4444;
+            --safe-top: env(safe-area-inset-top, 20px);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
-        /* قفل الشاشة ومنع الزوم */
-        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
+        
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; position: fixed;
-            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
+            overflow: hidden; position: fixed; 
+            background: var(--bg); color: #fff; font-family: 'Inter', sans-serif;
         }
 
-        body { display: flex; flex-direction: column; }
+        body { display: flex; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
 
-        /* Header */
-        header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .balance-tag {
-            background: var(--panel); border: 1px solid var(--border);
-            padding: 8px 14px; border-radius: 8px; font-weight: 800; 
-            display: flex; align-items: center; gap: 8px;
+        /* Header & Balance */
+        header {
+            height: 60px; display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        .balance-box {
+            background: #000; padding: 8px 25px; border-radius: 50px;
+            border: 2px solid var(--accent); display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.3rem; color: #fff; }
+
+        /* History Bar */
+        .history-bar {
+            display: flex; gap: 8px; padding: 10px; overflow-x: hidden;
+            justify-content: center; background: rgba(0,0,0,0.2);
+        }
+        .history-item {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900;
+            background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Game Area (Expanded) */
+        /* Game Area */
         .game-area {
-            flex: 1.8; position: relative; background: radial-gradient(circle at center, #111524 0%, #04060b 100%);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
         }
-        .rocket-container { position: absolute; bottom: 15%; left: 10%; z-index: 5; transition: 0.1s linear; display: none; }
-        #rocket { font-size: 50px; transform: rotate(-45deg); filter: drop-shadow(0 0 15px var(--brand)); transition: color 0.3s, filter 0.3s; }
+        .multiplier-val { 
+            font-size: 70px; font-weight: 900; font-family: 'Orbitron'; 
+            z-index: 10; text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+        .rocket-container { 
+            position: absolute; bottom: 15%; left: 10%; z-index: 5; 
+            display: none; transition: 0.1s linear; 
+        }
+        #rocket { 
+            font-size: 45px; transform: rotate(-45deg); 
+            color: var(--accent); filter: drop-shadow(0 0 15px var(--accent)); 
+        }
+        .status-msg { position: absolute; top: 10%; font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+
+        /* Controls Panel */
+        .controls {
+            background: var(--panel); padding: 20px 20px 10px 20px;
+            border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .field { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px; }
+        .field label { font-size: 9px; color: #94a3b8; display: block; margin-bottom: 2px; text-transform: uppercase; }
+        input { width: 100%; background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 900; }
+
+        .play-btn {
+            width: 100%; background: linear-gradient(45deg, #7c3aed, #a855f7);
+            color: #fff; border: none; padding: 16px; border-radius: 15px;
+            font-size: 1.3rem; font-weight: 900; cursor: pointer;
+            box-shadow: 0 4px 0 #5b21b6; text-transform: uppercase;
+        }
+        .play-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5b21b6; }
+        .btn-cashout { background: var(--up) !important; color: #000 !important; box-shadow: 0 4px 0 #065f46 !important; }
+        .btn-waiting { background: #1e293b !important; color: #64748b !important; box-shadow: none !important; cursor: not-allowed; }
         
-        .multiplier-val { font-size: 80px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
-        .waiting-status { position: absolute; top: 15%; font-size: 12px; font-weight: 800; color: var(--brand); letter-spacing: 2px; }
-
-        /* Stake Style Dashboard */
-        .dashboard {
-            background: var(--panel); border-top: 2px solid var(--border);
-            padding: 15px 20px 35px 20px; display: flex; flex-direction: column; gap: 10px;
-        }
-
-        .profit-label { text-align: center; height: 20px; color: var(--up); font-weight: 800; font-size: 15px; }
-
-        .control-group { display: flex; flex-direction: column; gap: 4px; }
-        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: #55607b; font-weight: 800; text-transform: uppercase; }
-
-        .input-wrapper {
-            background: var(--input-bg); border: 2px solid var(--border);
-            border-radius: 6px; display: flex; align-items: center; padding-right: 4px;
-        }
-        .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; font-size: 16px; font-weight: 700; }
-
-        .quick-btns { display: flex; gap: 2px; }
-        .quick-btns button { background: #2f3749; border: none; color: #fff; padding: 8px 10px; font-size: 11px; font-weight: 800; border-radius: 4px; }
-
-        .main-btn {
-            width: 100%; padding: 18px; border-radius: 6px; border: none;
-            font-size: 18px; font-weight: 900; text-transform: uppercase; transition: 0.2s;
-        }
-        .btn-bet { background: var(--brand); color: #fff; }
-        .btn-cashout { background: var(--up) !important; color: #000 !important; box-shadow: 0 0 20px rgba(0, 231, 1, 0.4); }
-        .btn-waiting { background: #242938; color: #55607b; }
-
+        #profit { height: 15px; text-align: center; font-weight: 900; font-size: 14px; color: var(--up); }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="game.html" style="color:#fff;"><i class="fa-solid fa-chevron-left"></i></a>
-        <div class="balance-tag">
-            <i class="fa-solid fa-circle-dollar-to-slot" style="color:var(--usdt)"></i>
-            <span id="userBalance">0.00</span>
+        <div class="balance-box">
+            <i class="fa-solid fa-bolt" style="color:var(--gold)"></i>
+            <span id="balance">1000.00</span>
         </div>
-        <div style="width:20px"></div>
     </header>
 
+    <div class="history-bar" id="history">
+        </div>
+
     <div class="game-area">
-        <div id="waitingMsg" class="waiting-status"></div>
+        <div id="status" class="status-msg">Waiting for next round...</div>
         <div class="rocket-container" id="rocketBox">
             <i id="rocket" class="fa-solid fa-rocket"></i>
         </div>
         <div id="multiplier" class="multiplier-val">1.00x</div>
     </div>
 
-    <div class="dashboard">
-        <div class="profit-label" id="profitLabel"></div>
-
-        <div class="control-group">
-            <div class="label-row"><span>Bet Amount</span><span>USDT</span></div>
-            <div class="input-wrapper">
-                <input type="number" id="betAmount" value="10.00">
-                <div class="quick-btns">
-                    <button onclick="mult(0.5)">½</button>
-                    <button onclick="mult(2)">2×</button>
-                </div>
+    <div class="controls">
+        <div id="profit"></div>
+        <div class="input-grid">
+            <div class="field">
+                <label>Amount (USDT)</label>
+                <input type="number" id="amt" value="10">
+            </div>
+            <div class="field">
+                <label>Auto Cashout</label>
+                <input type="number" id="auto" value="2.00" step="0.1">
             </div>
         </div>
-
-        <div class="control-group">
-            <div class="label-row"><span>Auto Cashout</span></div>
-            <div class="input-wrapper">
-                <input type="number" id="autoCash" value="2.00" step="0.1">
-            </div>
-        </div>
-
-        <button id="actionBtn" class="main-btn btn-bet" onclick="handleAction()">Place Bet</button>
+        <button id="mainBtn" class="play-btn" onclick="handleAction()">Place Bet</button>
     </div>
 
 <script>
-    let balance = parseFloat(localStorage.getItem('balance')) || 2840.15;
-    const balanceEl = document.getElementById('userBalance');
-    const multiText = document.getElementById('multiplier');
-    const rocket = document.getElementById('rocket');
-    const rocketBox = document.getElementById('rocketBox');
-    const actionBtn = document.getElementById('actionBtn');
-    const waitingMsg = document.getElementById('waitingMsg');
-    const profitLabel = document.getElementById('profitLabel');
-
-    function sync() { balanceEl.textContent = balance.toLocaleString(undefined, {minimumFractionDigits: 2}); localStorage.setItem('balance', balance); }
-    sync();
-
-    // Multiplayer Global Sync Settings
-    const ROUND_TIME = 20000; 
-    const WAIT_TIME = 5000;
+    let balance = 1000.00;
+    const ROUND_TIME = 15000; 
+    const WAIT_TIME = 4000;
     let hasBet = false, cashed = false, currentBet = 0, state = "IDLE";
+    let history = [1.50, 4.20, 1.10, 12.5, 2.10];
+
+    const balanceEl = document.getElementById('balance');
+    const multiEl = document.getElementById('multiplier');
+    const mainBtn = document.getElementById('mainBtn');
+    const rocketBox = document.getElementById('rocketBox');
+    const statusEl = document.getElementById('status');
+    const profitEl = document.getElementById('profit');
+    const historyEl = document.getElementById('history');
+
+    function sync() {
+        balanceEl.innerText = balance.toFixed(2);
+        renderHistory();
+    }
+
+    function renderHistory() {
+        historyEl.innerHTML = '';
+        history.slice(-6).reverse().forEach(val => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.style.color = val >= 2 ? 'var(--up)' : 'var(--down)';
+            div.innerText = val.toFixed(2) + 'x';
+            historyEl.appendChild(div);
+        });
+    }
+
+    function getCrashPoint(seed) {
+        // خوارزمية احتمالية مشابهة لـ Stake
+        const hash = Math.sin(seed) * 10000;
+        const rand = hash - Math.floor(hash);
+        // التلاعب: تقليل احتمالية الضربات العالية جداً لصالح الموقع
+        if (Math.random() < 0.1) return 1.00; // 10% ينفجر فوراً
+        return Math.max(1.01, 0.97 / (1 - rand));
+    }
 
     function update() {
         const now = Date.now();
         const cycle = now % ROUND_TIME;
+        const roundId = Math.floor(now / ROUND_TIME);
+        const crashAt = getCrashPoint(roundId);
 
         if (cycle < WAIT_TIME) {
-            // --- WAIT PHASE ---
+            // --- مرحلة الانتظار ---
             state = "IDLE";
-            const remaining = Math.ceil((WAIT_TIME - cycle) / 1000);
-            waitingMsg.textContent = `NEXT ROUND IN ${remaining}S`;
-            multiText.textContent = "1.00x";
-            multiText.style.color = "#fff";
+            const sec = Math.ceil((WAIT_TIME - cycle) / 1000);
+            statusEl.innerText = `Starts in ${sec}s`;
+            multiEl.innerText = "1.00x";
+            multiEl.style.color = "#fff";
             rocketBox.style.display = "none";
-            rocket.style.color = "var(--brand)"; 
-            rocket.style.filter = "drop-shadow(0 0 15px var(--brand))";
+            profitEl.innerText = "";
             
             if (!hasBet) {
-                actionBtn.className = "main-btn btn-bet";
-                actionBtn.textContent = "Place Bet";
+                mainBtn.className = "play-btn";
+                mainBtn.innerText = "Place Bet";
             } else {
-                actionBtn.className = "main-btn btn-waiting";
-                actionBtn.textContent = "Bet Placed";
+                mainBtn.className = "play-btn btn-waiting";
+                mainBtn.innerText = "Bet Accepted";
             }
         } else {
-            // --- FLY PHASE ---
-            state = "RUNNING";
-            waitingMsg.textContent = "";
+            // --- مرحلة الطيران ---
+            state = "FLYING";
+            statusEl.innerText = "Live";
             rocketBox.style.display = "block";
             
             const flightTime = (cycle - WAIT_TIME) / 1000;
-            const currentMulti = Math.pow(Math.E, 0.08 * flightTime);
-            
-            // Sync Crash Point
-            const roundId = Math.floor(now / ROUND_TIME);
-            const crashAt = getCrashPoint(roundId);
+            const currentMulti = Math.pow(Math.E, 0.07 * flightTime);
 
             if (currentMulti >= crashAt) {
-                // CRASHED
+                // --- انفجار (Crash) ---
+                if (state !== "CRASHED") {
+                    if (hasBet && !cashed) {
+                        hasBet = false;
+                        // خسارة
+                    }
+                    if (state !== "CRASHED") history.push(crashAt);
+                }
                 state = "CRASHED";
-                multiText.textContent = crashAt.toFixed(2) + "x";
-                multiText.style.color = "var(--down)";
-                rocket.style.color = "var(--down)";
-                rocket.style.filter = "drop-shadow(0 0 15px var(--down))";
-                actionBtn.className = "main-btn btn-waiting";
-                actionBtn.textContent = "Crashed";
-                profitLabel.textContent = "";
+                multiEl.innerText = crashAt.toFixed(2) + "x";
+                multiEl.style.color = "var(--down)";
+                document.getElementById('rocket').style.color = "var(--down)";
+                mainBtn.className = "play-btn btn-waiting";
+                mainBtn.innerText = "Crashed";
                 hasBet = false; cashed = false;
             } else {
-                // FLYING
-                multiText.textContent = currentMulti.toFixed(2) + "x";
-                rocket.style.color = "var(--up)";
-                rocket.style.filter = "drop-shadow(0 0 15px var(--up))";
+                // --- طيران مستمر ---
+                multiEl.innerText = currentMulti.toFixed(2) + "x";
+                multiEl.style.color = "var(--up)";
+                document.getElementById('rocket').style.color = "var(--accent)";
                 
-                rocketBox.style.left = Math.min(10 + flightTime * 6, 80) + "%";
-                rocketBox.style.bottom = Math.min(15 + Math.pow(flightTime, 1.3) * 5, 75) + "%";
+                // تحريك الصاروخ
+                rocketBox.style.left = Math.min(10 + flightTime * 5, 70) + "%";
+                rocketBox.style.bottom = Math.min(15 + flightTime * 4, 60) + "%";
 
                 if (hasBet && !cashed) {
-                    actionBtn.className = "main-btn btn-cashout";
-                    actionBtn.textContent = "Cash Out";
-                    profitLabel.textContent = "+" + (currentBet * currentMulti).toFixed(2) + " USDT";
-                    
-                    // Auto Cashout Logic
-                    let auto = parseFloat(document.getElementById('autoCash').value);
-                    if(auto > 1.01 && currentMulti >= auto) doCashOut(currentMulti);
+                    mainBtn.className = "play-btn btn-cashout";
+                    mainBtn.innerText = "Cash Out";
+                    const currentProfit = currentBet * currentMulti;
+                    profitEl.innerText = `+${currentProfit.toFixed(2)} USDT`;
+
+                    // Auto Cashout
+                    let autoVal = parseFloat(document.getElementById('auto').value);
+                    if (autoVal > 1.01 && currentMulti >= autoVal) doCashOut(currentMulti);
                 }
             }
         }
         requestAnimationFrame(update);
     }
 
-    function getCrashPoint(seed) {
-        const x = Math.sin(seed) * 10000;
-        const rand = x - Math.floor(x);
-        return Math.max(1.00, 0.98 / (1 - rand)); // نفس نظام ستيك
-    }
-
     function handleAction() {
-        const cycle = Date.now() % ROUND_TIME;
-        if (cycle < WAIT_TIME && !hasBet) {
-            let amt = parseFloat(document.getElementById('betAmount').value);
+        if (state === "IDLE" && !hasBet) {
+            const amt = parseFloat(document.getElementById('amt').value);
             if (amt > balance || amt <= 0) return;
             balance -= amt;
             currentBet = amt;
             hasBet = true;
             sync();
-        } else if (state === "RUNNING" && hasBet && !cashed) {
+        } else if (state === "FLYING" && hasBet && !cashed) {
+            const cycle = Date.now() % ROUND_TIME;
             const flightTime = (cycle - WAIT_TIME) / 1000;
-            const currentMulti = Math.pow(Math.E, 0.08 * flightTime);
+            const currentMulti = Math.pow(Math.E, 0.07 * flightTime);
             doCashOut(currentMulti);
         }
     }
 
     function doCashOut(m) {
-        if(cashed) return;
+        if (cashed) return;
         cashed = true;
-        let win = currentBet * m;
+        const win = currentBet * m;
         balance += win;
         sync();
-        actionBtn.className = "main-btn btn-waiting";
-        actionBtn.textContent = "Won +" + win.toFixed(2);
-        profitLabel.textContent = "CASHED OUT!";
-        // عند الربح تضوي نيون براند
-        rocket.style.color = "var(--brand)";
-        rocket.style.filter = "drop-shadow(0 0 20px var(--brand))";
+        mainBtn.className = "play-btn btn-waiting";
+        mainBtn.innerText = "Won +" + win.toFixed(2);
+        profitEl.innerText = "CASHED OUT!";
     }
 
-    function mult(v) { document.getElementById('betAmount').value = (document.getElementById('betAmount').value * v).toFixed(2); }
-
+    // منع السحب والتكبير
+    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    
+    sync();
     update();
 </script>
 </body>
