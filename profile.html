@@ -3,159 +3,87 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA GLOBAL | Profile</title>
+    <title>AMANA ELITE | Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
     <style>
         :root {
-            --bg: #0b0f1f;
-            --card-bg: rgba(255, 255, 255, 0.06);
+            --bg: #060914;
+            --brand: #ff00b8;
+            --accent: #00f2ff;
+            --card-bg: rgba(255, 255, 255, 0.04);
             --border: rgba(255, 255, 255, 0.1);
-            --brand1: #a100ff;
-            --brand2: #ff00b8;
             --text: #ffffff;
-            --muted: #b8c0e6;
-            --danger: #ff0050;
-            --nav-bg: rgba(15, 23, 42, 0.95);
+            --muted: #888;
+            --danger: #ff3b3b;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding-bottom: 100px;
-            background: radial-gradient(circle at bottom left, #1c0833, #0b0f1f);
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: var(--text);
+            padding-bottom: 110px;
+            background: radial-gradient(circle at bottom left, #1c0833, #060914);
             min-height: 100vh;
         }
 
-        .container { padding: 20px; }
+        .container { padding: 20px; max-width: 450px; margin: auto; }
 
         /* --- Profile Header --- */
-        .profile-header {
-            text-align: center;
-            padding: 30px 0;
-        }
-
+        .profile-header { text-align: center; padding: 40px 0 20px; }
         .avatar-wrapper {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 15px;
+            position: relative; width: 100px; height: 100px; margin: 0 auto 15px;
         }
-
         .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 3px solid var(--brand2);
-            padding: 3px;
-            object-fit: cover;
-            background: var(--card-bg);
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 3px solid var(--brand); padding: 3px;
+            background: var(--card-bg); object-fit: cover;
         }
-
         .status-badge {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: #00ff96;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 3px solid var(--bg);
+            position: absolute; bottom: 5px; right: 5px;
+            background: #00ff96; width: 18px; height: 18px;
+            border-radius: 50%; border: 3px solid var(--bg);
         }
-
-        .user-name { font-size: 22px; font-weight: 800; margin: 0; }
-        .user-id { font-size: 13px; color: var(--muted); margin-top: 5px; }
+        .user-name { font-size: 24px; font-weight: 900; margin: 0; }
+        .user-id { font-size: 12px; color: var(--muted); margin-top: 5px; font-family: monospace; }
 
         /* --- Stats Row --- */
-        .stats-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 18px;
-            text-align: center;
-            backdrop-filter: blur(10px);
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 15px; border-radius: 22px; text-align: center; backdrop-filter: blur(10px);
         }
-
-        .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
-        .stat-value { font-size: 16px; font-weight: 700; color: var(--brand2); }
+        .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
+        .stat-value { font-size: 16px; font-weight: 800; color: var(--accent); }
 
         /* --- Menu List --- */
         .menu-group {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 20px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 24px; overflow: hidden; margin-bottom: 20px;
         }
-
         .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            text-decoration: none;
-            color: var(--text);
-            border-bottom: 1px solid var(--border);
-            transition: 0.3s;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 20px; text-decoration: none; color: var(--text);
+            border-bottom: 1px solid var(--border); transition: 0.3s;
         }
-
         .menu-item:last-child { border-bottom: none; }
         .menu-item:active { background: rgba(255,255,255,0.05); }
-
         .menu-left { display: flex; align-items: center; gap: 15px; }
-        .menu-left i { font-size: 18px; width: 24px; text-align: center; color: var(--brand1); }
-        .menu-item span { font-size: 15px; font-weight: 500; }
-        .menu-right { color: var(--muted); font-size: 14px; }
+        .menu-left i { font-size: 18px; width: 24px; text-align: center; color: var(--brand); }
+        .menu-item span { font-size: 14px; font-weight: 600; }
+        .menu-right { color: var(--muted); font-size: 12px; }
 
-        .logout-btn {
-            color: var(--danger);
-            border: 1px solid rgba(255, 0, 80, 0.2);
-            background: rgba(255, 0, 80, 0.05);
-            margin-top: 10px;
-        }
-
+        .logout-btn { color: var(--danger); border: 1px solid rgba(255, 59, 59, 0.2); }
         .logout-btn i { color: var(--danger); }
 
-        /* --- BOTTOM NAV BAR (Shared) --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 75px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 10px;
-            z-index: 1000;
+        /* --- BOTTOM NAV (Shared & Linked) --- */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 80px; 
+            background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); 
+            display: flex; justify-content: space-around; align-items: center; 
+            z-index: 1000; backdrop-filter: blur(10px); 
         }
-
-        .nav-tab {
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 600;
-            flex: 1;
-        }
-
-        .nav-tab i { font-size: 20px; margin-bottom: 5px; }
-        .nav-tab.active { color: var(--brand2); }
+        .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; transition: 0.3s; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--brand); }
     </style>
 </head>
 <body>
@@ -163,17 +91,17 @@
     <div class="container">
         <div class="profile-header">
             <div class="avatar-wrapper">
-                <img src="https://ui-avatars.com/api/?name=User&background=a100ff&color=fff&size=128" alt="User Avatar" class="avatar" id="userAvatar">
+                <img src="https://ui-avatars.com/api/?name=User&background=ff00b8&color=fff&size=128" alt="Avatar" class="avatar" id="userAvatar">
                 <div class="status-badge"></div>
             </div>
             <h1 class="user-name" id="profileName">Loading...</h1>
-            <div class="user-id">UID: <span id="userUID">8429103</span></div>
+            <div class="user-id">UID: <span id="userUID">--------</span></div>
         </div>
 
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-label">Account Level</div>
-                <div class="stat-value">VIP 1</div>
+                <div class="stat-value">VIP 1 Elite</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">KYC Status</div>
@@ -196,13 +124,6 @@
                 </div>
                 <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
             </a>
-            <a href="#" class="menu-item">
-                <div class="menu-left">
-                    <i class="fa-solid fa-user-check"></i>
-                    <span>Identity Verification</span>
-                </div>
-                <div class="menu-right">Verified</div>
-            </a>
         </div>
 
         <div class="menu-group">
@@ -211,14 +132,7 @@
                     <i class="fa-solid fa-language"></i>
                     <span>Language</span>
                 </div>
-                <div class="menu-right">English <i class="fa-solid fa-chevron-right" style="margin-left: 5px;"></i></div>
-            </a>
-            <a href="#" class="menu-item">
-                <div class="menu-left">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span>About Amana Global</span>
-                </div>
-                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-right">English <i class="fa-solid fa-chevron-right" style="margin-left:5px"></i></div>
             </a>
         </div>
 
@@ -233,63 +147,43 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="home.html" class="nav-tab">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
-        <a href="game-center.html" class="nav-tab">
-            <i class="fa-solid fa-gamepad"></i>
-            <span>Game</span>
-        </a>
-        <a href="bot-trade.html" class="nav-tab">
-            <i class="fa-solid fa-robot"></i>
-            <span>Bot Trade</span>
-        </a>
-        <a href="overview.html" class="nav-tab">
-            <i class="fa-solid fa-chart-pie"></i>
-            <span>Overview</span>
-        </a>
-        <a href="profile.html" class="nav-tab active">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-        </a>
+        <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
+        <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+        <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+        <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Firebase Config (Same as your other pages)
-       const firebaseConfig = {
-  apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-  authDomain: "ai-dodo.firebaseapp.com",
-  projectId: "ai-dodo",
-  storageBucket: "ai-dodo.firebasestorage.app",
-  messagingSenderId: "261622335803",
-  appId: "1:261622335803:web:0b066791230535e7d5cf1e",
-  measurementId: "G-60CEST92TT"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+            authDomain: "ai-dodo.firebaseapp.com",
+            projectId: "ai-dodo",
+            storageBucket: "ai-dodo.firebasestorage.app",
+            messagingSenderId: "261622335803",
+            appId: "1:261622335803:web:0b066791230535e7d5cf1e",
+            measurementId: "G-60CEST92TT"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Check if user is logged in
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('profileName').textContent = user.displayName || "User";
-                document.getElementById('userUID').textContent = user.uid.substring(0, 8).toUpperCase();
+                document.getElementById('profileName').textContent = user.displayName || "Elite User";
+                document.getElementById('userUID').textContent = user.uid.substring(0, 10).toUpperCase();
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // Logout function
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => {
-                window.location.href = "login.html";
-            });
+            signOut(auth).then(() => { window.location.href = "login.html"; });
         });
     </script>
 </body>
 </html>
-
