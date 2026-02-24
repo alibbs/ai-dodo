@@ -53,19 +53,12 @@
         .game-item b { display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.5px; }
         .game-item span { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; }
 
-        /* Badge */
         .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
 
-        /* Custom Colors for Icons */
-        .color-crash { color: #ff3b3b; text-shadow: 0 0 15px rgba(255,59,59,0.3); }
-        .color-dice { color: var(--up); text-shadow: 0 0 15px rgba(0,255,150,0.3); }
-        .color-plinko { color: var(--accent); }
-        .color-chicken { color: var(--gold); }
-        .color-snake { color: #00ff00; }
-        .color-tower { color: #ff6b00; }
+        /* الألوان */
+        .color-crash { color: #ff3b3b; }
+        .color-dice { color: var(--up); }
         .color-wheel { color: #a100ff; }
-        .color-flip { color: #ffcc00; }
-        .color-slide { color: #ff0066; }
         .color-balloon { color: #00f2ff; }
 
         /* --- Bottom Nav --- */
@@ -80,98 +73,62 @@
 <div class="container">
     <div class="header">
         <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Amana<span style="color:var(--brand)">Casino</span></h1>
-        <div class="bal-display"><i class="fa-solid fa-coins"></i> 2,840.15</div>
+        <div class="bal-display"><i class="fa-solid fa-coins"></i> 1,000.00</div>
     </div>
 
     <div class="casino-banner">
-        <h2>BIG WINS AWAIT!<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Try our new provably fair games</span></h2>
+        <h2>BIG WINS AWAIT!<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Try our new rigged games</span></h2>
         <i class="fa-solid fa-clover"></i>
     </div>
 
     <div class="games-grid">
         
-        <div class="game-item" onclick="location.href='amanacrash.html'">
-            <div class="badge">Hot</div>
-            <i class="fa-solid fa-rocket color-crash"></i>
-            <b>Crash</b>
-            <span>Multiplier</span>
-        </div>
-
         <div class="game-item" onclick="location.href='dice.html'">
+            <div class="badge">Rigged</div>
             <i class="fa-solid fa-dice color-dice"></i>
-            <b>Dice</b>
+            <b>Dice Pro</b>
             <span>Over/Under</span>
         </div>
 
-        <div class="game-item" onclick="location.href='snake.html'">
-            <i class="fa-solid fa-worm color-snake"></i>
-            <b>Snake</b>
-            <span>Retro Win</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='cards.html'">
-            <i class="fa-solid fa-spade" style="color:var(--brand)"></i>
-            <b>Cards</b>
-            <span>Poker/BJ</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='plinko.html'">
-            <i class="fa-solid fa-braille color-plinko"></i>
-            <b>Plinko</b>
-            <span>Lucky Drop</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='chicken.html'">
-            <i class="fa-solid fa-drumstick-bite color-chicken"></i>
-            <b>Chicken</b>
-            <span>Mines Style</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='hilo.html'">
-            <i class="fa-solid fa-up-down" style="color:#ff0066"></i>
-            <b>HiLo</b>
-            <span>Next Card</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='tower.html'">
-            <i class="fa-solid fa-chess-rook color-tower"></i>
-            <b>King Tower</b>
-            <span>Climb Up</span>
-        </div>
-
-        <div class="game-item" onclick="location.href='flip.html'">
-            <i class="fa-solid fa-coins color-flip"></i>
-            <b>Coin Flip</b>
-            <span>50/50</span>
-        </div>
-
         <div class="game-item" onclick="location.href='wheel.html'">
+            <div class="badge">Fast</div>
             <i class="fa-solid fa-dharmachakra color-wheel"></i>
             <b>Wheel</b>
             <span>Spin Fortune</span>
         </div>
 
-        <div class="game-item" onclick="location.href='slide.html'">
-            <i class="fa-solid fa-sliders color-slide"></i>
-            <b>Slide</b>
-            <span>Instant</span>
+        <div class="game-item" onclick="location.href='balloon.html'">
+            <div class="badge">New</div>
+            <i class="fa-solid fa-hot-tub-person color-balloon"></i> <b>Balloon</b>
+            <span>Hold & Release</span>
         </div>
 
-        <div class="game-item" onclick="location.href='balloon.html'">
-            <i class="fa-solid fa-🎈 color-balloon"></i>
-            <b>Balloon</b>
-            <span>Hold & Release</span>
+        <div class="game-item" style="opacity: 0.5;">
+            <i class="fa-solid fa-rocket color-crash"></i>
+            <b>Crash</b>
+            <span>Coming Soon</span>
+        </div>
+
+        <div class="game-item" style="opacity: 0.5;">
+            <i class="fa-solid fa-drumstick-bite" style="color:var(--gold)"></i>
+            <b>Chicken</b>
+            <span>Coming Soon</span>
+        </div>
+
+        <div class="game-item" style="opacity: 0.5;">
+            <i class="fa-solid fa-braille" style="color:var(--accent)"></i>
+            <b>Plinko</b>
+            <span>Coming Soon</span>
         </div>
 
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="game.html" class="nav-link active"><i class="fa-solid fa-gamepad"></i><span>Games</span></a>
-    <a href="bot-trade.html" class="nav-link"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-    <a href="overview.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Assets</span></a>
-    <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="#" class="nav-link active"><i class="fa-solid fa-gamepad"></i><span>Games</span></a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
 </body>
