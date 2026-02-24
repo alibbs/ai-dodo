@@ -21,13 +21,23 @@
             background: var(--bg); color: #fff;
             padding-bottom: 110px;
             background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
+            min-height: 100vh;
         }
 
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
         /* --- Header --- */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .bal-display { background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); padding: 8px 15px; border-radius: 20px; color: var(--up); font-weight: 800; font-size: 14px; }
+        .bal-display { 
+            background: rgba(0, 255, 150, 0.1); 
+            border: 1px solid var(--up); 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            color: var(--up); 
+            font-weight: 800; 
+            font-size: 14px;
+            box-shadow: 0 0 15px rgba(0, 255, 150, 0.1);
+        }
 
         /* --- Banner --- */
         .casino-banner {
@@ -44,26 +54,34 @@
 
         .game-item {
             background: var(--card); border: 1px solid var(--border); border-radius: 22px;
-            padding: 25px 15px; text-align: center; transition: 0.3s; cursor: pointer;
-            position: relative; overflow: hidden;
+            padding: 25px 15px; text-align: center; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer; position: relative; overflow: hidden;
         }
-        .game-item:active { transform: scale(0.92); background: rgba(255,255,255,0.08); }
+        .game-item:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
         
-        .game-item i { font-size: 40px; margin-bottom: 12px; display: block; }
+        .game-item i { font-size: 40px; margin-bottom: 12px; display: block; transition: 0.3s; }
+        .game-item:hover i { transform: translateY(-5px); }
         .game-item b { display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.5px; }
-        .game-item span { font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; }
+        .game-item span { font-size: 10px; color: #777; font-weight: 700; text-transform: uppercase; }
 
-        .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+        /* Badge */
+        .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; z-index: 2; }
+        .badge.new { background: var(--accent); color: #000; }
 
-        /* الألوان */
-        .color-crash { color: #ff3b3b; }
-        .color-dice { color: var(--up); }
+        /* Colors */
+        .color-crash { color: #ff3b3b; text-shadow: 0 0 15px rgba(255,59,59,0.3); }
+        .color-dice { color: var(--up); text-shadow: 0 0 15px rgba(0,255,150,0.3); }
+        .color-plinko { color: var(--accent); }
+        .color-chicken { color: var(--gold); }
+        .color-snake { color: #00ff00; }
+        .color-tower { color: #ff6b00; }
         .color-wheel { color: #a100ff; }
-        .color-balloon { color: #00f2ff; }
+        .color-flip { color: #ffcc00; }
+        .color-balloon { color: #00f2ff; text-shadow: 0 0 15px rgba(0,242,255,0.3); }
 
         /* --- Bottom Nav --- */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-link { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; backdrop-filter: blur(15px); }
+        .nav-link { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; transition: 0.3s; }
         .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
         .nav-link.active { color: var(--brand); }
     </style>
@@ -72,13 +90,13 @@
 
 <div class="container">
     <div class="header">
-        <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Amana<span style="color:var(--brand)">Casino</span></h1>
-        <div class="bal-display"><i class="fa-solid fa-coins"></i> 1,000.00</div>
+        <h1 style="font-size: 22px; font-weight: 900; margin: 0; letter-spacing: -1px;">AMANA <span style="color:var(--brand)">ELITE</span></h1>
+        <div class="bal-display" id="mainBal"><i class="fa-solid fa-wallet"></i> 1,000.00</div>
     </div>
 
     <div class="casino-banner">
-        <h2>BIG WINS AWAIT!<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Try our new rigged games</span></h2>
-        <i class="fa-solid fa-clover"></i>
+        <h2>JACKPOT SEASON!<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Your fortune starts here.</span></h2>
+        <i class="fa-solid fa-crown"></i>
     </div>
 
     <div class="games-grid">
@@ -90,35 +108,60 @@
             <span>Over/Under</span>
         </div>
 
-        <div class="game-item" onclick="location.href='wheel.html'">
-            <div class="badge">Fast</div>
-            <i class="fa-solid fa-dharmachakra color-wheel"></i>
-            <b>Wheel</b>
-            <span>Spin Fortune</span>
-        </div>
-
         <div class="game-item" onclick="location.href='balloon.html'">
-            <div class="badge">New</div>
-            <i class="fa-solid fa-hot-tub-person color-balloon"></i> <b>Balloon</b>
+            <div class="badge new">New</div>
+            <i class="fa-solid fa-circle-dot color-balloon"></i>
+            <b>Balloon</b>
             <span>Hold & Release</span>
         </div>
 
-        <div class="game-item" style="opacity: 0.5;">
+        <div class="game-item" onclick="location.href='wheel.html'">
+            <i class="fa-solid fa-dharmachakra color-wheel"></i>
+            <b>Wheel</b>
+            <span>Fast Spin</span>
+        </div>
+
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <div class="badge">Hot</div>
             <i class="fa-solid fa-rocket color-crash"></i>
             <b>Crash</b>
-            <span>Coming Soon</span>
+            <span>Multiplier</span>
         </div>
 
-        <div class="game-item" style="opacity: 0.5;">
-            <i class="fa-solid fa-drumstick-bite" style="color:var(--gold)"></i>
-            <b>Chicken</b>
-            <span>Coming Soon</span>
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-worm color-snake"></i>
+            <b>Snake</b>
+            <span>Retro Win</span>
         </div>
 
-        <div class="game-item" style="opacity: 0.5;">
-            <i class="fa-solid fa-braille" style="color:var(--accent)"></i>
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-braille color-plinko"></i>
             <b>Plinko</b>
-            <span>Coming Soon</span>
+            <span>Lucky Drop</span>
+        </div>
+
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-drumstick-bite color-chicken"></i>
+            <b>Chicken</b>
+            <span>Mines Style</span>
+        </div>
+
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-up-down" style="color:#ff0066"></i>
+            <b>HiLo</b>
+            <span>Next Card</span>
+        </div>
+
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-chess-rook color-tower"></i>
+            <b>King Tower</b>
+            <span>Climb Up</span>
+        </div>
+
+        <div class="game-item" onclick="alert('Coming Soon!')">
+            <i class="fa-solid fa-coins color-flip"></i>
+            <b>Coin Flip</b>
+            <span>50/50</span>
         </div>
 
     </div>
@@ -128,8 +171,20 @@
     <a href="#" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
     <a href="#" class="nav-link active"><i class="fa-solid fa-gamepad"></i><span>Games</span></a>
     <a href="#" class="nav-link"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Assets</span></a>
     <a href="#" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
+
+<script>
+    // كود لتحديث الرصيد من الـ LocalStorage إذا كان موجوداً
+    function updateBalance() {
+        const savedBal = localStorage.getItem('casino_balance');
+        if (savedBal) {
+            document.getElementById('mainBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${parseFloat(savedBal).toFixed(2)}`;
+        }
+    }
+    setInterval(updateBalance, 1000); // تحديث الرصيد كل ثانية
+</script>
 
 </body>
 </html>
