@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA CASINO | STAKE ENGINE</title>
+    <title>AMANA CASINO | STAKE V2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -20,19 +20,20 @@
         
         header { padding: 10px; display: flex; justify-content: center; background: var(--bg); border-bottom: 1px solid var(--border); }
         .balance-box { background: var(--input); padding: 8px 15px; border-radius: 6px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); font-weight: 800; }
+        .balance-box span { color: #00ffaa; font-size: 18px; }
 
         #game-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
         canvas { max-width: 100%; height: auto; }
 
         .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; }
-        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s ease; }
+        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 900; color: #000; transition: transform 0.1s; }
 
         .controls { background: var(--sidebar); padding: 20px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
         .input-group { background: var(--input); border: 1px solid var(--border); padding: 10px; border-radius: 6px; }
         .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
         input, select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
         
-        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; transition: 0.1s; }
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
         .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
     </style>
 </head>
@@ -40,7 +41,7 @@
 
     <header>
         <div class="balance-box">
-            <i class="fa-solid fa-coins" style="color:#00ffaa"></i>
+            <i class="fa-solid fa-coins" style="color:#ffdf00"></i>
             <span id="userBalance">1000.00</span>
         </div>
     </header>
@@ -53,8 +54,8 @@
     <div class="controls">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="input-group">
-                <div class="input-label">Amount</div>
-                <input type="number" id="betAmount" value="10.00">
+                <div class="input-label">Bet Amount</div>
+                <input type="number" id="betAmount" value="10.00" step="1">
             </div>
             <div class="input-group">
                 <div class="input-label">Risk</div>
@@ -65,7 +66,7 @@
                 </select>
             </div>
         </div>
-        <button class="bet-btn" id="betBtn" onclick="dropBall()">PLAY</button>
+        <button class="bet-btn" onclick="dropBall()">PLAY</button>
     </div>
 
 <script>
@@ -73,21 +74,22 @@
     const ctx = canvas.getContext('2d');
     const riskSelect = document.getElementById('riskLevel');
     const amountInput = document.getElementById('betAmount');
+    const balanceDisplay = document.getElementById('userBalance');
 
     let balance = 1000.00;
     let balls = [], pegs = [];
     const rows = 16;
-    const spacingY = 24; 
+    const spacingY = 24;
 
     const riskData = {
-        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], color: '#00e701' },
-        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], color: '#ffb000' },
-        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], color: '#ff003f' }
+        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: ['#00e701','#55e701','#aae701','#ffe701','#ffb000','#ff7000','#ff0000','#ff7000','#ffb000','#ffe701','#aae701','#55e701','#00e701'] },
+        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: ['#ffc800','#ffb000','#ff9800','#ff8000','#ff6800','#ff5000','#ff3800','#ff0000','#ff3800','#ff5000','#ff6800','#ff8000','#ff9800','#ffb000','#ffc800'] },
+        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: ['#ff003f','#ff1a33','#ff4d26','#ff7a1a','#ff991a','#ffb31a','#ffd91a','#fff21a','#fff21a','#fff21a','#ffd91a','#ffb31a','#ff991a','#ff7a1a','#ff4d26','#ff1a33','#ff003f'] }
     };
 
     function initBoard() {
         canvas.width = 400;
-        canvas.height = 460;
+        canvas.height = 450;
         pegs = [];
         const risk = riskSelect.value;
         const currentMultis = riskData[risk].multis;
@@ -107,7 +109,7 @@
         currentMultis.forEach((m, i) => {
             const div = document.createElement('div');
             div.className = 'm-box';
-            div.style.background = riskData[risk].color;
+            div.style.background = riskData[risk].colors[i];
             div.textContent = m + 'x';
             mRow.appendChild(div);
         });
@@ -117,95 +119,81 @@
         const amt = parseFloat(amountInput.value);
         if (amt > balance || amt <= 0) return;
 
-        riskSelect.disabled = true; // قفل الصعوبة
+        riskSelect.disabled = true;
         balance -= amt;
-        document.getElementById('userBalance').innerText = balance.toFixed(2);
+        balanceDisplay.innerText = balance.toFixed(2);
 
         const risk = riskSelect.value;
         const currentMultis = riskData[risk].multis;
-        const mCount = currentMultis.length;
+        const n = currentMultis.length - 1;
 
-        // --- STAKE LOGIC (BINOMIAL PATH) ---
-        // بنحدد النتيجة مسبقاً وبنرسم الطريق بناءً عليها
+        // --- نظام الاحتمالات الحقيقي (Binomial Distribution) ---
+        // بنحاكي 16 خبطة مسمار، بكل خبطة احتمال 50/50 تروح يمين أو شمال
+        // هيدا النظام بيضمن إنو الـ 1000x تطلع مرة كل 65,536 رمية تقريباً!
         let targetSlot = 0;
-        for(let i=0; i<mCount-1; i++) {
-            if(Math.random() > 0.52) targetSlot++; // 0.52 لضمان House Edge خفيف
+        for (let i = 0; i < n; i++) {
+            if (Math.random() > 0.5) targetSlot++;
         }
 
         const spacingX = canvas.width / (rows + 2);
-        balls.push({
-            currentRow: 0,
-            currentCol: 0, // 0 means center
-            x: canvas.width/2,
-            y: 20,
-            targetSlot: targetSlot,
-            path: generatePath(targetSlot, mCount),
-            radius: 5,
-            betAmt: amt,
-            win: currentMultis[targetSlot]
-        });
-    }
+        const finalX = canvas.width/2 + (targetSlot - n/2) * spacingX;
 
-    function generatePath(target, totalSlots) {
-        // توليد سلسلة من اليمين والشمال لتصل للخانة المطلوبة
-        let path = [];
-        let currentPos = 0;
-        let finalPos = target - (totalSlots-1)/2;
-        
-        for(let i=0; i<rows; i++) {
-            let move = Math.random() > 0.5 ? 1 : -1;
-            path.push(move);
-        }
-        return path;
+        balls.push({
+            x: canvas.width/2,
+            y: 25,
+            targetX: finalX,
+            targetSlot: targetSlot,
+            bet: amt,
+            winMult: currentMultis[targetSlot],
+            progress: 0
+        });
     }
 
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw Pins
-        ctx.fillStyle = "#6781ad";
+        // رسم المسامير
         pegs.forEach(p => {
-            ctx.beginPath(); 
+            ctx.beginPath();
             ctx.arc(p.x, p.y, p.active > 0 ? 3.5 : 2.5, 0, Math.PI*2);
-            ctx.fillStyle = p.active > 0 ? "#fff" : "#6781ad";
+            ctx.fillStyle = p.active > 0 ? "#fff" : "#475569";
             ctx.fill();
             if(p.active > 0) p.active--;
         });
 
         balls.forEach((b, i) => {
-            b.y += 4; // سرعة نزول منتظمة
-
-            // حساب السطر الحالي
-            let nextRow = Math.floor((b.y - 40) / spacingY);
+            b.progress += 0.015; // سرعة النزول
+            b.y = 25 + b.progress * (canvas.height - 50);
             
-            if(nextRow > b.currentRow && b.currentRow < rows) {
-                b.currentRow = nextRow;
-                // توجيه الكرة يميناً أو يساراً بناءً على النتيجة مسبقة الصنع
-                let spacingX = canvas.width / (rows + 2);
-                let shift = (b.targetSlot - (riskData[riskSelect.value].multis.length-1)/2) / rows;
-                b.x += shift * spacingX * 1.5;
-                
-                // تنشيط المسمار القريب
-                pegs.forEach(p => {
-                    if(Math.hypot(b.x - p.x, b.y - p.y) < 15) p.active = 10;
-                });
-            }
+            // حركة اهتزازية واقعية للوصول للهدف
+            const wave = Math.sin(b.progress * 30) * 10 * (1 - b.progress);
+            const currentTargetX = canvas.width/2 + (b.targetX - canvas.width/2) * b.progress;
+            b.x = currentTargetX + wave;
 
-            // Draw Ball
-            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
-            ctx.fillStyle = "#a333ff"; ctx.shadowBlur = 10; ctx.shadowColor = "#a333ff";
-            ctx.fill(); ctx.strokeStyle = "#fff"; ctx.stroke(); ctx.shadowBlur = 0;
+            // تفعيل المسامير عند المرور
+            pegs.forEach(p => {
+                if(Math.abs(b.y - p.y) < 5 && Math.abs(b.x - p.x) < 15) p.active = 10;
+            });
 
-            if (b.y > canvas.height - 10) {
-                balance += (b.betAmt * b.win);
-                document.getElementById('userBalance').innerText = balance.toFixed(2);
+            // رسم الكرة
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 5, 0, Math.PI*2);
+            ctx.fillStyle = "#fff";
+            ctx.shadowBlur = 10; ctx.shadowColor = "#a333ff";
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            if (b.progress >= 1) {
+                // إضافة الربح للرصيد فوراً
+                const winAmount = b.bet * b.winMult;
+                balance += winAmount;
+                balanceDisplay.innerText = balance.toFixed(2);
                 
-                // تحريك الخانة اللي نزلت فيها
+                // تأثير بصري للخانة
                 const boxes = document.querySelectorAll('.m-box');
-                let idx = b.targetSlot;
-                if(boxes[idx]) {
-                    boxes[idx].style.transform = "translateY(5px)";
-                    setTimeout(() => boxes[idx].style.transform = "translateY(0)", 100);
+                if(boxes[b.targetSlot]) {
+                    boxes[b.targetSlot].style.transform = "scale(1.2)";
+                    setTimeout(() => boxes[b.targetSlot].style.transform = "scale(1)", 150);
                 }
 
                 balls.splice(i, 1);
