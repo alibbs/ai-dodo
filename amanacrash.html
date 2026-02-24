@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | PRO GRAPH CRASH</title>
+    <title>AMANA ELITE | PERFECT SYNC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@700;900&display=swap');
@@ -15,112 +15,87 @@
             --gold: #fbbf24;
             --up: #00e701;
             --down: #ff3b3b;
-            --safe-top: env(safe-area-inset-top, 20px);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
-        body { display: flex; flex-direction: column; padding-top: var(--safe-top); }
+        body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 20px); }
 
-        /* History Header */
-        .history-bar {
-            display: flex; gap: 8px; padding: 12px; overflow: hidden;
-            justify-content: center; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .h-item { padding: 5px 12px; border-radius: 50px; font-size: 11px; font-weight: 900; background: #1e293b; font-family: 'Orbitron'; }
+        /* History */
+        .history-bar { display: flex; gap: 8px; padding: 10px; overflow: hidden; justify-content: center; background: rgba(0,0,0,0.4); }
+        .h-item { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 900; background: #1e293b; font-family: 'Orbitron'; }
 
-        header { height: 60px; display: flex; align-items: center; justify-content: center; }
-        .balance-box {
-            background: #000; padding: 8px 25px; border-radius: 50px;
-            border: 2px solid var(--accent); display: flex; align-items: center; gap: 10px;
-        }
-        .balance-box span { font-family: 'Orbitron'; font-size: 1.2rem; }
+        header { height: 50px; display: flex; align-items: center; justify-content: center; }
+        .balance-box { background: #000; padding: 6px 20px; border-radius: 50px; border: 2px solid var(--accent); display: flex; align-items: center; gap: 8px; }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.1rem; }
 
-        /* Graph Canvas Area */
-        .game-stage { flex: 1; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        canvas { position: absolute; width: 100%; height: 100%; z-index: 1; }
-        
-        #multi-display { 
-            font-size: 80px; font-weight: 900; font-family: 'Orbitron'; 
-            z-index: 10; pointer-events: none; text-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-        .game-info { position: absolute; top: 10%; z-index: 10; font-size: 12px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; }
+        /* Game Area */
+        .game-stage { flex: 1; position: relative; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        canvas { position: absolute; width: 100%; height: 100%; }
+        #multi-val { font-size: 85px; font-weight: 900; font-family: 'Orbitron'; z-index: 10; pointer-events: none; }
+        .status-info { position: absolute; top: 12%; z-index: 10; font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Dashboard */
-        .controls {
-            background: var(--panel); padding: 20px 20px 40px 20px;
-            border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; gap: 12px; z-index: 20;
-        }
-        .profit-view { height: 20px; text-align: center; color: var(--up); font-weight: 900; font-size: 15px; }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .fld { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; }
-        .fld label { font-size: 9px; color: #64748b; display: block; text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
-        input { width: 100%; background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 900; font-family: 'Inter'; }
+        /* Controls */
+        .controls { background: var(--panel); padding: 15px 20px 35px 20px; border-radius: 25px 25px 0 0; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 10px; }
+        .profit-label { height: 18px; text-align: center; color: var(--up); font-weight: 900; font-size: 14px; }
+        .in-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .fld { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 10px; }
+        .fld label { font-size: 8px; color: #64748b; display: block; text-transform: uppercase; font-weight: 800; }
+        input { width: 100%; background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 900; }
 
-        .btn {
-            width: 100%; padding: 18px; border-radius: 16px; border: none;
-            font-size: 1.2rem; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s;
-        }
-        .btn-bet { background: var(--accent); color: #fff; box-shadow: 0 5px 0 #5b21b6; }
-        .btn-next { background: var(--gold); color: #000; box-shadow: 0 5px 0 #b45309; }
-        .btn-out { background: var(--up); color: #000; box-shadow: 0 5px 0 #059669; }
-        .btn-dis { background: #1e293b; color: #475569; cursor: not-allowed; }
+        .main-btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
+        .btn-bet { background: var(--accent); color: #fff; box-shadow: 0 4px 0 #5b21b6; }
+        .btn-next { background: var(--gold); color: #000; box-shadow: 0 4px 0 #b45309; }
+        .btn-out { background: var(--up); color: #000; box-shadow: 0 4px 0 #059669; }
+        .btn-dis { background: #1e293b; color: #475569; box-shadow: none; cursor: not-allowed; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div class="history-bar" id="history"></div>
 
     <header>
         <div class="balance-box">
             <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
-            <span id="balDisplay">1000.00</span>
+            <span id="balance">1000.00</span>
         </div>
     </header>
 
     <div class="game-stage">
-        <div class="game-info" id="gameStatus">Waiting...</div>
-        <canvas id="graphCanvas"></canvas>
-        <div id="multi-display">1.00x</div>
+        <div class="status-info" id="status">Syncing...</div>
+        <canvas id="graph"></canvas>
+        <div id="multi-val">1.00x</div>
     </div>
 
     <div class="controls">
-        <div class="profit-view" id="profitText"></div>
-        <div class="input-row">
-            <div class="fld"><label>Bet Amount</label><input type="number" id="betAmt" value="10"></div>
-            <div class="fld"><label>Auto Cashout</label><input type="number" id="autoVal" value="2.00" step="0.1"></div>
+        <div class="profit-label" id="profit"></div>
+        <div class="in-grid">
+            <div class="fld"><label>Bet Amount</label><input type="number" id="amt" value="10"></div>
+            <div class="fld"><label>Auto Cashout</label><input type="number" id="auto" value="2.00"></div>
         </div>
-        <button id="actionBtn" class="btn btn-bet" onclick="handleButtonClick()">Place Bet</button>
+        <button id="actionBtn" class="main-btn btn-bet" onclick="handleInput()">Place Bet</button>
     </div>
 
 <script>
-    const canvas = document.getElementById('graphCanvas');
+    const canvas = document.getElementById('graph');
     const ctx = canvas.getContext('2d');
-    const multiDisplay = document.getElementById('multi-display');
-    const statusDisplay = document.getElementById('gameStatus');
-    const actionBtn = document.getElementById('actionBtn');
-    const profitText = document.getElementById('profitText');
+    const multiEl = document.getElementById('multi-val');
+    const statusEl = document.getElementById('status');
+    const btnEl = document.getElementById('actionBtn');
+    const profitEl = document.getElementById('profit');
 
     let balance = 1000.00;
-    let roundState = {
-        hasBetThisRound: false,
-        betNextRound: false,
-        isCashedOut: false,
-        currentBetAmount: 0
-    };
+    let betState = { active: false, next: false, cashed: false, amount: 0 };
+    
+    // إعدادات الوقت (5 ثواني مراهنة + 0.8 ثانية تجمد عند الكراش)
+    const ROUND_TIME = 15000; 
+    const BET_WINDOW = 5000;
+    const FREEZE_TIME = 800;
 
-    const CONFIG = {
-        ROUND_TIME: 15000,
-        BET_PHASE: 4000,
-        FREEZE_PHASE: 1500, // وقت التجمد بعد الكراش
-        GRAPH_COLOR: '#8b5cf6'
-    };
-
-    function getGlobalCrash(roundId) {
-        const seed = Math.abs(Math.sin(roundId) * 10000);
+    function getCrashPoint(roundId) {
+        const seed = Math.abs(Math.sin(roundId) * 99999);
         const rand = seed - Math.floor(seed);
-        if (rand < 0.04) return 1.00; // 4% Instant crash
+        if (rand < 0.03) return 1.00; // 3% احتمال كراش فوري
         return Math.max(1.01, 0.98 / (1 - rand));
     }
 
@@ -131,168 +106,128 @@
     window.addEventListener('resize', resize);
     resize();
 
-    function drawGraph(progress) {
+    function renderGraph(t) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (progress <= 0) return;
-
+        if (t <= 0) return;
         ctx.beginPath();
-        ctx.strokeStyle = CONFIG.GRAPH_COLOR;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = CONFIG.GRAPH_COLOR;
-
-        const startX = 50;
-        const startY = canvas.height - 50;
-        const endX = startX + (canvas.width - 100) * Math.min(progress / 10, 1);
-        const endY = startY - (canvas.height - 150) * Math.min(Math.pow(progress, 0.6) / 5, 1);
-
-        ctx.moveTo(startX, startY);
-        // رسم خط منحني (Quadratic Curve) مثل ستيك
-        ctx.quadraticCurveTo(startX + (endX - startX) * 0.5, startY, endX, endY);
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 10; ctx.shadowColor = '#8b5cf6';
+        
+        const x = 40 + (canvas.width - 80) * Math.min(t / 10, 1);
+        const y = (canvas.height - 40) - (canvas.height - 120) * Math.min(Math.pow(t, 0.7) / 5, 1);
+        
+        ctx.moveTo(40, canvas.height - 40);
+        ctx.quadraticCurveTo(40 + (x-40)*0.5, canvas.height - 40, x, y);
         ctx.stroke();
     }
 
-    function mainLoop() {
+    function loop() {
         const now = Date.now();
-        const roundId = Math.floor(now / CONFIG.ROUND_TIME);
-        const cycle = now % CONFIG.ROUND_TIME;
-        const crashPoint = getGlobalCrash(roundId);
+        const roundId = Math.floor(now / ROUND_TIME);
+        const cycle = now % ROUND_TIME;
+        const crashPoint = getCrashPoint(roundId);
 
-        if (cycle < CONFIG.BET_PHASE) {
-            // --- PHASE: BETTING ---
-            statusDisplay.innerText = `Preparing... ${Math.ceil((CONFIG.BET_PHASE - cycle) / 1000)}s`;
-            multiDisplay.innerText = "1.00x";
-            multiDisplay.style.color = "#fff";
+        if (cycle < BET_WINDOW) {
+            // --- مرحلة المراهنة (5 ثواني) ---
+            statusEl.innerText = `Starts in ${Math.ceil((BET_WINDOW - cycle) / 1000)}s`;
+            multiEl.innerText = "1.00x";
+            multiEl.style.color = "#fff";
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            profitText.innerText = "";
+            profitEl.innerText = "";
             
-            // تحويل الرهان القادم لرهان حالي
-            if (roundState.betNextRound) {
-                roundState.hasBetThisRound = true;
-                roundState.betNextRound = false;
-            }
+            if (betState.next) { betState.active = true; betState.next = false; }
 
-            if (roundState.hasBetThisRound) {
-                actionBtn.className = "btn btn-dis";
-                actionBtn.innerText = "Bet Placed";
+            if (betState.active) {
+                btnEl.className = "main-btn btn-dis"; btnEl.innerText = "Bet Placed";
             } else {
-                actionBtn.className = "btn btn-bet";
-                actionBtn.innerText = "Place Bet";
+                btnEl.className = "main-btn btn-bet"; btnEl.innerText = "Place Bet";
             }
+        } else {
+            // --- مرحلة الطيران ---
+            const flightTime = (cycle - BET_WINDOW) / 1000;
+            const currentMulti = Math.pow(1.12, flightTime); // سرعة الخط متوازنة
 
-        } else if (cycle < CONFIG.ROUND_TIME - CONFIG.FREEZE_PHASE) {
-            // --- PHASE: FLYING ---
-            const flightTime = (cycle - CONFIG.BET_PHASE) / 1000;
-            const currentMulti = Math.pow(1.08, flightTime);
-
-            if (currentMulti >= crashPoint) {
-                // CRASHED (Waiting for Freeze)
-                handleCrash(crashPoint);
+            if (currentMulti >= crashPoint || (cycle > ROUND_TIME - FREEZE_TIME)) {
+                // الكراش
+                statusEl.innerText = "Crashed!";
+                multiEl.innerText = crashPoint.toFixed(2) + "x";
+                multiEl.style.color = "#ff3b3b";
+                btnEl.className = "main-btn btn-dis"; btnEl.innerText = "Crashed";
+                betState.active = false; betState.cashed = false;
             } else {
-                // LIVE
-                statusDisplay.innerText = "Live";
-                multiDisplay.innerText = currentMulti.toFixed(2) + "x";
-                multiDisplay.style.color = varToHex('--up');
-                drawGraph(flightTime);
+                // طيران حي
+                statusEl.innerText = "Live";
+                multiEl.innerText = currentMulti.toFixed(2) + "x";
+                multiEl.style.color = "#00e701";
+                renderGraph(flightTime);
 
-                if (roundState.hasBetThisRound && !roundState.isCashedOut) {
-                    actionBtn.className = "btn btn-out";
-                    actionBtn.innerText = "Cash Out";
-                    profitText.innerText = `+${(roundState.currentBetAmount * currentMulti).toFixed(2)} USDT`;
+                if (betState.active && !betState.cashed) {
+                    btnEl.className = "main-btn btn-out";
+                    btnEl.innerText = `Cash Out`;
+                    profitEl.innerText = `+${(betState.amount * currentMulti).toFixed(2)} USDT`;
                     
-                    // Auto Cashout
-                    let auto = parseFloat(document.getElementById('autoVal').value);
-                    if (currentMulti >= auto) cashOut(currentMulti);
-                } else if (!roundState.hasBetThisRound) {
-                    if (roundState.betNextRound) {
-                        actionBtn.className = "btn btn-dis";
-                        actionBtn.innerText = "Next Round Queued";
+                    let auto = parseFloat(document.getElementById('auto').value);
+                    if (currentMulti >= auto) doCashOut(currentMulti);
+                } else if (!betState.active) {
+                    if (betState.next) {
+                        btnEl.className = "main-btn btn-dis"; btnEl.innerText = "Next Round Queued";
                     } else {
-                        actionBtn.className = "btn btn-next";
-                        actionBtn.innerText = "Bet Next Round";
+                        btnEl.className = "main-btn btn-next"; btnEl.innerText = "Bet Next Round";
                     }
                 }
             }
-        } else {
-            // --- PHASE: FREEZE (The 1.5s after crash) ---
-            handleCrash(crashPoint);
         }
 
-        if (cycle < 100) updateHistory(roundId);
-        requestAnimationFrame(mainLoop);
+        if (cycle < 50) updateHistory(roundId);
+        requestAnimationFrame(loop);
     }
 
-    function handleCrash(cp) {
-        statusDisplay.innerText = "Crashed!";
-        multiDisplay.innerText = cp.toFixed(2) + "x";
-        multiDisplay.style.color = varToHex('--down');
-        actionBtn.className = "btn btn-dis";
-        actionBtn.innerText = "Crashed";
-        roundState.hasBetThisRound = false;
-        roundState.isCashedOut = false;
-    }
+    function handleInput() {
+        const cycle = Date.now() % ROUND_TIME;
+        const a = parseFloat(document.getElementById('amt').value);
 
-    function handleButtonClick() {
-        const now = Date.now();
-        const cycle = now % CONFIG.ROUND_TIME;
-        const amt = parseFloat(document.getElementById('betAmt').value);
-
-        if (cycle < CONFIG.BET_PHASE) {
-            // رهان في وقت المراهنة
-            if (amt > balance || amt <= 0) return;
-            balance -= amt;
-            roundState.currentBetAmount = amt;
-            roundState.hasBetThisRound = true;
-            syncBalance();
-        } else if (cycle < CONFIG.ROUND_TIME - CONFIG.FREEZE_PHASE) {
-            // رهان للجولة القادمة أو كاش أوت
-            if (roundState.hasBetThisRound && !roundState.isCashedOut) {
-                const flightTime = (cycle - CONFIG.BET_PHASE) / 1000;
-                cashOut(Math.pow(1.08, flightTime));
-            } else if (!roundState.hasBetThisRound && !roundState.betNextRound) {
-                if (amt > balance || amt <= 0) return;
-                balance -= amt;
-                roundState.currentBetAmount = amt;
-                roundState.betNextRound = true;
-                syncBalance();
+        if (cycle < BET_WINDOW) {
+            if (a > balance || a <= 0 || betState.active) return;
+            balance -= a; betState.amount = a; betState.active = true;
+            document.getElementById('balance').innerText = balance.toFixed(2);
+        } else if (cycle < ROUND_TIME - FREEZE_TIME) {
+            if (betState.active && !betState.cashed) {
+                const ft = (cycle - BET_WINDOW) / 1000;
+                doCashOut(Math.pow(1.12, ft));
+            } else if (!betState.active && !betState.next) {
+                if (a > balance || a <= 0) return;
+                balance -= a; betState.amount = a; betState.next = true;
+                document.getElementById('balance').innerText = balance.toFixed(2);
             }
         }
     }
 
-    function cashOut(m) {
-        if (roundState.isCashedOut) return;
-        roundState.isCashedOut = true;
-        const win = roundState.currentBetAmount * m;
+    function doCashOut(m) {
+        if (betState.cashed) return;
+        betState.cashed = true;
+        const win = betState.amount * m;
         balance += win;
-        syncBalance();
-        actionBtn.className = "btn btn-dis";
-        actionBtn.innerText = "Won +" + win.toFixed(2);
-        profitText.innerText = "CASHED OUT!";
-    }
-
-    function syncBalance() {
-        document.getElementById('balDisplay').innerText = balance.toFixed(2);
+        document.getElementById('balance').innerText = balance.toFixed(2);
+        btnEl.className = "main-btn btn-dis";
+        btnEl.innerText = "Won " + win.toFixed(2);
+        profitEl.innerText = "SUCCESS!";
     }
 
     function updateHistory(roundId) {
-        const histEl = document.getElementById('history');
-        histEl.innerHTML = '';
+        const h = document.getElementById('history');
+        h.innerHTML = '';
         for (let i = 1; i <= 6; i++) {
-            const val = getGlobalCrash(roundId - i);
-            const div = document.createElement('div');
-            div.className = 'h-item';
-            div.style.color = val >= 2 ? varToHex('--up') : varToHex('--down');
-            div.innerText = val.toFixed(2) + 'x';
-            histEl.appendChild(div);
+            const v = getCrashPoint(roundId - i);
+            const d = document.createElement('div');
+            d.className = 'h-item';
+            d.style.color = v >= 2 ? '#00e701' : '#ff3b3b';
+            d.innerText = v.toFixed(2) + 'x';
+            h.appendChild(d);
         }
     }
 
-    function varToHex(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-
-    mainLoop();
+    loop();
 </script>
 </body>
 </html>
