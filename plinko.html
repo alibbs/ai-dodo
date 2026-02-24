@@ -1,363 +1,251 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | PLINKO LUXURY</title>
+    <title>AMANA CASINO PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;800&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@600;900&display=swap');
+
         :root {
-            --bg: #05080f;
-            --card-bg: rgba(26, 31, 46, 0.8);
-            --accent: #a333ff;
-            --neon-green: #00ffaa;
-            --neon-red: #ff0055;
-            --text-main: #e2e8f0;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg: #030712;
+            --panel: rgba(17, 24, 39, 0.95);
+            --accent: #8b5cf6;
+            --gold: #f59e0b;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        * { 
-            touch-action: manipulation; 
-            -webkit-tap-highlight-color: transparent; 
-            box-sizing: border-box; 
-            outline: none;
-        }
-
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            font-family: 'Inter', sans-serif; 
-            background: radial-gradient(circle at top, #1e1b4b 0%, #05080f 100%); 
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
+            margin: 0; padding: 0; height: 100vh; background: var(--bg); 
+            color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* Glass Header */
-        header { 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center; 
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+        /* Top Bar */
+        header {
+            padding: 15px; display: flex; justify-content: center;
+            background: linear-gradient(to bottom, rgba(139, 92, 246, 0.1), transparent);
         }
 
-        .balance-box { 
-            background: rgba(0, 0, 0, 0.6); 
-            padding: 10px 30px; 
-            border-radius: 50px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 20px rgba(163, 51, 255, 0.3);
-            transition: all 0.3s ease;
+        .balance-container {
+            background: var(--panel); padding: 10px 25px; border-radius: 100px;
+            border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            display: flex; align-items: center; gap: 12px;
         }
 
-        .balance-box i { color: #ffd700; font-size: 20px; filter: drop-shadow(0 0 5px #ffd700); }
-        .balance-box span { 
-            font-family: 'Orbitron', sans-serif; 
-            font-weight: 900; 
-            font-size: 22px; 
-            color: #fff;
-            letter-spacing: 2px;
+        .balance-container i { color: var(--gold); font-size: 1.2rem; }
+        .balance-container span { font-family: 'Orbitron'; font-size: 1.4rem; letter-spacing: 1px; }
+
+        /* Game Display */
+        #game-view {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            position: relative; padding-bottom: 5px;
         }
 
-        /* Game Screen */
-        #game-area { 
-            flex: 1; 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-end;
-            padding-bottom: 10px;
+        canvas { width: 100%; max-width: 450px; height: auto; z-index: 1; }
+
+        .slots-container {
+            display: flex; gap: 2px; width: 96%; max-width: 450px; margin-bottom: 15px;
         }
 
-        canvas { max-width: 100%; filter: drop-shadow(0 0 10px rgba(163, 51, 255, 0.2)); }
-
-        .multiplier-row { 
-            display: flex; 
-            gap: 4px; 
-            width: 95%; 
-            max-width: 600px; 
-            margin-bottom: 25px;
-            padding: 5px;
+        .slot {
+            flex: 1; height: 28px; border-radius: 4px; font-size: 7px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; color: #000;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.5); transition: 0.1s;
         }
 
-        .m-box { 
-            flex: 1; 
-            height: 32px; 
-            border-radius: 6px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 8px; 
-            font-weight: 900; 
-            color: #000; 
-            text-shadow: 0 0 2px rgba(255,255,255,0.5);
-            box-shadow: 0 4px 0 rgba(0,0,0,0.4);
-            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-origin: bottom;
+        /* Controls Panel */
+        .ui-panel {
+            background: var(--panel); backdrop-filter: blur(20px);
+            padding: 20px 20px 35px 20px; border-radius: 30px 30px 0 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Controls Area */
-        .controls { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(20px);
-            padding: 25px; 
-            border-radius: 40px 40px 0 0; 
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+
+        .input-card {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px; border-radius: 12px;
         }
 
-        .grid-inputs {
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .input-group { 
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid var(--border-color); 
-            padding: 12px; 
-            border-radius: 15px;
-            transition: border 0.3s;
-        }
-
-        .input-group:focus-within { border-color: var(--accent); }
-
-        .input-label { 
-            font-size: 11px; 
-            color: var(--text-gray); 
-            font-weight: 800; 
-            margin-bottom: 6px; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        .label { font-size: 10px; color: #9ca3af; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
         input, select { 
-            width: 100%; 
-            background: transparent; 
-            border: none; 
-            color: #fff; 
-            font-weight: 800; 
-            font-size: 18px; 
+            width: 100%; background: transparent; border: none; color: #fff; 
+            font-size: 16px; font-weight: 900; font-family: 'Cairo';
         }
 
-        .bet-btn { 
-            background: linear-gradient(45deg, var(--accent), #7a1fd1); 
-            border: none; 
-            color: #fff; 
-            padding: 20px; 
-            border-radius: 15px; 
-            font-size: 20px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 0 #5a15a0, 0 10px 20px rgba(163, 51, 255, 0.4);
-            transition: all 0.1s;
+        .drop-btn {
+            width: 100%; background: linear-gradient(45deg, #6d28d9, #8b5cf6);
+            color: #fff; border: none; padding: 18px; border-radius: 12px;
+            font-size: 1.2rem; font-weight: 900; cursor: pointer;
+            box-shadow: 0 4px 0 #4c1d95, 0 10px 20px rgba(0,0,0,0.3);
+            text-transform: uppercase; transition: 0.1s;
         }
 
-        .bet-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #5a15a0; }
-        
-        /* Win Animation */
-        @keyframes winPulse {
-            0% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.1); filter: brightness(1.5); }
-            100% { transform: scale(1); filter: brightness(1); }
-        }
+        .drop-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #4c1d95; }
+        .drop-btn:disabled { filter: grayscale(1); opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="balance-box" id="balanceWrapper">
-            <i class="fa-solid fa-coins"></i>
-            <span id="userBalance">1000.00</span>
+        <div class="balance-container">
+            <i class="fa-solid fa-bolt"></i>
+            <span id="balance">1000.00</span>
         </div>
     </header>
 
-    <div id="game-area">
-        <canvas id="plinkoCanvas"></canvas>
-        <div class="multiplier-row" id="multiplierRow"></div>
+    <div id="game-view">
+        <canvas id="plinko"></canvas>
+        <div class="slots-container" id="slots"></div>
     </div>
 
-    <div class="controls">
-        <div class="grid-inputs">
-            <div class="input-group">
-                <div class="input-label">Stake Amount</div>
-                <input type="number" id="betAmount" value="10.00" step="1">
+    <div class="ui-panel">
+        <div class="inputs-grid">
+            <div class="input-card">
+                <div class="label">Amount</div>
+                <input type="number" id="amt" value="10">
             </div>
-            <div class="input-group">
-                <div class="input-label">Risk Level</div>
-                <select id="riskLevel" onchange="initBoard()">
-                    <option value="low">Low Risk</option>
-                    <option value="medium">Medium</option>
+            <div class="input-card">
+                <div class="label">Risk Level</div>
+                <select id="risk" onchange="initGame()">
+                    <option value="low">Low</option>
+                    <option value="med">Medium</option>
                     <option value="high" selected>Extreme</option>
                 </select>
             </div>
         </div>
-        <button class="bet-btn" onclick="dropBall()">Drop Ball</button>
+        <button class="drop-btn" id="playBtn" onclick="spawnBall()">Drop Ball</button>
     </div>
 
 <script>
-    const canvas = document.getElementById('plinkoCanvas');
+    const canvas = document.getElementById('plinko');
     const ctx = canvas.getContext('2d');
-    const riskSelect = document.getElementById('riskLevel');
-    const balanceWrapper = document.getElementById('balanceWrapper');
-
+    const riskSel = document.getElementById('risk');
+    const balanceEl = document.getElementById('balance');
+    
     let balance = 1000.00;
-    let balls = [], pegs = [];
+    let balls = [], pins = [];
     const rows = 16;
-    const spacingY = 25;
 
-    const riskData = {
-        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: ['#00ffaa','#00ffaa','#22ffbb','#44ffcc','#66ffdd','#88ffee','#aaffff','#88ffee','#66ffdd','#44ffcc','#22ffbb','#00ffaa','#00ffaa'] },
-        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: ['#ffd700','#ffc000','#ffa900','#ff9200','#ff7b00','#ff6400','#ff4d00','#ff3600','#ff1f00','#ff3600','#ff4d00','#ff6400','#ff7b00','#ff9200','#ffa900','#ffc000','#ffd700'] },
-        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: ['#ff0055','#ff1a66','#ff3377','#ff4d88','#ff6699','#ff80aa','#ff99bb','#ffb3cc','#ffccdd','#ffb3cc','#ff99bb','#ff80aa','#ff6699','#ff4d88','#ff3377','#ff1a66','#ff0055'] }
+    const config = {
+        low: { m: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], c: '#10b981' },
+        med: { m: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], c: '#f59e0b' },
+        high: { m: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], c: '#ef4444' }
     };
 
-    function initBoard() {
-        canvas.width = 450;
-        canvas.height = 480;
-        pegs = [];
-        const risk = riskSelect.value;
-        const currentMultis = riskData[risk].multis;
+    function initGame() {
+        canvas.width = window.innerWidth > 450 ? 450 : window.innerWidth;
+        canvas.height = 420;
+        pins = [];
         const spacingX = canvas.width / (rows + 2);
         
         for (let i = 0; i < rows; i++) {
-            const rowPins = i + 3;
-            for (let j = 0; j < rowPins; j++) {
-                const x = canvas.width/2 - ((rowPins-1)*spacingX)/2 + j*spacingX;
-                const y = (i + 1) * spacingY + 40;
-                pegs.push({ x, y, active: 0 });
+            const rowCount = i + 3;
+            for (let j = 0; j < rowCount; j++) {
+                pins.push({
+                    x: canvas.width/2 - ((rowCount-1)*spacingX)/2 + j*spacingX,
+                    y: (i + 1) * 22 + 30,
+                    a: 0
+                });
             }
         }
 
-        const mRow = document.getElementById('multiplierRow');
-        mRow.innerHTML = '';
-        currentMultis.forEach((m, i) => {
-            const div = document.createElement('div');
-            div.className = 'm-box';
-            div.style.background = riskData[risk].colors[i];
-            div.textContent = m + 'x';
-            mRow.appendChild(div);
+        const slotsDiv = document.getElementById('slots');
+        slotsDiv.innerHTML = '';
+        config[riskSel.value].m.forEach(val => {
+            const d = document.createElement('div');
+            d.className = 'slot';
+            d.style.background = config[riskSel.value].c;
+            d.innerText = val + 'x';
+            slotsDiv.appendChild(d);
         });
     }
 
-    function dropBall() {
-        const amt = parseFloat(document.getElementById('betAmount').value);
-        if (amt > balance || amt <= 0) return;
+    function spawnBall() {
+        const bet = parseFloat(document.getElementById('amt').value);
+        if (bet > balance || bet <= 0) return;
 
-        balance -= amt;
-        updateBalanceDisplay();
-        riskSelect.disabled = true;
+        balance -= bet;
+        balanceEl.innerText = balance.toFixed(2);
+        riskSel.disabled = true;
 
-        const risk = riskSelect.value;
-        const currentMultis = riskData[risk].multis;
-        const n = currentMultis.length - 1;
+        const currentRisk = riskSel.value;
+        const n = config[currentRisk].m.length - 1;
 
-        // Stake Probabilistic Logic
-        let targetSlot = 0;
-        for (let i = 0; i < n; i++) {
-            if (Math.random() > 0.505) targetSlot++;
+        // --- Extreme Stake Logic ---
+        // زيادة احتمالية المركز لـ 55% بدلاً من 50% لرفع الصعوبة
+        let target = 0;
+        for(let i=0; i<n; i++) {
+            if(Math.random() > 0.55) target++; 
         }
 
         const spacingX = canvas.width / (rows + 2);
-        const finalX = canvas.width/2 + (targetSlot - n/2) * spacingX;
-
         balls.push({
-            x: canvas.width/2,
-            y: 20,
-            targetX: finalX,
-            targetSlot: targetSlot,
-            bet: amt,
-            winMult: currentMultis[targetSlot],
-            progress: 0,
-            hue: Math.random() * 360
+            x: canvas.width/2, y: 15,
+            tx: canvas.width/2 + (target - n/2) * spacingX,
+            slot: target, bet: bet, mult: config[currentRisk].m[target],
+            p: 0
         });
     }
 
-    function updateBalanceDisplay() {
-        document.getElementById('userBalance').innerText = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-    }
-
-    function update() {
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Neon Pins
-        pegs.forEach(p => {
+        // Draw Pins with Glow
+        pins.forEach(p => {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.active > 0 ? 4 : 2, 0, Math.PI*2);
-            ctx.fillStyle = p.active > 0 ? "#fff" : "rgba(255,255,255,0.2)";
-            if(p.active > 0) {
-                ctx.shadowBlur = 15; ctx.shadowColor = "#fff";
-            }
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            if(p.active > 0) p.active--;
+            ctx.arc(p.x, p.y, p.a > 0 ? 4 : 2, 0, Math.PI*2);
+            ctx.fillStyle = p.a > 0 ? '#fff' : 'rgba(255,255,255,0.15)';
+            if(p.a > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; }
+            ctx.fill(); ctx.shadowBlur = 0;
+            if(p.a > 0) p.a--;
         });
 
         balls.forEach((b, i) => {
-            b.progress += 0.012; 
-            const easeProgress = 1 - Math.pow(1 - b.progress, 2); // Smooth ease out
+            b.p += 0.012; // Speed
+            b.y = 15 + b.p * (canvas.height - 30);
             
-            b.y = 20 + b.progress * (canvas.height - 40);
-            const wave = Math.sin(b.progress * 25) * 12 * (1 - b.progress);
-            const currentTargetX = canvas.width/2 + (b.targetX - canvas.width/2) * b.progress;
-            b.x = currentTargetX + wave;
+            const swing = Math.sin(b.p * 28) * 12 * (1 - b.p);
+            const targetX = canvas.width/2 + (b.tx - canvas.width/2) * b.p;
+            b.x = targetX + swing;
 
-            // Collision visuals
-            pegs.forEach(p => {
-                if(Math.abs(b.y - p.y) < 5 && Math.abs(b.x - p.x) < 15) p.active = 15;
+            // Pin collision effect
+            pins.forEach(p => {
+                if(Math.abs(b.y - p.y) < 5 && Math.abs(b.x - p.x) < 15) p.a = 15;
             });
 
-            // Crystal Ball with Trail
+            // Ball Visual
             ctx.beginPath();
-            ctx.arc(b.x, b.y, 6, 0, Math.PI*2);
-            ctx.fillStyle = "#fff";
-            ctx.shadowBlur = 20; ctx.shadowColor = varGet('--accent');
-            ctx.fill();
-            ctx.shadowBlur = 0;
+            ctx.arc(b.x, b.y, 5, 0, Math.PI*2);
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 15; ctx.shadowColor = '#8b5cf6';
+            ctx.fill(); ctx.shadowBlur = 0;
 
-            if (b.progress >= 1) {
-                const win = b.bet * b.winMult;
-                balance += win;
-                updateBalanceDisplay();
+            if(b.p >= 1) {
+                balance += (b.bet * b.mult);
+                balanceEl.innerText = balance.toFixed(2);
                 
-                // Win Effects
-                if(b.winMult >= 1) {
-                    balanceWrapper.style.animation = "winPulse 0.5s ease";
-                    setTimeout(() => balanceWrapper.style.animation = "", 500);
-                }
-
-                const boxes = document.querySelectorAll('.m-box');
-                if(boxes[b.targetSlot]) {
-                    boxes[b.targetSlot].style.transform = "scale(1.4) translateY(-10px)";
-                    setTimeout(() => boxes[b.targetSlot].style.transform = "scale(1)", 200);
+                // Visual feedback on slot
+                const s = document.querySelectorAll('.slot')[b.slot];
+                if(s) {
+                    s.style.transform = "translateY(8px) scale(1.1)";
+                    setTimeout(() => s.style.transform = "", 150);
                 }
 
                 balls.splice(i, 1);
-                if(balls.length === 0) riskSelect.disabled = false;
+                if(balls.length === 0) riskSel.disabled = false;
             }
         });
-        requestAnimationFrame(update);
+
+        requestAnimationFrame(draw);
     }
 
-    function varGet(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-
-    initBoard();
-    update();
+    window.addEventListener('resize', initGame);
+    initGame();
+    draw();
 </script>
 </body>
 </html>
