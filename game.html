@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA ELITE | Hub</title>
+    <title>AMANA ELITE | Games Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -11,15 +11,14 @@
             --brand: #ff00b8;
             --accent: #00f2ff;
             --up: #00ff96;
-            --gold: #ffcc00;
             --card: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.1); /* زدنا الوضوح شوي ليطابق صفحة البوت */
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: #fff;
-            padding-bottom: 100px; /* تناسب مع حجم البار الجديد */
+            padding-bottom: 110px;
             background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
             min-height: 100vh;
         }
@@ -29,10 +28,9 @@
         /* --- Header --- */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .bal-display { 
-            background: rgba(0, 255, 150, 0.1); 
-            border: 1px solid var(--up); 
-            padding: 8px 15px; border-radius: 20px; 
-            color: var(--up); font-weight: 800; font-size: 14px;
+            background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); 
+            padding: 8px 15px; border-radius: 20px; color: var(--up); 
+            font-weight: 800; font-size: 14px;
         }
 
         /* --- Banner --- */
@@ -43,6 +41,7 @@
             box-shadow: 0 10px 30px rgba(255, 0, 184, 0.3);
         }
         .casino-banner h2 { font-size: 20px; margin: 0; font-weight: 900; z-index: 1; line-height: 1.2; }
+        .casino-banner i { position: absolute; right: -5px; font-size: 80px; opacity: 0.15; transform: rotate(15deg); }
 
         /* --- Games Grid --- */
         .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
@@ -52,19 +51,19 @@
             padding: 25px 15px; text-align: center; transition: 0.3s; cursor: pointer;
             position: relative; backdrop-filter: blur(10px);
         }
-        .game-item:active { transform: scale(0.95); background: rgba(255,255,255,0.08); }
+        .game-item:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
         .game-item i { font-size: 38px; margin-bottom: 12px; display: block; }
         .game-item b { display: block; font-size: 15px; margin-bottom: 4px; }
-        .game-item span { font-size: 9px; color: #777; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .game-item span { font-size: 9px; color: #777; font-weight: 700; text-transform: uppercase; }
 
-        .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+        .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; }
 
-        /* Icon Colors */
+        /* Colors */
         .c-crash { color: #ff3b3b; } .c-dice { color: var(--up); }
         .c-wheel { color: #a100ff; } .c-ballon { color: #00f2ff; }
         .c-plinko { color: #ffcc00; } .c-flip { color: #00ff88; }
 
-        /* --- Updated Bottom Navigation (Same as AI Bot) --- */
+        /* --- Bottom Nav --- */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 80px; 
             background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); 
@@ -85,8 +84,8 @@
     </div>
 
     <div class="casino-banner">
-        <h2>ALL SYSTEMS ONLINE<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Pick your game & dominate</span></h2>
-        <i class="fa-solid fa-fire" style="position:absolute; right:10px; font-size:80px; opacity:0.15; transform: rotate(10deg);"></i>
+        <h2>ALL SYSTEMS ACTIVE<br><span style="font-size: 12px; opacity: 0.8; font-weight: 400;">Ready to win big?</span></h2>
+        <i class="fa-solid fa-fire"></i>
     </div>
 
     <div class="games-grid">
@@ -131,8 +130,8 @@
 </div>
 
 <nav class="bottom-nav">
-    <a href="home.html" class="nav-item active"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="game.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
     <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
     <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
     <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
@@ -147,7 +146,6 @@
         }
         document.getElementById('hubBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${parseFloat(savedBal).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     }
-    
     syncBalance();
     setInterval(syncBalance, 1000);
 </script>
