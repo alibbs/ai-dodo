@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | CRASH</title>
+    <title>AMANA ELITE | GLOBAL CRASH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@700;900&display=swap');
@@ -16,264 +16,211 @@
             --up: #10b981;
             --down: #ef4444;
             --safe-top: env(safe-area-inset-top, 20px);
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
-        
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; position: fixed; 
-            background: var(--bg); color: #fff; font-family: 'Inter', sans-serif;
-        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
+        body { display: flex; flex-direction: column; padding-top: var(--safe-top); }
 
-        body { display: flex; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-
-        /* Header & Balance */
-        header {
-            height: 60px; display: flex; align-items: center; justify-content: center; z-index: 100;
+        /* Global History */
+        .history-bar {
+            display: flex; gap: 6px; padding: 12px; overflow: hidden;
+            justify-content: center; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .h-item { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; background: var(--panel); border: 1px solid rgba(255,255,255,0.1); font-family: 'Orbitron'; }
+
+        header { height: 60px; display: flex; align-items: center; justify-content: center; }
         .balance-box {
             background: #000; padding: 8px 25px; border-radius: 50px;
-            border: 2px solid var(--accent); display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            border: 2px solid var(--accent); display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
         }
-        .balance-box span { font-family: 'Orbitron'; font-size: 1.3rem; color: #fff; }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.2rem; }
 
-        /* History Bar */
-        .history-bar {
-            display: flex; gap: 8px; padding: 10px; overflow-x: hidden;
-            justify-content: center; background: rgba(0,0,0,0.2);
-        }
-        .history-item {
-            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900;
-            background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* Game Stage */
+        .stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #multi { font-size: 75px; font-weight: 900; font-family: 'Orbitron'; transition: color 0.2s; z-index: 10; }
+        .rocket-wrap { position: absolute; bottom: 20%; left: 10%; transition: 0.1s linear; pointer-events: none; }
+        #rocket-icon { font-size: 50px; transform: rotate(-45deg); transition: 0.2s; }
+        .status-tag { position: absolute; top: 15%; font-size: 10px; letter-spacing: 2px; color: var(--gold); font-weight: 800; text-transform: uppercase; }
 
-        /* Game Area */
-        .game-area {
-            flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-        }
-        .multiplier-val { 
-            font-size: 70px; font-weight: 900; font-family: 'Orbitron'; 
-            z-index: 10; text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
-        }
-        .rocket-container { 
-            position: absolute; bottom: 15%; left: 10%; z-index: 5; 
-            display: none; transition: 0.1s linear; 
-        }
-        #rocket { 
-            font-size: 45px; transform: rotate(-45deg); 
-            color: var(--accent); filter: drop-shadow(0 0 15px var(--accent)); 
-        }
-        .status-msg { position: absolute; top: 10%; font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-
-        /* Controls Panel */
+        /* Controls */
         .controls {
-            background: var(--panel); padding: 20px 20px 10px 20px;
+            background: var(--panel); padding: 20px 20px 35px 20px;
             border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.1);
             display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
-
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .field { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px; }
-        .field label { font-size: 9px; color: #94a3b8; display: block; margin-bottom: 2px; text-transform: uppercase; }
+        .profit-info { height: 20px; text-align: center; color: var(--up); font-weight: 900; font-size: 14px; }
+        .in-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .fld { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px; }
+        .fld label { font-size: 9px; color: #64748b; display: block; text-transform: uppercase; margin-bottom: 2px; font-weight: 800; }
         input { width: 100%; background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 900; }
 
-        .play-btn {
-            width: 100%; background: linear-gradient(45deg, #7c3aed, #a855f7);
-            color: #fff; border: none; padding: 16px; border-radius: 15px;
-            font-size: 1.3rem; font-weight: 900; cursor: pointer;
-            box-shadow: 0 4px 0 #5b21b6; text-transform: uppercase;
+        .btn {
+            width: 100%; padding: 18px; border-radius: 15px; border: none;
+            font-size: 1.2rem; font-weight: 900; text-transform: uppercase; cursor: pointer;
+            transition: 0.2s;
         }
-        .play-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5b21b6; }
-        .btn-cashout { background: var(--up) !important; color: #000 !important; box-shadow: 0 4px 0 #065f46 !important; }
-        .btn-waiting { background: #1e293b !important; color: #64748b !important; box-shadow: none !important; cursor: not-allowed; }
-        
-        #profit { height: 15px; text-align: center; font-weight: 900; font-size: 14px; color: var(--up); }
+        .btn-bet { background: var(--accent); color: #fff; box-shadow: 0 4px 0 #5b21b6; }
+        .btn-out { background: var(--up); color: #000; box-shadow: 0 4px 0 #065f46; }
+        .btn-dis { background: #1e293b; color: #475569; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
+    <div class="history-bar" id="history"></div>
+
     <header>
         <div class="balance-box">
             <i class="fa-solid fa-bolt" style="color:var(--gold)"></i>
-            <span id="balance">1000.00</span>
+            <span id="bal">1000.00</span>
         </div>
     </header>
 
-    <div class="history-bar" id="history">
+    <div class="stage">
+        <div class="status-tag" id="status">Syncing...</div>
+        <div class="rocket-wrap" id="rktWrap">
+            <i id="rocket-icon" class="fa-solid fa-rocket"></i>
         </div>
-
-    <div class="game-area">
-        <div id="status" class="status-msg">Waiting for next round...</div>
-        <div class="rocket-container" id="rocketBox">
-            <i id="rocket" class="fa-solid fa-rocket"></i>
-        </div>
-        <div id="multiplier" class="multiplier-val">1.00x</div>
+        <div id="multi">1.00x</div>
     </div>
 
     <div class="controls">
-        <div id="profit"></div>
-        <div class="input-grid">
-            <div class="field">
-                <label>Amount (USDT)</label>
-                <input type="number" id="amt" value="10">
-            </div>
-            <div class="field">
-                <label>Auto Cashout</label>
-                <input type="number" id="auto" value="2.00" step="0.1">
-            </div>
+        <div class="profit-info" id="pft"></div>
+        <div class="in-row">
+            <div class="fld"><label>Amount</label><input type="number" id="amt" value="10"></div>
+            <div class="fld"><label>Auto</label><input type="number" id="auto" value="2.00"></div>
         </div>
-        <button id="mainBtn" class="play-btn" onclick="handleAction()">Place Bet</button>
+        <button id="mainBtn" class="btn btn-bet" onclick="act()">Place Bet</button>
     </div>
 
 <script>
+    // --- Global Config ---
+    const ROUND_DURATION = 20000; // كل جولة 20 ثانية
+    const WAIT_DURATION = 5000;   // وقت المراهنة 5 ثواني
     let balance = 1000.00;
-    const ROUND_TIME = 15000; 
-    const WAIT_TIME = 4000;
-    let hasBet = false, cashed = false, currentBet = 0, state = "IDLE";
-    let history = [1.50, 4.20, 1.10, 12.5, 2.10];
+    let myBet = { active: false, cashed: false, amount: 0 };
 
-    const balanceEl = document.getElementById('balance');
-    const multiEl = document.getElementById('multiplier');
-    const mainBtn = document.getElementById('mainBtn');
-    const rocketBox = document.getElementById('rocketBox');
-    const statusEl = document.getElementById('status');
-    const profitEl = document.getElementById('profit');
-    const historyEl = document.getElementById('history');
-
-    function sync() {
-        balanceEl.innerText = balance.toFixed(2);
-        renderHistory();
-    }
-
-    function renderHistory() {
-        historyEl.innerHTML = '';
-        history.slice(-6).reverse().forEach(val => {
-            const div = document.createElement('div');
-            div.className = 'history-item';
-            div.style.color = val >= 2 ? 'var(--up)' : 'var(--down)';
-            div.innerText = val.toFixed(2) + 'x';
-            historyEl.appendChild(div);
-        });
-    }
-
-    function getCrashPoint(seed) {
-        // خوارزمية احتمالية مشابهة لـ Stake
-        const hash = Math.sin(seed) * 10000;
-        const rand = hash - Math.floor(hash);
-        // التلاعب: تقليل احتمالية الضربات العالية جداً لصالح الموقع
-        if (Math.random() < 0.1) return 1.00; // 10% ينفجر فوراً
-        return Math.max(1.01, 0.97 / (1 - rand));
+    // --- Global Seeded Logic (Stake Style) ---
+    function getGlobalCrash(roundId) {
+        // معادلة ثابتة تعتمد على رقم الجولة فقط لتوحيد النتيجة عالمياً
+        const seed = Math.abs(Math.sin(roundId) * 16777216);
+        const rand = (seed % 1000) / 1000;
+        if (rand < 0.03) return 1.00; // 3% احتمال انفجار فوري
+        return Math.min(500, Math.max(1.01, 0.99 / (1 - rand)));
     }
 
     function update() {
         const now = Date.now();
-        const cycle = now % ROUND_TIME;
-        const roundId = Math.floor(now / ROUND_TIME);
-        const crashAt = getCrashPoint(roundId);
+        const roundId = Math.floor(now / ROUND_DURATION);
+        const cycle = now % ROUND_DURATION;
+        const crashAt = getGlobalCrash(roundId);
 
-        if (cycle < WAIT_TIME) {
-            // --- مرحلة الانتظار ---
-            state = "IDLE";
-            const sec = Math.ceil((WAIT_TIME - cycle) / 1000);
-            statusEl.innerText = `Starts in ${sec}s`;
+        const multiEl = document.getElementById('multi');
+        const statusEl = document.getElementById('status');
+        const btn = document.getElementById('mainBtn');
+        const rkt = document.getElementById('rktWrap');
+        const rktIcon = document.getElementById('rocket-icon');
+
+        if (cycle < WAIT_DURATION) {
+            // PHASE: WAITING
+            const timeLeft = Math.ceil((WAIT_DURATION - cycle) / 1000);
+            statusEl.innerText = `Starts in ${timeLeft}s`;
             multiEl.innerText = "1.00x";
             multiEl.style.color = "#fff";
-            rocketBox.style.display = "none";
-            profitEl.innerText = "";
+            rkt.style.display = "none";
+            rktIcon.style.color = "var(--accent)";
             
-            if (!hasBet) {
-                mainBtn.className = "play-btn";
-                mainBtn.innerText = "Place Bet";
+            if (!myBet.active) {
+                btn.className = "btn btn-bet";
+                btn.innerText = "Place Bet";
             } else {
-                mainBtn.className = "play-btn btn-waiting";
-                mainBtn.innerText = "Bet Accepted";
+                btn.className = "btn btn-dis";
+                btn.innerText = "Bet Placed";
             }
         } else {
-            // --- مرحلة الطيران ---
-            state = "FLYING";
-            statusEl.innerText = "Live";
-            rocketBox.style.display = "block";
-            
-            const flightTime = (cycle - WAIT_TIME) / 1000;
-            const currentMulti = Math.pow(Math.E, 0.07 * flightTime);
+            // PHASE: FLYING
+            const flightTime = (cycle - WAIT_DURATION) / 1000;
+            const currentMulti = Math.pow(1.08, flightTime); // نمو رياضي ثابت
 
             if (currentMulti >= crashAt) {
-                // --- انفجار (Crash) ---
-                if (state !== "CRASHED") {
-                    if (hasBet && !cashed) {
-                        hasBet = false;
-                        // خسارة
-                    }
-                    if (state !== "CRASHED") history.push(crashAt);
-                }
-                state = "CRASHED";
+                // STATE: CRASHED
+                statusEl.innerText = "Crashed";
                 multiEl.innerText = crashAt.toFixed(2) + "x";
                 multiEl.style.color = "var(--down)";
-                document.getElementById('rocket').style.color = "var(--down)";
-                mainBtn.className = "play-btn btn-waiting";
-                mainBtn.innerText = "Crashed";
-                hasBet = false; cashed = false;
+                rktIcon.style.color = "var(--down)";
+                btn.className = "btn btn-dis";
+                btn.innerText = "Crashed";
+                myBet.active = false;
+                myBet.cashed = false;
             } else {
-                // --- طيران مستمر ---
+                // STATE: LIVE
+                statusEl.innerText = "Live";
+                rkt.style.display = "block";
                 multiEl.innerText = currentMulti.toFixed(2) + "x";
                 multiEl.style.color = "var(--up)";
-                document.getElementById('rocket').style.color = "var(--accent)";
                 
-                // تحريك الصاروخ
-                rocketBox.style.left = Math.min(10 + flightTime * 5, 70) + "%";
-                rocketBox.style.bottom = Math.min(15 + flightTime * 4, 60) + "%";
+                // Rocket Animation
+                rkt.style.left = Math.min(10 + flightTime * 5, 75) + "%";
+                rkt.style.bottom = Math.min(20 + flightTime * 4, 65) + "%";
 
-                if (hasBet && !cashed) {
-                    mainBtn.className = "play-btn btn-cashout";
-                    mainBtn.innerText = "Cash Out";
-                    const currentProfit = currentBet * currentMulti;
-                    profitEl.innerText = `+${currentProfit.toFixed(2)} USDT`;
-
+                if (myBet.active && !myBet.cashed) {
+                    btn.className = "btn btn-out";
+                    btn.innerText = "Cash Out";
+                    document.getElementById('pft').innerText = `+${(myBet.amount * currentMulti).toFixed(2)}`;
+                    
                     // Auto Cashout
                     let autoVal = parseFloat(document.getElementById('auto').value);
-                    if (autoVal > 1.01 && currentMulti >= autoVal) doCashOut(currentMulti);
+                    if (currentMulti >= autoVal) doOut(currentMulti);
                 }
             }
         }
+        
+        // Sync History (Simple visualization)
+        if (cycle < 100) updateHistory(roundId);
+
         requestAnimationFrame(update);
     }
 
-    function handleAction() {
-        if (state === "IDLE" && !hasBet) {
-            const amt = parseFloat(document.getElementById('amt').value);
-            if (amt > balance || amt <= 0) return;
-            balance -= amt;
-            currentBet = amt;
-            hasBet = true;
-            sync();
-        } else if (state === "FLYING" && hasBet && !cashed) {
-            const cycle = Date.now() % ROUND_TIME;
-            const flightTime = (cycle - WAIT_TIME) / 1000;
-            const currentMulti = Math.pow(Math.E, 0.07 * flightTime);
-            doCashOut(currentMulti);
+    function updateHistory(currentRound) {
+        const histEl = document.getElementById('history');
+        histEl.innerHTML = '';
+        for (let i = 1; i <= 6; i++) {
+            const val = getGlobalCrash(currentRound - i);
+            const div = document.createElement('div');
+            div.className = 'h-item';
+            div.style.color = val >= 2 ? 'var(--up)' : 'var(--down)';
+            div.innerText = val.toFixed(2) + 'x';
+            histEl.appendChild(div);
         }
     }
 
-    function doCashOut(m) {
-        if (cashed) return;
-        cashed = true;
-        const win = currentBet * m;
-        balance += win;
-        sync();
-        mainBtn.className = "play-btn btn-waiting";
-        mainBtn.innerText = "Won +" + win.toFixed(2);
-        profitEl.innerText = "CASHED OUT!";
+    function act() {
+        const cycle = Date.now() % ROUND_DURATION;
+        if (cycle < WAIT_DURATION && !myBet.active) {
+            let a = parseFloat(document.getElementById('amt').value);
+            if (a > balance || a <= 0) return;
+            balance -= a;
+            myBet = { active: true, cashed: false, amount: a };
+            document.getElementById('bal').innerText = balance.toFixed(2);
+        } else if (cycle >= WAIT_DURATION && myBet.active && !myBet.cashed) {
+            const flightTime = (cycle - WAIT_DURATION) / 1000;
+            const currentMulti = Math.pow(1.08, flightTime);
+            doOut(currentMulti);
+        }
     }
 
-    // منع السحب والتكبير
-    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-    
-    sync();
+    function doOut(m) {
+        if (myBet.cashed) return;
+        myBet.cashed = true;
+        const win = myBet.amount * m;
+        balance += win;
+        document.getElementById('bal').innerText = balance.toFixed(2);
+        document.getElementById('mainBtn').className = "btn btn-dis";
+        document.getElementById('mainBtn').innerText = "Won " + win.toFixed(2);
+        document.getElementById('pft').innerText = "CASHED!";
+    }
+
     update();
 </script>
 </body>
