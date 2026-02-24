@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | PRO PHYSICS</title>
+    <title>AMANA PLINKO | FIXED PHYSICS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -11,7 +11,6 @@
             --sidebar: #212631;
             --input: #0f121d;
             --moov: #a333ff;
-            --red: #ff3b3b;
             --border: #2f3749;
             --text-gray: #b1bad3;
         }
@@ -19,22 +18,22 @@
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; }
         
-        header { padding: 10px; display: flex; justify-content: center; background: var(--bg); z-index: 10; }
+        header { padding: 10px; display: flex; justify-content: center; background: var(--bg); border-bottom: 1px solid var(--border); }
         .balance-box { background: var(--input); padding: 8px 15px; border-radius: 6px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); font-weight: 800; }
 
-        #game-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; overflow: hidden; }
+        #game-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
         canvas { max-width: 100%; height: auto; }
 
-        .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; z-index: 5; }
-        .m-box { flex: 1; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s; }
+        .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; }
+        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s; }
 
-        .controls { background: var(--sidebar); padding: 15px 15px 30px 15px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
-        .input-group { background: var(--input); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; }
-        .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; }
-        .input-field input, .input-field select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
+        .controls { background: var(--sidebar); padding: 20px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
+        .input-group { background: var(--input); border: 1px solid var(--border); padding: 10px; border-radius: 6px; }
+        .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
+        input, select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
         
-        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 16px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
-        .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
+        .bet-btn:disabled { background: #475569; box-shadow: 0 4px 0 #1e293b; cursor: not-allowed; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -51,44 +50,47 @@
         <div class="multiplier-row" id="multiplierRow"></div>
     </div>
 
-    <div class="controls">
+    <div class="controls" id="controlsPanel">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="input-group">
-                <div class="input-label">BET AMOUNT</div>
-                <div class="input-field"><input type="number" id="betAmount" value="10.00"></div>
+                <div class="input-label">Amount</div>
+                <input type="number" id="betAmount" value="10.00">
             </div>
             <div class="input-group">
-                <div class="input-label">RISK</div>
-                <div class="input-field">
-                    <select id="riskLevel" onchange="initBoard()">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high" selected>High</option>
-                    </select>
-                </div>
+                <div class="input-label">Risk</div>
+                <select id="riskLevel" onchange="initBoard()">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high" selected>High</option>
+                </select>
             </div>
         </div>
-        <button class="bet-btn" onclick="dropBall()">PLAY</button>
+        <button class="bet-btn" id="betBtn" onclick="dropBall()">PLAY</button>
     </div>
 
 <script>
     const canvas = document.getElementById('plinkoCanvas');
     const ctx = canvas.getContext('2d');
+    const betBtn = document.getElementById('betBtn');
+    const riskSelect = document.getElementById('riskLevel');
+    const amountInput = document.getElementById('betAmount');
+
     let balance = 1000.00;
     let balls = [], pegs = [];
     const rows = 16;
-    
+    const maxSpeed = 7; // سرعة قصوى لمنع الانفجار الفيزيائي
+
     const riskData = {
-        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: ['#00e701','#55e701','#aae701','#ffe701','#ffb000','#ff7000','#ff0000','#ff7000','#ffb000','#ffe701','#aae701','#55e701','#00e701'] },
-        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: ['#ffc800','#ffb000','#ff9800','#ff8000','#ff6800','#ff5000','#ff3800','#ff0000','#ff3800','#ff5000','#ff6800','#ff8000','#ff9800','#ffb000','#ffc800'] },
-        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: ['#ff003f','#ff1a33','#ff4d26','#ff7a1a','#ff991a','#ffb31a','#ffd91a','#fff21a','#fff21a','#fff21a','#ffd91a','#ffb31a','#ff991a','#ff7a1a','#ff4d26','#ff1a33','#ff003f'] }
+        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: '#00e701' },
+        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: '#ffb000' },
+        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: '#ff003f' }
     };
 
     function initBoard() {
         canvas.width = 400;
         canvas.height = 450;
         pegs = [];
-        const risk = document.getElementById('riskLevel').value;
+        const risk = riskSelect.value;
         const currentMultis = riskData[risk].multis;
         const spacing = canvas.width / (rows + 2);
         
@@ -106,33 +108,39 @@
         currentMultis.forEach((m, i) => {
             const div = document.createElement('div');
             div.className = 'm-box';
-            div.style.background = riskData[risk].colors[i] || '#ff003f';
+            div.style.background = riskData[risk].colors;
             div.textContent = m + 'x';
             mRow.appendChild(div);
         });
     }
 
     function dropBall() {
-        const amt = parseFloat(document.getElementById('betAmount').value);
-        if (amt > balance) return;
+        const amt = parseFloat(amountInput.value);
+        if (amt > balance || amt <= 0) return;
+
+        // قفل الأزرار
+        betBtn.disabled = true;
+        riskSelect.disabled = true;
+        amountInput.disabled = true;
+
         balance -= amt;
         document.getElementById('userBalance').innerText = balance.toFixed(2);
 
-        const risk = document.getElementById('riskLevel').value;
+        const risk = riskSelect.value;
         const mCount = riskData[risk].multis.length;
         
-        // --- RIGGED CASINO LOGIC ---
+        // Rigged Logic
         let target;
         const r = Math.random() * 100;
-        if (r < 0.3) target = Math.random() > 0.5 ? 0 : mCount-1; // Jackpot
-        else if (r < 5) target = Math.random() > 0.5 ? 2 : mCount-3; // Mid
-        else target = Math.floor(mCount/2) + (Math.floor(Math.random()*3)-1); // Loser center
+        if (r < 0.2) target = Math.random() > 0.5 ? 0 : mCount-1;
+        else if (r < 4) target = Math.random() > 0.5 ? 2 : mCount-3;
+        else target = Math.floor(mCount/2) + (Math.floor(Math.random()*3)-1);
 
         const spacing = canvas.width / (rows + 2);
         const targetX = canvas.width/2 + (target - (mCount-1)/2) * spacing;
 
         balls.push({
-            x: canvas.width/2 + (Math.random()*10-5),
+            x: canvas.width/2 + (Math.random()*4-2),
             y: 10, vx: 0, vy: 0, radius: 5,
             targetX: targetX,
             win: riskData[risk].multis[target]
@@ -142,50 +150,57 @@
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw Pins
         ctx.fillStyle = "#6781ad";
         pegs.forEach(p => {
             ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
         });
 
         balls.forEach((b, i) => {
-            b.vy += 0.35; // Gravity
+            b.vy += 0.3; // Gravity أنعم
             
-            // Hard Fix: Prevent ball from leaving screen
-            if (b.x < 10) { b.x = 10; b.vx *= -0.5; }
-            if (b.x > canvas.width - 10) { b.x = canvas.width - 10; b.vx *= -0.5; }
+            // Wall Constraints
+            if (b.x < 15) { b.x = 15; b.vx *= -0.2; }
+            if (b.x > canvas.width - 15) { b.x = canvas.width - 15; b.vx *= -0.2; }
 
-            // Guiding physics (Smooth pathing)
-            let pull = (b.targetX - b.x) * 0.02;
+            // Guiding
+            let pull = (b.targetX - b.x) * 0.015;
             b.vx += pull;
-            b.vx *= 0.95;
+            
+            // Limit Speed لمنع الجنون الفيزيائي
+            b.vx = Math.max(Math.min(b.vx, maxSpeed), -maxSpeed);
+            b.vy = Math.min(b.vy, maxSpeed);
+
+            b.vx *= 0.96; // Friction
             b.x += b.vx; b.y += b.vy;
 
-            // Accurate Collision
             pegs.forEach(p => {
                 const dx = b.x - p.x;
                 const dy = b.y - p.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 if (dist < b.radius + 2.5) {
                     const angle = Math.atan2(dy, dx);
-                    // Push out of pin
                     b.x = p.x + Math.cos(angle) * (b.radius + 2.6);
                     b.y = p.y + Math.sin(angle) * (b.radius + 2.6);
-                    // Bounce
-                    b.vx += Math.cos(angle) * 1.2;
-                    b.vy *= -0.4;
+                    b.vx += Math.cos(angle) * 0.8;
+                    b.vy *= -0.3; // ارتداد هادئ
                 }
             });
 
-            // Draw Ball
             ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
-            ctx.fillStyle = "#ff00ff"; ctx.shadowBlur = 5; ctx.shadowColor = "#ff00ff";
-            ctx.fill(); ctx.shadowBlur = 0;
+            ctx.fillStyle = "#a333ff"; ctx.fill();
+            ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.stroke();
 
             if (b.y > canvas.height) {
-                balance += (parseFloat(document.getElementById('betAmount').value) * b.win);
+                balance += (parseFloat(amountInput.value) * b.win);
                 document.getElementById('userBalance').innerText = balance.toFixed(2);
                 balls.splice(i, 1);
+
+                // فتح الأزرار بعد انتهاء الرمية
+                if (balls.length === 0) {
+                    betBtn.disabled = false;
+                    riskSelect.disabled = false;
+                    amountInput.disabled = false;
+                }
             }
         });
         requestAnimationFrame(update);
