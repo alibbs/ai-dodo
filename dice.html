@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>AMANA ELITE | DICE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@700;900&display=swap');
+
+        :root {
+            --bg: #030712;
+            --panel: #0f172a;
+            --accent: #8b5cf6;
+            --gold: #fbbf24;
+            --up: #00e701;
+            --down: #ff3b3b;
+            --slider-bg: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; outline: none; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
+        body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 20px); }
+
+        header { height: 60px; display: flex; align-items: center; justify-content: center; }
+        .balance-box { background: #000; padding: 8px 25px; border-radius: 50px; border: 2px solid var(--accent); display: flex; align-items: center; gap: 10px; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1.2rem; }
+
+        /* Game Area */
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        
+        .dice-display {
+            width: 100%; max-width: 400px; background: var(--panel); border-radius: 20px;
+            padding: 40px 20px; position: relative; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05); text-align: center;
+        }
+
+        .result-val { font-size: 80px; font-weight: 900; font-family: 'Orbitron'; margin: 20px 0; transition: 0.1s; }
+        
+        /* Custom Slider */
+        .slider-container { width: 100%; position: relative; height: 12px; background: var(--slider-bg); border-radius: 10px; margin: 40px 0; }
+        .slider-fill { position: absolute; height: 100%; background: var(--up); border-radius: 10px; left: 0; }
+        
+        input[type=range] {
+            position: absolute; width: 100%; top: -10px; appearance: none; background: transparent; cursor: pointer; z-index: 10;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none; height: 30px; width: 30px; border-radius: 8px; background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: grab; border: 4px solid var(--accent);
+        }
+
+        .slider-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 900; color: #64748b; margin-top: 15px; }
+
+        /* Stats Row */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
+        .stat-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-box label { display: block; font-size: 9px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; font-weight: 800; }
+        .stat-box span { font-family: 'Orbitron'; font-size: 14px; font-weight: 900; }
+
+        /* Controls */
+        .controls { background: var(--panel); padding: 20px 20px 40px 20px; border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.1); }
+        .input-row { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        .fld { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 15px; }
+        .fld label { font-size: 10px; color: #64748b; display: block; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
+        input[type=number] { width: 100%; background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 900; }
+
+        .roll-btn {
+            width: 100%; padding: 20px; border-radius: 15px; border: none;
+            background: var(--accent); color: #fff; font-size: 1.4rem; font-weight: 900;
+            text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 0 #5b21b6;
+        }
+        .roll-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #5b21b6; }
+
+        .win-anim { color: var(--up) !important; text-shadow: 0 0 20px var(--up); }
+        .loss-anim { color: var(--down) !important; text-shadow: 0 0 20px var(--down); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="balance-box">
+            <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
+            <span id="balance">1000.00</span>
+        </div>
+    </header>
+
+    <div class="game-area">
+        <div class="dice-display">
+            <div id="result" class="result-val">50.00</div>
+            
+            <div class="slider-container">
+                <div id="fill" class="slider-fill" style="width: 50%;"></div>
+                <input type="range" id="diceSlider" min="2" max="98" value="50" step="0.01">
+            </div>
+            
+            <div class="slider-labels">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box"><label>Multiplier</label><span id="multDisplay">1.98x</span></div>
+            <div class="stat-box"><label>Roll Over</label><span id="targetDisplay">50.00</span></div>
+            <div class="stat-box"><label>Win Chance</label><span id="chanceDisplay">50.00%</span></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="input-row">
+            <div class="fld">
+                <label>Bet Amount</label>
+                <input type="number" id="betAmt" value="10.00">
+            </div>
+        </div>
+        <button class="roll-btn" onclick="rollDice()">Roll Dice</button>
+    </div>
+
+<script>
+    let balance = 1000.00;
+    const slider = document.getElementById('diceSlider');
+    const fill = document.getElementById('fill');
+    const resultEl = document.getElementById('result');
+    const multDisplay = document.getElementById('multDisplay');
+    const targetDisplay = document.getElementById('targetDisplay');
+    const chanceDisplay = document.getElementById('chanceDisplay');
+    const balDisplay = document.getElementById('balance');
+
+    function updateStats() {
+        const val = parseFloat(slider.value);
+        fill.style.width = (100 - val) + "%";
+        fill.style.left = val + "%";
+        
+        const winChance = 100 - val;
+        const multiplier = (99 / winChance).toFixed(4);
+        
+        targetDisplay.innerText = val.toFixed(2);
+        chanceDisplay.innerText = winChance.toFixed(2) + "%";
+        multDisplay.innerText = multiplier + "x";
+    }
+
+    slider.oninput = updateStats;
+
+    function rollDice() {
+        const amt = parseFloat(document.getElementById('betAmt').value);
+        if (amt > balance || amt <= 0) return;
+
+        balance -= amt;
+        balDisplay.innerText = balance.toFixed(2);
+        
+        const target = parseFloat(slider.value);
+        const winChance = 100 - target;
+        const multiplier = 99 / winChance;
+        
+        // تأثير الدوران السريع
+        let rolls = 0;
+        const interval = setInterval(() => {
+            resultEl.innerText = (Math.random() * 100).toFixed(2);
+            resultEl.className = "result-val";
+            rolls++;
+            
+            if (rolls > 10) {
+                clearInterval(interval);
+                const finalResult = Math.random() * 100;
+                resultEl.innerText = finalResult.toFixed(2);
+                
+                if (finalResult > target) {
+                    // فوز
+                    const winAmt = amt * multiplier;
+                    balance += winAmt;
+                    resultEl.classList.add("win-anim");
+                } else {
+                    // خسارة
+                    resultEl.classList.add("loss-anim");
+                }
+                balDisplay.innerText = balance.toFixed(2);
+            }
+        }, 50);
+    }
+
+    updateStats();
+</script>
+</body>
+</html>
