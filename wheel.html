@@ -3,221 +3,212 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>AMANA ELITE | WHEEL</title>
+    <title>AMANA ELITE | AMBITRON WHEEL PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;800&display=swap');
 
         :root {
-            --bg: #0f172a;
-            --panel: #1e293b;
-            --accent: #8b5cf6;
+            --bg: #05020a;
+            --panel: #110820;
+            --neon: #d946ef;
             --gold: #facc15;
-            --border: rgba(255, 255, 255, 0.1);
+            --danger: #ff0055;
+            --win: #00ff88;
+            --border: rgba(217, 70, 239, 0.15);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header */
-        header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-        .bal-box { background: #000; padding: 8px 15px; border-radius: 10px; border: 1px solid var(--accent); font-family: 'Orbitron'; color: var(--gold); }
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; }
+        .bal-box { background: #000; padding: 8px 15px; border-radius: 12px; border: 1px solid var(--neon); font-family: 'Orbitron'; color: var(--gold); }
 
-        /* Wheel Area */
-        .game-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        
-        .wheel-wrapper { position: relative; width: 320px; height: 320px; margin-bottom: 20px; }
-        
-        /* السهم المشير للأسفل */
-        .pointer { 
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 30px; height: 30px; background: #fff; clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 10; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
-        }
+        .scroll-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 
-        canvas { width: 100%; height: 100%; border-radius: 50%; border: 8px solid var(--panel); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .game-area { padding: 30px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .wheel-container { position: relative; width: 310px; height: 310px; z-index: 1; }
+        .pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 35px; height: 35px; background: #fff; clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 100; box-shadow: 0 0 10px var(--neon); }
+        .wheel-outer { width: 100%; height: 100%; border-radius: 50%; padding: 8px; background: linear-gradient(180deg, var(--neon), #4f46e5); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        canvas { width: 100%; height: 100%; border-radius: 50%; background: #000; transition: transform 5s cubic-bezier(0.15, 0, 0, 1); }
+        #resMsg { height: 45px; font-family: 'Orbitron'; font-size: 35px; font-weight: 900; margin-bottom: 10px; text-align: center; }
 
-        /* Controls */
-        .controls { background: var(--panel); padding: 20px; border-radius: 30px 30px 0 0; }
-        
-        .risk-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .risk-btn { padding: 10px; border: none; border-radius: 8px; background: #334155; color: #94a3b8; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .risk-btn.active { background: var(--accent); color: #fff; }
+        .controls { background: var(--panel); padding: 25px; border-radius: 35px 35px 0 0; border-top: 2px solid var(--neon); }
+        .risk-bar { display: flex; gap: 8px; margin-bottom: 15px; }
+        .risk-btn { flex: 1; padding: 12px; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; background: rgba(0,0,0,0.4); color: #555; font-size: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .risk-btn.active { background: var(--neon); color: #fff; border-color: #fff; }
 
-        .input-wrap { background: #0f172a; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .input-wrap label { font-size: 10px; color: #64748b; display: block; margin-bottom: 5px; }
-        .input-wrap input { background: transparent; border: none; color: #fff; width: 100%; font-size: 18px; font-weight: 800; }
+        .bet-box { background: #000; padding: 14px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .bet-box input { background: transparent; border: none; color: #fff; font-family: 'Orbitron'; font-size: 18px; width: 70%; }
 
-        .spin-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--accent); color: #fff; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 #6d28d9; }
-        .spin-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #6d28d9; }
-        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .spin-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: linear-gradient(90deg, #9333ea, var(--neon)); color: #fff; font-family: 'Orbitron'; font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #7e22ce; }
+        .spin-btn:disabled { opacity: 0.4; }
 
-        /* History */
-        .history { display: flex; gap: 5px; margin-top: 15px; overflow-x: auto; height: 30px; }
-        .hist-item { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; background: #334155; display: flex; align-items: center; }
-
+        .leaderboard { padding: 20px; background: #05020a; border-top: 1px solid var(--border); }
+        .leaderboard h3 { font-family: 'Orbitron'; font-size: 12px; color: #666; margin-bottom: 15px; letter-spacing: 2px; }
+        .lb-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .lb-table th { text-align: left; color: #333; padding-bottom: 8px; border-bottom: 1px solid #111; }
+        .lb-table td { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .user-col { display: flex; align-items: center; gap: 8px; color: #bbb; }
+        .mult-tag { padding: 2px 6px; border-radius: 4px; font-weight: 900; background: rgba(255,255,255,0.05); color: var(--neon); }
+        .win-amt { font-family: 'Orbitron'; font-weight: 900; }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="font-family:'Orbitron'; font-weight:900;">AMANA <span style="color:var(--accent)">WHEEL</span></div>
+        <div class="logo">AMANA <span style="color:var(--neon)">WHEEL</span></div>
         <div class="bal-box" id="bal">1,000.00</div>
     </header>
 
-    <div class="game-container">
-        <div class="wheel-wrapper">
-            <div class="pointer"></div>
-            <canvas id="wheelCanvas" width="600" height="600"></canvas>
-        </div>
-        <div id="result-msg" style="font-family:'Orbitron'; font-size:24px; font-weight:900; height:30px;"></div>
-    </div>
-
-    <div class="controls">
-        <div class="risk-selector">
-            <button class="risk-btn active" onclick="setRisk('low')">LOW</button>
-            <button class="risk-btn" onclick="setRisk('med')">MED</button>
-            <button class="risk-btn" onclick="setRisk('high')">HIGH</button>
+    <div class="scroll-area">
+        <div class="game-area">
+            <div id="resMsg"></div>
+            <div class="wheel-container">
+                <div class="pointer"></div>
+                <div class="wheel-outer">
+                    <canvas id="wheelCanvas" width="800" height="800"></canvas>
+                </div>
+            </div>
         </div>
 
-        <div class="input-wrap">
-            <label>Amount</label>
-            <input type="number" id="betAmt" value="10.00">
+        <div class="controls">
+            <div class="risk-bar">
+                <button class="risk-btn active" onclick="setRisk('low', this)">LOW</button>
+                <button class="risk-btn" onclick="setRisk('med', this)">MEDIUM</button>
+                <button class="risk-btn" onclick="setRisk('ext', this)">EXTREME</button>
+            </div>
+            <div class="bet-box">
+                <input type="number" id="amt" value="10.00">
+                <span style="color:var(--neon); font-size:12px; font-weight:900">USDT</span>
+            </div>
+            <button class="spin-btn" id="spinBtn" onclick="executeSpin()">SPIN</button>
         </div>
 
-        <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN</button>
-        
-        <div class="history" id="history"></div>
+        <div class="leaderboard">
+            <h3>LIVE BETS</h3>
+            <table class="lb-table">
+                <thead>
+                    <tr>
+                        <th>USER</th>
+                        <th>MULT</th>
+                        <th style="text-align:right">PAYOUT</th>
+                    </tr>
+                </thead>
+                <tbody id="lb-body"></tbody>
+            </table>
+        </div>
     </div>
 
 <script>
     let balance = 1000.00;
-    let currentRisk = 'low';
-    let isSpinning = false;
-    let currentRotation = 0;
+    let risk = 'low';
+    let spinning = false;
+
+    const segmentsData = {
+        low: [1.2, 1.5, 0, 1.2, 0, 1.5, 1.2, 0, 1.1, 1.5, 0, 1.2],
+        med: [2, 0, 1.5, 0, 3, 0, 1.5, 0, 2, 0, 1.5, 0],
+        ext: [50, 0, 0, 0, 1.2, 0, 0, 0, 0, 10, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 0]
+    };
 
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
-    const spinBtn = document.getElementById('spinBtn');
 
-    // إعدادات الستيك (Segments)
-    const configs = {
-        low: [1.5, 1.2, 0, 1.2, 1.5, 1.2, 0, 1.2, 1.5, 1.2],
-        med: [2, 1.5, 0, 1.5, 2, 0, 3, 0, 1.5, 0],
-        high: [0, 0, 0, 0, 5, 0, 0, 0, 0, 10]
-    };
-
-    function setRisk(risk) {
-        if(isSpinning) return;
-        currentRisk = risk;
+    function setRisk(r, btn) {
+        if(spinning) return;
+        risk = r;
         document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        btn.classList.add('active');
         drawWheel();
     }
 
     function drawWheel() {
-        const segments = configs[currentRisk];
-        const angleStep = (Math.PI * 2) / segments.length;
-        
-        ctx.clearRect(0,0,600,600);
-        
-        segments.forEach((val, i) => {
-            const angle = i * angleStep;
+        const segs = segmentsData[risk];
+        const step = (Math.PI * 2) / segs.length;
+        ctx.clearRect(0,0,800,800);
+        segs.forEach((val, i) => {
             ctx.beginPath();
-            ctx.moveTo(300, 300);
-            ctx.arc(300, 300, 280, angle, angle + angleStep);
-            
-            // تلوين حسب القيمة
-            if(val === 0) ctx.fillStyle = '#334155';
-            else if(val <= 1.5) ctx.fillStyle = '#8b5cf6';
-            else ctx.fillStyle = '#f59e0b';
-            
+            ctx.moveTo(400, 400);
+            ctx.arc(400, 400, 390, i * step, (i+1) * step);
+            ctx.fillStyle = val === 0 ? "#0d041a" : (val >= 10 ? "#ff0055" : "#d946ef");
             ctx.fill();
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-
-            // إضافة النص
             ctx.save();
-            ctx.translate(300, 300);
-            ctx.rotate(angle + angleStep/2);
-            ctx.textAlign = 'right';
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 30px Orbitron';
-            ctx.fillText(val + 'x', 250, 10);
+            ctx.translate(400, 400);
+            ctx.rotate(i * step + step/2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 32px Orbitron";
+            ctx.fillText(val + "x", 360, 12);
             ctx.restore();
         });
     }
 
-    function spinWheel() {
-        const amt = parseFloat(document.getElementById('betAmt').value);
-        if(isNaN(amt) || amt <= 0 || amt > balance || isSpinning) return;
+    function executeSpin() {
+        const amt = parseFloat(document.getElementById('amt').value);
+        if(amt > balance || amt <= 0 || spinning) return;
 
         balance -= amt;
         updateUI();
-        isSpinning = true;
-        spinBtn.disabled = true;
-        document.getElementById('result-msg').innerText = "";
+        spinning = true;
+        document.getElementById('spinBtn').disabled = true;
+        document.getElementById('resMsg').innerText = "";
 
-        const segments = configs[currentRisk];
-        const segmentAngle = 360 / segments.length;
+        const segs = segmentsData[risk];
+        let winIdx;
+        const luck = Math.random();
         
-        // Rigged logic: اختيار النتيجة مسبقاً (تميل للخسارة في الصعب)
-        let randIdx;
-        const rand = Math.random();
-        if(currentRisk === 'high') randIdx = rand < 0.8 ? 0 : Math.floor(Math.random() * segments.length);
-        else randIdx = Math.floor(Math.random() * segments.length);
-
-        const targetRotation = (360 - (randIdx * segmentAngle)) - (segmentAngle/2);
-        const totalSpins = 3600 + targetRotation; // 10 لفات كاملة + الهدف
-
-        const start = performance.now();
-        const duration = 4000;
-
-        function animate(time) {
-            const elapsed = time - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            
-            const rotation = easeOut * totalSpins;
-            canvas.style.transform = `rotate(${rotation}deg)`;
-
-            if(progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                finishSpin(segments[randIdx], amt);
-            }
+        // منطق الغش (Rigged)
+        if (risk === 'ext') {
+            if (luck > 0.02) { 
+                const zeroes = segs.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+                winIdx = zeroes[Math.floor(Math.random() * zeroes.length)];
+            } else winIdx = 0;
+        } else {
+            if (luck < 0.6) { 
+                const zeroes = segs.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+                winIdx = zeroes[Math.floor(Math.random() * zeroes.length)];
+            } else winIdx = Math.floor(Math.random() * segs.length);
         }
-        requestAnimationFrame(animate);
+
+        const degPerSeg = 360 / segs.length;
+        const targetDeg = (360 - (winIdx * degPerSeg)) - (degPerSeg / 2);
+        canvas.style.transition = "transform 5s cubic-bezier(0.15, 0, 0, 1)";
+        canvas.style.transform = `rotate(${3600 + targetDeg}deg)`;
+
+        setTimeout(() => {
+            spinning = false;
+            document.getElementById('spinBtn').disabled = false;
+            const mult = segs[winIdx];
+            const payout = amt * mult;
+            balance += payout;
+            
+            document.getElementById('resMsg').innerText = mult + "x";
+            document.getElementById('resMsg').style.color = mult > 0 ? "var(--win)" : "var(--danger)";
+            
+            canvas.style.transition = "none";
+            canvas.style.transform = `rotate(${targetDeg}deg)`;
+            
+            addToLeaderboard("You", mult, payout);
+            updateUI();
+        }, 5100);
     }
 
-    function finishSpin(mult, bet) {
-        isSpinning = false;
-        spinBtn.disabled = false;
-        const win = bet * mult;
-        balance += win;
-        
-        const msg = document.getElementById('result-msg');
-        msg.innerText = mult + "x";
-        msg.style.color = mult > 0 ? "var(--up)" : "#ef4444";
-        
-        addHistory(mult);
-        updateUI();
+    function addToLeaderboard(user, mult, payout) {
+        const tbody = document.getElementById('lb-body');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><div class="user-col"><i class="fa-solid fa-circle-user"></i> ${user}</div></td>
+            <td><span class="mult-tag">${mult}x</span></td>
+            <td style="text-align:right; color:${payout > 0 ? 'var(--win)' : '#444'}" class="win-amt">
+                ${payout > 0 ? '+' + payout.toFixed(2) : payout.toFixed(2)}
+            </td>
+        `;
+        tbody.prepend(row);
+        if(tbody.children.length > 8) tbody.lastChild.remove();
     }
 
-    function addHistory(m) {
-        const h = document.getElementById('history');
-        const item = document.createElement('div');
-        item.className = 'hist-item';
-        item.style.color = m > 0 ? '#10b981' : '#ef4444';
-        item.innerText = m + 'x';
-        h.prepend(item);
-    }
-
-    function updateUI() {
-        document.getElementById('bal').innerText = balance.toFixed(2);
-    }
-
+    function updateUI() { document.getElementById('bal').innerText = balance.toFixed(2); }
     drawWheel();
 </script>
 </body>
