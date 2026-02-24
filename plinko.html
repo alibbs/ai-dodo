@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | MULTI-DROP</title>
+    <title>AMANA CASINO | STAKE ENGINE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -25,15 +25,14 @@
         canvas { max-width: 100%; height: auto; }
 
         .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; }
-        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: all 0.2s; }
+        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s ease; }
 
         .controls { background: var(--sidebar); padding: 20px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
         .input-group { background: var(--input); border: 1px solid var(--border); padding: 10px; border-radius: 6px; }
         .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
         input, select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
-        select:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
+        .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; transition: 0.1s; }
         .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
     </style>
 </head>
@@ -78,28 +77,28 @@
     let balance = 1000.00;
     let balls = [], pegs = [];
     const rows = 16;
-    const maxSpeed = 7;
+    const spacingY = 24; 
 
     const riskData = {
-        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: '#00e701' },
-        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], colors: '#ffb000' },
-        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], colors: '#ff003f' }
+        low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], color: '#00e701' },
+        medium: { multis: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110], color: '#ffb000' },
+        high: { multis: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000], color: '#ff003f' }
     };
 
     function initBoard() {
         canvas.width = 400;
-        canvas.height = 450;
+        canvas.height = 460;
         pegs = [];
         const risk = riskSelect.value;
         const currentMultis = riskData[risk].multis;
-        const spacing = canvas.width / (rows + 2);
+        const spacingX = canvas.width / (rows + 2);
         
         for (let i = 0; i < rows; i++) {
             const rowPins = i + 3;
             for (let j = 0; j < rowPins; j++) {
-                const x = canvas.width/2 - ((rowPins-1)*spacing)/2 + j*spacing;
-                const y = (i + 1) * 22 + 40;
-                pegs.push({ x, y });
+                const x = canvas.width/2 - ((rowPins-1)*spacingX)/2 + j*spacingX;
+                const y = (i + 1) * spacingY + 40;
+                pegs.push({ x, y, active: 0 });
             }
         }
 
@@ -108,7 +107,7 @@
         currentMultis.forEach((m, i) => {
             const div = document.createElement('div');
             div.className = 'm-box';
-            div.style.background = riskData[risk].colors;
+            div.style.background = riskData[risk].color;
             div.textContent = m + 'x';
             mRow.appendChild(div);
         });
@@ -118,84 +117,99 @@
         const amt = parseFloat(amountInput.value);
         if (amt > balance || amt <= 0) return;
 
-        // اقفل خيار الصعوبة والمبلغ فقط (زر اللعب بضل شغال)
-        riskSelect.disabled = true;
-        amountInput.disabled = true;
-
+        riskSelect.disabled = true; // قفل الصعوبة
         balance -= amt;
         document.getElementById('userBalance').innerText = balance.toFixed(2);
 
         const risk = riskSelect.value;
-        const mCount = riskData[risk].multis.length;
-        
-        // Rigged Logic
-        let target;
-        const r = Math.random() * 100;
-        if (r < 0.2) target = Math.random() > 0.5 ? 0 : mCount-1;
-        else if (r < 4) target = Math.random() > 0.5 ? 2 : mCount-3;
-        else target = Math.floor(mCount/2) + (Math.floor(Math.random()*3)-1);
+        const currentMultis = riskData[risk].multis;
+        const mCount = currentMultis.length;
 
-        const spacing = canvas.width / (rows + 2);
-        const targetX = canvas.width/2 + (target - (mCount-1)/2) * spacing;
+        // --- STAKE LOGIC (BINOMIAL PATH) ---
+        // بنحدد النتيجة مسبقاً وبنرسم الطريق بناءً عليها
+        let targetSlot = 0;
+        for(let i=0; i<mCount-1; i++) {
+            if(Math.random() > 0.52) targetSlot++; // 0.52 لضمان House Edge خفيف
+        }
 
+        const spacingX = canvas.width / (rows + 2);
         balls.push({
-            x: canvas.width/2 + (Math.random()*6-3),
-            y: 10, vx: 0, vy: 0, radius: 5,
-            targetX: targetX,
-            win: riskData[risk].multis[target],
-            betAmt: amt // حفظ قيمة الرهان لكل طابة
+            currentRow: 0,
+            currentCol: 0, // 0 means center
+            x: canvas.width/2,
+            y: 20,
+            targetSlot: targetSlot,
+            path: generatePath(targetSlot, mCount),
+            radius: 5,
+            betAmt: amt,
+            win: currentMultis[targetSlot]
         });
+    }
+
+    function generatePath(target, totalSlots) {
+        // توليد سلسلة من اليمين والشمال لتصل للخانة المطلوبة
+        let path = [];
+        let currentPos = 0;
+        let finalPos = target - (totalSlots-1)/2;
+        
+        for(let i=0; i<rows; i++) {
+            let move = Math.random() > 0.5 ? 1 : -1;
+            path.push(move);
+        }
+        return path;
     }
 
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Draw Pins
         ctx.fillStyle = "#6781ad";
         pegs.forEach(p => {
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); 
+            ctx.arc(p.x, p.y, p.active > 0 ? 3.5 : 2.5, 0, Math.PI*2);
+            ctx.fillStyle = p.active > 0 ? "#fff" : "#6781ad";
+            ctx.fill();
+            if(p.active > 0) p.active--;
         });
 
         balls.forEach((b, i) => {
-            b.vy += 0.3;
+            b.y += 4; // سرعة نزول منتظمة
+
+            // حساب السطر الحالي
+            let nextRow = Math.floor((b.y - 40) / spacingY);
             
-            if (b.x < 15) { b.x = 15; b.vx *= -0.2; }
-            if (b.x > canvas.width - 15) { b.x = canvas.width - 15; b.vx *= -0.2; }
+            if(nextRow > b.currentRow && b.currentRow < rows) {
+                b.currentRow = nextRow;
+                // توجيه الكرة يميناً أو يساراً بناءً على النتيجة مسبقة الصنع
+                let spacingX = canvas.width / (rows + 2);
+                let shift = (b.targetSlot - (riskData[riskSelect.value].multis.length-1)/2) / rows;
+                b.x += shift * spacingX * 1.5;
+                
+                // تنشيط المسمار القريب
+                pegs.forEach(p => {
+                    if(Math.hypot(b.x - p.x, b.y - p.y) < 15) p.active = 10;
+                });
+            }
 
-            let pull = (b.targetX - b.x) * 0.015;
-            b.vx += pull;
-            b.vx = Math.max(Math.min(b.vx, maxSpeed), -maxSpeed);
-            b.vy = Math.min(b.vy, maxSpeed);
-
-            b.vx *= 0.96;
-            b.x += b.vx; b.y += b.vy;
-
-            pegs.forEach(p => {
-                const dx = b.x - p.x;
-                const dy = b.y - p.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < b.radius + 2.5) {
-                    const angle = Math.atan2(dy, dx);
-                    b.x = p.x + Math.cos(angle) * (b.radius + 2.6);
-                    b.y = p.y + Math.sin(angle) * (b.radius + 2.6);
-                    b.vx += Math.cos(angle) * 0.8;
-                    b.vy *= -0.3;
-                }
-            });
-
+            // Draw Ball
             ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
-            ctx.fillStyle = "#a333ff"; ctx.fill();
-            ctx.strokeStyle = "#fff"; ctx.stroke();
+            ctx.fillStyle = "#a333ff"; ctx.shadowBlur = 10; ctx.shadowColor = "#a333ff";
+            ctx.fill(); ctx.strokeStyle = "#fff"; ctx.stroke(); ctx.shadowBlur = 0;
 
-            if (b.y > canvas.height) {
+            if (b.y > canvas.height - 10) {
                 balance += (b.betAmt * b.win);
                 document.getElementById('userBalance').innerText = balance.toFixed(2);
-                balls.splice(i, 1);
-
-                // إذا خلصوا كل الطابات من الشاشة، ارجع افتح التحكم
-                if (balls.length === 0) {
-                    riskSelect.disabled = false;
-                    amountInput.disabled = false;
+                
+                // تحريك الخانة اللي نزلت فيها
+                const boxes = document.querySelectorAll('.m-box');
+                let idx = b.targetSlot;
+                if(boxes[idx]) {
+                    boxes[idx].style.transform = "translateY(5px)";
+                    setTimeout(() => boxes[idx].style.transform = "translateY(0)", 100);
                 }
+
+                balls.splice(i, 1);
+                if(balls.length === 0) riskSelect.disabled = false;
             }
         });
         requestAnimationFrame(update);
