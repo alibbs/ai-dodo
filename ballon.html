@@ -1,10 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>AMANA ELITE | NEON BALLOON</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AMANA ELITE | BALLOON</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;800&display=swap');
 
@@ -17,55 +17,151 @@
             --gold: #facc15;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); }
-        .bal-box { background: #000; padding: 8px 15px; border-radius: 12px; border: 1px solid var(--accent); font-family: 'Orbitron'; color: var(--gold); }
-
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; margin: 0; padding: 0; }
         
-        /* البالون */
-        .balloon-wrapper { position: relative; transition: transform 0.1s ease-out; }
-        .balloon {
-            width: 120px; height: 150px; background: var(--accent);
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 0 40px rgba(0,242,255,0.3);
-            position: relative; transition: all 0.2s ease-out;
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
         }
-        .balloon::after { content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid var(--accent); }
 
-        .multiplier-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Orbitron'; font-size: 2.5rem; font-weight: 900; text-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 10; }
+        header { 
+            padding: 15px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
 
-        .controls { background: var(--panel); padding: 25px; border-radius: 30px 30px 0 0; border-top: 2px solid var(--accent); }
+        .bal-box { 
+            background: #000; 
+            padding: 8px 15px; 
+            border-radius: 12px; 
+            border: 1px solid var(--accent); 
+            font-family: 'Orbitron'; 
+            color: var(--gold);
+            font-size: 14px;
+        }
+
+        .game-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative;
+            perspective: 1000px;
+        }
+
+        /* البالون */
+        .balloon-wrapper { 
+            position: relative; 
+            z-index: 5;
+            transition: transform 0.1s linear;
+        }
+
+        .balloon {
+            width: 100px; 
+            height: 130px; 
+            background: var(--accent);
+            border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 0 30px rgba(0,242,255,0.2);
+            position: relative;
+        }
+
+        .balloon::after { 
+            content: ""; 
+            position: absolute; 
+            bottom: -8px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            border-left: 8px solid transparent; 
+            border-right: 8px solid transparent; 
+            border-bottom: 12px solid var(--accent); 
+        }
+
+        .multiplier-display { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-family: 'Orbitron'; 
+            font-size: 2rem; 
+            font-weight: 900; 
+            z-index: 10; 
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .controls { 
+            background: var(--panel); 
+            padding: 20px 25px 40px 25px; 
+            border-radius: 30px 30px 0 0; 
+            border-top: 2px solid var(--accent);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 10px; color: #9ca3af; margin-bottom: 5px; font-weight: 800; }
-        .input-group input { width: 100%; background: #000; border: 1px solid #374151; padding: 12px; border-radius: 12px; color: #fff; font-family: 'Orbitron'; font-size: 1.1rem; }
+        .input-group label { display: block; font-size: 10px; color: #9ca3af; margin-bottom: 6px; font-weight: 800; letter-spacing: 1px; }
+        .input-group input { 
+            width: 100%; 
+            background: #000; 
+            border: 1px solid #374151; 
+            padding: 14px; 
+            border-radius: 12px; 
+            color: #fff; 
+            font-family: 'Orbitron'; 
+            font-size: 1.1rem;
+        }
 
         .action-btn {
-            width: 100%; padding: 20px; border-radius: 15px; border: none;
-            background: linear-gradient(90deg, #00d2ff, #00f2ff);
-            color: #000; font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,242,255,0.3); transition: 0.1s;
+            width: 100%; 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: none;
+            background: var(--accent);
+            color: #000; 
+            font-family: 'Orbitron'; 
+            font-size: 1.2rem; 
+            font-weight: 900;
+            cursor: pointer; 
+            transition: 0.1s;
         }
-        .action-btn:active { transform: translateY(2px); }
+
         .action-btn.cashing { background: var(--win); }
         .action-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        /* تأثير الانفجار */
-        .pop-effect { position: absolute; font-size: 3rem; animation: explode 0.5s forwards; pointer-events: none; opacity: 0; }
-        @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+        /* الأنيميشن عند الانفجار */
+        .shake { animation: shakeBall 0.1s infinite; }
+        @keyframes shakeBall {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            50% { transform: translate(-1px, -2px) rotate(-1deg); }
+            100% { transform: translate(1px, 1px) rotate(1deg); }
+        }
+
+        #pop { 
+            position: absolute; 
+            font-size: 5rem; 
+            display: none; 
+            z-index: 20;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="font-family:'Orbitron'; font-weight:900; font-size:12px;">AMBITRON <span style="color:var(--accent)">BALLOON</span></div>
+        <div style="font-family:'Orbitron'; font-weight:900; font-size:12px;">AMANA <span style="color:var(--accent)">BALLOON</span></div>
         <div class="bal-box" id="balance">1,000.00</div>
     </header>
 
     <div class="game-area">
-        <div id="pop" class="pop-effect">💥</div>
+        <div id="pop">💥</div>
         <div class="balloon-wrapper" id="bWrapper">
             <div class="multiplier-display" id="multText">1.00x</div>
             <div class="balloon" id="balloon"></div>
@@ -74,10 +170,10 @@
 
     <div class="controls">
         <div class="input-group">
-            <label>BET AMOUNT</label>
-            <input type="number" id="betAmt" value="10.00">
+            <label>BET AMOUNT (USDT)</label>
+            <input type="number" id="betAmt" value="10.00" step="1">
         </div>
-        <button class="action-btn" id="btn" onclick="handleAction()">PUMP & BET</button>
+        <button class="action-btn" id="btn" onclick="handleAction()">BET & PUMP</button>
     </div>
 
 <script>
@@ -92,6 +188,7 @@
     const bWrapper = document.getElementById('bWrapper');
     const multText = document.getElementById('multText');
     const balText = document.getElementById('balance');
+    const pop = document.getElementById('pop');
 
     function handleAction() {
         if (!isPlaying) {
@@ -103,42 +200,50 @@
 
     function startGame() {
         const amt = parseFloat(document.getElementById('betAmt').value);
-        if (amt > bal || amt <= 0) return;
+        if (isNaN(amt) || amt > bal || amt <= 0) {
+            alert("Check your balance!");
+            return;
+        }
 
         bal -= amt;
         updateUI();
         
         isPlaying = true;
         currentMult = 1.00;
+        pop.style.display = "none";
+        multText.style.color = "#fff";
+        balloon.style.opacity = "1";
         
-        // --- منطق الخسارة (The Rigged Logic) ---
-        // 1. فرصة 20% يفرقع فوراً عند 1.00x (Instant Loss)
-        // 2. إذا المبلغ كبير (أكثر من 50)، يفرقع قبل الـ 2x غالباً
+        // --- منطق الخسارة الاحترافي ---
         let chance = Math.random();
-        if (chance < 0.2) {
+        if (chance < 0.15) { // 15% يفرقع فوراً
             crashPoint = 1.00; 
-        } else if (amt > 50) {
-            crashPoint = 1.1 + (Math.random() * 0.8); // بين 1.1 و 1.9
+        } else if (amt >= 50) { // لو الرهان كبير
+            crashPoint = 1.1 + (Math.random() * 0.7); 
         } else {
-            crashPoint = 1.2 + (Math.random() * 3.0); // بين 1.2 و 4.2
+            crashPoint = 1.2 + (Math.random() * 2.5); 
         }
 
         btn.innerText = "CASH OUT";
         btn.classList.add('cashing');
-        balloon.style.background = "var(--accent)";
         
         gameInterval = setInterval(() => {
-            currentMult += 0.02; // سرعة الزيادة
+            currentMult += 0.02;
             multText.innerText = currentMult.toFixed(2) + "x";
             
-            // تكبير البالون
-            let scale = 1 + (currentMult - 1) * 0.3;
+            // تكبير البالون تدريجياً
+            let scale = 1 + (currentMult - 1) * 0.4;
             bWrapper.style.transform = `scale(${scale})`;
+
+            // إضافة اهتزاز قبل الانفجار بـ 0.2
+            if (currentMult > crashPoint - 0.2) {
+                bWrapper.classList.add('shake');
+            }
 
             if (currentMult >= crashPoint) {
                 gameOver();
             }
-        }, 50);
+        }, 60);
     }
 
     function cashOut() {
@@ -148,26 +253,29 @@
         bal += win;
         
         multText.style.color = "var(--win)";
-        endGame("WIN: +" + win.toFixed(2));
+        bWrapper.classList.remove('shake');
+        endGame();
     }
 
     function gameOver() {
         clearInterval(gameInterval);
+        isPlaying = false;
+        bWrapper.classList.remove('shake');
+        
+        balloon.style.opacity = "0";
+        pop.style.display = "block";
         multText.innerText = "POPPED!";
         multText.style.color = "var(--loss)";
-        balloon.style.background = "transparent";
-        balloon.style.boxShadow = "none";
-        document.getElementById('pop').style.opacity = "1";
         
         setTimeout(() => {
-            document.getElementById('pop').style.opacity = "0";
-            endGame("BET LOST");
+            pop.style.display = "none";
+            endGame();
         }, 1000);
     }
 
-    function endGame(msg) {
+    function endGame() {
         isPlaying = false;
-        btn.innerText = "PUMP & BET";
+        btn.innerText = "BET & PUMP";
         btn.classList.remove('cashing');
         btn.disabled = true;
         
@@ -176,14 +284,14 @@
             multText.innerText = "1.00x";
             multText.style.color = "#fff";
             bWrapper.style.transform = "scale(1)";
-            balloon.style.background = "var(--accent)";
+            balloon.style.opacity = "1";
             btn.disabled = false;
             updateUI();
-        }, 1500);
+        }, 1200);
     }
 
     function updateUI() {
-        balText.innerText = bal.toFixed(2);
+        balText.innerText = bal.toLocaleString(undefined, {minimumFractionDigits: 2});
     }
 </script>
 </body>
