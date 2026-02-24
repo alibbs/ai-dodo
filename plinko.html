@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA PLINKO | FIXED PHYSICS</title>
+    <title>AMANA PLINKO | MULTI-DROP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -25,15 +25,16 @@
         canvas { max-width: 100%; height: auto; }
 
         .multiplier-row { display: flex; gap: 2px; width: 95%; max-width: 500px; margin-bottom: 20px; }
-        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: transform 0.1s; }
+        .m-box { flex: 1; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: all 0.2s; }
 
         .controls { background: var(--sidebar); padding: 20px; display: flex; flex-direction: column; gap: 10px; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); }
         .input-group { background: var(--input); border: 1px solid var(--border); padding: 10px; border-radius: 6px; }
         .input-label { font-size: 10px; color: var(--text-gray); font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
         input, select { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; }
+        select:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .bet-btn { background: var(--moov); border: none; color: #fff; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #7a1fd1; }
-        .bet-btn:disabled { background: #475569; box-shadow: 0 4px 0 #1e293b; cursor: not-allowed; opacity: 0.6; }
+        .bet-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a1fd1; }
     </style>
 </head>
 <body>
@@ -50,7 +51,7 @@
         <div class="multiplier-row" id="multiplierRow"></div>
     </div>
 
-    <div class="controls" id="controlsPanel">
+    <div class="controls">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="input-group">
                 <div class="input-label">Amount</div>
@@ -71,14 +72,13 @@
 <script>
     const canvas = document.getElementById('plinkoCanvas');
     const ctx = canvas.getContext('2d');
-    const betBtn = document.getElementById('betBtn');
     const riskSelect = document.getElementById('riskLevel');
     const amountInput = document.getElementById('betAmount');
 
     let balance = 1000.00;
     let balls = [], pegs = [];
     const rows = 16;
-    const maxSpeed = 7; // سرعة قصوى لمنع الانفجار الفيزيائي
+    const maxSpeed = 7;
 
     const riskData = {
         low: { multis: [16, 9, 2, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 2, 9, 16], colors: '#00e701' },
@@ -118,8 +118,7 @@
         const amt = parseFloat(amountInput.value);
         if (amt > balance || amt <= 0) return;
 
-        // قفل الأزرار
-        betBtn.disabled = true;
+        // اقفل خيار الصعوبة والمبلغ فقط (زر اللعب بضل شغال)
         riskSelect.disabled = true;
         amountInput.disabled = true;
 
@@ -140,10 +139,11 @@
         const targetX = canvas.width/2 + (target - (mCount-1)/2) * spacing;
 
         balls.push({
-            x: canvas.width/2 + (Math.random()*4-2),
+            x: canvas.width/2 + (Math.random()*6-3),
             y: 10, vx: 0, vy: 0, radius: 5,
             targetX: targetX,
-            win: riskData[risk].multis[target]
+            win: riskData[risk].multis[target],
+            betAmt: amt // حفظ قيمة الرهان لكل طابة
         });
     }
 
@@ -156,21 +156,17 @@
         });
 
         balls.forEach((b, i) => {
-            b.vy += 0.3; // Gravity أنعم
+            b.vy += 0.3;
             
-            // Wall Constraints
             if (b.x < 15) { b.x = 15; b.vx *= -0.2; }
             if (b.x > canvas.width - 15) { b.x = canvas.width - 15; b.vx *= -0.2; }
 
-            // Guiding
             let pull = (b.targetX - b.x) * 0.015;
             b.vx += pull;
-            
-            // Limit Speed لمنع الجنون الفيزيائي
             b.vx = Math.max(Math.min(b.vx, maxSpeed), -maxSpeed);
             b.vy = Math.min(b.vy, maxSpeed);
 
-            b.vx *= 0.96; // Friction
+            b.vx *= 0.96;
             b.x += b.vx; b.y += b.vy;
 
             pegs.forEach(p => {
@@ -182,22 +178,21 @@
                     b.x = p.x + Math.cos(angle) * (b.radius + 2.6);
                     b.y = p.y + Math.sin(angle) * (b.radius + 2.6);
                     b.vx += Math.cos(angle) * 0.8;
-                    b.vy *= -0.3; // ارتداد هادئ
+                    b.vy *= -0.3;
                 }
             });
 
             ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
             ctx.fillStyle = "#a333ff"; ctx.fill();
-            ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.stroke();
+            ctx.strokeStyle = "#fff"; ctx.stroke();
 
             if (b.y > canvas.height) {
-                balance += (parseFloat(amountInput.value) * b.win);
+                balance += (b.betAmt * b.win);
                 document.getElementById('userBalance').innerText = balance.toFixed(2);
                 balls.splice(i, 1);
 
-                // فتح الأزرار بعد انتهاء الرمية
+                // إذا خلصوا كل الطابات من الشاشة، ارجع افتح التحكم
                 if (balls.length === 0) {
-                    betBtn.disabled = false;
                     riskSelect.disabled = false;
                     amountInput.disabled = false;
                 }
