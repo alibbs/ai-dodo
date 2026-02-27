@@ -67,7 +67,6 @@
         }
         input:focus + i { color: var(--brand2); }
 
-        /* تصحيح شكل الزر */
         .submit-btn {
             width: 100%; padding: 18px; border-radius: 16px; border: none !important;
             font-weight: 900; font-size: 16px; cursor: pointer;
@@ -92,8 +91,10 @@
 
         .status-msg {
             margin-top: 20px; padding: 15px; border-radius: 16px;
-            display: none; font-size: 14px; font-weight: 700;
+            display: none; font-size: 13px; font-weight: 700;
+            animation: slideUp 0.3s ease;
         }
+        @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .status-msg.err { background: rgba(255,0,80,0.1); color: var(--error); border: 1px solid rgba(255,0,80,0.2); }
         .status-msg.ok { background: rgba(0,255,150,0.1); color: var(--success); border: 1px solid rgba(0,255,150,0.2); }
     </style>
@@ -177,7 +178,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp, collection, query, where, limit, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -204,43 +205,72 @@
         statusBox.className = "status-msg " + (type === 'success' ? 'ok' : 'err');
     }
 
+    // --- الفحص الذكي: لو مسجل دخول، اطلعه بره الصفحة دغري ---
+    onAuthStateChanged(auth, (user) => {
+        if (user) { 
+            window.location.replace("home.html"); 
+        }
+    });
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         submitBtn.disabled = true;
-        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> CHECKING...';
+        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> CREATING VAULT...';
 
         try {
+            // 1. سحب محفظة من الـ Pool
             const poolRef = collection(db, "wallet_pool");
             const q = query(poolRef, where("isUsed", "==", false), limit(1));
             const poolSnap = await getDocs(q);
 
-            if (poolSnap.empty) throw new Error("Pool Empty. Contact Admin.");
+            if (poolSnap.empty) throw new Error("Our Investment Pool is currently full. Contact Admin.");
 
             const walletDoc = poolSnap.docs[0];
             const walletAddress = walletDoc.data().address;
 
-            const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+            // 2. إنشاء المستخدم في Firebase Auth
+            const emailVal = document.getElementById("email").value.trim();
+            const passwordVal = document.getElementById("password").value;
+            const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
             const user = userCredential.user;
-            await updateProfile(user, { displayName: username.value });
 
+            // 3. تحديث الاسم
+            const usernameVal = document.getElementById("username").value.trim();
+            await updateProfile(user, { displayName: usernameVal });
+
+            // 4. الربط في الـ Database بنظام الـ Transaction لضمان الأمان
             await runTransaction(db, async (transaction) => {
-                transaction.update(doc(db, "wallet_pool", walletDoc.id), { isUsed: true, assignedTo: user.uid });
+                transaction.update(doc(db, "wallet_pool", walletDoc.id), { 
+                    isUsed: true, 
+                    assignedTo: user.uid 
+                });
+
                 transaction.set(doc(db, "users", user.uid), {
-                    uid: user.uid, username: username.value, email: email.value,
-                    country: country.value, phone: country.value + phone.value,
-                    promo: promo.value || "NONE", balance: 0.0, bot_profit: 0.0,
-                    game_profit: 0.0, trc20_address: walletAddress, status: "active", createdAt: serverTimestamp()
+                    uid: user.uid,
+                    username: usernameVal,
+                    email: emailVal,
+                    country: document.getElementById("country").value,
+                    phone: document.getElementById("country").value + document.getElementById("phone").value.trim(),
+                    promo: document.getElementById("promo").value.trim() || "NONE",
+                    balance: 0.0,
+                    bot_profit: 0.0,
+                    game_profit: 0.0,
+                    trc20_address: walletAddress,
+                    status: "active",
+                    createdAt: serverTimestamp()
                 });
             });
 
-            btnText.innerHTML = 'SUCCESS!';
-            showStatus("Account Created! Redirecting...", "success");
-            setTimeout(() => { window.location.href = "home.html"; }, 1500);
-
+            btnText.innerHTML = '<i class="fa-solid fa-check"></i> DEPLOYED!';
+            showStatus("Account & Wallet Synchronized! Redirecting...", "success");
+            // التحويل سيتم تلقائياً عبر onAuthStateChanged
+            
         } catch (err) {
             submitBtn.disabled = false;
             btnText.textContent = "CREATE ACCOUNT";
-            showStatus(err.message, "error");
+            let friendlyError = err.message;
+            if(err.code === "auth/email-already-in-use") friendlyError = "Email already registered.";
+            showStatus(friendlyError, "error");
         }
     });
 </script>
