@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AMANA ELITE | Airplane Pro</title>
+    <title>AMANA ELITE | Airplane Pro Ultra</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -23,13 +23,14 @@
 
         .history-bar { 
             width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 5px 15px; 
-            overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border);
+            overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); min-height: 40px; align-items: center;
         }
         .history-bar::-webkit-scrollbar { display: none; }
         .hist-item { 
             padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; 
-            background: var(--card); border: 1px solid var(--border); white-space: nowrap;
+            background: var(--card); border: 1px solid var(--border); white-space: nowrap; animation: slideIn 0.3s ease;
         }
+        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         .container { width: 100%; max-width: 500px; padding: 10px 15px; }
 
@@ -38,7 +39,7 @@
             width: 100%; height: 260px; background: #0a0e1a; border-radius: 20px;
             border: 1px solid var(--border); position: relative; overflow: hidden; margin-bottom: 15px;
         }
-        .ping-box { position: absolute; top: 10px; left: 10px; font-size: 9px; background: rgba(0,0,0,0.6); padding: 3px 7px; border-radius: 4px; display: flex; align-items: center; gap: 4px; z-index: 10; }
+        .ping-box { position: absolute; top: 10px; left: 10px; font-size: 9px; background: rgba(0,0,0,0.6); padding: 3px 7px; border-radius: 4px; z-index: 10; display: flex; align-items: center; gap: 4px; }
         .ping-dot { width: 4px; height: 4px; background: var(--up); border-radius: 50%; }
 
         #multiplier { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; font-weight: 900; z-index: 4; }
@@ -59,8 +60,9 @@
 
         /* Players List */
         .stats-toggle { margin-top: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
-        .stats-head { padding: 10px 15px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
-        .stats-body { max-height: 200px; overflow-y: auto; padding: 0 15px 10px; }
+        .stats-head { padding: 10px 15px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .total-pool { color: var(--accent); font-weight: 900; }
+        .stats-body { max-height: 200px; overflow-y: auto; padding: 5px 15px 10px; }
         .p-row { display: flex; justify-content: space-between; font-size: 11px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .won-val { color: var(--up); font-weight: 800; }
 
@@ -78,7 +80,7 @@
 
     <div class="container">
         <div class="flight-window">
-            <div class="ping-box"><div class="ping-dot"></div><span>PING: <span id="pingVal">28</span>ms</span></div>
+            <div class="ping-box"><div class="ping-dot"></div><span>PING: <span id="pingVal">24</span>ms</span></div>
             <div id="multiplier">1.00x</div>
             <div id="canvas-wrap" style="position:absolute; width:100%; height:100%;">
                 <svg style="position:absolute; width:100%; height:100%;"><path id="flightPath" d="" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></svg>
@@ -97,7 +99,10 @@
         </div>
 
         <div class="stats-toggle">
-            <div class="stats-head"><span>LIVE PLAYERS</span> <span id="pCount">--</span></div>
+            <div class="stats-head">
+                <span><i class="fa-solid fa-users"></i> PLAYERS: <span id="pCount">0</span></span>
+                <span class="total-pool">TOTAL: $<span id="totalBets">0.00</span></span>
+            </div>
             <div class="stats-body" id="playerList"></div>
         </div>
     </div>
@@ -110,7 +115,8 @@
     const firebaseConfig = { apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA", authDomain: "ai-dodo.firebaseapp.com", projectId: "ai-dodo", storageBucket: "ai-dodo.firebasestorage.app", messagingSenderId: "261622335803", appId: "1:261622335803:web:0b066791230535e7d5cf1e" };
     const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
 
-    let userId, userBalance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, history = [];
+    let userId, userBalance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, historyData = [];
+    let currentFakePlayers = [];
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
     function sfx(f, d=0.1) {
@@ -122,52 +128,88 @@
 
     onAuthStateChanged(auth, u => {
         if(u) { userId = u.uid; onSnapshot(doc(db, "users", userId), s => {
-            userBalance = s.data().balance;
-            document.getElementById('userBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toFixed(2)}`;
+            if(s.exists()){
+                userBalance = s.data().balance;
+                document.getElementById('userBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toFixed(2)}`;
+            }
         }); }
     });
 
     window.adj = (f) => { if(!isPlaying) document.getElementById('betInput').value = (parseFloat(document.getElementById('betInput').value)*f).toFixed(2); };
 
+    // --- Dynamic User Generation ---
+    const prefixes = ['Ali', 'Sam', 'X_', 'King', 'User', 'Elite', 'Luna', 'Nova', 'Player', 'VIP'];
+    const suffixes = ['_77', '99', '_Crypto', 'Pro', '_X', '888', '_M', '01'];
+
+    function generateRoundPlayers() {
+        const count = Math.floor(Math.random() * 12) + 8; // 8 to 20 visible players
+        let newFakes = [];
+        let totalSum = 0;
+
+        for (let i = 0; i < count; i++) {
+            const isHidden = Math.random() < 0.3;
+            const name = isHidden ? 'Hidden' : prefixes[Math.floor(Math.random()*prefixes.length)] + suffixes[Math.floor(Math.random()*suffixes.length)];
+            const bet = (Math.random() * 200 + 5).toFixed(2);
+            totalSum += parseFloat(bet);
+            newFakes.push({
+                name,
+                bet,
+                target: (1.1 + Math.random() * 4).toFixed(2),
+                out: false,
+                id: i
+            });
+        }
+        
+        document.getElementById('totalBets').textContent = totalSum.toFixed(2);
+        document.getElementById('pCount').textContent = Math.floor(Math.random() * 150 + 50); // Total server count
+        return newFakes;
+    }
+
     async function gameLoop() {
         while(true) {
-            // Reset
+            // Reset & Prepare
             document.getElementById('multiplier').style.color = 'var(--accent)';
             document.getElementById('planeNode').style.display = 'none';
             document.getElementById('flightPath').setAttribute('d', '');
-            if(!isPlaying) { document.getElementById('btnBet').style.display = 'block'; document.getElementById('btnCash').style.display = 'none'; }
             
+            if(!isPlaying) { 
+                document.getElementById('btnBet').style.display = 'block'; 
+                document.getElementById('btnCash').style.display = 'none'; 
+            }
+            
+            currentFakePlayers = generateRoundPlayers();
+            renderPlayerList();
+
             await new Promise(r => setTimeout(r, 3000));
 
-            // Flight
+            // Flight Start
             document.getElementById('planeNode').style.display = 'block';
             document.getElementById('planeNode').classList.remove('crashed');
             const crashPoint = (Math.random() < 0.03) ? 1.00 : (1.00 / (1 - Math.random()) ** 0.96).toFixed(2);
             let start = Date.now();
-            let fakePlayers = generateFakes();
 
             while(true) {
                 let elapsed = (Date.now() - start) / 1000;
                 currentMult = Math.pow(Math.E, 0.07 * elapsed);
                 document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
                 
-                // Lock logic
                 if(isPlaying && !hasCashout) {
                     const btn = document.getElementById('btnCash');
                     btn.disabled = currentMult < 1.01;
                     btn.textContent = `CASHOUT ($${(parseFloat(document.getElementById('betInput').value)*currentMult).toFixed(2)})`;
                 }
 
-                // Plane Motion
+                // Plane Visuals
                 let x = Math.min(elapsed * 45, 80), y = Math.min(Math.pow(elapsed, 1.4) * 12, 75);
                 document.getElementById('planeNode').style.transform = `translate(${x}vw, -${y}vh)`;
                 document.getElementById('flightPath').setAttribute('d', `M 20 240 Q ${20 + (x*2)} 240, ${20 + (x*4.5)} ${240 - (y*3)}`);
 
-                // Fake Cashouts
-                fakePlayers.forEach(p => {
+                // Update Fakes Cashout
+                currentFakePlayers.forEach(p => {
                     if(!p.out && currentMult >= p.target) {
                         p.out = true;
-                        updatePlayerUI(p.id, p.target);
+                        const row = document.getElementById(`fake-${p.id}`);
+                        if(row) row.querySelector('.p-res').innerHTML = `<span class="won-val">${p.target}x</span>`;
                     }
                 });
 
@@ -180,11 +222,31 @@
             document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
             document.getElementById('multiplier').style.color = '#ff0050';
             document.getElementById('planeNode').classList.add('crashed');
-            addHistory(currentMult.toFixed(2));
             
+            updateHistory(currentMult.toFixed(2));
             isPlaying = false; hasCashout = false;
             await new Promise(r => setTimeout(r, 2500));
         }
+    }
+
+    function renderPlayerList() {
+        const list = document.getElementById('playerList');
+        list.innerHTML = currentFakePlayers.map(p => `
+            <div class="p-row" id="fake-${p.id}">
+                <span>${p.name}</span>
+                <span>$${p.bet}</span>
+                <span class="p-res">-</span>
+            </div>
+        `).join('');
+    }
+
+    function updateHistory(val) {
+        historyData.unshift(val); if(historyData.length > 10) historyData.pop();
+        const bar = document.getElementById('histBar');
+        bar.innerHTML = historyData.map(h => {
+            const color = h >= 2 ? 'var(--up)' : (h < 1.2 ? '#ff0050' : '#fff');
+            return `<div class="hist-item" style="color:${color}">${h}x</div>`;
+        }).join('');
     }
 
     document.getElementById('btnBet').onclick = async () => {
@@ -208,32 +270,7 @@
         document.getElementById('btnCash').textContent = 'WIN!';
     };
 
-    function addHistory(val) {
-        history.unshift(val); if(history.length > 10) history.pop();
-        const bar = document.getElementById('histBar'); bar.innerHTML = '';
-        history.forEach(h => {
-            const color = h >= 2 ? 'var(--up)' : (h < 1.2 ? '#ff0050' : '#fff');
-            bar.innerHTML += `<div class="hist-item" style="color:${color}">${h}x</div>`;
-        });
-    }
-
-    function generateFakes() {
-        const names = ['Ali_H', 'Hidden', 'Samer', 'Hidden', 'Maro', 'Hidden', 'Elite_1', 'Hidden'];
-        const list = document.getElementById('playerList'); list.innerHTML = '';
-        document.getElementById('pCount').textContent = Math.floor(Math.random()*200+50) + ' Players';
-        return names.map((n, i) => {
-            const target = (1 + Math.random() * 3).toFixed(2);
-            list.innerHTML += `<div class="p-row" id="p-${i}"><span>${n}</span><span>$${(Math.random()*50).toFixed(2)}</span><span class="p-res">-</span></div>`;
-            return { id: i, target, out: false };
-        });
-    }
-
-    function updatePlayerUI(id, mult) {
-        const row = document.getElementById(`p-${id}`);
-        if(row) row.querySelector('.p-res').innerHTML = `<span class="won-val">${mult}x</span>`;
-    }
-
-    setInterval(() => { document.getElementById('pingVal').textContent = Math.floor(Math.random()*15+15); }, 3000);
+    setInterval(() => { document.getElementById('pingVal').textContent = Math.floor(Math.random()*12+18); }, 3000);
     gameLoop();
 </script>
 </body>
