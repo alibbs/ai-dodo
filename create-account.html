@@ -1,99 +1,58 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>AMANA GLOBAL | Create Account</title>
-
-<style>
-:root{
---bg:#0b0f1f;
---text:#ffffff;
---muted:#b8b9d9;
---brand1:#a100ff;
---brand2:#ff00b8;
---glass:rgba(255,255,255,.06);
---border:rgba(255,255,255,.08);
---radius:16px;
-}
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family: 'Inter', system-ui, -apple-system;
-background:linear-gradient(135deg,#0b0f1f,#1c0833);
-color:var(--text);
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:16px;
-}
-.container{width:100%;max-width:420px;}
-.header{text-align:center;margin-bottom:20px;}
-.brand{
-font-size:24px;
-font-weight:900;
-background:linear-gradient(135deg,var(--brand1),var(--brand2));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-letter-spacing: -1px;
-}
-.card{
-background:var(--glass);
-backdrop-filter:blur(18px);
-border:1px solid var(--border);
-border-radius:var(--radius);
-padding:25px;
-box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-label{font-size:12px;font-weight:700;margin-bottom:6px;display:block;color:var(--muted);text-transform: uppercase;}
-input,select{
-width:100%;
-padding:14px;
-margin-bottom:16px;
-border-radius:12px;
-border:1px solid var(--border);
-background:rgba(0,0,0,.4);
-color:#fff;
-font-size:15px;
-outline: none;
-transition: 0.3s;
-}
-input:focus, select:focus { border-color: var(--brand2); box-shadow: 0 0 10px rgba(255,0,184,0.1); }
-button{
-width:100%;
-padding:15px;
-border-radius:12px;
-border:none;
-font-weight:800;
-font-size:15px;
-cursor:pointer;
-background:linear-gradient(135deg,var(--brand1),var(--brand2));
-color:#fff;
-margin-bottom:10px;
-transition: 0.3s;
-}
-button:disabled { opacity: 0.6; }
-.msg{
-margin-top:15px;
-padding:12px;
-border-radius:12px;
-font-size:14px;
-display:none;
-text-align: center;
-font-weight: 600;
-}
-.success{background:rgba(0,255,150,.1);color:#00ff96; border: 1px solid rgba(0,255,150,0.2);}
-.error{background:rgba(255,0,80,.1);color:#ff0050; border: 1px solid rgba(255,0,80,0.2);}
-.login-btn{
-background:transparent;
-border: 1px solid var(--border);
-color: var(--muted);
-margin-top: 5px;
-}
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA GLOBAL | Create Account</title>
+    <style>
+        :root {
+            --bg: #0b0f1f; --text: #ffffff; --muted: #b8b9d9; --brand1: #a100ff;
+            --brand2: #ff00b8; --glass: rgba(255,255,255,.06); --border: rgba(255,255,255,.08);
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: 'Inter', system-ui, -apple-system;
+            background: linear-gradient(135deg, #0b0f1f, #1c0833);
+            color: var(--text); min-height: 100vh; display: flex;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .container { width: 100%; max-width: 420px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .brand {
+            font-size: 24px; font-weight: 900;
+            background: linear-gradient(135deg, var(--brand1), var(--brand2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .card {
+            background: var(--glass); backdrop-filter: blur(18px);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        label { font-size: 12px; font-weight: 700; margin-bottom: 6px; display: block; color: var(--muted); text-transform: uppercase; }
+        input, select {
+            width: 100%; padding: 14px; margin-bottom: 16px; border-radius: 12px;
+            border: 1px solid var(--border); background: rgba(0,0,0,.4);
+            color: #fff; font-size: 15px; outline: none; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--brand2); box-shadow: 0 0 10px rgba(255,0,184,0.1); }
+        button {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            font-weight: 800; font-size: 15px; cursor: pointer;
+            background: linear-gradient(135deg, var(--brand1), var(--brand2));
+            color: #fff; margin-bottom: 10px; transition: 0.3s;
+        }
+        button:disabled { opacity: 0.6; }
+        .msg {
+            margin-top: 15px; padding: 12px; border-radius: 12px;
+            font-size: 14px; display: none; text-align: center; font-weight: 600;
+        }
+        .success { background: rgba(0,255,150,.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2); }
+        .error { background: rgba(255,0,80,.1); color: #ff0050; border: 1px solid rgba(255,0,80,0.2); }
+        .login-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); margin-top: 5px; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -134,7 +93,6 @@ margin-top: 5px;
 
             <button type="submit" id="submitBtn">Create Account</button>
             <button type="button" class="login-btn" onclick="window.location.href='login.html'">Already have an account? Login</button>
-
             <div id="msg" class="msg"></div>
         </form>
     </div>
@@ -143,16 +101,16 @@ margin-top: 5px;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, serverTimestamp, collection, query, where, limit, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-  authDomain: "ai-dodo.firebaseapp.com",
-  projectId: "ai-dodo",
-  storageBucket: "ai-dodo.firebasestorage.app",
-  messagingSenderId: "261622335803",
-  appId: "1:261622335803:web:0b066791230535e7d5cf1e",
-  measurementId: "G-60CEST92TT"
+    apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+    authDomain: "ai-dodo.firebaseapp.com",
+    projectId: "ai-dodo",
+    storageBucket: "ai-dodo.firebasestorage.app",
+    messagingSenderId: "261622335803",
+    appId: "1:261622335803:web:0b066791230535e7d5cf1e",
+    measurementId: "G-60CEST92TT"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -171,9 +129,8 @@ function showMsg(text, type){
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     submitBtn.disabled = true;
-    submitBtn.textContent = "Deploying Account...";
+    submitBtn.textContent = "Assigning Wallet...";
 
     const usernameVal = document.getElementById("username").value.trim();
     const emailVal = document.getElementById("email").value.trim();
@@ -183,47 +140,60 @@ form.addEventListener("submit", async (e) => {
     const promoVal = document.getElementById("promo").value.trim();
 
     try {
-        // 1. إنشاء المستخدم في Firebase Auth
+        // 1. البحث عن محفظة حرة أولاً قبل إنشاء الحساب لضمان التوفر
+        const poolRef = collection(db, "wallet_pool");
+        const q = query(poolRef, where("isUsed", "==", false), limit(1));
+        const poolSnap = await getDocs(q);
+
+        if (poolSnap.empty) {
+            throw new Error("No wallets available in pool. Contact admin.");
+        }
+
+        const walletDoc = poolSnap.docs[0];
+        const walletAddress = walletDoc.data().address;
+
+        // 2. إنشاء المستخدم في Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
         const user = userCredential.user;
 
-        // 2. تحديث الاسم في البروفايل
         await updateProfile(user, { displayName: usernameVal });
 
-        // 3. إنشاء وثيقة المستخدم في Firestore مع رصيد 0.00
-        await setDoc(doc(db, "users", user.uid), {
-            uid: user.uid,
-            username: usernameVal,
-            email: emailVal,
-            country: countryVal,
-            phone: countryVal + phoneVal,
-            promo: promoVal || "NONE",
-            balance: 0.00, // ✅ الرصيد الأولي المربوط بالسيستم
-            bot_profit: 0.00,
-            game_profit: 0.00,
-            trc20_address: "", // سيتم ملؤه من صفحة الـ Overview لاحقاً
-            status: "active",
-            createdAt: serverTimestamp()
+        // 3. عملية الـ Transaction لربط المحفظة بالمستخدم وحجزها
+        await runTransaction(db, async (transaction) => {
+            // تحديث حالة المحفظة في الـ Pool
+            transaction.update(doc(db, "wallet_pool", walletDoc.id), {
+                isUsed: true,
+                assignedTo: user.uid
+            });
+
+            // إنشاء ملف المستخدم
+            transaction.set(doc(db, "users", user.uid), {
+                uid: user.uid,
+                username: usernameVal,
+                email: emailVal,
+                country: countryVal,
+                phone: countryVal + phoneVal,
+                promo: promoVal || "NONE",
+                balance: 0.00,
+                bot_profit: 0.00,
+                game_profit: 0.00,
+                trc20_address: walletAddress, // المحفظة المسحوبة بنجاح ✅
+                status: "active",
+                createdAt: serverTimestamp()
+            });
         });
 
-        showMsg("Account Deployed Successfully! ✅", "success");
-
-        setTimeout(() => {
-            window.location.href = "home.html";
-        }, 1500);
+        showMsg("Account & Wallet Deployed Successfully! ✅", "success");
+        setTimeout(() => { window.location.href = "home.html"; }, 1500);
 
     } catch (err) {
         submitBtn.disabled = false;
         submitBtn.textContent = "Create Account";
-        
         let errorMsg = err.message;
-        if(err.code === "auth/email-already-in-use") errorMsg = "This email is already registered.";
-        if(err.code === "auth/weak-password") errorMsg = "Password is too weak.";
-        
+        if(err.code === "auth/email-already-in-use") errorMsg = "Email already registered.";
         showMsg(errorMsg, "error");
     }
 });
 </script>
-
 </body>
 </html>
