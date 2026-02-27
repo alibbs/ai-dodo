@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>AMANA ELITE | Diamonds</title>
+    <title>AMANA ELITE | Diamonds Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -23,16 +23,14 @@
             overflow-x: hidden;
         }
 
-        /* Logo Corner */
         .logo-mini {
             position: absolute; top: 15px; left: 15px;
-            font-size: 14px; font-weight: 900; letter-spacing: 0px;
+            font-size: 14px; font-weight: 900;
         }
         .logo-mini span { color: var(--brand); }
 
         .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; margin-top: 40px; }
 
-        /* Wallet Header */
         .wallet-header { display: flex; justify-content: flex-end; margin-bottom: 15px; }
         .bal-display { 
             background: rgba(0, 255, 150, 0.08); border: 1px solid var(--up); 
@@ -40,7 +38,6 @@
             font-weight: 800; font-size: 13px;
         }
 
-        /* Grid - Stake Style */
         .grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
             background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 15px;
@@ -50,50 +47,55 @@
         .tile {
             aspect-ratio: 1; background: #213743; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 22px; transition: 0.2s; border-bottom: 3px solid rgba(0,0,0,0.3);
+            font-size: 22px; transition: 0.1s; border-bottom: 3px solid rgba(0,0,0,0.3);
         }
-        .tile:active { transform: scale(0.95); }
+        .tile:active { transform: scale(0.92); background: #2f4553; }
         .tile.revealed { background: #0f212e; border-bottom: none; cursor: default; }
-        .tile.bomb-hit { background: rgba(255, 0, 80, 0.3); border: 1px solid var(--error); }
+        .tile.bomb-hit { background: rgba(255, 0, 80, 0.4) !important; border: 1px solid #ff0050; }
         
-        .tile i { opacity: 0; transform: scale(0.4); transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tile i { opacity: 0; transform: scale(0.4); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
 
-        /* Controls - Stake Order */
+        /* Controls */
         .controls {
             background: var(--card); padding: 20px; border-radius: 20px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
         }
 
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         .label-row { display: flex; justify-content: space-between; align-items: center; }
         label { font-size: 11px; color: #8b8da3; font-weight: 700; text-transform: uppercase; }
-        .check-bal { font-size: 10px; color: var(--accent); opacity: 0.8; }
+
+        /* Bet Input Wrapper */
+        .bet-input-wrapper { display: flex; gap: 5px; }
+        .bet-input-wrapper input { flex: 1; min-width: 0; }
+        .btn-adjust { 
+            background: #2f4553; border: none; color: #fff; 
+            padding: 0 15px; border-radius: 8px; font-weight: 800; font-size: 12px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-adjust:active { background: #405a6e; }
 
         input, select {
             background: #0f212e; border: 1px solid var(--border);
             padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
-            font-size: 14px;
+            font-size: 14px; -webkit-appearance: none;
         }
 
         .btn-main {
             background: var(--up); color: #060914;
             border: none; padding: 16px; border-radius: 10px;
             font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;
-            margin-top: 5px;
         }
-        .btn-main:active { transform: scale(0.98); }
-        .btn-main:disabled { opacity: 0.5; filter: grayscale(1); }
-        
+        .btn-main:active { transform: scale(0.96); opacity: 0.8; }
         .cashout-btn { background: #fff; color: #000; display: none; }
 
-        /* Multiplier & Profit Bar */
         .stats-float {
             display: flex; justify-content: space-between; padding: 0 10px 10px 10px;
             font-size: 13px; font-weight: 800;
         }
 
-        .d-gem { color: var(--accent); }
+        .d-gem { color: var(--accent); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
         .d-bomb { color: #ff0050; }
     </style>
 </head>
@@ -107,8 +109,8 @@
     </div>
 
     <div class="stats-float">
-        <span><span id="multText" style="color:var(--accent)">1.00x</span></span>
-        <span><span id="profitText" style="color:var(--up)">$0.00</span></span>
+        <span>Multiplier: <span id="multText" style="color:var(--accent)">1.00x</span></span>
+        <span>Profit: <span id="profitText" style="color:var(--up)">$0.00</span></span>
     </div>
 
     <div class="grid" id="gameGrid"></div>
@@ -117,19 +119,24 @@
         <div class="input-group">
             <div class="label-row">
                 <label>Bet Amount</label>
-                <span class="check-bal">Check Balance <i class="fa-solid fa-shield-check"></i></span>
             </div>
-            <input type="number" id="betAmount" value="10.00" step="0.1">
+            <div class="bet-input-wrapper">
+                <input type="number" id="betAmount" value="10.00" step="1">
+                <button class="btn-adjust" onclick="adjustBet(0.5)">½</button>
+                <button class="btn-adjust" onclick="adjustBet(2)">x2</button>
+            </div>
         </div>
 
         <div class="input-group">
             <label>Mines</label>
             <select id="bombCount">
-                <option value="1">1</option>
-                <option value="3" selected>3</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="24">24</option>
+                <option value="1">1 Mine</option>
+                <option value="3" selected>3 Mines</option>
+                <option value="5">5 Mines</option>
+                <option value="10">10 Mines</option>
+                <option value="15">15 Mines</option>
+                <option value="20">20 Mines</option>
+                <option value="24">24 Mines</option>
             </select>
         </div>
 
@@ -138,9 +145,9 @@
     </div>
 </div>
 
-<audio id="sndGem" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio> 
-<audio id="sndBomb" src="https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3"></audio>
-<audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+<audio id="sndGem" preload="auto" src="https://pixabay.com/static/audio/2022/03/15/audio_7833320c91.mp3"></audio> 
+<audio id="sndBomb" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
+<audio id="sndClick" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -162,9 +169,23 @@
 
     let userBalance = 0, userId = null, gameActive = false, bombs = [], revealedCount = 0, currentMult = 1.00;
 
-    const grid = document.getElementById('gameGrid'), startBtn = document.getElementById('startBtn'), cashoutBtn = document.getElementById('cashoutBtn'), balDisplay = document.getElementById('userBalance');
-    const sndGem = document.getElementById('sndGem'), sndBomb = document.getElementById('sndBomb'), sndClick = document.getElementById('sndClick');
-    sndGem.volume = 0.3; sndBomb.volume = 0.3; sndClick.volume = 0.2;
+    const grid = document.getElementById('gameGrid'), 
+          startBtn = document.getElementById('startBtn'), 
+          cashoutBtn = document.getElementById('cashoutBtn'), 
+          balDisplay = document.getElementById('userBalance'),
+          betInput = document.getElementById('betAmount');
+
+    const sndGem = document.getElementById('sndGem'), 
+          sndBomb = document.getElementById('sndBomb'), 
+          sndClick = document.getElementById('sndClick');
+
+    sndGem.volume = 0.4; sndBomb.volume = 0.3; sndClick.volume = 0.2;
+
+    // Bet Adjustment Logic
+    window.adjustBet = (factor) => {
+        let current = parseFloat(betInput.value) || 0;
+        betInput.value = (current * factor).toFixed(2);
+    };
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -189,10 +210,10 @@
     }
 
     async function initGame() {
-        const bet = parseFloat(document.getElementById('betAmount').value);
+        const bet = parseFloat(betInput.value);
         if (bet > userBalance || bet <= 0) return;
 
-        sndClick.play();
+        sndClick.currentTime = 0; sndClick.play();
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
 
         const bombNum = parseInt(document.getElementById('bombCount').value);
@@ -217,7 +238,7 @@
         tile.classList.add('revealed');
         
         if (bombs.includes(index)) {
-            sndBomb.play();
+            sndBomb.currentTime = 0; sndBomb.play();
             tile.classList.add('bomb-hit');
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
             endGame(false);
@@ -238,7 +259,7 @@
     }
 
     function updateStats() {
-        const bet = parseFloat(document.getElementById('betAmount').value);
+        const bet = parseFloat(betInput.value);
         document.getElementById('multText').textContent = currentMult.toFixed(2) + 'x';
         document.getElementById('profitText').textContent = '$' + (bet * currentMult).toFixed(2);
     }
@@ -249,7 +270,7 @@
         cashoutBtn.style.display = 'none';
 
         if (isWin) {
-            const bet = parseFloat(document.getElementById('betAmount').value);
+            const bet = parseFloat(betInput.value);
             await updateDoc(doc(db, "users", userId), { balance: increment(bet * currentMult) });
         }
 
@@ -263,7 +284,7 @@
     }
 
     startBtn.onclick = initGame;
-    cashoutBtn.onclick = () => { if(gameActive) { sndGem.play(); endGame(true); } };
+    cashoutBtn.onclick = () => { if(gameActive) { sndGem.currentTime = 0; sndGem.play(); endGame(true); } };
     createBoard();
 </script>
 </body>
