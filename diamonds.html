@@ -20,116 +20,129 @@
             background: var(--bg); color: #fff;
             background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
             min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
         }
 
-        /* --- Logo Style --- */
-        .logo-top {
-            position: absolute; top: 20px; left: 20px;
-            font-weight: 900; font-size: 16px; letter-spacing: -1px;
-            display: flex; align-items: center; gap: 5px;
+        /* Logo Corner */
+        .logo-mini {
+            position: absolute; top: 15px; left: 15px;
+            font-size: 14px; font-weight: 900; letter-spacing: 0px;
         }
-        .logo-top span { color: var(--brand); text-shadow: 0 0 10px var(--brand); }
+        .logo-mini span { color: var(--brand); }
 
-        .container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; margin-top: 50px; }
+        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; margin-top: 40px; }
 
-        /* Header & Balance */
-        .header { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; width: 100%; }
+        /* Wallet Header */
+        .wallet-header { display: flex; justify-content: flex-end; margin-bottom: 15px; }
         .bal-display { 
-            background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); 
-            padding: 8px 15px; border-radius: 20px; color: var(--up); 
-            font-weight: 800; font-size: 14px;
+            background: rgba(0, 255, 150, 0.08); border: 1px solid var(--up); 
+            padding: 6px 12px; border-radius: 50px; color: var(--up); 
+            font-weight: 800; font-size: 13px;
         }
 
-        /* Grid */
+        /* Grid - Stake Style */
         .grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
-            background: var(--card); padding: 15px; border-radius: 20px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+            background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 15px;
             border: 1px solid var(--border); margin-bottom: 20px;
-            backdrop-filter: blur(10px);
         }
 
         .tile {
-            aspect-ratio: 1; background: rgba(255,255,255,0.05); border-radius: 12px;
+            aspect-ratio: 1; background: #213743; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; transition: 0.2s; border: 1px solid var(--border);
+            font-size: 22px; transition: 0.2s; border-bottom: 3px solid rgba(0,0,0,0.3);
         }
-        .tile:active { transform: scale(0.92); }
-        .tile.revealed { background: rgba(0,0,0,0.4); border-color: transparent; cursor: default; }
-        .tile.bomb-hit { background: rgba(255, 0, 80, 0.2); border: 1px solid #ff0050; }
+        .tile:active { transform: scale(0.95); }
+        .tile.revealed { background: #0f212e; border-bottom: none; cursor: default; }
+        .tile.bomb-hit { background: rgba(255, 0, 80, 0.3); border: 1px solid var(--error); }
         
-        .tile i { opacity: 0; transform: scale(0.5); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tile i { opacity: 0; transform: scale(0.4); transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
 
-        /* Controls */
+        /* Controls - Stake Order */
         .controls {
-            background: var(--card); padding: 20px; border-radius: 25px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
+            background: var(--card); padding: 20px; border-radius: 20px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
         }
-        .input-row { display: flex; gap: 10px; }
-        .input-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 10px; color: #777; font-weight: 800; text-transform: uppercase; }
-        
+
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        .label-row { display: flex; justify-content: space-between; align-items: center; }
+        label { font-size: 11px; color: #8b8da3; font-weight: 700; text-transform: uppercase; }
+        .check-bal { font-size: 10px; color: var(--accent); opacity: 0.8; }
+
         input, select {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
-            padding: 12px; border-radius: 12px; color: #fff; font-weight: bold; outline: none;
-            -webkit-appearance: none;
+            background: #0f212e; border: 1px solid var(--border);
+            padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
+            font-size: 14px;
         }
 
         .btn-main {
-            background: linear-gradient(135deg, var(--brand), #6200ff);
-            border: none; padding: 16px; border-radius: 15px; color: #fff;
-            font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 0, 184, 0.2);
+            background: var(--up); color: #060914;
+            border: none; padding: 16px; border-radius: 10px;
+            font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;
+            margin-top: 5px;
         }
         .btn-main:active { transform: scale(0.98); }
-        .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
-        .cashout-btn { background: var(--up); color: #060914; display: none; box-shadow: 0 5px 15px rgba(0, 255, 150, 0.2); }
-
-        /* Stats Bar */
-        .stats { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .btn-main:disabled { opacity: 0.5; filter: grayscale(1); }
         
-        .d-gem { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
-        .d-bomb { color: #ff0050; text-shadow: 0 0 10px #ff0050; }
+        .cashout-btn { background: #fff; color: #000; display: none; }
+
+        /* Multiplier & Profit Bar */
+        .stats-float {
+            display: flex; justify-content: space-between; padding: 0 10px 10px 10px;
+            font-size: 13px; font-weight: 800;
+        }
+
+        .d-gem { color: var(--accent); }
+        .d-bomb { color: #ff0050; }
     </style>
 </head>
 <body>
 
-<div class="logo-top">AMANA <span>ELITE</span></div>
+<div class="logo-mini">AMANA <span>ELITE</span></div>
 
 <div class="container">
-    <div class="header">
+    <div class="wallet-header">
         <div class="bal-display" id="userBalance"><i class="fa-solid fa-wallet"></i> 0.00</div>
     </div>
 
-    <div class="stats">
-        <span>Multiplier: <span id="multText" style="color:var(--accent)">1.00x</span></span>
-        <span>Profit: <span id="profitText" style="color:var(--up)">$0.00</span></span>
+    <div class="stats-float">
+        <span><span id="multText" style="color:var(--accent)">1.00x</span></span>
+        <span><span id="profitText" style="color:var(--up)">$0.00</span></span>
     </div>
 
     <div class="grid" id="gameGrid"></div>
 
     <div class="controls">
-        <div class="input-row">
-            <div class="input-box">
-                <label>Amount</label>
-                <input type="number" id="betAmount" value="10">
+        <div class="input-group">
+            <div class="label-row">
+                <label>Bet Amount</label>
+                <span class="check-bal">Check Balance <i class="fa-solid fa-shield-check"></i></span>
             </div>
-            <div class="input-box">
-                <label>Bombs</label>
-                <select id="bombCount">
-                    <option value="1">1</option>
-                    <option value="3" selected>3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                </select>
-            </div>
+            <input type="number" id="betAmount" value="10.00" step="0.1">
         </div>
-        <button class="btn-main" id="startBtn">START GAME</button>
-        <button class="btn-main cashout-btn" id="cashoutBtn">CASHOUT</button>
+
+        <div class="input-group">
+            <label>Mines</label>
+            <select id="bombCount">
+                <option value="1">1</option>
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="24">24</option>
+            </select>
+        </div>
+
+        <button class="btn-main" id="startBtn">Bet</button>
+        <button class="btn-main cashout-btn" id="cashoutBtn">Cashout</button>
     </div>
 </div>
 
-<audio id="sndGem" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio> <audio id="sndBomb" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio> <audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio> <script type="module">
+<audio id="sndGem" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio> 
+<audio id="sndBomb" src="https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3"></audio>
+<audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -147,22 +160,11 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let userBalance = 0;
-    let userId = null;
-    let gameActive = false;
-    let bombs = [];
-    let revealedCount = 0;
-    let currentMult = 1.00;
+    let userBalance = 0, userId = null, gameActive = false, bombs = [], revealedCount = 0, currentMult = 1.00;
 
-    const grid = document.getElementById('gameGrid');
-    const startBtn = document.getElementById('startBtn');
-    const cashoutBtn = document.getElementById('cashoutBtn');
-    const balDisplay = document.getElementById('userBalance');
-
-    // Soft Volume Settings
-    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.2;
-    const sndBomb = document.getElementById('sndBomb'); sndBomb.volume = 0.2;
-    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.15;
+    const grid = document.getElementById('gameGrid'), startBtn = document.getElementById('startBtn'), cashoutBtn = document.getElementById('cashoutBtn'), balDisplay = document.getElementById('userBalance');
+    const sndGem = document.getElementById('sndGem'), sndBomb = document.getElementById('sndBomb'), sndClick = document.getElementById('sndClick');
+    sndGem.volume = 0.3; sndBomb.volume = 0.3; sndClick.volume = 0.2;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -187,14 +189,8 @@
     }
 
     async function initGame() {
-        const betValue = document.getElementById('betAmount').value;
-        const bet = parseFloat(betValue);
-        
-        if (isNaN(bet) || bet <= 0) return;
-        if (bet > userBalance) {
-            alert("Balance too low!");
-            return;
-        }
+        const bet = parseFloat(document.getElementById('betAmount').value);
+        if (bet > userBalance || bet <= 0) return;
 
         sndClick.play();
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
@@ -206,12 +202,9 @@
             if(!bombs.includes(r)) bombs.push(r);
         }
 
-        gameActive = true;
-        revealedCount = 0;
-        currentMult = 1.00;
+        gameActive = true; revealedCount = 0; currentMult = 1.00;
         updateStats();
-        
-        startBtn.disabled = true;
+        startBtn.style.display = 'none';
         cashoutBtn.style.display = 'block';
         createBoard();
     }
@@ -239,12 +232,9 @@
 
     function calculateMultiplier() {
         const bombNum = parseInt(document.getElementById('bombCount').value);
-        const total = 25;
         let m = 1;
-        for(let i=0; i<revealedCount; i++) {
-            m *= (total - i) / (total - bombNum - i);
-        }
-        currentMult = m * 0.98; 
+        for(let i=0; i<revealedCount; i++) { m *= (25 - i) / (25 - bombNum - i); }
+        currentMult = m * 0.99; 
     }
 
     function updateStats() {
@@ -255,27 +245,25 @@
 
     async function endGame(isWin) {
         gameActive = false;
-        startBtn.disabled = false;
+        startBtn.style.display = 'block';
         cashoutBtn.style.display = 'none';
 
         if (isWin) {
             const bet = parseFloat(document.getElementById('betAmount').value);
-            const winAmount = bet * currentMult;
-            await updateDoc(doc(db, "users", userId), { balance: increment(winAmount) });
+            await updateDoc(doc(db, "users", userId), { balance: increment(bet * currentMult) });
         }
 
         bombs.forEach(i => {
             const t = grid.children[i];
             if(!t.classList.contains('revealed')) {
                 t.classList.add('revealed');
-                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.3"></i>';
+                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.2"></i>';
             }
         });
     }
 
     startBtn.onclick = initGame;
     cashoutBtn.onclick = () => { if(gameActive) { sndGem.play(); endGame(true); } };
-
     createBoard();
 </script>
 </body>
