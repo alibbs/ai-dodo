@@ -3,92 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AMANA ELITE | Professional Crash</title>
+    <title>AMANA ELITE | Classic Airplane</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f212e; --bg-body: #071620; --stake-green: #00e701;
-            --text-main: #b1bad3; --white: #ffffff; --border: #2f4553;
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --up: #00ff96; --card: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1);
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-        body { margin: 0; background-color: var(--bg-body); color: var(--white); overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
+        * { touch-action: manipulation; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { margin: 0; background: var(--bg); color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
 
-        /* Header Stake Style */
-        .header { width: 100%; max-width: 500px; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-body); }
-        .logo { font-size: 22px; font-weight: 900; color: var(--white); } .logo span { color: var(--stake-green); }
-        .balance-badge { background: var(--bg-dark); border: 1px solid var(--border); padding: 8px 15px; border-radius: 4px; font-weight: 600; font-size: 14px; color: var(--white); }
+        .header { width: 100%; max-width: 500px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; font-size: 20px; } .logo span { color: var(--brand); }
+        .bal-display { background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); padding: 8px 16px; border-radius: 50px; color: var(--up); font-weight: 800; }
 
-        /* History Bar */
-        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 6px; padding: 10px; overflow-x: auto; scrollbar-width: none; background: #071620; }
-        .hist-item { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border); }
-        .hist-item.high { color: var(--stake-green); }
+        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; scrollbar-width: none; }
+        .hist-item { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; background: var(--card); border: 1px solid var(--border); }
 
-        /* Graph Area (Mirror Stake) */
         .game-window {
-            width: 95%; max-width: 480px; height: 300px; background: #0f212e; border-radius: 8px;
-            position: relative; overflow: hidden; margin-top: 5px; border: 1px solid var(--border);
+            width: 95%; max-width: 480px; height: 260px; background: #0a0e1a; border-radius: 20px;
+            border: 1px solid var(--border); position: relative; overflow: hidden; margin-bottom: 15px;
         }
-        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 60px; font-weight: 900; z-index: 10; color: var(--white); }
-        .graph-svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
-        #graphPath { fill: rgba(255, 153, 0, 0.2); stroke: var(--white); stroke-width: 4; }
-
-        .wait-layer { position: absolute; inset: 0; background: rgba(7,22,32,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; display: none; }
-        .loader-line { width: 150px; height: 4px; background: #2f4553; border-radius: 2px; margin-top: 10px; overflow: hidden; }
-        .loader-fill { height: 100%; width: 0%; background: var(--stake-green); }
-
-        /* Controls */
-        .controls { width: 95%; max-width: 480px; padding: 15px; background: #0f212e; border-radius: 8px; margin-top: 10px; }
-        .input-box { background: #071620; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; margin-bottom: 10px; padding: 5px 10px; }
-        .input-box span { color: var(--text-main); font-size: 12px; font-weight: 700; margin-right: 10px; }
-        .input-box input { background: transparent; border: none; color: white; flex: 1; padding: 8px; font-weight: 700; outline: none; }
+        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; font-weight: 900; z-index: 10; }
         
-        .main-btn { width: 100%; padding: 18px; border-radius: 4px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn-green { background: var(--stake-green); color: #071620; }
-        .btn-green:disabled { background: #2f4553; color: var(--text-main); }
-        .btn-cashout { background: var(--white); color: #000; display: none; }
+        .wait-overlay { position: absolute; inset: 0; background: rgba(6,9,20,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; display: none; }
+        .load-bar-bg { width: 180px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .load-bar-fill { height: 100%; width: 0%; background: var(--up); box-shadow: 0 0 10px var(--up); }
 
-        /* Stats List (Stake Style) */
-        .stats-container { width: 95%; max-width: 480px; margin-top: 15px; }
-        .stats-header { display: flex; justify-content: space-between; padding: 10px; font-size: 13px; color: var(--text-main); font-weight: 700; border-bottom: 2px solid var(--border); }
-        .player-row { display: flex; justify-content: space-between; padding: 12px 10px; font-size: 13px; border-bottom: 1px solid var(--border); background: rgba(47, 69, 83, 0.2); }
-        .player-row.me { border-left: 3px solid var(--stake-green); background: rgba(0, 231, 1, 0.05); }
-        .user-info { display: flex; align-items: center; gap: 8px; }
-        .hidden-icon { color: var(--text-main); opacity: 0.5; }
-        .profit-green { color: var(--stake-green); font-weight: 800; }
+        .plane-node { position: absolute; bottom: 30px; left: 30px; z-index: 15; transition: transform 0.1s linear; }
+        .plane-node i { font-size: 28px; color: var(--accent); transform: rotate(-15deg); filter: drop-shadow(0 0 8px var(--accent)); }
+
+        .controls { width: 95%; max-width: 480px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .input-field { flex: 1; background: #0f212e; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+        .input-field label { display: block; font-size: 10px; color: #8b8da3; font-weight: 800; margin-bottom: 5px; }
+        .input-field input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 16px; outline: none; }
+
+        .btn-main { width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .btn-bet { background: var(--up); color: #060914; }
+        .btn-cash { background: #fff; color: #000; display: none; }
+
+        .stats-box { width: 95%; max-width: 480px; margin-top: 15px; }
+        .stats-h { display: flex; justify-content: space-between; padding: 10px; font-size: 12px; font-weight: 800; color: #8b8da3; border-bottom: 1px solid var(--border); }
+        .p-row { display: flex; justify-content: space-between; padding: 10px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .p-row.me { color: var(--accent); background: rgba(0, 242, 255, 0.05); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo">AMANA <span>ELITE</span></div>
-        <div id="userBal" class="balance-badge">0.00 BTC</div>
+        <div id="userBal" class="bal-display">$ 0.00</div>
     </div>
 
     <div class="history-bar" id="histBar"></div>
 
     <div class="game-window">
         <div id="multiplier">1.00x</div>
-        <div class="wait-layer" id="waitLayer">
-            <div style="font-weight: 800; color: var(--text-main);">PREPARING...</div>
-            <div class="loader-line"><div class="loader-fill" id="loaderFill"></div></div>
+        <div class="wait-overlay" id="waitOverlay">
+            <div style="font-weight: 800; letter-spacing: 1px;">PREPARING NEXT ROUND</div>
+            <div class="load-bar-bg"><div class="load-bar-fill" id="loadFill"></div></div>
         </div>
-        <svg class="graph-svg" viewBox="0 0 500 300" preserveAspectRatio="none">
-            <path id="graphPath" d="M 0 300 Q 250 300 500 300 L 500 300 L 0 300 Z" />
-        </svg>
+        <svg style="position:absolute; width:100%; height:100%;"><path id="flightPath" d="" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="6,6"/></svg>
+        <div class="plane-node" id="planeNode" style="display:none;"><i class="fa-solid fa-plane"></i></div>
     </div>
 
     <div class="controls">
-        <div class="input-box"><span>Amount</span><input type="number" id="betInput" value="10.00"></div>
-        <div class="input-box"><span>Auto Cashout</span><input type="number" id="autoInput" value="2.00" step="0.1"></div>
-        <button id="btnBet" class="main-btn btn-green">Bet (Next Round)</button>
-        <button id="btnCashout" class="main-btn btn-cashout">Cashout</button>
+        <div class="input-group">
+            <div class="input-field"><label>BET AMOUNT</label><input type="number" id="betInput" value="10.00"></div>
+            <div class="input-field"><label>AUTO CASHOUT</label><input type="number" id="autoInput" value="2.00" step="0.1"></div>
+        </div>
+        <button id="btnBet" class="btn-main btn-bet">PLACE BET</button>
+        <button id="btnCash" class="btn-main btn-cash">CASHOUT</button>
     </div>
 
-    <div class="stats-container">
-        <div class="stats-header">
-            <span><i class="fa-solid fa-users"></i> <span id="pCount">0</span> Players</span>
-            <span><span id="totalPool">0.00</span> BTC</span>
-        </div>
+    <div class="stats-box">
+        <div class="stats-h"><span>PLAYERS (<span id="pCount">0</span>)</span> <span>POOL: $<span id="totalPool">0.00</span></span></div>
         <div id="playerList"></div>
     </div>
 
@@ -100,111 +90,90 @@
     const firebaseConfig = { apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA", authDomain: "ai-dodo.firebaseapp.com", projectId: "ai-dodo", storageBucket: "ai-dodo.firebasestorage.app", messagingSenderId: "261622335803", appId: "1:261622335803:web:0b066791230535e7d5cf1e" };
     const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
 
-    let userId, userBalance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, nextBet = false;
+    let userId, userBal = 0, isPlaying = false, hasCashout = false, nextBet = false, currentMult = 1.0;
     let hist = [];
 
     onAuthStateChanged(auth, u => { if(u) { userId = u.uid; onSnapshot(doc(db, "users", userId), s => { 
-        userBalance = s.data().balance; 
-        document.getElementById('userBal').textContent = userBalance.toFixed(8) + " BTC";
+        userBal = s.data().balance; document.getElementById('userBal').textContent = "$ " + userBal.toFixed(2);
     }); }});
 
-    // Global Sync Algorithm
-    async function startLiveSystem() {
+    async function gameEngine() {
         while(true) {
             const cycle = 15000; const now = Date.now(); const timeInCycle = now % cycle;
-            
-            if(timeInCycle < 5000) { // Betting Phase
-                document.getElementById('waitLayer').style.display = 'flex';
-                document.getElementById('loaderFill').style.width = (timeInCycle / 5000 * 100) + '%';
+
+            if(timeInCycle < 5000) { // Waiting Phase
+                document.getElementById('waitOverlay').style.display = 'flex';
+                document.getElementById('loadFill').style.width = (timeInCycle/5000 * 100) + '%';
                 document.getElementById('multiplier').textContent = "1.00x";
-                document.getElementById('multiplier').style.color = "var(--text-main)";
-                updateGraph(0);
-                if(!isPlaying) {
-                    document.getElementById('btnBet').style.display = 'block';
-                    document.getElementById('btnCashout').style.display = 'none';
-                    document.getElementById('betInput').disabled = false;
-                }
-                renderPlayers(false);
+                document.getElementById('planeNode').style.display = 'none';
+                document.getElementById('flightPath').setAttribute('d', '');
+                if(!isPlaying) { document.getElementById('btnBet').style.display = 'block'; document.getElementById('btnCash').style.display = 'none'; document.getElementById('betInput').disabled = false; }
+                renderFakes();
                 await new Promise(r => setTimeout(r, 50));
             } else { // Flight Phase
-                document.getElementById('waitLayer').style.display = 'none';
+                document.getElementById('waitOverlay').style.display = 'none';
+                document.getElementById('planeNode').style.display = 'block';
                 if(nextBet) { isPlaying = true; nextBet = false; }
-                if(isPlaying) { document.getElementById('btnBet').style.display = 'none'; document.getElementById('btnCashout').style.display = 'block'; }
+                if(isPlaying) { document.getElementById('btnBet').style.display = 'none'; document.getElementById('btnCash').style.display = 'block'; }
 
                 const roundId = Math.floor(now / cycle);
-                const crashPoint = calculateCrash(roundId);
+                const crashPoint = getCasinoCrash(roundId);
                 const flightStart = now - (now % cycle) + 5000;
 
                 while(true) {
-                    const frameNow = Date.now();
-                    const elapsed = (frameNow - flightStart) / 1000;
+                    const elapsed = (Date.now() - flightStart) / 1000;
                     if(elapsed < 0) break;
+                    currentMult = Math.pow(Math.E, 0.075 * elapsed);
 
-                    currentMult = Math.pow(Math.E, 0.08 * elapsed);
                     if(currentMult >= crashPoint) break;
 
                     document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
-                    document.getElementById('multiplier').style.color = "white";
-                    updateGraph(elapsed);
-
+                    
                     if(isPlaying && !hasCashout) {
-                        document.getElementById('btnCashout').disabled = currentMult < 1.01;
-                        document.getElementById('btnCashout').textContent = `Cashout (${(document.getElementById('betInput').value * currentMult).toFixed(2)})`;
+                        document.getElementById('btnCash').disabled = currentMult < 1.01;
+                        document.getElementById('btnCash').textContent = `CASHOUT $${(document.getElementById('betInput').value * currentMult).toFixed(2)}`;
                         if(currentMult >= parseFloat(document.getElementById('autoInput').value)) doCashout();
                     }
+
+                    // Motion
+                    let x = Math.min(elapsed * 40, 80), y = Math.min(Math.pow(elapsed, 1.4) * 12, 70);
+                    document.getElementById('planeNode').style.transform = `translate(${x}vw, -${y}vh)`;
+                    document.getElementById('flightPath').setAttribute('d', `M 30 230 Q ${30+(x*2)} 230, ${30+(x*4.5)} ${230-(y*3)}`);
+
                     await new Promise(r => requestAnimationFrame(r));
                 }
 
-                // Crash
-                document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
+                // Boom
                 document.getElementById('multiplier').style.color = "#ff4d4d";
                 if(hist[0] != currentMult.toFixed(2)) {
                     hist.unshift(currentMult.toFixed(2)); if(hist.length > 10) hist.pop();
-                    renderHistory();
+                    document.getElementById('histBar').innerHTML = hist.map(h => `<div class="hist-item" style="color:${h >= 2 ? 'var(--up)' : '#fff'}">${h}x</div>`).join('');
                 }
                 isPlaying = false; hasCashout = false;
                 document.getElementById('btnBet').disabled = false;
-                document.getElementById('btnBet').textContent = "Bet (Next Round)";
+                document.getElementById('btnBet').textContent = "PLACE BET";
+                document.getElementById('multiplier').style.color = "#fff";
                 
-                const waitNext = cycle - (Date.now() % cycle);
-                await new Promise(r => setTimeout(r, waitNext));
+                await new Promise(r => setTimeout(r, cycle - (Date.now() % cycle)));
             }
         }
     }
 
-    function calculateCrash(seed) {
-        // House Edge Logic: 3% Instant Crash at 1.00
+    function getCasinoCrash(seed) {
         let hash = (seed * 16807) % 2147483647;
         let rand = hash / 2147483647;
-        if (rand < 0.03) return 1.00; 
-        return (1.00 / (1 - rand) ** 0.97).toFixed(2);
+        // House Edge: 3% Instant Crash + 0.97 multiplier factor
+        if (rand < 0.033) return 1.00;
+        return (1.00 / (1 - rand) ** 0.965).toFixed(2);
     }
 
-    function updateGraph(t) {
-        const x = Math.min(t * 50, 500);
-        const y = 300 - Math.min(Math.pow(t, 1.5) * 20, 250);
-        document.getElementById('graphPath').setAttribute('d', `M 0 300 Q ${x/2} 300, ${x} ${y} L ${x} 300 L 0 300 Z`);
-    }
-
-    function renderPlayers(active) {
-        const list = document.getElementById('playerList');
-        const fakes = [
-            {n: 'Ba777', b: 0.002, t: 1.5}, {n: 'Nar_22', b: 0.015, t: 2.1}, {n: 'Hidden', b: 0.0005, t: 1.2},
-            {n: 'Olymbis23', b: 0.04, t: 3.5}, {n: 'Hidden', b: 0.008, t: 1.8}, {n: 'Hidden', b: 0.012, t: 1.1}
-        ];
-        fakes.sort((a,b) => b.b - a.b);
-        document.getElementById('pCount').textContent = Math.floor(Math.random()*100 + 50);
-        document.getElementById('totalPool').textContent = (Math.random() * 0.5).toFixed(4);
-
-        let html = isPlaying ? `<div class="player-row me"><span>YOU</span><span>-</span><span class="profit-green">${document.getElementById('betInput').value} BTC</span></div>` : '';
-        html += fakes.map(f => `
-            <div class="player-row">
-                <div class="user-info">${f.n == 'Hidden' ? '<i class="fa-solid fa-user-secret hidden-icon"></i>' : ''} ${f.n}</div>
-                <div style="color:var(--text-main)">${(active && currentMult >= f.t) ? f.t+'x' : '-'}</div>
-                <div class="${(active && currentMult >= f.t) ? 'profit-green' : ''}">${f.b} BTC</div>
-            </div>
-        `).join('');
-        list.innerHTML = html;
+    function renderFakes() {
+        const names = ['Nar_22', 'Ba777', 'Olymbis23', 'Hidden', 'Hunter_X', 'Hidden', 'King_01', 'Hidden'];
+        document.getElementById('pCount').textContent = Math.floor(Math.random()*200+80);
+        document.getElementById('totalPool').textContent = (Math.random()*5000 + 1000).toFixed(2);
+        let h = isPlaying ? `<div class="p-row me"><span>YOU</span><span>$${document.getElementById('betInput').value}</span></div>` : '';
+        h += names.map(n => `<div class="p-row"><span>${n}</span><span>$${(Math.random()*200).toFixed(2)}</span></div>`).join('');
+        document.getElementById('playerList').innerHTML = h;
     }
 
     async function doCashout() {
@@ -212,25 +181,22 @@
         hasCashout = true;
         const win = parseFloat(document.getElementById('betInput').value) * currentMult;
         await updateDoc(doc(db, "users", userId), { balance: increment(win) });
-        document.getElementById('btnCashout').style.background = 'var(--stake-green)';
-        document.getElementById('btnCashout').textContent = 'WON!';
+        document.getElementById('btnCash').style.background = 'var(--up)';
+        document.getElementById('btnCash').textContent = 'SUCCESS!';
     }
 
     document.getElementById('btnBet').onclick = async () => {
         const bet = parseFloat(document.getElementById('betInput').value);
-        if(bet > userBalance || bet <= 0) return;
+        if(bet > userBal || bet <= 0) return;
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
         nextBet = true;
         document.getElementById('btnBet').disabled = true;
-        document.getElementById('btnBet').textContent = "Bet Placed...";
+        document.getElementById('btnBet').textContent = "WAITING...";
+        document.getElementById('betInput').disabled = true;
     };
 
-    document.getElementById('btnCashout').onclick = doCashout;
-    function renderHistory() {
-        document.getElementById('histBar').innerHTML = hist.map(h => `<div class="hist-item ${h >= 2 ? 'high' : ''}">${h}x</div>`).join('');
-    }
-
-    startLiveSystem();
+    document.getElementById('btnCash').onclick = doCashout;
+    gameEngine();
 </script>
 </body>
 </html>
