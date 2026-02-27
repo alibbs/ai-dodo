@@ -58,10 +58,14 @@
 
         .badge { position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; background: var(--brand); color: #fff; padding: 3px 8px; border-radius: 6px; }
 
-        /* Colors */
-        .c-crash { color: #ff3b3b; } .c-dice { color: var(--up); }
-        .c-wheel { color: #a100ff; } .c-ballon { color: #00f2ff; }
-        .c-plinko { color: #ffcc00; } .c-flip { color: #00ff88; }
+        /* الألوان والأيقونات */
+        .c-diamonds { color: #00f2ff; text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
+        .c-crash { color: #ff3b3b; } 
+        .c-dice { color: var(--up); }
+        .c-wheel { color: #a100ff; } 
+        .c-ballon { color: #00f2ff; }
+        .c-plinko { color: #ffcc00; } 
+        .c-flip { color: #00ff88; }
 
         /* --- Bottom Nav --- */
         .bottom-nav { 
@@ -89,6 +93,13 @@
     </div>
 
     <div class="games-grid">
+        <div class="game-item" onclick="location.href='diamonds.html'">
+            <div class="badge" style="background: linear-gradient(to right, #00f2ff, var(--brand));">Elite</div>
+            <i class="fa-solid fa-gem c-diamonds"></i>
+            <b>Diamonds</b>
+            <span>Mines Style</span>
+        </div>
+
         <div class="game-item" onclick="location.href='crash.html'">
             <div class="badge">Hot</div>
             <i class="fa-solid fa-rocket c-crash"></i>
@@ -120,12 +131,6 @@
             <b>Plinko</b>
             <span>Lucky Drop</span>
         </div>
-
-        <div class="game-item" onclick="location.href='flip.html'">
-            <i class="fa-solid fa-coins c-flip"></i>
-            <b>Coin Flip</b>
-            <span>50/50 Luck</span>
-        </div>
     </div>
 </div>
 
@@ -138,12 +143,10 @@
 </nav>
 
 <script type="module">
-    // استيراد Firebase الأساسي
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // إعدادات Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
         authDomain: "ai-dodo.firebaseapp.com",
@@ -153,23 +156,18 @@
         appId: "1:261622335803:web:0b066791230535e7d5cf1e"
     };
 
-    // تشغيل التطبيق
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
     const balDisplay = document.getElementById('hubBal');
 
-    // مراقبة المستخدم وجلب الرصيد من Firestore
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // الاستماع للتغييرات في مستند المستخدم (الرصيد)
             onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
                     const currentBal = userData.balance || 0;
-                    
-                    // تحديث واجهة المستخدم بالرصيد الحقيقي
                     balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${currentBal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
                 } else {
                     balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> 0.00`;
@@ -179,7 +177,6 @@
                 balDisplay.innerHTML = "Error";
             });
         } else {
-            // إذا لم يكن هناك مستخدم، توجيه لصفحة تسجيل الدخول
             window.location.href = "login.html";
         }
     });
