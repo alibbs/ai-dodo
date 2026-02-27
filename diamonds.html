@@ -83,6 +83,7 @@
             font-weight: 900; font-size: 16px; cursor: pointer;
         }
         .cashout-btn { background: #fff; color: #000; display: none; }
+        .cashout-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #ccc; }
 
         .stats-float {
             display: flex; justify-content: space-between; padding: 0 10px 10px 10px;
@@ -129,7 +130,7 @@
             </select>
         </div>
         <button class="btn-main" id="startBtn">Bet</button>
-        <button class="btn-main cashout-btn" id="cashoutBtn">Cashout</button>
+        <button class="btn-main cashout-btn" id="cashoutBtn" disabled>Cashout</button>
     </div>
 </div>
 
@@ -151,18 +152,14 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // --- Embedded Sounds (Base64) - Works on all devices ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Clean Ting Sound for Diamonds
-    const gemSoundBase64 = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YV92T197AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AHwAfQB+AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8Afw==";
-
     function playDiamondSound() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // High pitch ting
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
@@ -244,6 +241,7 @@
         updateStats();
         startBtn.style.display = 'none';
         cashoutBtn.style.display = 'block';
+        cashoutBtn.disabled = true; // Disabled until first gem
         createBoard();
     }
 
@@ -263,6 +261,10 @@
             playDiamondSound();
             tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
+            
+            // Enable cashout as soon as 1 gem is found
+            if(revealedCount >= 1) cashoutBtn.disabled = false;
+
             calculateMultiplier();
             updateStats();
         }
@@ -285,6 +287,7 @@
         gameActive = false;
         startBtn.style.display = 'block';
         cashoutBtn.style.display = 'none';
+        cashoutBtn.disabled = true;
 
         if (isWin) {
             const bet = parseFloat(betInput.value);
@@ -304,7 +307,7 @@
     }
 
     startBtn.onclick = initGame;
-    cashoutBtn.onclick = () => { if(gameActive) { playDiamondSound(); endGame(true); } };
+    cashoutBtn.onclick = () => { if(gameActive && revealedCount > 0) { playDiamondSound(); endGame(true); } };
     createBoard();
 </script>
 </body>
