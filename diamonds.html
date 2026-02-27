@@ -2,180 +2,195 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMANA ELITE | Diamonds Mines</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AMANA ELITE | Diamonds</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0f212e; /* لون ستيك الأصلي تقريباً */
-            --side-panel: #213743;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border: #2f4553;
-            --brand: #a100ff;
-            --brand2: #ff00b8;
+            --bg: #060914;
+            --brand: #ff00b8;
             --accent: #00f2ff;
-            --success: #00e701;
-            --error: #ff0050;
-            --radius: 10px;
+            --up: #00ff96;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: #fff;
-            display: flex; align-items: center; justify-content: center; min-height: 100vh;
-            padding: 10px;
+            background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
         }
 
-        .game-container {
-            display: flex; flex-direction: row-reverse; /* ترتيب ستيك: التحكم يسار واللعب يمين */
-            width: 100%; max-width: 900px; gap: 20px;
-            background: #1a2c38; padding: 20px; border-radius: 15px;
+        .container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
+
+        /* Header & Balance */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; }
+        .bal-display { 
+            background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); 
+            padding: 8px 15px; border-radius: 20px; color: var(--up); 
+            font-weight: 800; font-size: 14px;
         }
 
-        /* لوحة التحكم الجانبية */
-        .side-control {
-            flex: 1; background: var(--side-panel); padding: 20px;
-            border-radius: var(--radius); display: flex; flex-direction: column; gap: 15px;
-        }
-
-        /* منطقة اللعب */
-        .game-main { flex: 2; display: flex; flex-direction: column; align-items: center; }
-
+        /* Grid */
         .grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-            width: 100%; max-width: 450px;
+            background: var(--card); padding: 15px; border-radius: 20px;
+            border: 1px solid var(--border); margin-bottom: 20px;
         }
 
         .tile {
-            aspect-ratio: 1; background: #2f4553; border-radius: 6px;
+            aspect-ratio: 1; background: rgba(255,255,255,0.05); border-radius: 12px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; transition: all 0.2s; border-bottom: 4px solid rgba(0,0,0,0.2);
+            font-size: 24px; transition: 0.2s; border: 1px solid var(--border);
         }
+        .tile:active { transform: scale(0.9); }
+        .tile.revealed { background: rgba(0,0,0,0.4); border: none; cursor: default; }
+        .tile.bomb-hit { background: rgba(255, 0, 80, 0.2); border: 1px solid #ff0050; }
+        .tile i { opacity: 0; transform: scale(0.5); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tile.revealed i { opacity: 1; transform: scale(1); }
 
-        .tile:hover { background: #557086; transform: translateY(-2px); }
-        .tile.revealed { cursor: default; background: #071824; border-bottom: none; transform: none; }
-        .tile.bomb-hit { background: var(--error) !important; animation: shake 0.4s; }
-        .tile i { transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .tile.revealed i { transform: scale(1); }
-
-        /* إحصائيات */
-        .stats-bar {
-            width: 100%; display: flex; justify-content: space-between;
-            margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;
+        /* Controls */
+        .controls {
+            background: var(--card); padding: 20px; border-radius: 25px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
         }
-
-        /* أزرار ومدخلات */
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 12px; color: #b1bad3; font-weight: bold; }
+        .input-row { display: flex; gap: 10px; }
+        .input-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10px; color: #777; font-weight: 800; text-transform: uppercase; }
         input, select {
-            background: #0f212e; border: 2px solid var(--border);
-            padding: 12px; border-radius: 5px; color: #fff; font-weight: bold; outline: none;
-        }
-        input:focus { border-color: #557086; }
-
-        .btn-play {
-            background: var(--success); color: #012e01; border: none;
-            padding: 18px; border-radius: 5px; font-weight: 900;
-            cursor: pointer; font-size: 16px; transition: 0.2s;
-        }
-        .btn-play:hover { filter: brightness(1.2); }
-        .btn-play:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .cashout-btn {
-            background: #fff; color: #000; display: none; margin-top: 10px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            padding: 12px; border-radius: 12px; color: #fff; font-weight: bold; outline: none;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        .btn-main {
+            background: linear-gradient(135deg, var(--brand), #6200ff);
+            border: none; padding: 16px; border-radius: 15px; color: #fff;
+            font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s;
         }
+        .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
+        .cashout-btn { background: var(--up); color: #060914; display: none; }
 
-        /* موبايل */
-        @media (max-width: 768px) {
-            .game-container { flex-direction: column; }
-            .side-control { order: 2; }
-            .game-main { order: 1; }
-        }
-
-        .d-blue { color: #00f2ff; drop-shadow: 0 0 10px #00f2ff; }
-        .d-bomb { color: #fff; }
+        /* Stats */
+        .stats { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        
+        .d-gem { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        .d-bomb { color: #ff0050; }
     </style>
 </head>
 <body>
 
-<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-<audio id="gemSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
-<audio id="bombSound" src="https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3"></audio>
-
-<div class="game-container">
-    
-    <div class="side-control">
-        <div class="input-group">
-            <label>Bet Amount</label>
-            <input type="number" id="betAmount" value="10.00" step="0.10">
-        </div>
-        <div class="input-group">
-            <label>Mines</label>
-            <select id="bombCount">
-                <option value="1">1</option>
-                <option value="3" selected>3</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-            </select>
-        </div>
-        <button class="btn-play" id="startBtn">Bet</button>
-        <button class="btn-play cashout-btn" id="cashoutBtn">Cashout</button>
+<div class="container">
+    <div class="header">
+        <h2 style="margin:0; font-size:18px;">DIAMONDS</h2>
+        <div class="bal-display" id="userBalance"><i class="fa-solid fa-wallet"></i> 0.00</div>
     </div>
 
-    <div class="game-main">
-        <div class="stats-bar">
-            <span>Multiplier: <b id="multText" style="color:var(--accent)">1.00x</b></span>
-            <span>Profit: <b id="profitText" style="color:var(--success)">$0.00</b></span>
-        </div>
-        <div class="grid" id="gameGrid"></div>
+    <div class="stats">
+        <span>Multiplier: <span id="multText" style="color:var(--accent)">1.00x</span></span>
+        <span>Profit: <span id="profitText" style="color:var(--up)">$0.00</span></span>
     </div>
 
+    <div class="grid" id="gameGrid"></div>
+
+    <div class="controls">
+        <div class="input-row">
+            <div class="input-box">
+                <label>Bet Amount</label>
+                <input type="number" id="betAmount" value="10" min="1">
+            </div>
+            <div class="input-box">
+                <label>Bombs</label>
+                <select id="bombCount">
+                    <option value="1">1</option>
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-main" id="startBtn">PLACE BET</button>
+        <button class="btn-main cashout-btn" id="cashoutBtn">CASHOUT</button>
+    </div>
 </div>
 
-<script>
-    const grid = document.getElementById('gameGrid');
-    const startBtn = document.getElementById('startBtn');
-    const cashoutBtn = document.getElementById('cashoutBtn');
-    const multText = document.getElementById('multText');
-    const profitText = document.getElementById('profitText');
-    
-    // الأصوات
-    const sndClick = document.getElementById('clickSound');
-    const sndGem = document.getElementById('gemSound');
-    const sndBomb = document.getElementById('bombSound');
+<audio id="sndGem" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
+<audio id="sndBomb" src="https://www.soundjay.com/free-music/sounds/fail-farewell-01.mp3"></audio>
+<audio id="sndClick" src="https://www.soundjay.com/buttons/sounds/button-50.mp3"></audio>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let userBalance = 0;
+    let userId = null;
     let gameActive = false;
     let bombs = [];
     let revealedCount = 0;
     let currentMult = 1.00;
+
+    const grid = document.getElementById('gameGrid');
+    const startBtn = document.getElementById('startBtn');
+    const cashoutBtn = document.getElementById('cashoutBtn');
+    const balDisplay = document.getElementById('userBalance');
+
+    // Load Sounds
+    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.3;
+    const sndBomb = document.getElementById('sndBomb'); sndBomb.volume = 0.2;
+    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.2;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userId = user.uid;
+            onSnapshot(doc(db, "users", userId), (snap) => {
+                if (snap.exists()) {
+                    userBalance = snap.data().balance || 0;
+                    balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                }
+            });
+        } else { window.location.href = "login.html"; }
+    });
 
     function createBoard() {
         grid.innerHTML = '';
         for (let i = 0; i < 25; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
-            tile.dataset.index = i;
             tile.onclick = () => revealTile(i);
             grid.appendChild(tile);
         }
     }
 
-    function initGame() {
+    async function initGame() {
+        const bet = parseFloat(document.getElementById('betAmount').value);
+        if (bet > userBalance) return alert("Insufficient Balance!");
+        if (bet <= 0) return;
+
         sndClick.play();
+        // خصم الرصيد فوراً من Firebase
+        await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
+
         const bombNum = parseInt(document.getElementById('bombCount').value);
         bombs = [];
         while(bombs.length < bombNum) {
             let r = Math.floor(Math.random() * 25);
             if(!bombs.includes(r)) bombs.push(r);
         }
-        
+
         gameActive = true;
         revealedCount = 0;
         currentMult = 1.00;
@@ -186,7 +201,7 @@
         createBoard();
     }
 
-    function revealTile(index) {
+    async function revealTile(index) {
         if (!gameActive) return;
         const tile = grid.children[index];
         if (tile.classList.contains('revealed')) return;
@@ -197,11 +212,10 @@
             sndBomb.play();
             tile.classList.add('bomb-hit');
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
-            gameOver(false);
+            endGame(false);
         } else {
-            sndGem.currentTime = 0;
-            sndGem.play();
-            tile.innerHTML = '<i class="fa-solid fa-gem d-blue"></i>';
+            sndGem.currentTime = 0; sndGem.play();
+            tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
             calculateMultiplier();
             updateStats();
@@ -210,53 +224,45 @@
 
     function calculateMultiplier() {
         const bombNum = parseInt(document.getElementById('bombCount').value);
-        // معادلة ستيك التقريبية
-        const totalTiles = 25;
-        let mult = 1;
+        const total = 25;
+        let m = 1;
         for(let i=0; i<revealedCount; i++) {
-            mult *= (totalTiles - i) / (totalTiles - bombNum - i);
+            m *= (total - i) / (total - bombNum - i);
         }
-        currentMult = mult * 0.99; // عمولة بسيطة للمنصة
+        currentMult = m * 0.98; 
     }
 
     function updateStats() {
         const bet = parseFloat(document.getElementById('betAmount').value);
-        multText.textContent = currentMult.toFixed(2) + 'x';
-        profitText.textContent = '$' + (bet * currentMult).toFixed(2);
+        document.getElementById('multText').textContent = currentMult.toFixed(2) + 'x';
+        document.getElementById('profitText').textContent = '$' + (bet * currentMult).toFixed(2);
     }
 
-    function gameOver(win) {
+    async function endGame(isWin) {
         gameActive = false;
         startBtn.disabled = false;
         cashoutBtn.style.display = 'none';
 
-        // كشف كل المربعات
-        bombs.forEach(index => {
-            const t = grid.children[index];
-            if (!t.classList.contains('revealed')) {
+        if (isWin) {
+            const bet = parseFloat(document.getElementById('betAmount').value);
+            const winAmount = bet * currentMult;
+            await updateDoc(doc(db, "users", userId), { balance: increment(winAmount) });
+        }
+
+        // كشف القنابل
+        bombs.forEach(i => {
+            const t = grid.children[i];
+            if(!t.classList.contains('revealed')) {
                 t.classList.add('revealed');
-                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.5"></i>';
+                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.3"></i>';
             }
         });
-        
-        if(!win) {
-            profitText.style.color = 'var(--error)';
-            setTimeout(() => { 
-                multText.textContent = "1.00x"; 
-                profitText.textContent = "$0.00";
-                profitText.style.color = 'var(--success)';
-            }, 2000);
-        }
     }
 
-    startBtn.addEventListener('click', initGame);
-    cashoutBtn.addEventListener('click', () => {
-        sndGem.play();
-        gameOver(true);
-    });
+    startBtn.onclick = initGame;
+    cashoutBtn.onclick = () => { if(gameActive) { sndGem.play(); endGame(true); } };
 
     createBoard();
 </script>
-
 </body>
 </html>
