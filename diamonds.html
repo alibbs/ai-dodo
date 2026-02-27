@@ -56,7 +56,6 @@
         .tile i { opacity: 0; transform: scale(0.4); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
 
-        /* Controls */
         .controls {
             background: var(--card); padding: 20px; border-radius: 20px;
             border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
@@ -66,7 +65,6 @@
         .label-row { display: flex; justify-content: space-between; align-items: center; }
         label { font-size: 11px; color: #8b8da3; font-weight: 700; text-transform: uppercase; }
 
-        /* Bet Input Wrapper */
         .bet-input-wrapper { display: flex; gap: 5px; }
         .bet-input-wrapper input { flex: 1; min-width: 0; }
         .btn-adjust { 
@@ -74,13 +72,14 @@
             padding: 0 15px; border-radius: 8px; font-weight: 800; font-size: 12px;
             cursor: pointer; transition: 0.2s;
         }
-        .btn-adjust:active { background: #405a6e; }
+        .btn-adjust:disabled { opacity: 0.5; cursor: not-allowed; }
 
         input, select {
             background: #0f212e; border: 1px solid var(--border);
             padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
             font-size: 14px; -webkit-appearance: none;
         }
+        input:disabled, select:disabled { opacity: 0.6; cursor: not-allowed; color: #555; }
 
         .btn-main {
             background: var(--up); color: #060914;
@@ -122,8 +121,8 @@
             </div>
             <div class="bet-input-wrapper">
                 <input type="number" id="betAmount" value="10.00" step="1">
-                <button class="btn-adjust" onclick="adjustBet(0.5)">½</button>
-                <button class="btn-adjust" onclick="adjustBet(2)">x2</button>
+                <button class="btn-adjust" id="halfBtn" onclick="adjustBet(0.5)">½</button>
+                <button class="btn-adjust" id="doubleBtn" onclick="adjustBet(2)">x2</button>
             </div>
         </div>
 
@@ -173,16 +172,19 @@
           startBtn = document.getElementById('startBtn'), 
           cashoutBtn = document.getElementById('cashoutBtn'), 
           balDisplay = document.getElementById('userBalance'),
-          betInput = document.getElementById('betAmount');
+          betInput = document.getElementById('betAmount'),
+          bombSelect = document.getElementById('bombCount'),
+          halfBtn = document.getElementById('halfBtn'),
+          doubleBtn = document.getElementById('doubleBtn');
 
     const sndGem = document.getElementById('sndGem'), 
           sndBomb = document.getElementById('sndBomb'), 
           sndClick = document.getElementById('sndClick');
 
-    sndGem.volume = 0.4; sndBomb.volume = 0.3; sndClick.volume = 0.2;
+    sndGem.volume = 0.5; sndBomb.volume = 0.4; sndClick.volume = 0.3;
 
-    // Bet Adjustment Logic
     window.adjustBet = (factor) => {
+        if(gameActive) return;
         let current = parseFloat(betInput.value) || 0;
         betInput.value = (current * factor).toFixed(2);
     };
@@ -209,14 +211,25 @@
         }
     }
 
+    function toggleControls(lock) {
+        betInput.disabled = lock;
+        bombSelect.disabled = lock;
+        halfBtn.disabled = lock;
+        doubleBtn.disabled = lock;
+    }
+
     async function initGame() {
         const bet = parseFloat(betInput.value);
         if (bet > userBalance || bet <= 0) return;
 
         sndClick.currentTime = 0; sndClick.play();
+        
+        // Lock UI
+        toggleControls(true);
+        
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
 
-        const bombNum = parseInt(document.getElementById('bombCount').value);
+        const bombNum = parseInt(bombSelect.value);
         bombs = [];
         while(bombs.length < bombNum) {
             let r = Math.floor(Math.random() * 25);
@@ -243,7 +256,10 @@
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
             endGame(false);
         } else {
-            sndGem.currentTime = 0; sndGem.play();
+            // Play gem sound with reset for rapid clicking
+            sndGem.currentTime = 0; 
+            sndGem.play();
+            
             tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
             calculateMultiplier();
@@ -252,7 +268,7 @@
     }
 
     function calculateMultiplier() {
-        const bombNum = parseInt(document.getElementById('bombCount').value);
+        const bombNum = parseInt(bombSelect.value);
         let m = 1;
         for(let i=0; i<revealedCount; i++) { m *= (25 - i) / (25 - bombNum - i); }
         currentMult = m * 0.99; 
@@ -281,6 +297,9 @@
                 t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.2"></i>';
             }
         });
+
+        // Unlock UI
+        toggleControls(false);
     }
 
     startBtn.onclick = initGame;
