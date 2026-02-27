@@ -91,7 +91,7 @@ border-color:var(--brand2);
 background:rgba(255,0,184,0.05);
 box-shadow:0 0 20px rgba(255,0,184,.15);
 }
-.field:focus + i { color: var(--brand2); }
+.field:focus + i { color: var(--brand2); transform: translateY(-50%) scale(1.1); }
 
 .btn{
 width:100%;
@@ -108,9 +108,13 @@ transition: 0.4s;
 text-transform: uppercase;
 letter-spacing: 2px;
 box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
 }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.5); }
-.btn:disabled { opacity: 0.5; filter: grayscale(1); }
+.btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
 .create-acc-wrap {
     margin-top: 30px;
@@ -142,7 +146,9 @@ border-radius:14px;
 display:none;
 font-size:13px;
 font-weight: 600;
+animation: slideUp 0.3s ease;
 }
+@keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 .msg.error{background:rgba(255,0,80,.1); color:#ff4d8d; border: 1px solid rgba(255,0,80,0.2);}
 .msg.success{background:rgba(0,255,184,.1); color:#00ffb8; border: 1px solid rgba(0,255,184,0.2);}
 
@@ -155,7 +161,7 @@ font-weight: 600;
     <div class="card">
         <div class="logo">AMANA</div>
         <h1>Digital Hub</h1>
-        <p class="sub">Experience the next generation of <b>AI Arbitrage</b> and <b>Elite Crypto Gaming</b> in one secure vault.</p>
+        <p class="sub">Experience the next generation of <b>AI Arbitrage</b> and <b>Elite Crypto Gaming</b>.</p>
 
         <form id="loginForm">
             <div class="form-group">
@@ -174,7 +180,9 @@ font-weight: 600;
                 </div>
             </div>
 
-            <button class="btn" type="submit" id="submitBtn">LOGIN</button>
+            <button class="btn" type="submit" id="submitBtn">
+                <span id="btnText">LOGIN</span>
+            </button>
             <div id="msg" class="msg"></div>
         </form>
 
@@ -208,6 +216,7 @@ const auth = getAuth(app);
 const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
 const submitBtn = document.getElementById("submitBtn");
+const btnText = document.getElementById("btnText");
 
 function showMsg(text, type) {
     msg.style.display = "block";
@@ -215,14 +224,17 @@ function showMsg(text, type) {
     msg.textContent = text;
 }
 
+// الفحص الذكي: لو المستخدم مسجل دخول، حوله فوراً دون انتظار
 onAuthStateChanged(auth, (user) => {
-    if (user) { window.location.href = "home.html"; }
+    if (user) { 
+        window.location.replace("home.html"); 
+    }
 });
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     submitBtn.disabled = true;
-    submitBtn.textContent = "AUTHENTICATING...";
+    btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> AUTHENTICATING...';
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
@@ -230,11 +242,11 @@ form.addEventListener("submit", async (e) => {
     try {
         await signInWithEmailAndPassword(auth, email, password);
         showMsg("Identity Verified. Entering Hub...", "success");
-        setTimeout(() => { window.location.href = "home.html"; }, 1200);
+        // التحويل سيتم تلقائياً عبر onAuthStateChanged بالأعلى
     } catch (error) {
         submitBtn.disabled = false;
-        submitBtn.textContent = "LOGIN";
-        showMsg("Invalid email or security password.", "error");
+        btnText.textContent = "LOGIN";
+        showMsg("Access Denied: Invalid credentials.", "error");
     }
 });
 </script>
