@@ -4,72 +4,90 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>AMANA GLOBAL | Login</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
 :root{
---bg:#0b0f1f;
+--bg:#060914;
 --text:#ffffff;
---muted:#b8b9d9;
+--muted:#8b8da3;
 --brand1:#a100ff;
 --brand2:#ff00b8;
---glass:rgba(255,255,255,.05);
---border:rgba(255,255,255,.1);
---radius:20px;
+--glass:rgba(255,255,255,.03);
+--border:rgba(255,255,255,.08);
+--radius:24px;
+--accent:#00f2ff;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 body{
 margin:0;
 font-family: 'Inter', system-ui, -apple-system;
-background:linear-gradient(-45deg,#0b0f1f,#140b2d,#1c0833,#120822);
-background-size:400% 400%;
-animation:bgMove 12s ease infinite;
+background: var(--bg);
+background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
 color:var(--text);
 min-height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:24px;
+padding:20px;
 }
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
-}
-.wrap{width:100%;max-width:420px;}
+
+.wrap{width:100%;max-width:400px; animation: fadeIn 0.8s ease-out;}
+@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+
 .card{
 background:var(--glass);
-backdrop-filter:blur(25px);
+backdrop-filter:blur(30px);
 border:1px solid var(--border);
 border-radius:var(--radius);
-padding:40px 30px;
+padding:40px 25px;
 text-align:center;
-box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+position: relative;
+overflow: hidden;
 }
+
+/* شعاع خلفي خفيف */
+.card::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,0,184,0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
 .logo{
-font-size:28px;
+font-size:32px;
 font-weight:900;
-margin-bottom:10px;
-background:linear-gradient(135deg,var(--brand1),var(--brand2));
+margin-bottom:8px;
+background:linear-gradient(135deg, var(--accent), var(--brand2));
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-letter-spacing: -1px;
+letter-spacing: -1.5px;
+text-transform: uppercase;
 }
-h1{margin:0 0 8px;font-size:24px;font-weight:800;}
-.sub{margin:0 0 30px;color:var(--muted);font-size:14px;}
-.form-group{text-align:left;margin-bottom:18px;}
+
+h1{margin:0 0 8px; font-size:22px; font-weight:700; letter-spacing:-0.5px;}
+.sub{margin:0 0 35px; color:var(--muted); font-size:14px; line-height:1.5;}
+
+.form-group{text-align:left; margin-bottom:20px; position:relative;}
 label{
 display:block;
-font-weight:700;
-font-size:13px;
+font-weight:600;
+font-size:12px;
 margin-bottom:8px;
 color:var(--muted);
+text-transform: uppercase;
+letter-spacing: 1px;
 }
+
+.field-wrapper { position: relative; }
+.field-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #444; font-size: 16px; transition: 0.3s; }
+
 .field{
 width:100%;
-padding:14px 16px;
-border-radius:14px;
+padding:15px 15px 15px 45px;
+border-radius:16px;
 border:1px solid var(--border);
-background:rgba(0,0,0,.3);
+background:rgba(0,0,0,.4);
 color:var(--text);
 font-size:15px;
 transition: 0.3s;
@@ -77,62 +95,101 @@ transition: 0.3s;
 .field:focus{
 outline:none;
 border-color:var(--brand2);
-box-shadow:0 0 15px rgba(255,0,184,.2);
+background:rgba(255,0,184,0.05);
+box-shadow:0 0 20px rgba(255,0,184,.15);
 }
+.field:focus + i { color: var(--brand2); }
+
 .btn{
 width:100%;
-padding:16px;
-border-radius:14px;
-font-weight:800;
+padding:18px;
+border-radius:16px;
+font-weight:900;
 font-size:16px;
 cursor:pointer;
 border:none;
-background:linear-gradient(135deg,var(--brand1),var(--brand2));
+background: linear-gradient(135deg, var(--brand1), var(--brand2));
 color:#fff;
 margin-top:10px;
-transition: 0.3s;
-box-shadow: 0 10px 20px rgba(255, 0, 184, 0.2);
+transition: 0.4s;
+text-transform: uppercase;
+letter-spacing: 2px;
+box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
 }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.5); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+
+.create-acc-wrap {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+.create-acc-wrap p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.btn-outline {
+    display: inline-block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); color: var(--accent); }
+
 .msg{
 margin-top:20px;
-padding:12px;
-border-radius:12px;
+padding:14px;
+border-radius:14px;
 display:none;
-font-size:14px;
+font-size:13px;
 font-weight: 600;
+animation: shake 0.4s ease-in-out;
 }
-.msg.error{background:rgba(255,0,80,.15);color:#ff4d8d; border: 1px solid rgba(255,0,80,0.2);}
-.msg.success{background:rgba(0,255,184,.15);color:#00ffb8; border: 1px solid rgba(0,255,184,0.2);}
-.footer-note{
-margin-top:25px;
-font-size:12px;
-color:var(--muted);
-}
+@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+.msg.error{background:rgba(255,0,80,.1); color:#ff4d8d; border: 1px solid rgba(255,0,80,0.2);}
+.msg.success{background:rgba(0,255,184,.1); color:#00ffb8; border: 1px solid rgba(0,255,184,0.2);}
+
+.footer-note{ margin-top:30px; font-size:10px; color:#444; letter-spacing: 1px; }
 </style>
 </head>
 <body>
 
 <div class="wrap">
     <div class="card">
-        <div class="logo">AMANA GLOBAL</div>
-        <h1>Welcome Back</h1>
-        <p class="sub">Authorize access to your AI Vault</p>
+        <div class="logo">AMANA</div>
+        <h1>Secure Access</h1>
+        <p class="sub">Log in to manage your AI trading assets</p>
 
         <form id="loginForm">
             <div class="form-group">
                 <label>Email Address</label>
-                <input id="email" class="field" type="email" placeholder="name@example.com" required>
+                <div class="field-wrapper">
+                    <input id="email" class="field" type="email" placeholder="name@email.com" required>
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Security Password</label>
-                <input id="password" class="field" type="password" placeholder="••••••••" required>
+                <div class="field-wrapper">
+                    <input id="password" class="field" type="password" placeholder="••••••••" required>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
             </div>
 
-            <button class="btn" type="submit" id="submitBtn">Authorize Login</button>
+            <button class="btn" type="submit" id="submitBtn">LOGIN</button>
             <div id="msg" class="msg"></div>
         </form>
+
+        <div class="create-acc-wrap">
+            <p>Don't have an investment account?</p>
+            <a href="register.html" class="btn-outline">CREATE NEW ACCOUNT</a>
+        </div>
 
         <div class="footer-note">
             &copy; 2026 AMANA GLOBAL ELITE SYSTEM
@@ -141,22 +198,18 @@ color:var(--muted);
 </div>
 
 <script type="module">
-// استيراد مكتبات Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// إعدادات Firebase الخاصة بك
 const firebaseConfig = {
   apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
   authDomain: "ai-dodo.firebaseapp.com",
   projectId: "ai-dodo",
   storageBucket: "ai-dodo.firebasestorage.app",
   messagingSenderId: "261622335803",
-  appId: "1:261622335803:web:0b066791230535e7d5cf1e",
-  measurementId: "G-60CEST92TT"
+  appId: "1:261622335803:web:0b066791230535e7d5cf1e"
 };
 
-// تشغيل Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
@@ -164,55 +217,37 @@ const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
 const submitBtn = document.getElementById("submitBtn");
 
-// وظيفة إظهار الرسائل
 function showMsg(text, type) {
     msg.style.display = "block";
     msg.className = "msg " + type;
     msg.textContent = text;
 }
 
-// فحص حالة المستخدم: إذا مسجل دخول مسبقاً، حوله فوراً للرئيسية
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        window.location.href = "home.html";
-    }
+    if (user) { window.location.href = "home.html"; }
 });
 
-// التعامل مع الفورم عند الإرسال
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    // تجهيز الزر
     submitBtn.disabled = true;
-    submitBtn.textContent = "Verifying Credentials...";
+    submitBtn.textContent = "VERIFYING...";
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     try {
-        // محاولة تسجيل الدخول
         await signInWithEmailAndPassword(auth, email, password);
-        
-        showMsg("Identity Verified. Redirecting...", "success");
-
-        // تحويل بعد نجاح الدخول بـ 1 ثانية
-        setTimeout(() => {
-            window.location.href = "home.html";
-        }, 1000);
-
+        showMsg("Access Granted. Loading Vault...", "success");
+        setTimeout(() => { window.location.href = "home.html"; }, 1200);
     } catch (error) {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Authorize Login";
-
-        // التعامل مع أخطاء تسجيل الدخول
+        submitBtn.textContent = "LOGIN";
         console.error("Login Error:", error.code);
         
         if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-            showMsg("Invalid email or security password", "error");
-        } else if (error.code === "auth/too-many-requests") {
-            showMsg("Too many attempts. Try again later.", "error");
+            showMsg("Invalid credentials. Please try again.", "error");
         } else {
-            showMsg("System Error: " + error.message, "error");
+            showMsg("System error. Check your connection.", "error");
         }
     }
 });
