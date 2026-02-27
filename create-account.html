@@ -16,6 +16,8 @@
             --border: rgba(255, 255, 255, .08);
             --radius: 24px;
             --accent: #00f2ff;
+            --success: #00ff96;
+            --error: #ff0050;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -66,19 +68,18 @@
         input:focus + i { color: var(--brand2); }
 
         .btn {
-            width: 100%; padding: 16px; border-radius: 16px; border: none;
+            width: 100%; padding: 18px; border-radius: 16px; border: none;
             font-weight: 900; font-size: 16px; cursor: pointer;
             background: linear-gradient(135deg, var(--brand1), var(--brand2));
             color: #fff; margin-top: 10px; transition: 0.4s;
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 2px;
             box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.4); }
-        .btn:disabled { opacity: 0.5; filter: grayscale(1); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-        .login-link {
-            margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);
-        }
+        .login-link { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border); }
         .btn-outline {
             display: block; width: 100%; padding: 14px; border-radius: 14px;
             border: 1px solid var(--border); background: transparent;
@@ -87,12 +88,17 @@
         }
         .btn-outline:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: var(--accent); }
 
-        .msg {
-            margin-top: 20px; padding: 14px; border-radius: 14px;
-            font-size: 13px; display: none; font-weight: 600;
+        /* Status Messages */
+        .status-msg {
+            margin-top: 20px; padding: 15px; border-radius: 16px;
+            display: none; font-size: 14px; font-weight: 700;
+            animation: slideUp 0.3s ease-out;
         }
-        .success { background: rgba(0,255,150,.1); color: #00ff96; border: 1px solid rgba(0,255,150,0.2); }
-        .error { background: rgba(255,0,80,.1); color: #ff0050; border: 1px solid rgba(255,0,80,0.2); }
+        @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+        .status-msg.err { background: rgba(255,0,80,0.1); color: var(--error); border: 1px solid rgba(255,0,80,0.2); animation: shake 0.4s; }
+        .status-msg.ok { background: rgba(0,255,150,0.1); color: var(--success); border: 1px solid rgba(0,255,150,0.2); }
+        
+        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
     </style>
 </head>
 <body>
@@ -151,7 +157,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 25px;">
                 <label>Promo Code (Optional)</label>
                 <div class="field-wrapper">
                     <input id="promo" placeholder="Enter if any" />
@@ -159,13 +165,16 @@
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn">CREATE VAULT</button>
+            <button type="submit" id="submitBtn">
+                <span id="btnText">CREATE ACCOUNT</span>
+            </button>
+            
+            <div id="statusBox" class="status-msg"></div>
         </form>
 
         <div class="login-link">
             <a href="login.html" class="btn-outline">ALREADY HAVE AN ACCOUNT? LOGIN</a>
         </div>
-        <div id="msg" class="msg"></div>
     </div>
 </div>
 
@@ -188,19 +197,23 @@
     const db = getFirestore(app);
 
     const form = document.getElementById("createForm");
-    const msg = document.getElementById("msg");
+    const statusBox = document.getElementById("statusBox");
     const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
 
-    function showMsg(text, type){
-        msg.style.display = "block";
-        msg.className = "msg " + type;
-        msg.textContent = text;
+    function showStatus(msg, type) {
+        statusBox.textContent = msg;
+        statusBox.style.display = "block";
+        statusBox.className = "status-msg " + (type === 'success' ? 'ok' : 'err');
     }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        
+        // 1. بداية الإجراء
         submitBtn.disabled = true;
-        submitBtn.textContent = "VERIFYING POOL...";
+        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SECURITY CHECK...';
+        statusBox.style.display = "none";
 
         const usernameVal = document.getElementById("username").value.trim();
         const emailVal = document.getElementById("email").value.trim();
@@ -210,21 +223,27 @@
         const promoVal = document.getElementById("promo").value.trim();
 
         try {
+            // 2. فحص المحفظة
+            btnText.innerHTML = '<i class="fa-solid fa-wallet"></i> ASSIGNING WALLET...';
             const poolRef = collection(db, "wallet_pool");
             const q = query(poolRef, where("isUsed", "==", false), limit(1));
             const poolSnap = await getDocs(q);
 
             if (poolSnap.empty) {
-                throw new Error("Pool Empty. Contact Support.");
+                throw new Error("Investment Pool is full. Contact Admin.");
             }
 
             const walletDoc = poolSnap.docs[0];
             const walletAddress = walletDoc.data().address;
 
+            // 3. إنشاء الحساب
+            btnText.innerHTML = '<i class="fa-solid fa-user-shield"></i> CREATING IDENTITY...';
             const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
             const user = userCredential.user;
             await updateProfile(user, { displayName: usernameVal });
 
+            // 4. الربط النهائي
+            btnText.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> FINALIZING VAULT...';
             await runTransaction(db, async (transaction) => {
                 transaction.update(doc(db, "wallet_pool", walletDoc.id), {
                     isUsed: true,
@@ -247,15 +266,19 @@
                 });
             });
 
-            showMsg("Vault Created Successfully! ✅", "success");
-            setTimeout(() => { window.location.href = "home.html"; }, 1500);
+            // 5. النجاح
+            btnText.innerHTML = '<i class="fa-solid fa-check-double"></i> SUCCESS!';
+            showStatus("Account & Wallet Deployed! Redirecting...", "success");
+            
+            setTimeout(() => { window.location.href = "home.html"; }, 1800);
 
         } catch (err) {
             submitBtn.disabled = false;
-            submitBtn.textContent = "CREATE VAULT";
+            btnText.textContent = "CREATE ACCOUNT";
             let errorMsg = err.message;
-            if(err.code === "auth/email-already-in-use") errorMsg = "Email already in use.";
-            showMsg(errorMsg, "error");
+            if(err.code === "auth/email-already-in-use") errorMsg = "Email already registered in our system.";
+            if(err.code === "auth/weak-password") errorMsg = "Password is too weak.";
+            showStatus(errorMsg, "error");
         }
     });
 </script>
