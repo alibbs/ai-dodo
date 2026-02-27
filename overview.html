@@ -82,10 +82,8 @@
         .modal-input { width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 15px; color: white; margin-bottom: 15px; box-sizing: border-box; }
         .modal-btn { width: 100%; padding: 16px; border-radius: 15px; border: none; background: var(--brand); color: white; font-weight: 900; cursor: pointer; }
 
-        /* --- QR Holder --- */
         #qrcode { background: white; padding: 10px; border-radius: 12px; margin: 15px auto; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; }
 
-        /* --- Nav --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
@@ -179,6 +177,7 @@
                     userTRC20 = d.trc20_address || "Searching...";
                     
                     if (!isScannerRunning && userTRC20.startsWith("T")) {
+                        console.log("Scanner Started for: " + userTRC20);
                         startScanner(userTRC20, user.uid);
                         isScannerRunning = true;
                     }
@@ -187,28 +186,35 @@
         } else { window.location.href = "login.html"; }
     });
 
-    // --- سكانر الحوالات التلقائي ---
+    // --- سكانر الحوالات المحدث (Trongrid API) ---
     async function startScanner(address, uid) {
         setInterval(async () => {
             try {
-                const res = await fetch(`https://apilist.tronscan.org/api/token_trc20/transfers?limit=5&toAddress=${address}`);
+                // استخدام Trongrid بدلاً من TronScan لتجنب أخطاء CORS
+                const res = await fetch(`https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=5`);
                 const data = await res.json();
-                if (data.token_transfers) {
-                    for (let tx of data.token_transfers) {
+                
+                if (data.data && data.data.length > 0) {
+                    for (let tx of data.data) {
                         const hash = tx.transaction_id;
-                        const amount = tx.quant / 1000000;
-                        const txRef = doc(db, "processed_tx", hash);
-                        const txSnap = await getDoc(txRef);
-                        
-                        if (!txSnap.exists()) {
-                            await setDoc(txRef, { uid, amount, hash, date: new Date() });
-                            await updateDoc(doc(db, "users", uid), { balance: increment(amount) });
-                            alert(`Success! +$${amount} added to balance.`);
+                        // التاكد ان الحوالة هي USDT حصراً
+                        if (tx.token_info.symbol === "USDT") {
+                            const decimals = tx.token_info.decimals || 6;
+                            const amount = tx.value / Math.pow(10, decimals);
+                            
+                            const txRef = doc(db, "processed_tx", hash);
+                            const txSnap = await getDoc(txRef);
+                            
+                            if (!txSnap.exists()) {
+                                await setDoc(txRef, { uid, amount, hash, date: new Date() });
+                                await updateDoc(doc(db, "users", uid), { balance: increment(amount) });
+                                alert(`Deposit Detected! +$${amount.toFixed(2)} added.`);
+                            }
                         }
                     }
                 }
-            } catch(e) {}
-        }, 15000);
+            } catch(e) { console.error("Scanner Error:", e); }
+        }, 12000); // يفحص كل 12 ثانية
     }
 
     window.openModal = function(type) {
@@ -229,7 +235,10 @@
                 <p style="font-size:10px; color:orange; text-align:center; margin-top:10px;">Send only USDT TRC20 to this address.</p>
             `;
             if(userTRC20.startsWith("T")) {
-                setTimeout(() => { new QRCode(document.getElementById("qrcode"), { text: userTRC20, width: 150, height: 150 }); }, 50);
+                setTimeout(() => { 
+                    document.getElementById("qrcode").innerHTML = ""; // مسح القديم
+                    new QRCode(document.getElementById("qrcode"), { text: userTRC20, width: 150, height: 150 }); 
+                }, 50);
             }
         } else if(type === 'withdraw') {
             title.textContent = "Withdraw USDT";
@@ -252,7 +261,6 @@
     window.closeModal = () => { document.getElementById('actionModal').style.display = 'none'; }
     window.processAction = () => { alert("Request submitted."); closeModal(); }
 
-    // --- تحديث أسعار العملات المباشر ---
     async function fetchPrices() {
         try {
             const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
