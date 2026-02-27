@@ -22,10 +22,18 @@
             min-height: 100vh; display: flex; flex-direction: column; align-items: center;
         }
 
-        .container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
+        /* --- Logo Style --- */
+        .logo-top {
+            position: absolute; top: 20px; left: 20px;
+            font-weight: 900; font-size: 16px; letter-spacing: -1px;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .logo-top span { color: var(--brand); text-shadow: 0 0 10px var(--brand); }
+
+        .container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; margin-top: 50px; }
 
         /* Header & Balance */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; }
+        .header { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; width: 100%; }
         .bal-display { 
             background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); 
             padding: 8px 15px; border-radius: 20px; color: var(--up); 
@@ -34,9 +42,10 @@
 
         /* Grid */
         .grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
             background: var(--card); padding: 15px; border-radius: 20px;
             border: 1px solid var(--border); margin-bottom: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .tile {
@@ -44,9 +53,10 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 24px; transition: 0.2s; border: 1px solid var(--border);
         }
-        .tile:active { transform: scale(0.9); }
-        .tile.revealed { background: rgba(0,0,0,0.4); border: none; cursor: default; }
+        .tile:active { transform: scale(0.92); }
+        .tile.revealed { background: rgba(0,0,0,0.4); border-color: transparent; cursor: default; }
         .tile.bomb-hit { background: rgba(255, 0, 80, 0.2); border: 1px solid #ff0050; }
+        
         .tile i { opacity: 0; transform: scale(0.5); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
 
@@ -58,31 +68,36 @@
         .input-row { display: flex; gap: 10px; }
         .input-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 10px; color: #777; font-weight: 800; text-transform: uppercase; }
+        
         input, select {
             background: rgba(0,0,0,0.3); border: 1px solid var(--border);
             padding: 12px; border-radius: 12px; color: #fff; font-weight: bold; outline: none;
+            -webkit-appearance: none;
         }
 
         .btn-main {
             background: linear-gradient(135deg, var(--brand), #6200ff);
             border: none; padding: 16px; border-radius: 15px; color: #fff;
             font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 184, 0.2);
         }
+        .btn-main:active { transform: scale(0.98); }
         .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
-        .cashout-btn { background: var(--up); color: #060914; display: none; }
+        .cashout-btn { background: var(--up); color: #060914; display: none; box-shadow: 0 5px 15px rgba(0, 255, 150, 0.2); }
 
-        /* Stats */
+        /* Stats Bar */
         .stats { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         
-        .d-gem { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-        .d-bomb { color: #ff0050; }
+        .d-gem { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
+        .d-bomb { color: #ff0050; text-shadow: 0 0 10px #ff0050; }
     </style>
 </head>
 <body>
 
+<div class="logo-top">AMANA <span>ELITE</span></div>
+
 <div class="container">
     <div class="header">
-        <h2 style="margin:0; font-size:18px;">DIAMONDS</h2>
         <div class="bal-display" id="userBalance"><i class="fa-solid fa-wallet"></i> 0.00</div>
     </div>
 
@@ -96,8 +111,8 @@
     <div class="controls">
         <div class="input-row">
             <div class="input-box">
-                <label>Bet Amount</label>
-                <input type="number" id="betAmount" value="10" min="1">
+                <label>Amount</label>
+                <input type="number" id="betAmount" value="10">
             </div>
             <div class="input-box">
                 <label>Bombs</label>
@@ -109,18 +124,14 @@
                 </select>
             </div>
         </div>
-        <button class="btn-main" id="startBtn">PLACE BET</button>
+        <button class="btn-main" id="startBtn">START GAME</button>
         <button class="btn-main cashout-btn" id="cashoutBtn">CASHOUT</button>
     </div>
 </div>
 
-<audio id="sndGem" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
-<audio id="sndBomb" src="https://www.soundjay.com/free-music/sounds/fail-farewell-01.mp3"></audio>
-<audio id="sndClick" src="https://www.soundjay.com/buttons/sounds/button-50.mp3"></audio>
-
-<script type="module">
+<audio id="sndGem" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio> <audio id="sndBomb" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio> <audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio> <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -148,10 +159,10 @@
     const cashoutBtn = document.getElementById('cashoutBtn');
     const balDisplay = document.getElementById('userBalance');
 
-    // Load Sounds
-    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.3;
+    // Soft Volume Settings
+    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.2;
     const sndBomb = document.getElementById('sndBomb'); sndBomb.volume = 0.2;
-    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.2;
+    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.15;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -176,12 +187,16 @@
     }
 
     async function initGame() {
-        const bet = parseFloat(document.getElementById('betAmount').value);
-        if (bet > userBalance) return alert("Insufficient Balance!");
-        if (bet <= 0) return;
+        const betValue = document.getElementById('betAmount').value;
+        const bet = parseFloat(betValue);
+        
+        if (isNaN(bet) || bet <= 0) return;
+        if (bet > userBalance) {
+            alert("Balance too low!");
+            return;
+        }
 
         sndClick.play();
-        // خصم الرصيد فوراً من Firebase
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
 
         const bombNum = parseInt(document.getElementById('bombCount').value);
@@ -249,7 +264,6 @@
             await updateDoc(doc(db, "users", userId), { balance: increment(winAmount) });
         }
 
-        // كشف القنابل
         bombs.forEach(i => {
             const t = grid.children[i];
             if(!t.classList.contains('revealed')) {
