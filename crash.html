@@ -3,46 +3,29 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | PERFECT SYNC</title>
+    <title>AMANA ELITE | CRASH SYNC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@700;900&display=swap');
-
-        :root {
-            --bg: #030712;
-            --panel: #0f172a;
-            --accent: #8b5cf6;
-            --gold: #fbbf24;
-            --up: #00e701;
-            --down: #ff3b3b;
-        }
-
+        :root { --bg: #030712; --panel: #0f172a; --accent: #8b5cf6; --gold: #fbbf24; --up: #00e701; --down: #ff3b3b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 20px); }
-
-        /* History */
-        .history-bar { display: flex; gap: 8px; padding: 10px; overflow: hidden; justify-content: center; background: rgba(0,0,0,0.4); }
+        .history-bar { display: flex; gap: 8px; padding: 10px; overflow: hidden; justify-content: center; background: rgba(0,0,0,0.4); height: 40px; }
         .h-item { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 900; background: #1e293b; font-family: 'Orbitron'; }
-
         header { height: 50px; display: flex; align-items: center; justify-content: center; }
         .balance-box { background: #000; padding: 6px 20px; border-radius: 50px; border: 2px solid var(--accent); display: flex; align-items: center; gap: 8px; }
         .balance-box span { font-family: 'Orbitron'; font-size: 1.1rem; }
-
-        /* Game Area */
         .game-stage { flex: 1; position: relative; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         canvas { position: absolute; width: 100%; height: 100%; }
         #multi-val { font-size: 85px; font-weight: 900; font-family: 'Orbitron'; z-index: 10; pointer-events: none; }
         .status-info { position: absolute; top: 12%; z-index: 10; font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-
-        /* Controls */
         .controls { background: var(--panel); padding: 15px 20px 35px 20px; border-radius: 25px 25px 0 0; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 10px; }
         .profit-label { height: 18px; text-align: center; color: var(--up); font-weight: 900; font-size: 14px; }
         .in-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .fld { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 10px; }
         .fld label { font-size: 8px; color: #64748b; display: block; text-transform: uppercase; font-weight: 800; }
         input { width: 100%; background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 900; }
-
         .main-btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
         .btn-bet { background: var(--accent); color: #fff; box-shadow: 0 4px 0 #5b21b6; }
         .btn-next { background: var(--gold); color: #000; box-shadow: 0 4px 0 #b45309; }
@@ -53,16 +36,15 @@
 <body>
 
     <div class="history-bar" id="history"></div>
-
     <header>
         <div class="balance-box">
             <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
-            <span id="balance">1000.00</span>
+            <span id="balance">0.00</span>
         </div>
     </header>
 
     <div class="game-stage">
-        <div class="status-info" id="status">Syncing...</div>
+        <div class="status-info" id="status">Connecting...</div>
         <canvas id="graph"></canvas>
         <div id="multi-val">1.00x</div>
     </div>
@@ -73,21 +55,54 @@
             <div class="fld"><label>Bet Amount</label><input type="number" id="amt" value="10"></div>
             <div class="fld"><label>Auto Cashout</label><input type="number" id="auto" value="2.00"></div>
         </div>
-        <button id="actionBtn" class="main-btn btn-bet" onclick="handleInput()">Place Bet</button>
+        <button id="actionBtn" class="main-btn btn-bet">Connecting...</button>
     </div>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let userRef = null;
+    let balance = 0;
+    let betState = { active: false, next: false, cashed: false, amount: 0 };
+    
+    // ربط الواجهة
+    const balanceEl = document.getElementById('balance');
+    const btnEl = document.getElementById('actionBtn');
+
+    // مراقبة الرصيد من فايربيس
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userRef = doc(db, "users", user.uid);
+            onSnapshot(userRef, (snap) => {
+                if (snap.exists()) {
+                    balance = snap.data().balance || 0;
+                    balanceEl.innerText = balance.toFixed(2);
+                }
+            });
+        } else { window.location.href = "login.html"; }
+    });
+
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext('2d');
     const multiEl = document.getElementById('multi-val');
     const statusEl = document.getElementById('status');
-    const btnEl = document.getElementById('actionBtn');
     const profitEl = document.getElementById('profit');
 
-    let balance = 1000.00;
-    let betState = { active: false, next: false, cashed: false, amount: 0 };
-    
-    // إعدادات الوقت (5 ثواني مراهنة + 0.8 ثانية تجمد عند الكراش)
     const ROUND_TIME = 15000; 
     const BET_WINDOW = 5000;
     const FREEZE_TIME = 800;
@@ -95,7 +110,7 @@
     function getCrashPoint(roundId) {
         const seed = Math.abs(Math.sin(roundId) * 99999);
         const rand = seed - Math.floor(seed);
-        if (rand < 0.03) return 1.00; // 3% احتمال كراش فوري
+        if (rand < 0.03) return 1.00;
         return Math.max(1.01, 0.98 / (1 - rand));
     }
 
@@ -110,26 +125,22 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (t <= 0) return;
         ctx.beginPath();
-        ctx.strokeStyle = '#8b5cf6';
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#8b5cf6'; ctx.lineWidth = 4;
         ctx.shadowBlur = 10; ctx.shadowColor = '#8b5cf6';
-        
         const x = 40 + (canvas.width - 80) * Math.min(t / 10, 1);
         const y = (canvas.height - 40) - (canvas.height - 120) * Math.min(Math.pow(t, 0.7) / 5, 1);
-        
         ctx.moveTo(40, canvas.height - 40);
         ctx.quadraticCurveTo(40 + (x-40)*0.5, canvas.height - 40, x, y);
         ctx.stroke();
     }
 
-    function loop() {
+    async function loop() {
         const now = Date.now();
         const roundId = Math.floor(now / ROUND_TIME);
         const cycle = now % ROUND_TIME;
         const crashPoint = getCrashPoint(roundId);
 
         if (cycle < BET_WINDOW) {
-            // --- مرحلة المراهنة (5 ثواني) ---
             statusEl.innerText = `Starts in ${Math.ceil((BET_WINDOW - cycle) / 1000)}s`;
             multiEl.innerText = "1.00x";
             multiEl.style.color = "#fff";
@@ -144,31 +155,26 @@
                 btnEl.className = "main-btn btn-bet"; btnEl.innerText = "Place Bet";
             }
         } else {
-            // --- مرحلة الطيران ---
             const flightTime = (cycle - BET_WINDOW) / 1000;
-            const currentMulti = Math.pow(1.12, flightTime); // سرعة الخط متوازنة
+            const currentMulti = Math.pow(1.12, flightTime);
 
             if (currentMulti >= crashPoint || (cycle > ROUND_TIME - FREEZE_TIME)) {
-                // الكراش
                 statusEl.innerText = "Crashed!";
                 multiEl.innerText = crashPoint.toFixed(2) + "x";
                 multiEl.style.color = "#ff3b3b";
                 btnEl.className = "main-btn btn-dis"; btnEl.innerText = "Crashed";
                 betState.active = false; betState.cashed = false;
             } else {
-                // طيران حي
                 statusEl.innerText = "Live";
                 multiEl.innerText = currentMulti.toFixed(2) + "x";
                 multiEl.style.color = "#00e701";
                 renderGraph(flightTime);
 
                 if (betState.active && !betState.cashed) {
-                    btnEl.className = "main-btn btn-out";
-                    btnEl.innerText = `Cash Out`;
+                    btnEl.className = "main-btn btn-out"; btnEl.innerText = `Cash Out`;
                     profitEl.innerText = `+${(betState.amount * currentMulti).toFixed(2)} USDT`;
-                    
                     let auto = parseFloat(document.getElementById('auto').value);
-                    if (currentMulti >= auto) doCashOut(currentMulti);
+                    if (currentMulti >= auto) await doCashOut(currentMulti);
                 } else if (!betState.active) {
                     if (betState.next) {
                         btnEl.className = "main-btn btn-dis"; btnEl.innerText = "Next Round Queued";
@@ -178,37 +184,45 @@
                 }
             }
         }
-
         if (cycle < 50) updateHistory(roundId);
         requestAnimationFrame(loop);
     }
 
-    function handleInput() {
+    // تعديل دالة المراهنة للخصم من فايربيس
+    window.handleInput = async () => {
         const cycle = Date.now() % ROUND_TIME;
         const a = parseFloat(document.getElementById('amt').value);
 
+        if (a > balance || a <= 0) { alert("Insufficient Balance"); return; }
+
         if (cycle < BET_WINDOW) {
-            if (a > balance || a <= 0 || betState.active) return;
-            balance -= a; betState.amount = a; betState.active = true;
-            document.getElementById('balance').innerText = balance.toFixed(2);
+            if (betState.active) return;
+            const newBal = balance - a;
+            await updateDoc(userRef, { balance: newBal });
+            betState.amount = a; betState.active = true;
         } else if (cycle < ROUND_TIME - FREEZE_TIME) {
             if (betState.active && !betState.cashed) {
                 const ft = (cycle - BET_WINDOW) / 1000;
-                doCashOut(Math.pow(1.12, ft));
+                await doCashOut(Math.pow(1.12, ft));
             } else if (!betState.active && !betState.next) {
-                if (a > balance || a <= 0) return;
-                balance -= a; betState.amount = a; betState.next = true;
-                document.getElementById('balance').innerText = balance.toFixed(2);
+                const newBal = balance - a;
+                await updateDoc(userRef, { balance: newBal });
+                betState.amount = a; betState.next = true;
             }
         }
-    }
+    };
 
-    function doCashOut(m) {
+    // ربط الزر بالدالة
+    btnEl.onclick = window.handleInput;
+
+    async function doCashOut(m) {
         if (betState.cashed) return;
         betState.cashed = true;
         const win = betState.amount * m;
-        balance += win;
-        document.getElementById('balance').innerText = balance.toFixed(2);
+        const newBal = balance + win;
+        
+        await updateDoc(userRef, { balance: newBal });
+        
         btnEl.className = "main-btn btn-dis";
         btnEl.innerText = "Won " + win.toFixed(2);
         profitEl.innerText = "SUCCESS!";
