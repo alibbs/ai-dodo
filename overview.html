@@ -108,7 +108,7 @@
             <div class="card-top">
                 <div>
                     <div class="card-label">Total Portfolio</div>
-                    <div class="card-balance">2,840.15<small>USDT</small></div>
+                    <div class="card-balance" id="displayBalance">0.00<small>USDT</small></div>
                 </div>
                 <i class="fa-solid fa-layer-group"></i>
             </div>
@@ -116,11 +116,11 @@
             <div class="card-stats">
                 <div class="stat-box">
                     Bot Profit
-                    <b>+$124.50</b>
+                    <b id="displayBotProfit">+$0.00</b>
                 </div>
                 <div class="stat-box">
                     Game Win
-                    <b class="game-profit">+$82.00</b>
+                    <b class="game-profit" id="displayGameProfit">+$0.00</b>
                 </div>
             </div>
         </div>
@@ -159,8 +159,43 @@
     <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
-<script>
-    function openModal(type) {
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+      authDomain: "ai-dodo.firebaseapp.com",
+      projectId: "ai-dodo",
+      storageBucket: "ai-dodo.firebasestorage.app",
+      messagingSenderId: "261622335803",
+      appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let userTRC20 = ""; // لتخزين العنوان القادم من Firestore
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if (snap.exists()) {
+                    const d = snap.data();
+                    document.getElementById('displayBalance').innerHTML = `${(d.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}<small>USDT</small>`;
+                    document.getElementById('displayBotProfit').textContent = `+$${(d.bot_profit || 0).toFixed(2)}`;
+                    document.getElementById('displayGameProfit').textContent = `+$${(d.game_profit || 0).toFixed(2)}`;
+                    userTRC20 = d.trc20_address || "Pending Assignment...";
+                }
+            });
+        } else {
+            window.location.href = "login.html";
+        }
+    });
+
+    window.openModal = function(type) {
         const modal = document.getElementById('actionModal');
         const title = document.getElementById('modalTitle');
         const body = document.getElementById('modalBody');
@@ -170,42 +205,40 @@
 
         if(type === 'deposit') {
             title.textContent = "Deposit (TRC20)";
-            body.innerHTML = `<p style="font-size:11px; color:#888;">Only USDT TRC20 is accepted.</p>
-                              <div style="background:#000; padding:12px; border-radius:12px; font-size:11px; word-break:break-all; border:1px dashed #444;">T9zB4nmC7S9G6vBxT9zB4nmC7S9G6vBx</div>
-                              <input type="number" class="modal-input" placeholder="Amount to deposit">`;
+            body.innerHTML = `
+                <p style="font-size:11px; color:#888;">Only USDT TRC20 is accepted. Deposit to your unique address:</p>
+                <div style="background:#000; padding:15px; border-radius:12px; font-size:12px; word-break:break-all; border:1px dashed var(--brand); color:var(--up); text-align:center; font-family:monospace;">
+                    ${userTRC20}
+                </div>
+                <p style="font-size:10px; color:orange; margin-top:10px;">* Funds will appear after 1 confirmation.</p>
+            `;
         } else if(type === 'withdraw') {
             title.textContent = "Withdraw (TRC20)";
-            body.innerHTML = `<input type="text" class="modal-input" placeholder="Your TRC20 Address"><input type="number" class="modal-input" placeholder="Amount">`;
+            body.innerHTML = `<input type="text" id="wAddr" class="modal-input" placeholder="Your TRC20 Address"><input type="number" id="wAmt" class="modal-input" placeholder="Amount">`;
         } else if(type === 'swap') {
             title.textContent = "Instant Swap";
             body.innerHTML = `<select class="modal-input"><option>USDT to BTC</option><option>USDT to ETH</option></select><input type="number" class="modal-input" placeholder="Amount">`;
         } else if(type === 'history') {
             title.textContent = "Activity History";
             footer.style.display = 'none';
-            body.innerHTML = `
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #222;">
-                    <div><b style="font-size:13px;">Game Win</b><br><small style="color:#555">Today</small></div>
-                    <b style="color:var(--up)">+$24.00</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:10px 0;">
-                    <div><b style="font-size:13px;">Bot Profit</b><br><small style="color:#555">Yesterday</small></div>
-                    <b style="color:var(--up)">+$5.20</b>
-                </div>`;
+            body.innerHTML = `<p style="text-align:center; color:#555; font-size:12px;">No recent transactions found.</p>`;
         }
     }
 
-    function closeModal() { document.getElementById('actionModal').style.display = 'none'; }
-    function processAction() { alert("Request Processing..."); closeModal(); }
+    window.closeModal = function() { document.getElementById('actionModal').style.display = 'none'; }
+    window.processAction = function() { alert("Request Sent to Security Node. Please wait."); closeModal(); }
 
     async function fetchPrices() {
-        const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT","SOLUSDT"]');
-        const data = await res.json();
-        data.forEach(c => {
-            const sym = c.symbol.replace('USDT','').toLowerCase();
-            document.getElementById(`p-${sym}`).textContent = '$' + parseFloat(c.price).toLocaleString();
-        });
+        try {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT","SOLUSDT"]');
+            const data = await res.json();
+            data.forEach(c => {
+                const sym = c.symbol.replace('USDT','').toLowerCase();
+                document.getElementById(`p-${sym}`).textContent = '$' + parseFloat(c.price).toLocaleString();
+            });
+        } catch(e) {}
     }
-    setInterval(fetchPrices, 5000); fetchPrices();
+    setInterval(fetchPrices, 10000); fetchPrices();
 </script>
 </body>
 </html>
