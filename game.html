@@ -30,7 +30,7 @@
         .bal-display { 
             background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); 
             padding: 8px 15px; border-radius: 20px; color: var(--up); 
-            font-weight: 800; font-size: 14px;
+            font-weight: 800; font-size: 14px; min-width: 100px; text-align: center;
         }
 
         /* --- Banner --- */
@@ -80,7 +80,7 @@
 <div class="container">
     <div class="header">
         <h1 style="font-size: 22px; font-weight: 900; margin: 0; letter-spacing: -1px;">AMANA <span style="color:var(--brand)">ELITE</span></h1>
-        <div class="bal-display" id="hubBal"><i class="fa-solid fa-wallet"></i> 1,000.00</div>
+        <div class="bal-display" id="hubBal"><i class="fa-solid fa-spinner fa-spin"></i></div>
     </div>
 
     <div class="casino-banner">
@@ -137,17 +137,52 @@
     <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
-<script>
-    function syncBalance() {
-        let savedBal = localStorage.getItem('casino_balance');
-        if (!savedBal) {
-            localStorage.setItem('casino_balance', '1000.00');
-            savedBal = '1000.00';
+<script type="module">
+    // استيراد Firebase الأساسي
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // إعدادات Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    // تشغيل التطبيق
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const balDisplay = document.getElementById('hubBal');
+
+    // مراقبة المستخدم وجلب الرصيد من Firestore
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // الاستماع للتغييرات في مستند المستخدم (الرصيد)
+            onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const currentBal = userData.balance || 0;
+                    
+                    // تحديث واجهة المستخدم بالرصيد الحقيقي
+                    balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${currentBal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                } else {
+                    balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> 0.00`;
+                }
+            }, (error) => {
+                console.error("Error fetching balance:", error);
+                balDisplay.innerHTML = "Error";
+            });
+        } else {
+            // إذا لم يكن هناك مستخدم، توجيه لصفحة تسجيل الدخول
+            window.location.href = "login.html";
         }
-        document.getElementById('hubBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${parseFloat(savedBal).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    }
-    syncBalance();
-    setInterval(syncBalance, 1000);
+    });
 </script>
 
 </body>
