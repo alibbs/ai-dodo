@@ -81,9 +81,8 @@
             background: linear-gradient(135deg, var(--brand), #a100ff);
             color: white; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s;
         }
-        .activate-btn:active { transform: scale(0.97); }
+        .activate-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* --- Info Section --- */
         .desc-box {
             margin-top: 25px; padding: 18px; background: rgba(255,255,255,0.02); border-radius: 20px; 
             font-size: 12px; line-height: 1.6; color: #888; border: 1px solid var(--border);
@@ -91,7 +90,6 @@
         .desc-box h4 { margin: 0 0 10px; color: #fff; font-size: 14px; }
         .desc-box b { color: var(--brand); }
 
-        /* --- Navigation --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; backdrop-filter: blur(10px); }
         .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
@@ -106,7 +104,7 @@
         <div class="inner-glow"></div>
         <div class="core-info">
             <span id="activeCoinLabel" style="font-size: 10px; color: var(--accent); letter-spacing: 1px;">BTC CORE VAULT</span>
-            <div class="main-balance" id="displayBalance">$0.00</div>
+            <div class="main-balance" id="displayBalance"><i class="fas fa-spinner fa-spin"></i></div>
             <div class="uptime" id="uptimeDisplay">00:00:00:00</div>
         </div>
     </div>
@@ -154,14 +152,14 @@
             <span id="netProfit" style="color: var(--accent); font-weight: 800;">$2.50 USDT</span>
         </div>
 
-        <button class="activate-btn" onclick="startAI()">INITIALIZE AI CORE</button>
+        <button class="activate-btn" id="startBtn">INITIALIZE AI CORE</button>
     </div>
 
     <div class="desc-box">
         <h4><i class="fa-solid fa-circle-nodes"></i> Operational Summary</h4>
         The Amana Global <b>AI Vault</b> combines high-frequency trading bots with a secure <b>Investment Fund</b> structure. 
         <br><br>
-        Your capital (Max <b>5,000 USDT</b>) is locked for the selected period to ensure market liquidity. A <b>5% service fee</b> is applied only to generated profits upon withdrawal.
+        Your capital (Max <b>5,000 USDT</b>) is locked for the selected period to ensure market liquidity. A <b>5% service fee</b> is applied only to generated profits.
     </div>
 </div>
 
@@ -173,18 +171,46 @@
     <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+      authDomain: "ai-dodo.firebaseapp.com",
+      projectId: "ai-dodo",
+      storageBucket: "ai-dodo.firebasestorage.app",
+      messagingSenderId: "261622335803",
+      appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentBalance = 0;
+    let currentUser = null;
     let activeDays = 5;
     let currentRate = 1.0;
     let startTime = null;
 
-    // --- الربط الموحد مع الرصيد ---
-    function syncBalance() {
-        let currentBal = parseFloat(localStorage.getItem('main_balance')) || 1000.00;
-        document.getElementById('displayBalance').textContent = "$" + currentBal.toLocaleString(undefined, {minimumFractionDigits: 2});
-    }
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if (snap.exists()) {
+                    currentBalance = snap.data().balance || 0;
+                    document.getElementById('displayBalance').textContent = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+                }
+            });
+        } else {
+            window.location.href = "login.html";
+        }
+    });
 
-    function selectCoin(el, symbol, rate) {
+    // الدوال لجعلها متاحة في HTML
+    window.selectCoin = (el, symbol, rate) => {
         document.querySelectorAll('.coin-opt').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         currentRate = rate;
@@ -193,51 +219,47 @@
         calc();
     }
 
-    function setD(btn, d) {
+    window.setD = (btn, d) => {
         document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeDays = d;
         calc();
     }
 
-    function calc() {
-        let amtInput = document.getElementById('investAmt');
-        let amt = parseFloat(amtInput.value) || 0;
-        
-        if(amt > 5000) { 
-            amt = 5000; 
-            amtInput.value = 5000; 
-        }
-
+    window.calc = () => {
+        let amt = parseFloat(document.getElementById('investAmt').value) || 0;
+        if(amt > 5000) amt = 5000;
         let totalNet = (amt * (currentRate/100) * activeDays);
         document.getElementById('netProfit').textContent = "$" + totalNet.toFixed(2) + " USDT";
     }
 
-    function startAI() {
+    document.getElementById('startBtn').addEventListener('click', async () => {
         let amt = parseFloat(document.getElementById('investAmt').value);
-        let currentBal = parseFloat(localStorage.getItem('main_balance')) || 1000.00;
-
+        
         if(amt < 50) { alert("Minimum investment is 50 USDT"); return; }
-        
-        // التحقق من الرصيد الحقيقي
-        if(amt > currentBal) {
-            alert("Insufficient balance in your wallet!");
-            return;
-        }
+        if(amt > currentBalance) { alert("Insufficient balance!"); return; }
 
-        // خصم المبلغ وتحديث السيستم
-        let newBalance = currentBal - amt;
-        localStorage.setItem('main_balance', newBalance.toFixed(2));
-        syncBalance();
-
-        let btn = document.querySelector('.activate-btn');
-        btn.textContent = "CORE DEPLOYED";
-        btn.style.background = "#1a1a1a";
+        const btn = document.getElementById('startBtn');
         btn.disabled = true;
-        
-        startTime = new Date();
-        setInterval(updateTime, 10);
-    }
+        btn.textContent = "PROCESSING...";
+
+        try {
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, {
+                balance: currentBalance - amt
+            });
+
+            btn.textContent = "CORE DEPLOYED";
+            btn.style.background = "#1a1a1a";
+            startTime = new Date();
+            setInterval(updateTime, 10);
+            alert("AI Core Initialized Successfully!");
+        } catch (e) {
+            alert("Error: " + e.message);
+            btn.disabled = false;
+            btn.textContent = "INITIALIZE AI CORE";
+        }
+    });
 
     function updateTime() {
         let diff = new Date() - startTime;
@@ -245,16 +267,11 @@
         let mm = Math.floor((diff % 3600000) / 60000);
         let ss = Math.floor((diff % 60000) / 1000);
         let ms = Math.floor((diff % 1000) / 10);
-        
         document.getElementById('uptimeDisplay').textContent = 
             (hh<10?'0':'')+hh + ":" + (mm<10?'0':'')+mm + ":" + (ss<10?'0':'')+ss + ":" + (ms<10?'0':'')+ms;
     }
 
-    // تشغيل المزامنة فوراً
-    syncBalance();
-    calc();
-    // مراقبة الرصيد كل ثانية
-    setInterval(syncBalance, 1000);
+    window.calc(); // تشغيل الحسبة لأول مرة
 </script>
 
 </body>
