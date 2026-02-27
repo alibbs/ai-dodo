@@ -3,53 +3,87 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AMANA | Command Center</title>
+    <title>AMANA ELITE | Private Command Center</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        body { background: #060914; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
-        .admin-container { max-width: 1000px; margin: auto; }
-        h1 { color: #ff00b8; border-bottom: 2px solid #1a0b2e; padding-bottom: 10px; }
+        :root {
+            --admin-pink: #ff00b8;
+            --admin-cyan: #00f2ff;
+            --bg: #060914;
+        }
+        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        
+        /* --- بوابة الدخول السرية --- */
+        #adminAuth {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .auth-box { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--admin-pink); text-align: center; width: 300px; }
+        .auth-box h2 { color: var(--admin-pink); margin-bottom: 20px; }
+        .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
+        .auth-btn { width: 100%; padding: 12px; background: var(--admin-pink); border: none; color: white; font-weight: 900; border-radius: 8px; cursor: pointer; }
+
+        /* --- لوحة التحكم --- */
+        .admin-content { display: none; max-width: 1100px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1a0b2e; padding-bottom: 15px; margin-bottom: 20px; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-card b { display: block; font-size: 24px; color: #00f2ff; }
+        .stat-card b { display: block; font-size: 24px; color: var(--admin-cyan); }
 
-        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: 15px; overflow: hidden; }
+        .table-container { overflow-x: auto; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
-        th { background: #1a0b2e; color: #ff00b8; text-transform: uppercase; letter-spacing: 1px; }
+        th { background: #1a0b2e; color: var(--admin-pink); text-transform: uppercase; letter-spacing: 1px; }
         
-        .action-btn { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; margin-right: 5px; }
-        .btn-edit { background: #00f2ff; color: #000; }
-        .btn-save { background: #00ff96; color: #000; }
-        
-        input { background: #000; border: 1px solid #333; color: #00ff96; padding: 5px; border-radius: 5px; width: 80px; }
-        .wide-input { width: 200px; color: #fff; }
+        input { background: #000; border: 1px solid #444; color: #00ff96; padding: 8px; border-radius: 5px; width: 90px; font-weight: bold; }
+        .wide-input { width: 180px; color: #fff; font-size: 11px; }
+
+        .btn-update { background: var(--admin-cyan); color: #000; padding: 8px 15px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-update:hover { background: var(--admin-pink); color: #fff; }
+        .logout { color: #ff3b3b; cursor: pointer; font-size: 12px; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="admin-container">
-    <h1><i class="fa-solid fa-screwdriver-wrench"></i> AMANA ADMIN PANEL</h1>
-    
-    <div class="stats-grid">
-        <div class="stat-card">Total Users <b id="totalUsers">0</b></div>
-        <div class="stat-card">Total Deposits <b id="totalVault">$0.00</b></div>
+    <div id="adminAuth">
+        <div class="auth-box">
+            <h2>MASTER ADMIN</h2>
+            <input type="email" id="adminEmail" class="auth-input" placeholder="Admin Email">
+            <input type="password" id="adminPass" class="auth-input" placeholder="Master Password">
+            <button class="auth-btn" onclick="checkAuth()">UNSEAL ACCESS</button>
+            <p id="error" style="color: red; font-size: 12px; margin-top: 10px; display: none;">Invalid Credentials</p>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>User (Email/Name)</th>
-                <th>Balance ($)</th>
-                <th>TRC20 Address</th>
-                <th>Bot/Game Profit</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="userTable">
-            </tbody>
-    </table>
-</div>
+    <div class="admin-content" id="mainAdmin">
+        <div class="header">
+            <h1><i class="fa-solid fa-bolt"></i> AMANA COMMAND</h1>
+            <div class="logout" onclick="location.reload()">Lock Console</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">Active Users <b id="totalUsers">0</b></div>
+            <div class="stat-card">Vault TVL <b id="totalVault">$0.00</b></div>
+            <div class="stat-card">System Health <b style="color:#00ff96">OPTIMAL</b></div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User / UID</th>
+                        <th>Balance (USDT)</th>
+                        <th>TRC20 Address (Deposit)</th>
+                        <th>Bot/Game Profits</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+                    </tbody>
+            </table>
+        </div>
+    </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -67,40 +101,60 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // جلب بيانات كل المستخدمين فوريًا
-    onSnapshot(collection(db, "users"), (snapshot) => {
-        const table = document.getElementById('userTable');
-        table.innerHTML = "";
-        let totalUsers = 0;
-        let totalVault = 0;
+    // --- إعدادات الدخول الخاصة بك ---
+    const MASTER_EMAIL = "admin@amana.com"; 
+    const MASTER_PASS = "Amana2026"; 
 
-        snapshot.forEach((userDoc) => {
-            const data = userDoc.data();
-            const id = userDoc.id;
-            totalUsers++;
-            totalVault += (data.balance || 0);
+    window.checkAuth = function() {
+        const e = document.getElementById('adminEmail').value;
+        const p = document.getElementById('adminPass').value;
 
-            table.innerHTML += `
-                <tr>
-                    <td>${data.username || 'N/A'}<br><small style="color:#666">${data.email || ''}</small></td>
-                    <td><input type="number" id="bal-${id}" value="${data.balance || 0}"></td>
-                    <td><input type="text" class="wide-input" id="addr-${id}" value="${data.trc20_address || ''}" placeholder="Paste TRC20"></td>
-                    <td>
-                        B: <input type="number" id="bot-${id}" value="${data.bot_profit || 0}"><br>
-                        G: <input type="number" id="game-${id}" value="${data.game_profit || 0}">
-                    </td>
-                    <td>
-                        <button class="action-btn btn-save" onclick="updateUser('${id}')">Update</button>
-                    </td>
-                </tr>
-            `;
+        if(e === MASTER_EMAIL && p === MASTER_PASS) {
+            document.getElementById('adminAuth').style.display = 'none';
+            document.getElementById('mainAdmin').style.display = 'block';
+            loadAdminData();
+        } else {
+            document.getElementById('error').style.display = 'block';
+        }
+    }
+
+    function loadAdminData() {
+        onSnapshot(collection(db, "users"), (snapshot) => {
+            const table = document.getElementById('userTable');
+            table.innerHTML = "";
+            let count = 0;
+            let tvl = 0;
+
+            snapshot.forEach((userDoc) => {
+                const data = userDoc.data();
+                const id = userDoc.id;
+                count++;
+                tvl += (data.balance || 0);
+
+                table.innerHTML += `
+                    <tr>
+                        <td>
+                            <b>${data.username || 'No Name'}</b><br>
+                            <small style="color:#666; font-size:10px;">${id}</small>
+                        </td>
+                        <td><input type="number" id="bal-${id}" value="${data.balance || 0}" step="0.01"></td>
+                        <td><input type="text" class="wide-input" id="addr-${id}" value="${data.trc20_address || ''}" placeholder="Assign TRC20 Address"></td>
+                        <td>
+                            <div style="font-size:11px;">Bot: <input type="number" id="bot-${id}" value="${data.bot_profit || 0}"></div>
+                            <div style="font-size:11px; margin-top:5px;">Game: <input type="number" id="game-${id}" value="${data.game_profit || 0}"></div>
+                        </td>
+                        <td>
+                            <button class="btn-update" onclick="updateUser('${id}')">UPDATE</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('totalUsers').textContent = count;
+            document.getElementById('totalVault').textContent = "$" + tvl.toLocaleString(undefined, {minimumFractionDigits:2});
         });
+    }
 
-        document.getElementById('totalUsers').textContent = totalUsers;
-        document.getElementById('totalVault').textContent = "$" + totalVault.toLocaleString();
-    });
-
-    // دالة تحديث البيانات في فايربيس
     window.updateUser = async (uid) => {
         const newBal = parseFloat(document.getElementById(`bal-${uid}`).value);
         const newAddr = document.getElementById(`addr-${uid}`).value;
@@ -114,9 +168,9 @@
                 bot_profit: newBot,
                 game_profit: newGame
             });
-            alert("User updated successfully!");
+            alert("✅ User " + uid + " Sync Successful!");
         } catch (e) {
-            alert("Error: " + e.message);
+            alert("❌ Sync Failed: " + e.message);
         }
     };
 </script>
