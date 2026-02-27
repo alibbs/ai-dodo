@@ -23,10 +23,7 @@
             overflow-x: hidden;
         }
 
-        .logo-mini {
-            position: absolute; top: 15px; left: 15px;
-            font-size: 14px; font-weight: 900;
-        }
+        .logo-mini { position: absolute; top: 15px; left: 15px; font-size: 14px; font-weight: 900; }
         .logo-mini span { color: var(--brand); }
 
         .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; margin-top: 40px; }
@@ -38,6 +35,7 @@
             font-weight: 800; font-size: 13px;
         }
 
+        /* Fixed Grid - No Movement */
         .grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
             background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 15px;
@@ -47,11 +45,14 @@
         .tile {
             aspect-ratio: 1; background: #213743; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 22px; transition: 0.1s; border-bottom: 3px solid rgba(0,0,0,0.3);
+            font-size: 22px; transition: background 0.1s; 
+            border: none; /* Fixed border to prevent jumping */
+            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
+            position: relative;
         }
-        .tile:active { transform: scale(0.92); background: #2f4553; }
-        .tile.revealed { background: #0f212e; border-bottom: none; cursor: default; }
-        .tile.bomb-hit { background: rgba(255, 0, 80, 0.4) !important; border: 1px solid #ff0050; }
+        .tile:active { transform: scale(0.95); }
+        .tile.revealed { background: #0f212e; box-shadow: none; cursor: default; }
+        .tile.bomb-hit { background: rgba(255, 0, 80, 0.4) !important; }
         
         .tile i { opacity: 0; transform: scale(0.4); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
@@ -62,7 +63,6 @@
         }
 
         .input-group { display: flex; flex-direction: column; gap: 6px; }
-        .label-row { display: flex; justify-content: space-between; align-items: center; }
         label { font-size: 11px; color: #8b8da3; font-weight: 700; text-transform: uppercase; }
 
         .bet-input-wrapper { display: flex; gap: 5px; }
@@ -70,23 +70,22 @@
         .btn-adjust { 
             background: #2f4553; border: none; color: #fff; 
             padding: 0 15px; border-radius: 8px; font-weight: 800; font-size: 12px;
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer;
         }
-        .btn-adjust:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-adjust:disabled { opacity: 0.4; }
 
         input, select {
             background: #0f212e; border: 1px solid var(--border);
             padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
-            font-size: 14px; -webkit-appearance: none;
+            font-size: 14px;
         }
-        input:disabled, select:disabled { opacity: 0.6; cursor: not-allowed; color: #555; }
+        input:disabled, select:disabled { opacity: 0.6; }
 
         .btn-main {
             background: var(--up); color: #060914;
             border: none; padding: 16px; border-radius: 10px;
-            font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;
+            font-weight: 900; font-size: 16px; cursor: pointer;
         }
-        .btn-main:active { transform: scale(0.96); opacity: 0.8; }
         .cashout-btn { background: #fff; color: #000; display: none; }
 
         .stats-float {
@@ -116,16 +115,13 @@
 
     <div class="controls">
         <div class="input-group">
-            <div class="label-row">
-                <label>Bet Amount</label>
-            </div>
+            <label>Bet Amount</label>
             <div class="bet-input-wrapper">
                 <input type="number" id="betAmount" value="10.00" step="1">
                 <button class="btn-adjust" id="halfBtn" onclick="adjustBet(0.5)">½</button>
                 <button class="btn-adjust" id="doubleBtn" onclick="adjustBet(2)">x2</button>
             </div>
         </div>
-
         <div class="input-group">
             <label>Mines</label>
             <select id="bombCount">
@@ -133,18 +129,15 @@
                 <option value="3" selected>3 Mines</option>
                 <option value="5">5 Mines</option>
                 <option value="10">10 Mines</option>
-                <option value="15">15 Mines</option>
-                <option value="20">20 Mines</option>
                 <option value="24">24 Mines</option>
             </select>
         </div>
-
         <button class="btn-main" id="startBtn">Bet</button>
         <button class="btn-main cashout-btn" id="cashoutBtn">Cashout</button>
     </div>
 </div>
 
-<audio id="sndGem" preload="auto" src="https://pixabay.com/static/audio/2022/03/15/audio_7833320c91.mp3"></audio> 
+<audio id="sndGem" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio> 
 <audio id="sndBomb" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
 <audio id="sndClick" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
@@ -173,20 +166,16 @@
           cashoutBtn = document.getElementById('cashoutBtn'), 
           balDisplay = document.getElementById('userBalance'),
           betInput = document.getElementById('betAmount'),
-          bombSelect = document.getElementById('bombCount'),
-          halfBtn = document.getElementById('halfBtn'),
-          doubleBtn = document.getElementById('doubleBtn');
+          bombSelect = document.getElementById('bombCount');
 
-    const sndGem = document.getElementById('sndGem'), 
-          sndBomb = document.getElementById('sndBomb'), 
-          sndClick = document.getElementById('sndClick');
-
-    sndGem.volume = 0.5; sndBomb.volume = 0.4; sndClick.volume = 0.3;
+    // Soft Volume
+    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.4;
+    const sndBomb = document.getElementById('sndBomb'); sndBomb.volume = 0.3;
+    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.2;
 
     window.adjustBet = (factor) => {
         if(gameActive) return;
-        let current = parseFloat(betInput.value) || 0;
-        betInput.value = (current * factor).toFixed(2);
+        betInput.value = (parseFloat(betInput.value || 0) * factor).toFixed(2);
     };
 
     onAuthStateChanged(auth, (user) => {
@@ -198,7 +187,7 @@
                     balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
                 }
             });
-        } else { window.location.href = "login.html"; }
+        }
     });
 
     function createBoard() {
@@ -206,16 +195,10 @@
         for (let i = 0; i < 25; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
+            tile.innerHTML = '&nbsp;'; // Keep height fixed
             tile.onclick = () => revealTile(i);
             grid.appendChild(tile);
         }
-    }
-
-    function toggleControls(lock) {
-        betInput.disabled = lock;
-        bombSelect.disabled = lock;
-        halfBtn.disabled = lock;
-        doubleBtn.disabled = lock;
     }
 
     async function initGame() {
@@ -224,9 +207,9 @@
 
         sndClick.currentTime = 0; sndClick.play();
         
-        // Lock UI
-        toggleControls(true);
-        
+        betInput.disabled = bombSelect.disabled = true;
+        document.getElementById('halfBtn').disabled = document.getElementById('doubleBtn').disabled = true;
+
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
 
         const bombNum = parseInt(bombSelect.value);
@@ -252,13 +235,14 @@
         
         if (bombs.includes(index)) {
             sndBomb.currentTime = 0; sndBomb.play();
-            tile.classList.add('bomb-hit');
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
+            tile.classList.add('bomb-hit');
             endGame(false);
         } else {
-            // Play gem sound with reset for rapid clicking
-            sndGem.currentTime = 0; 
-            sndGem.play();
+            // Instant Sound Playback
+            const soundClone = sndGem.cloneNode();
+            soundClone.volume = 0.4;
+            soundClone.play();
             
             tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
@@ -298,12 +282,12 @@
             }
         });
 
-        // Unlock UI
-        toggleControls(false);
+        betInput.disabled = bombSelect.disabled = false;
+        document.getElementById('halfBtn').disabled = document.getElementById('doubleBtn').disabled = false;
     }
 
     startBtn.onclick = initGame;
-    cashoutBtn.onclick = () => { if(gameActive) { sndGem.currentTime = 0; sndGem.play(); endGame(true); } };
+    cashoutBtn.onclick = () => { if(gameActive) { sndGem.cloneNode().play(); endGame(true); } };
     createBoard();
 </script>
 </body>
