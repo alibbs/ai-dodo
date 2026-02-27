@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMANA GLOBAL | Diamonds Game</title>
+    <title>AMANA GLOBAL | Diamond Mines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -14,6 +14,7 @@
             --brand2: #ff00b8;
             --accent: #00f2ff;
             --success: #00ff96;
+            --error: #ff0050;
             --radius: 20px;
         }
 
@@ -23,185 +24,210 @@
             display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
 
-        .game-container {
-            width: 100%; max-width: 500px; padding: 20px;
-            background: var(--card-bg); backdrop-filter: blur(20px);
+        .game-wrap {
+            width: 100%; max-width: 450px; padding: 20px;
+            background: var(--card-bg); backdrop-filter: blur(25px);
             border: 1px solid var(--border); border-radius: var(--radius);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
         }
 
-        /* منطقة الألماس */
-        .slot-machine {
-            display: flex; justify-content: center; gap: 10px;
-            background: rgba(0,0,0,0.3); padding: 30px 15px;
-            border-radius: 15px; margin-bottom: 25px;
-            border: 1px inset var(--border);
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h2 { margin: 0; font-weight: 900; background: linear-gradient(to right, var(--accent), var(--brand2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* الشبكة */
+        .grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+            margin-bottom: 25px; perspective: 1000px;
         }
 
-        .diamond-slot {
-            width: 60px; height: 60px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px; display: flex;
-            align-items: center; justify-content: center;
-            font-size: 30px; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--border);
+        .tile {
+            aspect-ratio: 1; background: rgba(255,255,255,0.07);
+            border-radius: 12px; border: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; transition: 0.3s; position: relative;
         }
 
-        .diamond-slot.active { transform: scale(1.1); filter: drop-shadow(0 0 10px currentColor); }
+        .tile:hover { background: rgba(255,255,255,0.12); transform: scale(1.05); }
+        .tile.revealed { cursor: default; transform: rotateY(180deg); background: rgba(0,0,0,0.3); }
+        .tile i { opacity: 0; transition: 0.3s; transform: rotateY(180deg); }
+        .tile.revealed i { opacity: 1; }
 
-        /* التحكم */
-        .controls { display: flex; flex-direction: column; gap: 15px; }
-
-        .input-group { text-align: right; }
-        label { display: block; font-size: 12px; color: #8b8da3; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
-        
-        input, select {
-            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-            padding: 15px; border-radius: 12px; color: #fff; font-weight: bold; outline: none;
-        }
-
-        .multiplier-display {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            margin: 10px 0; font-size: 12px; text-align: center;
-        }
-
-        .mult-box { padding: 8px; background: var(--glass); border: 1px solid var(--border); border-radius: 8px; opacity: 0.5; }
-        .mult-box.active { opacity: 1; border-color: var(--accent); color: var(--accent); background: rgba(0, 242, 255, 0.1); }
-
-        .play-btn {
-            background: linear-gradient(135deg, var(--brand), var(--brand2));
-            border: none; padding: 18px; border-radius: 15px; color: #fff;
-            font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 10px 25px rgba(255, 0, 184, 0.3);
-        }
-
-        .play-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255, 0, 184, 0.5); }
-        .play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .result-msg { margin-top: 15px; text-align: center; font-weight: bold; min-height: 24px; }
-        .win { color: var(--success); text-shadow: 0 0 10px rgba(0, 255, 150, 0.5); }
-        .lose { color: #ff4d8d; }
-
-        /* الوان الألماس */
+        /* الألوان */
         .d-blue { color: #00f2ff; }
         .d-pink { color: #ff00b8; }
         .d-yellow { color: #ffaa00; }
-        .d-green { color: #00ff96; }
-        .d-red { color: #ff0050; }
-        .d-purple { color: #a100ff; }
+        .d-bomb { color: var(--error); }
+
+        /* لوحة التحكم */
+        .controls { display: flex; flex-direction: column; gap: 15px; }
+        .input-box { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+        
+        input, select {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--border);
+            padding: 12px; border-radius: 10px; color: #fff; outline: none; font-weight: bold;
+        }
+
+        .stats {
+            display: flex; justify-content: space-between; 
+            padding: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            border: none; padding: 16px; border-radius: 14px; color: #fff;
+            font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-main:disabled { opacity: 0.4; filter: grayscale(1); }
+
+        .cashout-btn { background: var(--success); color: #000; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <h2 style="text-align: center; margin-bottom: 25px; letter-spacing: 2px;">DIAMONDS</h2>
-
-    <div class="slot-machine" id="slotMachine">
-        <div class="diamond-slot" id="s1"><i class="fa-solid fa-gem"></i></div>
-        <div class="diamond-slot" id="s2"><i class="fa-solid fa-gem"></i></div>
-        <div class="diamond-slot" id="s3"><i class="fa-solid fa-gem"></i></div>
-        <div class="diamond-slot" id="s4"><i class="fa-solid fa-gem"></i></div>
-        <div class="diamond-slot" id="s5"><i class="fa-solid fa-gem"></i></div>
+<div class="game-wrap">
+    <div class="header">
+        <h2>DIAMOND MINES</h2>
     </div>
 
-    <div class="multiplier-display">
-        <div class="mult-box" id="m2">Pair: x2.0</div>
-        <div class="mult-box" id="m3">3 Kind: x5.0</div>
-        <div class="mult-box" id="m4">4 Kind: x20.0</div>
-        <div class="mult-box" id="m5">5 Kind: x50.0</div>
+    <div class="stats">
+        <div>Multiplier: <span id="multText" style="color: var(--accent);">1.00x</span></div>
+        <div>Profit: <span id="profitText" style="color: var(--success);">$0.00</span></div>
     </div>
 
-    <div class="controls">
-        <div class="input-group">
-            <label>مبلغ الرهان (Bet Amount)</label>
-            <input type="number" id="betAmount" value="10" min="1">
+    <div class="grid" id="gameGrid">
         </div>
 
-        <button class="play-btn" id="playBtn">START SPIN</button>
+    <div class="controls">
+        <div class="input-box">
+            <label>Amount</label>
+            <input type="number" id="betAmount" value="10">
+        </div>
+        <div class="input-box">
+            <label>Bombs</label>
+            <select id="bombCount">
+                <option value="1">1 Bomb</option>
+                <option value="3" selected>3 Bombs</option>
+                <option value="5">5 Bombs</option>
+                <option value="10">10 Bombs</option>
+            </select>
+        </div>
+        <button class="btn-main" id="startBtn">BET</button>
+        <button class="btn-main cashout-btn" id="cashoutBtn">CASHOUT</button>
     </div>
-
-    <div class="result-msg" id="resultMsg"></div>
 </div>
 
 <script>
-    const gems = [
+    const grid = document.getElementById('gameGrid');
+    const startBtn = document.getElementById('startBtn');
+    const cashoutBtn = document.getElementById('cashoutBtn');
+    const multText = document.getElementById('multText');
+    const profitText = document.getElementById('profitText');
+
+    let gameActive = false;
+    let tiles = [];
+    let bombs = [];
+    let revealedCount = 0;
+    let currentMult = 1.00;
+
+    const gemTypes = [
         { icon: 'fa-gem', class: 'd-blue' },
         { icon: 'fa-gem', class: 'd-pink' },
-        { icon: 'fa-gem', class: 'd-yellow' },
-        { icon: 'fa-gem', class: 'd-green' },
-        { icon: 'fa-gem', class: 'd-red' },
-        { icon: 'fa-gem', class: 'd-purple' }
+        { icon: 'fa-gem', class: 'd-yellow' }
     ];
 
-    const playBtn = document.getElementById('playBtn');
-    const resultMsg = document.getElementById('resultMsg');
-    const slots = [
-        document.getElementById('s1'),
-        document.getElementById('s2'),
-        document.getElementById('s3'),
-        document.getElementById('s4'),
-        document.getElementById('s5')
-    ];
+    // إنشاء الشبكة لأول مرة
+    function createBoard() {
+        grid.innerHTML = '';
+        for (let i = 0; i < 25; i++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.dataset.index = i;
+            tile.addEventListener('click', () => revealTile(i));
+            grid.appendChild(tile);
+        }
+    }
 
-    playBtn.addEventListener('click', () => {
-        let bet = parseFloat(document.getElementById('betAmount').value);
-        if (isNaN(bet) || bet <= 0) return alert("Please enter a valid bet");
-
-        // 1. بداية الحركة
-        playBtn.disabled = true;
-        resultMsg.textContent = "Spinning...";
-        resultMsg.className = "result-msg";
+    function initGame() {
+        const bombNum = parseInt(document.getElementById('bombCount').value);
+        bombs = [];
+        while(bombs.length < bombNum) {
+            let r = Math.floor(Math.random() * 25);
+            if(!bombs.includes(r)) bombs.push(r);
+        }
         
-        // Reset multipliers
-        document.querySelectorAll('.mult-box').forEach(b => b.classList.remove('active'));
+        gameActive = true;
+        revealedCount = 0;
+        currentMult = 1.00;
+        updateStats();
+        
+        startBtn.disabled = true;
+        cashoutBtn.style.display = 'block';
+        createBoard();
+    }
 
-        let spinCount = 0;
-        const interval = setInterval(() => {
-            slots.forEach(slot => {
-                const randomGem = gems[Math.floor(Math.random() * gems.length)];
-                slot.innerHTML = `<i class="fa-solid ${randomGem.icon}"></i>`;
-                slot.className = `diamond-slot ${randomGem.class}`;
-            });
-            spinCount++;
-            if (spinCount > 15) {
-                clearInterval(interval);
-                finishGame(bet);
+    function revealTile(index) {
+        if (!gameActive) return;
+        const tile = grid.children[index];
+        if (tile.classList.contains('revealed')) return;
+
+        tile.classList.add('revealed');
+        
+        if (bombs.includes(index)) {
+            // خسر اللاعب
+            tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
+            gameOver(false);
+        } else {
+            // ربح ألماسة
+            const gem = gemTypes[Math.floor(Math.random() * gemTypes.length)];
+            tile.innerHTML = `<i class="fa-solid ${gem.icon} ${gem.class}"></i>`;
+            revealedCount++;
+            calculateMultiplier();
+            updateStats();
+        }
+    }
+
+    function calculateMultiplier() {
+        const bombNum = parseInt(document.getElementById('bombCount').value);
+        // معادلة تقريبية للربح بناءً على عدد القنابل والمربعات المفتوحة
+        currentMult = 1 + (revealedCount * (bombNum * 0.25));
+    }
+
+    function updateStats() {
+        const bet = parseFloat(document.getElementById('betAmount').value);
+        multText.textContent = currentMult.toFixed(2) + 'x';
+        profitText.textContent = '$' + (bet * currentMult).toFixed(2);
+    }
+
+    function gameOver(win) {
+        gameActive = false;
+        startBtn.disabled = false;
+        cashoutBtn.style.display = 'none';
+
+        // كشف باقي القنابل
+        bombs.forEach(index => {
+            const t = grid.children[index];
+            if (!t.classList.contains('revealed')) {
+                t.classList.add('revealed');
+                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.5"></i>';
             }
-        }, 80);
-    });
-
-    function finishGame(bet) {
-        const finalResults = [];
-        slots.forEach(slot => {
-            const randomGem = gems[Math.floor(Math.random() * gems.length)];
-            slot.innerHTML = `<i class="fa-solid ${randomGem.icon}"></i>`;
-            slot.className = `diamond-slot ${randomGem.class} active`;
-            finalResults.push(randomGem.class);
         });
 
-        // حساب التكرار
-        const counts = {};
-        finalResults.forEach(c => counts[c] = (counts[c] || 0) + 1);
-        const maxSame = Math.max(...Object.values(counts));
-
-        let multiplier = 0;
-        if (maxSame === 2) { multiplier = 2; document.getElementById('m2').classList.add('active'); }
-        else if (maxSame === 3) { multiplier = 5; document.getElementById('m3').classList.add('active'); }
-        else if (maxSame === 4) { multiplier = 20; document.getElementById('m4').classList.add('active'); }
-        else if (maxSame === 5) { multiplier = 50; document.getElementById('m5').classList.add('active'); }
-
-        if (multiplier > 0) {
-            const winAmount = bet * multiplier;
-            resultMsg.textContent = `WINNER! +$${winAmount.toFixed(2)}`;
-            resultMsg.classList.add('win');
-            // هون بتربط مع الـ Firebase عشان تزيد رصيد اليوزر
-        } else {
-            resultMsg.textContent = "Better luck next time!";
-            resultMsg.classList.add('lose');
+        if (!win) {
+            multText.textContent = "1.00x";
+            profitText.textContent = "$0.00";
+            alert("BOMB! You lost your bet.");
         }
-
-        playBtn.disabled = false;
     }
+
+    startBtn.addEventListener('click', initGame);
+    cashoutBtn.addEventListener('click', () => {
+        const bet = parseFloat(document.getElementById('betAmount').value);
+        alert(`CONGRATS! You cashed out $${(bet * currentMult).toFixed(2)}`);
+        gameOver(true);
+    });
+
+    createBoard();
 </script>
 
 </body>
