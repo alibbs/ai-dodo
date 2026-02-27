@@ -51,7 +51,7 @@
 
         /* --- Coin Selector --- */
         .label-sm { font-size: 11px; color: #888; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 1.5px; }
-        .coin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
+        .coin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; transition: 0.3s; }
         .coin-opt {
             background: var(--card-bg); border: 1px solid var(--border);
             padding: 12px 5px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s;
@@ -110,7 +110,7 @@
     </div>
 
     <span class="label-sm">Select Asset Fund</span>
-    <div class="coin-grid">
+    <div class="coin-grid" id="coinGrid">
         <div class="coin-opt active" onclick="selectCoin(this, 'BTC', 1.0)" data-name="BTC CORE VAULT">
             <i class="fa-brands fa-bitcoin" style="color:#f7931a;"></i>
             <span>BTC</span>
@@ -133,26 +133,28 @@
         </div>
     </div>
 
-    <div class="invest-panel">
-        <div class="input-box">
-            <input type="number" id="investAmt" value="50" oninput="calc()">
-            <span style="color: var(--brand); font-weight: 800;">USDT</span>
-        </div>
+    <div class="invest-panel" id="mainPanel">
+        <div id="inputMode">
+            <div class="input-box">
+                <input type="number" id="investAmt" value="50" oninput="calc()">
+                <span style="color: var(--brand); font-weight: 800;">USDT</span>
+            </div>
 
-        <div class="days-grid">
-            <button class="day-btn active" onclick="setD(this, 5)">5D</button>
-            <button class="day-btn" onclick="setD(this, 15)">15D</button>
-            <button class="day-btn" onclick="setD(this, 30)">30D</button>
-            <button class="day-btn" onclick="setD(this, 90)">90D</button>
-            <button class="day-btn" onclick="setD(this, 365)">1Y</button>
-        </div>
+            <div class="days-grid">
+                <button class="day-btn active" onclick="setD(this, 5)">5D</button>
+                <button class="day-btn" onclick="setD(this, 15)">15D</button>
+                <button class="day-btn" onclick="setD(this, 30)">30D</button>
+                <button class="day-btn" onclick="setD(this, 90)">90D</button>
+                <button class="day-btn" onclick="setD(this, 365)">1Y</button>
+            </div>
 
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
-            <span style="color: #666;">Daily ROI: <b id="rateDisp" style="color:var(--success)">1.0%</b></span>
-            <span id="netProfit" style="color: var(--accent); font-weight: 800;">$2.50 USDT</span>
-        </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
+                <span style="color: #666;">Daily ROI: <b id="rateDisp" style="color:var(--success)">1.0%</b></span>
+                <span id="netProfit" style="color: var(--accent); font-weight: 800;">$2.50 USDT</span>
+            </div>
 
-        <button class="activate-btn" id="startBtn">INITIALIZE AI CORE</button>
+            <button class="activate-btn" id="startBtn">INITIALIZE AI CORE</button>
+        </div>
     </div>
 
     <div class="desc-box">
@@ -173,7 +175,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -193,86 +195,142 @@
     let currentUser = null;
     let activeDays = 5;
     let currentRate = 1.0;
-    let startTime = null;
+    let activeInvest = null;
+    let liveInterval = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if (snap.exists()) {
-                    currentBalance = snap.data().balance || 0;
+                    const data = snap.data();
+                    currentBalance = data.balance || 0;
                     document.getElementById('displayBalance').textContent = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+                    
+                    if (data.active_investment) {
+                        activeInvest = data.active_investment;
+                        renderRunningMode();
+                    } else {
+                        activeInvest = null;
+                        document.getElementById('coinGrid').style.opacity = "1";
+                        document.getElementById('coinGrid').style.pointerEvents = "all";
+                    }
                 }
             });
-        } else {
-            window.location.href = "login.html";
-        }
+        } else { window.location.href = "login.html"; }
     });
 
-    // الدوال لجعلها متاحة في HTML
+    function renderRunningMode() {
+        document.getElementById('coinGrid').style.opacity = "0.3";
+        document.getElementById('coinGrid').style.pointerEvents = "none";
+        document.getElementById('mainPanel').innerHTML = `
+            <div style="text-align:center; padding:10px;">
+                <div style="margin-bottom:15px;"><i class="fas fa-microchip fa-spin" style="color:var(--brand); font-size:30px;"></i></div>
+                <h3 style="color:var(--brand); margin:0; letter-spacing:1px; font-size:16px;">AI CORE ACTIVE</h3>
+                <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin:15px 0; border:1px solid var(--border);">
+                    <div style="font-size:10px; color:#666; margin-bottom:5px;">REAL-TIME PROFIT (USDT)</div>
+                    <div id="liveProfit" style="font-size:26px; color:var(--success); font-weight:900; font-family:monospace;">$0.0000</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px;">
+                    <span>Locked: <b style="color:#fff;">$${activeInvest.amount}</b></span>
+                    <span>Status: <b id="timer" style="color:var(--accent);">--:--:--</b></span>
+                </div>
+            </div>
+        `;
+        startLiveTracking();
+    }
+
+    function startLiveTracking() {
+        if(liveInterval) clearInterval(liveInterval);
+        liveInterval = setInterval(async () => {
+            if (!activeInvest) return;
+            const now = new Date().getTime();
+            const start = activeInvest.startTime.toDate().getTime();
+            const end = start + (activeInvest.days * 24 * 60 * 60 * 1000);
+            const remaining = end - now;
+
+            if (remaining <= 0) {
+                clearInterval(liveInterval);
+                await collectEarnings();
+                return;
+            }
+
+            const totalProfitTarget = activeInvest.amount * (activeInvest.rate / 100) * activeInvest.days;
+            const totalSeconds = activeInvest.days * 24 * 60 * 60;
+            const elapsedSeconds = (now - start) / 1000;
+            const currentAccrued = (totalProfitTarget / totalSeconds) * elapsedSeconds;
+
+            if(document.getElementById('liveProfit')) document.getElementById('liveProfit').textContent = "$" + currentAccrued.toFixed(4);
+            
+            const d = Math.floor(remaining / (1000 * 60 * 60 * 24));
+            const h = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((remaining % (1000 * 60)) / 1000);
+            const timerStr = `${d}d ${h}h ${m}m ${s}s`;
+            
+            if(document.getElementById('timer')) document.getElementById('timer').textContent = timerStr;
+            document.getElementById('uptimeDisplay').textContent = timerStr;
+        }, 1000);
+    }
+
+    async function collectEarnings() {
+        const profit = activeInvest.amount * (activeInvest.rate / 100) * activeInvest.days;
+        const totalRefund = activeInvest.amount + profit;
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+            balance: currentBalance + totalRefund,
+            bot_profit: (activeInvest.bot_profit || 0) + profit,
+            active_investment: deleteField()
+        });
+        alert("Investment Cycle Completed! Profit Added.");
+        location.reload();
+    }
+
     window.selectCoin = (el, symbol, rate) => {
         document.querySelectorAll('.coin-opt').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         currentRate = rate;
         document.getElementById('activeCoinLabel').textContent = el.getAttribute('data-name');
         document.getElementById('rateDisp').textContent = rate.toFixed(1) + "%";
-        calc();
+        window.calc();
     }
 
     window.setD = (btn, d) => {
         document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeDays = d;
-        calc();
+        window.calc();
     }
 
     window.calc = () => {
         let amt = parseFloat(document.getElementById('investAmt').value) || 0;
-        if(amt > 5000) amt = 5000;
         let totalNet = (amt * (currentRate/100) * activeDays);
-        document.getElementById('netProfit').textContent = "$" + totalNet.toFixed(2) + " USDT";
+        if(document.getElementById('netProfit')) document.getElementById('netProfit').textContent = "$" + totalNet.toFixed(2) + " USDT";
     }
 
     document.getElementById('startBtn').addEventListener('click', async () => {
         let amt = parseFloat(document.getElementById('investAmt').value);
-        
-        if(amt < 50) { alert("Minimum investment is 50 USDT"); return; }
-        if(amt > currentBalance) { alert("Insufficient balance!"); return; }
+        if(amt < 50) { alert("Min 50 USDT"); return; }
+        if(amt > currentBalance) { alert("Insufficient Balance"); return; }
 
         const btn = document.getElementById('startBtn');
         btn.disabled = true;
-        btn.textContent = "PROCESSING...";
+        btn.textContent = "WAIT...";
 
         try {
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, {
-                balance: currentBalance - amt
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                balance: currentBalance - amt,
+                active_investment: {
+                    amount: amt,
+                    days: activeDays,
+                    rate: currentRate,
+                    startTime: new Date()
+                }
             });
-
-            btn.textContent = "CORE DEPLOYED";
-            btn.style.background = "#1a1a1a";
-            startTime = new Date();
-            setInterval(updateTime, 10);
-            alert("AI Core Initialized Successfully!");
-        } catch (e) {
-            alert("Error: " + e.message);
-            btn.disabled = false;
-            btn.textContent = "INITIALIZE AI CORE";
-        }
+        } catch (e) { alert(e.message); btn.disabled = false; }
     });
 
-    function updateTime() {
-        let diff = new Date() - startTime;
-        let hh = Math.floor(diff / 3600000);
-        let mm = Math.floor((diff % 3600000) / 60000);
-        let ss = Math.floor((diff % 60000) / 1000);
-        let ms = Math.floor((diff % 1000) / 10);
-        document.getElementById('uptimeDisplay').textContent = 
-            (hh<10?'0':'')+hh + ":" + (mm<10?'0':'')+mm + ":" + (ss<10?'0':'')+ss + ":" + (ms<10?'0':'')+ms;
-    }
-
-    window.calc(); // تشغيل الحسبة لأول مرة
+    window.calc();
 </script>
-
 </body>
 </html>
