@@ -178,6 +178,12 @@
     let currentRate = 1.0;
     let startTime = null;
 
+    // --- الربط الموحد مع الرصيد ---
+    function syncBalance() {
+        let currentBal = parseFloat(localStorage.getItem('main_balance')) || 1000.00;
+        document.getElementById('displayBalance').textContent = "$" + currentBal.toLocaleString(undefined, {minimumFractionDigits: 2});
+    }
+
     function selectCoin(el, symbol, rate) {
         document.querySelectorAll('.coin-opt').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
@@ -208,15 +214,26 @@
     }
 
     function startAI() {
-        let amt = document.getElementById('investAmt').value;
+        let amt = parseFloat(document.getElementById('investAmt').value);
+        let currentBal = parseFloat(localStorage.getItem('main_balance')) || 1000.00;
+
         if(amt < 50) { alert("Minimum investment is 50 USDT"); return; }
         
+        // التحقق من الرصيد الحقيقي
+        if(amt > currentBal) {
+            alert("Insufficient balance in your wallet!");
+            return;
+        }
+
+        // خصم المبلغ وتحديث السيستم
+        let newBalance = currentBal - amt;
+        localStorage.setItem('main_balance', newBalance.toFixed(2));
+        syncBalance();
+
         let btn = document.querySelector('.activate-btn');
         btn.textContent = "CORE DEPLOYED";
         btn.style.background = "#1a1a1a";
         btn.disabled = true;
-        
-        document.getElementById('displayBalance').textContent = "$" + parseFloat(amt).toFixed(2);
         
         startTime = new Date();
         setInterval(updateTime, 10);
@@ -233,8 +250,11 @@
             (hh<10?'0':'')+hh + ":" + (mm<10?'0':'')+mm + ":" + (ss<10?'0':'')+ss + ":" + (ms<10?'0':'')+ms;
     }
 
-    // Initial calculation
+    // تشغيل المزامنة فوراً
+    syncBalance();
     calc();
+    // مراقبة الرصيد كل ثانية
+    setInterval(syncBalance, 1000);
 </script>
 
 </body>
