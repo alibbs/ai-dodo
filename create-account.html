@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>AMANA GLOBAL | Create Account</title>
 
 <style>
@@ -19,7 +19,7 @@
 *{box-sizing:border-box}
 body{
 margin:0;
-font-family:system-ui,-apple-system,Tahoma,Arial;
+font-family: 'Inter', system-ui, -apple-system;
 background:linear-gradient(135deg,#0b0f1f,#1c0833);
 color:var(--text);
 min-height:100vh;
@@ -31,58 +31,65 @@ padding:16px;
 .container{width:100%;max-width:420px;}
 .header{text-align:center;margin-bottom:20px;}
 .brand{
-font-size:22px;
+font-size:24px;
 font-weight:900;
 background:linear-gradient(135deg,var(--brand1),var(--brand2));
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+letter-spacing: -1px;
 }
 .card{
 background:var(--glass);
 backdrop-filter:blur(18px);
 border:1px solid var(--border);
 border-radius:var(--radius);
-padding:22px;
+padding:25px;
+box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
-label{font-size:13px;font-weight:700;margin-bottom:6px;display:block;}
+label{font-size:12px;font-weight:700;margin-bottom:6px;display:block;color:var(--muted);text-transform: uppercase;}
 input,select{
 width:100%;
 padding:14px;
 margin-bottom:16px;
-border-radius:14px;
+border-radius:12px;
 border:1px solid var(--border);
 background:rgba(0,0,0,.4);
 color:#fff;
 font-size:15px;
+outline: none;
+transition: 0.3s;
 }
+input:focus, select:focus { border-color: var(--brand2); box-shadow: 0 0 10px rgba(255,0,184,0.1); }
 button{
 width:100%;
-padding:14px;
-border-radius:14px;
+padding:15px;
+border-radius:12px;
 border:none;
 font-weight:800;
 font-size:15px;
 cursor:pointer;
 background:linear-gradient(135deg,var(--brand1),var(--brand2));
 color:#fff;
-margin-bottom:8px;
+margin-bottom:10px;
+transition: 0.3s;
 }
+button:disabled { opacity: 0.6; }
 .msg{
 margin-top:15px;
 padding:12px;
 border-radius:12px;
 font-size:14px;
 display:none;
+text-align: center;
+font-weight: 600;
 }
-.success{background:rgba(0,255,150,.1);color:#00ff96;}
-.error{background:rgba(255,0,80,.1);color:#ff0050;}
+.success{background:rgba(0,255,150,.1);color:#00ff96; border: 1px solid rgba(0,255,150,0.2);}
+.error{background:rgba(255,0,80,.1);color:#ff0050; border: 1px solid rgba(255,0,80,0.2);}
 .login-btn{
 background:transparent;
-border:1px solid var(--border);
-color:var(--muted);
-}
-.login-btn:hover{
-background:rgba(255,255,255,0.05);
+border: 1px solid var(--border);
+color: var(--muted);
+margin-top: 5px;
 }
 </style>
 </head>
@@ -90,46 +97,47 @@ background:rgba(255,255,255,0.05);
 <body>
 
 <div class="container">
-<div class="header">
-<div class="brand">AMANA GLOBAL</div>
-<div style="color:var(--muted);font-size:13px;margin-top:4px;">
-Create Your Secure Account
-</div>
-</div>
+    <div class="header">
+        <div class="brand">AMANA GLOBAL</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:4px;">Create Your AI Vault Account</div>
+    </div>
 
-<div class="card">
-<form id="createForm">
+    <div class="card">
+        <form id="createForm">
+            <label>Username</label>
+            <input id="username" type="text" placeholder="e.g. AmanaUser" required minlength="3" />
 
-<label>Username</label>
-<input id="username" required minlength="3" />
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="name@domain.com" required />
 
-<label>Email</label>
-<input type="email" id="email" required />
+            <label>Security Password</label>
+            <input type="password" id="password" placeholder="Min. 8 characters" required minlength="8" />
 
-<label>Password</label>
-<input type="password" id="password" required minlength="8" />
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Country Code</label>
+                    <select id="country" required>
+                        <option value="+961">Lebanon (+961)</option>
+                        <option value="+971">UAE (+971)</option>
+                        <option value="+966">KSA (+966)</option>
+                        <option value="+1">USA (+1)</option>
+                    </select>
+                </div>
+                <div style="flex: 2;">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="70123456" required />
+                </div>
+            </div>
 
-<label>Country</label>
-<select id="country" required>
-<option value="">Select Country</option>
-<option value="+1">USA (+1)</option>
-<option value="+971">UAE (+971)</option>
-<option value="+966">KSA (+966)</option>
-</select>
+            <label>Promo Code (Optional)</label>
+            <input id="promo" placeholder="Enter code if any" />
 
-<label>Phone</label>
-<input type="tel" id="phone" required />
+            <button type="submit" id="submitBtn">Create Account</button>
+            <button type="button" class="login-btn" onclick="window.location.href='login.html'">Already have an account? Login</button>
 
-<label>Promo Code</label>
-<input id="promo" />
-
-<button type="submit">Create Account</button>
-<button type="button" class="login-btn" onclick="window.location.href='login.html'">Login</button>
-
-<div id="msg" class="msg"></div>
-
-</form>
-</div>
+            <div id="msg" class="msg"></div>
+        </form>
+    </div>
 </div>
 
 <script type="module">
@@ -153,56 +161,67 @@ const db = getFirestore(app);
 
 const form = document.getElementById("createForm");
 const msg = document.getElementById("msg");
+const submitBtn = document.getElementById("submitBtn");
 
-function show(text,type){
-msg.style.display="block";
-msg.className="msg "+type;
-msg.textContent=text;
+function showMsg(text, type){
+    msg.style.display = "block";
+    msg.className = "msg " + type;
+    msg.textContent = text;
 }
 
-form.addEventListener("submit",async(e)=>{
-e.preventDefault();
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const btn=form.querySelector("button");
-btn.disabled=true;
-btn.textContent="Processing...";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Deploying Account...";
 
-/* ✅ الحل الصحيح بدون تعارض أسماء */
-const usernameValue=document.getElementById("username").value.trim();
-const emailValue=document.getElementById("email").value.trim();
-const passwordValue=document.getElementById("password").value;
-const countryValue=document.getElementById("country").value;
-const phoneValue=document.getElementById("phone").value.trim();
-const promoValue=document.getElementById("promo").value.trim();
+    const usernameVal = document.getElementById("username").value.trim();
+    const emailVal = document.getElementById("email").value.trim();
+    const passwordVal = document.getElementById("password").value;
+    const countryVal = document.getElementById("country").value;
+    const phoneVal = document.getElementById("phone").value.trim();
+    const promoVal = document.getElementById("promo").value.trim();
 
-try{
+    try {
+        // 1. إنشاء المستخدم في Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
+        const user = userCredential.user;
 
-const userCredential=await createUserWithEmailAndPassword(auth,emailValue,passwordValue);
+        // 2. تحديث الاسم في البروفايل
+        await updateProfile(user, { displayName: usernameVal });
 
-await updateProfile(userCredential.user,{
-displayName:usernameValue
-});
+        // 3. إنشاء وثيقة المستخدم في Firestore مع رصيد 0.00
+        await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            username: usernameVal,
+            email: emailVal,
+            country: countryVal,
+            phone: countryVal + phoneVal,
+            promo: promoVal || "NONE",
+            balance: 0.00, // ✅ الرصيد الأولي المربوط بالسيستم
+            bot_profit: 0.00,
+            game_profit: 0.00,
+            trc20_address: "", // سيتم ملؤه من صفحة الـ Overview لاحقاً
+            status: "active",
+            createdAt: serverTimestamp()
+        });
 
-await setDoc(doc(db,"users",userCredential.user.uid),{
-username:usernameValue,
-email:emailValue,
-country:countryValue,
-phone:countryValue+phoneValue,
-promo:promoValue||null,
-createdAt:serverTimestamp()
-});
+        showMsg("Account Deployed Successfully! ✅", "success");
 
-show("Account created successfully ✅","success");
+        setTimeout(() => {
+            window.location.href = "home.html";
+        }, 1500);
 
-setTimeout(()=>{
-window.location.href="profile.html";
-},1000);
-
-}catch(err){
-btn.disabled=false;
-btn.textContent="Create Account";
-show(err.message,"error");
-}
+    } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create Account";
+        
+        let errorMsg = err.message;
+        if(err.code === "auth/email-already-in-use") errorMsg = "This email is already registered.";
+        if(err.code === "auth/weak-password") errorMsg = "Password is too weak.";
+        
+        showMsg(errorMsg, "error");
+    }
 });
 </script>
 
