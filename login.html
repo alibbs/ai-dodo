@@ -47,13 +47,6 @@ position: relative;
 overflow: hidden;
 }
 
-/* شعاع خلفي خفيف */
-.card::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255,0,184,0.05) 0%, transparent 70%);
-    pointer-events: none;
-}
-
 .logo{
 font-size:32px;
 font-weight:900;
@@ -65,18 +58,18 @@ letter-spacing: -1.5px;
 text-transform: uppercase;
 }
 
-h1{margin:0 0 8px; font-size:22px; font-weight:700; letter-spacing:-0.5px;}
-.sub{margin:0 0 35px; color:var(--muted); font-size:14px; line-height:1.5;}
+h1{margin:0 0 10px; font-size:24px; font-weight:800; letter-spacing:-0.5px;}
+.sub{margin:0 0 35px; color:var(--muted); font-size:13px; line-height:1.6; padding: 0 10px;}
 
 .form-group{text-align:left; margin-bottom:20px; position:relative;}
 label{
 display:block;
 font-weight:600;
-font-size:12px;
+font-size:11px;
 margin-bottom:8px;
 color:var(--muted);
 text-transform: uppercase;
-letter-spacing: 1px;
+letter-spacing: 1.2px;
 }
 
 .field-wrapper { position: relative; }
@@ -117,29 +110,30 @@ letter-spacing: 2px;
 box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
 }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.5); }
-.btn:active { transform: translateY(0); }
-.btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+.btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
 .create-acc-wrap {
-    margin-top: 25px;
+    margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
 }
-.create-acc-wrap p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.create-acc-wrap p { font-size: 13px; color: var(--muted); margin-bottom: 15px; }
 .btn-outline {
-    display: inline-block;
+    display: block;
     width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid var(--accent);
     background: transparent;
-    color: #fff;
+    color: var(--accent);
     text-decoration: none;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 800;
     transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-.btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); color: var(--accent); }
+.btn-outline:hover { background: rgba(0, 242, 255, 0.1); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
 
 .msg{
 margin-top:20px;
@@ -148,13 +142,11 @@ border-radius:14px;
 display:none;
 font-size:13px;
 font-weight: 600;
-animation: shake 0.4s ease-in-out;
 }
-@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
 .msg.error{background:rgba(255,0,80,.1); color:#ff4d8d; border: 1px solid rgba(255,0,80,0.2);}
 .msg.success{background:rgba(0,255,184,.1); color:#00ffb8; border: 1px solid rgba(0,255,184,0.2);}
 
-.footer-note{ margin-top:30px; font-size:10px; color:#444; letter-spacing: 1px; }
+.footer-note{ margin-top:30px; font-size:10px; color:#444; letter-spacing: 1px; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -162,8 +154,8 @@ animation: shake 0.4s ease-in-out;
 <div class="wrap">
     <div class="card">
         <div class="logo">AMANA</div>
-        <h1>Secure Access</h1>
-        <p class="sub">Log in to manage your AI trading assets</p>
+        <h1>Digital Hub</h1>
+        <p class="sub">Experience the next generation of <b>AI Arbitrage</b> and <b>Elite Crypto Gaming</b> in one secure vault.</p>
 
         <form id="loginForm">
             <div class="form-group">
@@ -187,8 +179,8 @@ animation: shake 0.4s ease-in-out;
         </form>
 
         <div class="create-acc-wrap">
-            <p>Don't have an investment account?</p>
-            <a href="register.html" class="btn-outline">CREATE NEW ACCOUNT</a>
+            <p>New to our ecosystem?</p>
+            <a href="create-account.html" class="btn-outline">CREATE ACCOUNT</a>
         </div>
 
         <div class="footer-note">
@@ -230,25 +222,19 @@ onAuthStateChanged(auth, (user) => {
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     submitBtn.disabled = true;
-    submitBtn.textContent = "VERIFYING...";
+    submitBtn.textContent = "AUTHENTICATING...";
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        showMsg("Access Granted. Loading Vault...", "success");
+        showMsg("Identity Verified. Entering Hub...", "success");
         setTimeout(() => { window.location.href = "home.html"; }, 1200);
     } catch (error) {
         submitBtn.disabled = false;
         submitBtn.textContent = "LOGIN";
-        console.error("Login Error:", error.code);
-        
-        if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-            showMsg("Invalid credentials. Please try again.", "error");
-        } else {
-            showMsg("System error. Check your connection.", "error");
-        }
+        showMsg("Invalid email or security password.", "error");
     }
 });
 </script>
