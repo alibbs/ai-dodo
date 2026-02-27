@@ -3,118 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMANA GLOBAL | Diamond Mines</title>
+    <title>AMANA ELITE | Diamonds Mines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #060914;
+            --bg: #0f212e; /* لون ستيك الأصلي تقريباً */
+            --side-panel: #213743;
             --card-bg: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --border: #2f4553;
             --brand: #a100ff;
             --brand2: #ff00b8;
             --accent: #00f2ff;
-            --success: #00ff96;
+            --success: #00e701;
             --error: #ff0050;
-            --radius: 20px;
+            --radius: 10px;
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: #fff;
             display: flex; align-items: center; justify-content: center; min-height: 100vh;
+            padding: 10px;
         }
 
-        .game-wrap {
-            width: 100%; max-width: 450px; padding: 20px;
-            background: var(--card-bg); backdrop-filter: blur(25px);
-            border: 1px solid var(--border); border-radius: var(--radius);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+        .game-container {
+            display: flex; flex-direction: row-reverse; /* ترتيب ستيك: التحكم يسار واللعب يمين */
+            width: 100%; max-width: 900px; gap: 20px;
+            background: #1a2c38; padding: 20px; border-radius: 15px;
         }
 
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h2 { margin: 0; font-weight: 900; background: linear-gradient(to right, var(--accent), var(--brand2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* لوحة التحكم الجانبية */
+        .side-control {
+            flex: 1; background: var(--side-panel); padding: 20px;
+            border-radius: var(--radius); display: flex; flex-direction: column; gap: 15px;
+        }
 
-        /* الشبكة */
+        /* منطقة اللعب */
+        .game-main { flex: 2; display: flex; flex-direction: column; align-items: center; }
+
         .grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
-            margin-bottom: 25px; perspective: 1000px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+            width: 100%; max-width: 450px;
         }
 
         .tile {
-            aspect-ratio: 1; background: rgba(255,255,255,0.07);
-            border-radius: 12px; border: 1px solid var(--border);
+            aspect-ratio: 1; background: #2f4553; border-radius: 6px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; transition: 0.3s; position: relative;
+            font-size: 30px; transition: all 0.2s; border-bottom: 4px solid rgba(0,0,0,0.2);
         }
 
-        .tile:hover { background: rgba(255,255,255,0.12); transform: scale(1.05); }
-        .tile.revealed { cursor: default; transform: rotateY(180deg); background: rgba(0,0,0,0.3); }
-        .tile i { opacity: 0; transition: 0.3s; transform: rotateY(180deg); }
-        .tile.revealed i { opacity: 1; }
+        .tile:hover { background: #557086; transform: translateY(-2px); }
+        .tile.revealed { cursor: default; background: #071824; border-bottom: none; transform: none; }
+        .tile.bomb-hit { background: var(--error) !important; animation: shake 0.4s; }
+        .tile i { transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tile.revealed i { transform: scale(1); }
 
-        /* الألوان */
-        .d-blue { color: #00f2ff; }
-        .d-pink { color: #ff00b8; }
-        .d-yellow { color: #ffaa00; }
-        .d-bomb { color: var(--error); }
+        /* إحصائيات */
+        .stats-bar {
+            width: 100%; display: flex; justify-content: space-between;
+            margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;
+        }
 
-        /* لوحة التحكم */
-        .controls { display: flex; flex-direction: column; gap: 15px; }
-        .input-box { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 11px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
-        
+        /* أزرار ومدخلات */
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 12px; color: #b1bad3; font-weight: bold; }
         input, select {
-            background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-            padding: 12px; border-radius: 10px; color: #fff; outline: none; font-weight: bold;
+            background: #0f212e; border: 2px solid var(--border);
+            padding: 12px; border-radius: 5px; color: #fff; font-weight: bold; outline: none;
+        }
+        input:focus { border-color: #557086; }
+
+        .btn-play {
+            background: var(--success); color: #012e01; border: none;
+            padding: 18px; border-radius: 5px; font-weight: 900;
+            cursor: pointer; font-size: 16px; transition: 0.2s;
+        }
+        .btn-play:hover { filter: brightness(1.2); }
+        .btn-play:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .cashout-btn {
+            background: #fff; color: #000; display: none; margin-top: 10px;
         }
 
-        .stats {
-            display: flex; justify-content: space-between; 
-            padding: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        .btn-main {
-            background: linear-gradient(135deg, var(--brand), var(--brand2));
-            border: none; padding: 16px; border-radius: 14px; color: #fff;
-            font-weight: 900; cursor: pointer; transition: 0.3s;
+        /* موبايل */
+        @media (max-width: 768px) {
+            .game-container { flex-direction: column; }
+            .side-control { order: 2; }
+            .game-main { order: 1; }
         }
-        .btn-main:disabled { opacity: 0.4; filter: grayscale(1); }
 
-        .cashout-btn { background: var(--success); color: #000; margin-top: 10px; display: none; }
+        .d-blue { color: #00f2ff; drop-shadow: 0 0 10px #00f2ff; }
+        .d-bomb { color: #fff; }
     </style>
 </head>
 <body>
 
-<div class="game-wrap">
-    <div class="header">
-        <h2>DIAMOND MINES</h2>
-    </div>
+<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+<audio id="gemSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+<audio id="bombSound" src="https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3"></audio>
 
-    <div class="stats">
-        <div>Multiplier: <span id="multText" style="color: var(--accent);">1.00x</span></div>
-        <div>Profit: <span id="profitText" style="color: var(--success);">$0.00</span></div>
-    </div>
-
-    <div class="grid" id="gameGrid">
+<div class="game-container">
+    
+    <div class="side-control">
+        <div class="input-group">
+            <label>Bet Amount</label>
+            <input type="number" id="betAmount" value="10.00" step="0.10">
         </div>
-
-    <div class="controls">
-        <div class="input-box">
-            <label>Amount</label>
-            <input type="number" id="betAmount" value="10">
-        </div>
-        <div class="input-box">
-            <label>Bombs</label>
+        <div class="input-group">
+            <label>Mines</label>
             <select id="bombCount">
-                <option value="1">1 Bomb</option>
-                <option value="3" selected>3 Bombs</option>
-                <option value="5">5 Bombs</option>
-                <option value="10">10 Bombs</option>
+                <option value="1">1</option>
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
             </select>
         </div>
-        <button class="btn-main" id="startBtn">BET</button>
-        <button class="btn-main cashout-btn" id="cashoutBtn">CASHOUT</button>
+        <button class="btn-play" id="startBtn">Bet</button>
+        <button class="btn-play cashout-btn" id="cashoutBtn">Cashout</button>
     </div>
+
+    <div class="game-main">
+        <div class="stats-bar">
+            <span>Multiplier: <b id="multText" style="color:var(--accent)">1.00x</b></span>
+            <span>Profit: <b id="profitText" style="color:var(--success)">$0.00</b></span>
+        </div>
+        <div class="grid" id="gameGrid"></div>
+    </div>
+
 </div>
 
 <script>
@@ -123,32 +145,30 @@
     const cashoutBtn = document.getElementById('cashoutBtn');
     const multText = document.getElementById('multText');
     const profitText = document.getElementById('profitText');
+    
+    // الأصوات
+    const sndClick = document.getElementById('clickSound');
+    const sndGem = document.getElementById('gemSound');
+    const sndBomb = document.getElementById('bombSound');
 
     let gameActive = false;
-    let tiles = [];
     let bombs = [];
     let revealedCount = 0;
     let currentMult = 1.00;
 
-    const gemTypes = [
-        { icon: 'fa-gem', class: 'd-blue' },
-        { icon: 'fa-gem', class: 'd-pink' },
-        { icon: 'fa-gem', class: 'd-yellow' }
-    ];
-
-    // إنشاء الشبكة لأول مرة
     function createBoard() {
         grid.innerHTML = '';
         for (let i = 0; i < 25; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
             tile.dataset.index = i;
-            tile.addEventListener('click', () => revealTile(i));
+            tile.onclick = () => revealTile(i);
             grid.appendChild(tile);
         }
     }
 
     function initGame() {
+        sndClick.play();
         const bombNum = parseInt(document.getElementById('bombCount').value);
         bombs = [];
         while(bombs.length < bombNum) {
@@ -174,13 +194,14 @@
         tile.classList.add('revealed');
         
         if (bombs.includes(index)) {
-            // خسر اللاعب
+            sndBomb.play();
+            tile.classList.add('bomb-hit');
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
             gameOver(false);
         } else {
-            // ربح ألماسة
-            const gem = gemTypes[Math.floor(Math.random() * gemTypes.length)];
-            tile.innerHTML = `<i class="fa-solid ${gem.icon} ${gem.class}"></i>`;
+            sndGem.currentTime = 0;
+            sndGem.play();
+            tile.innerHTML = '<i class="fa-solid fa-gem d-blue"></i>';
             revealedCount++;
             calculateMultiplier();
             updateStats();
@@ -189,8 +210,13 @@
 
     function calculateMultiplier() {
         const bombNum = parseInt(document.getElementById('bombCount').value);
-        // معادلة تقريبية للربح بناءً على عدد القنابل والمربعات المفتوحة
-        currentMult = 1 + (revealedCount * (bombNum * 0.25));
+        // معادلة ستيك التقريبية
+        const totalTiles = 25;
+        let mult = 1;
+        for(let i=0; i<revealedCount; i++) {
+            mult *= (totalTiles - i) / (totalTiles - bombNum - i);
+        }
+        currentMult = mult * 0.99; // عمولة بسيطة للمنصة
     }
 
     function updateStats() {
@@ -204,7 +230,7 @@
         startBtn.disabled = false;
         cashoutBtn.style.display = 'none';
 
-        // كشف باقي القنابل
+        // كشف كل المربعات
         bombs.forEach(index => {
             const t = grid.children[index];
             if (!t.classList.contains('revealed')) {
@@ -212,18 +238,20 @@
                 t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.5"></i>';
             }
         });
-
-        if (!win) {
-            multText.textContent = "1.00x";
-            profitText.textContent = "$0.00";
-            alert("BOMB! You lost your bet.");
+        
+        if(!win) {
+            profitText.style.color = 'var(--error)';
+            setTimeout(() => { 
+                multText.textContent = "1.00x"; 
+                profitText.textContent = "$0.00";
+                profitText.style.color = 'var(--success)';
+            }, 2000);
         }
     }
 
     startBtn.addEventListener('click', initGame);
     cashoutBtn.addEventListener('click', () => {
-        const bet = parseFloat(document.getElementById('betAmount').value);
-        alert(`CONGRATS! You cashed out $${(bet * currentMult).toFixed(2)}`);
+        sndGem.play();
         gameOver(true);
     });
 
