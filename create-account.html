@@ -67,38 +67,35 @@
         }
         input:focus + i { color: var(--brand2); }
 
-        .btn {
-            width: 100%; padding: 18px; border-radius: 16px; border: none;
+        /* تصحيح شكل الزر */
+        .submit-btn {
+            width: 100%; padding: 18px; border-radius: 16px; border: none !important;
             font-weight: 900; font-size: 16px; cursor: pointer;
-            background: linear-gradient(135deg, var(--brand1), var(--brand2));
-            color: #fff; margin-top: 10px; transition: 0.4s;
+            background: linear-gradient(135deg, var(--brand1), var(--brand2)) !important;
+            color: #fff !important; margin-top: 10px; transition: 0.4s;
             text-transform: uppercase; letter-spacing: 2px;
             box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            appearance: none; -webkit-appearance: none;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.4); }
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.4); }
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; filter: grayscale(1); }
 
         .login-link { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border); }
         .btn-outline {
             display: block; width: 100%; padding: 14px; border-radius: 14px;
             border: 1px solid var(--border); background: transparent;
             color: var(--muted); text-decoration: none; font-size: 13px;
-            font-weight: 700; transition: 0.3s;
+            font-weight: 700; transition: 0.3s; text-align: center;
         }
         .btn-outline:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: var(--accent); }
 
-        /* Status Messages */
         .status-msg {
             margin-top: 20px; padding: 15px; border-radius: 16px;
             display: none; font-size: 14px; font-weight: 700;
-            animation: slideUp 0.3s ease-out;
         }
-        @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-        .status-msg.err { background: rgba(255,0,80,0.1); color: var(--error); border: 1px solid rgba(255,0,80,0.2); animation: shake 0.4s; }
+        .status-msg.err { background: rgba(255,0,80,0.1); color: var(--error); border: 1px solid rgba(255,0,80,0.2); }
         .status-msg.ok { background: rgba(0,255,150,0.1); color: var(--success); border: 1px solid rgba(0,255,150,0.2); }
-        
-        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
     </style>
 </head>
 <body>
@@ -165,7 +162,7 @@
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn">
+            <button type="submit" id="submitBtn" class="submit-btn">
                 <span id="btnText">CREATE ACCOUNT</span>
             </button>
             
@@ -209,76 +206,41 @@
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        
-        // 1. بداية الإجراء
         submitBtn.disabled = true;
-        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SECURITY CHECK...';
-        statusBox.style.display = "none";
-
-        const usernameVal = document.getElementById("username").value.trim();
-        const emailVal = document.getElementById("email").value.trim();
-        const passwordVal = document.getElementById("password").value;
-        const countryVal = document.getElementById("country").value;
-        const phoneVal = document.getElementById("phone").value.trim();
-        const promoVal = document.getElementById("promo").value.trim();
+        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> CHECKING...';
 
         try {
-            // 2. فحص المحفظة
-            btnText.innerHTML = '<i class="fa-solid fa-wallet"></i> ASSIGNING WALLET...';
             const poolRef = collection(db, "wallet_pool");
             const q = query(poolRef, where("isUsed", "==", false), limit(1));
             const poolSnap = await getDocs(q);
 
-            if (poolSnap.empty) {
-                throw new Error("Investment Pool is full. Contact Admin.");
-            }
+            if (poolSnap.empty) throw new Error("Pool Empty. Contact Admin.");
 
             const walletDoc = poolSnap.docs[0];
             const walletAddress = walletDoc.data().address;
 
-            // 3. إنشاء الحساب
-            btnText.innerHTML = '<i class="fa-solid fa-user-shield"></i> CREATING IDENTITY...';
-            const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
+            const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
             const user = userCredential.user;
-            await updateProfile(user, { displayName: usernameVal });
+            await updateProfile(user, { displayName: username.value });
 
-            // 4. الربط النهائي
-            btnText.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> FINALIZING VAULT...';
             await runTransaction(db, async (transaction) => {
-                transaction.update(doc(db, "wallet_pool", walletDoc.id), {
-                    isUsed: true,
-                    assignedTo: user.uid
-                });
-
+                transaction.update(doc(db, "wallet_pool", walletDoc.id), { isUsed: true, assignedTo: user.uid });
                 transaction.set(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    username: usernameVal,
-                    email: emailVal,
-                    country: countryVal,
-                    phone: countryVal + phoneVal,
-                    promo: promoVal || "NONE",
-                    balance: 0.00,
-                    bot_profit: 0.00,
-                    game_profit: 0.00,
-                    trc20_address: walletAddress,
-                    status: "active",
-                    createdAt: serverTimestamp()
+                    uid: user.uid, username: username.value, email: email.value,
+                    country: country.value, phone: country.value + phone.value,
+                    promo: promo.value || "NONE", balance: 0.0, bot_profit: 0.0,
+                    game_profit: 0.0, trc20_address: walletAddress, status: "active", createdAt: serverTimestamp()
                 });
             });
 
-            // 5. النجاح
-            btnText.innerHTML = '<i class="fa-solid fa-check-double"></i> SUCCESS!';
-            showStatus("Account & Wallet Deployed! Redirecting...", "success");
-            
-            setTimeout(() => { window.location.href = "home.html"; }, 1800);
+            btnText.innerHTML = 'SUCCESS!';
+            showStatus("Account Created! Redirecting...", "success");
+            setTimeout(() => { window.location.href = "home.html"; }, 1500);
 
         } catch (err) {
             submitBtn.disabled = false;
             btnText.textContent = "CREATE ACCOUNT";
-            let errorMsg = err.message;
-            if(err.code === "auth/email-already-in-use") errorMsg = "Email already registered in our system.";
-            if(err.code === "auth/weak-password") errorMsg = "Password is too weak.";
-            showStatus(errorMsg, "error");
+            showStatus(err.message, "error");
         }
     });
 </script>
