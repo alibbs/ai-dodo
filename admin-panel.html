@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AMANA | Command Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body { background: #060914; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: auto; }
+        h1 { color: #ff00b8; border-bottom: 2px solid #1a0b2e; padding-bottom: 10px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-card b { display: block; font-size: 24px; color: #00f2ff; }
+
+        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: 15px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        th { background: #1a0b2e; color: #ff00b8; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .action-btn { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; margin-right: 5px; }
+        .btn-edit { background: #00f2ff; color: #000; }
+        .btn-save { background: #00ff96; color: #000; }
+        
+        input { background: #000; border: 1px solid #333; color: #00ff96; padding: 5px; border-radius: 5px; width: 80px; }
+        .wide-input { width: 200px; color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <h1><i class="fa-solid fa-screwdriver-wrench"></i> AMANA ADMIN PANEL</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card">Total Users <b id="totalUsers">0</b></div>
+        <div class="stat-card">Total Deposits <b id="totalVault">$0.00</b></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>User (Email/Name)</th>
+                <th>Balance ($)</th>
+                <th>TRC20 Address</th>
+                <th>Bot/Game Profit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            </tbody>
+    </table>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // جلب بيانات كل المستخدمين فوريًا
+    onSnapshot(collection(db, "users"), (snapshot) => {
+        const table = document.getElementById('userTable');
+        table.innerHTML = "";
+        let totalUsers = 0;
+        let totalVault = 0;
+
+        snapshot.forEach((userDoc) => {
+            const data = userDoc.data();
+            const id = userDoc.id;
+            totalUsers++;
+            totalVault += (data.balance || 0);
+
+            table.innerHTML += `
+                <tr>
+                    <td>${data.username || 'N/A'}<br><small style="color:#666">${data.email || ''}</small></td>
+                    <td><input type="number" id="bal-${id}" value="${data.balance || 0}"></td>
+                    <td><input type="text" class="wide-input" id="addr-${id}" value="${data.trc20_address || ''}" placeholder="Paste TRC20"></td>
+                    <td>
+                        B: <input type="number" id="bot-${id}" value="${data.bot_profit || 0}"><br>
+                        G: <input type="number" id="game-${id}" value="${data.game_profit || 0}">
+                    </td>
+                    <td>
+                        <button class="action-btn btn-save" onclick="updateUser('${id}')">Update</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('totalUsers').textContent = totalUsers;
+        document.getElementById('totalVault').textContent = "$" + totalVault.toLocaleString();
+    });
+
+    // دالة تحديث البيانات في فايربيس
+    window.updateUser = async (uid) => {
+        const newBal = parseFloat(document.getElementById(`bal-${uid}`).value);
+        const newAddr = document.getElementById(`addr-${uid}`).value;
+        const newBot = parseFloat(document.getElementById(`bot-${uid}`).value);
+        const newGame = parseFloat(document.getElementById(`game-${uid}`).value);
+
+        try {
+            await updateDoc(doc(db, "users", uid), {
+                balance: newBal,
+                trc20_address: newAddr,
+                bot_profit: newBot,
+                game_profit: newGame
+            });
+            alert("User updated successfully!");
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
+    };
+</script>
+
+</body>
+</html>
