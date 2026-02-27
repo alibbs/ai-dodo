@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>AMANA ELITE | Diamonds Pro</title>
+    <title>AMANA ELITE | Diamonds Ultra</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -35,7 +35,6 @@
             font-weight: 800; font-size: 13px;
         }
 
-        /* Fixed Grid - No Movement */
         .grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
             background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 15px;
@@ -46,9 +45,8 @@
             aspect-ratio: 1; background: #213743; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 22px; transition: background 0.1s; 
-            border: none; /* Fixed border to prevent jumping */
             box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
-            position: relative;
+            border: none; outline: none; position: relative;
         }
         .tile:active { transform: scale(0.95); }
         .tile.revealed { background: #0f212e; box-shadow: none; cursor: default; }
@@ -72,14 +70,12 @@
             padding: 0 15px; border-radius: 8px; font-weight: 800; font-size: 12px;
             cursor: pointer;
         }
-        .btn-adjust:disabled { opacity: 0.4; }
 
         input, select {
             background: #0f212e; border: 1px solid var(--border);
             padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
-            font-size: 14px;
         }
-        input:disabled, select:disabled { opacity: 0.6; }
+        input:disabled, select:disabled, .btn-adjust:disabled { opacity: 0.5; }
 
         .btn-main {
             background: var(--up); color: #060914;
@@ -137,10 +133,6 @@
     </div>
 </div>
 
-<audio id="sndGem" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio> 
-<audio id="sndBomb" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
-<audio id="sndClick" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -159,19 +151,49 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let userBalance = 0, userId = null, gameActive = false, bombs = [], revealedCount = 0, currentMult = 1.00;
+    // --- Embedded Sounds (Base64) - Works on all devices ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Clean Ting Sound for Diamonds
+    const gemSoundBase64 = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YV92T197AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AHwAfQB+AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8AfwB/AH8Afw==";
 
+    function playDiamondSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // High pitch ting
+        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playBombSound() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    let userBalance = 0, userId = null, gameActive = false, bombs = [], revealedCount = 0, currentMult = 1.00;
+    
     const grid = document.getElementById('gameGrid'), 
           startBtn = document.getElementById('startBtn'), 
           cashoutBtn = document.getElementById('cashoutBtn'), 
           balDisplay = document.getElementById('userBalance'),
           betInput = document.getElementById('betAmount'),
           bombSelect = document.getElementById('bombCount');
-
-    // Soft Volume
-    const sndGem = document.getElementById('sndGem'); sndGem.volume = 0.4;
-    const sndBomb = document.getElementById('sndBomb'); sndBomb.volume = 0.3;
-    const sndClick = document.getElementById('sndClick'); sndClick.volume = 0.2;
 
     window.adjustBet = (factor) => {
         if(gameActive) return;
@@ -195,18 +217,17 @@
         for (let i = 0; i < 25; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
-            tile.innerHTML = '&nbsp;'; // Keep height fixed
+            tile.innerHTML = "&nbsp;";
             tile.onclick = () => revealTile(i);
             grid.appendChild(tile);
         }
     }
 
     async function initGame() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         const bet = parseFloat(betInput.value);
         if (bet > userBalance || bet <= 0) return;
 
-        sndClick.currentTime = 0; sndClick.play();
-        
         betInput.disabled = bombSelect.disabled = true;
         document.getElementById('halfBtn').disabled = document.getElementById('doubleBtn').disabled = true;
 
@@ -234,16 +255,12 @@
         tile.classList.add('revealed');
         
         if (bombs.includes(index)) {
-            sndBomb.currentTime = 0; sndBomb.play();
+            playBombSound();
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
             tile.classList.add('bomb-hit');
             endGame(false);
         } else {
-            // Instant Sound Playback
-            const soundClone = sndGem.cloneNode();
-            soundClone.volume = 0.4;
-            soundClone.play();
-            
+            playDiamondSound();
             tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
             calculateMultiplier();
@@ -287,7 +304,7 @@
     }
 
     startBtn.onclick = initGame;
-    cashoutBtn.onclick = () => { if(gameActive) { sndGem.cloneNode().play(); endGame(true); } };
+    cashoutBtn.onclick = () => { if(gameActive) { playDiamondSound(); endGame(true); } };
     createBoard();
 </script>
 </body>
