@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE | DICE RIGGED</title>
+    <title>A | ELITE DICE PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;800;900&display=swap');
@@ -11,23 +11,49 @@
         :root {
             --bg: #02040a;
             --panel: #0d111c;
-            --accent: #8b5cf6;
+            --accent: #ff00b8;
             --gold: #fbbf24;
             --up: #00e701;
             --down: #ff3b3b;
             --border: rgba(255, 255, 255, 0.08);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; outline: none; }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
-        body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 20px); }
-
-        header { height: 60px; display: flex; align-items: center; justify-content: center; padding: 0 20px; }
-        .balance-box { 
-            background: #000; padding: 8px 20px; border-radius: 12px; 
-            border: 1px solid var(--accent); display: flex; align-items: center; gap: 10px;
+        /* منع الزوم وتحسين اللمس */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        
+        html, body { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; 
         }
-        .balance-box span { font-family: 'Orbitron'; font-size: 1.1rem; color: #fff; }
+
+        body { display: flex; flex-direction: column; }
+
+        /* Custom Alert System */
+        #custom-alert {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 59, 59, 0.95); color: white; padding: 14px 28px;
+            border-radius: 12px; font-weight: 800; z-index: 9999; font-size: 14px;
+            box-shadow: 0 10px 40px rgba(255, 59, 59, 0.5);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2);
+            text-transform: uppercase;
+        }
+        #custom-alert.show { top: 25px; }
+
+        header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        
+        .logo-a { 
+            width: 42px; height: 42px; background: rgba(255, 0, 184, 0.1); border: 2px solid var(--accent); 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
+            font-size: 26px; font-weight: 900; text-shadow: 0 0 15px var(--accent); 
+            cursor: pointer; text-decoration: none; color: white;
+        }
+
+        .balance-box { 
+            background: var(--panel); padding: 8px 18px; border-radius: 12px; 
+            border: 1px solid var(--border); display: flex; align-items: center; gap: 10px;
+        }
+        .balance-box span { font-family: 'Orbitron'; font-size: 1rem; color: var(--up); }
 
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
         
@@ -37,24 +63,16 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.5);
         }
 
-        .result-box {
-            height: 120px; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-        }
-        .result-val { 
-            font-size: 85px; font-weight: 900; font-family: 'Orbitron'; 
-            transition: 0.05s; letter-spacing: -3px; color: #fff;
-        }
+        .result-box { height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .result-val { font-size: 75px; font-weight: 900; font-family: 'Orbitron'; transition: 0.1s; color: #fff; }
         
-        .slider-wrapper { width: 100%; position: relative; padding: 10px 0 30px 0; }
-        .track { height: 12px; background: var(--down); border-radius: 10px; position: relative; overflow: hidden; }
+        .slider-wrapper { width: 100%; position: relative; padding: 10px 0 35px 0; }
+        .track { height: 14px; background: var(--down); border-radius: 10px; position: relative; overflow: hidden; }
         .track-win { position: absolute; height: 100%; background: var(--up); right: 0; transition: 0.2s ease; }
         
-        input[type=range] {
-            position: absolute; width: 100%; top: 2px; appearance: none; background: transparent; cursor: pointer; z-index: 10; margin: 0;
-        }
+        input[type=range] { position: absolute; width: 100%; top: 4px; appearance: none; background: transparent; cursor: pointer; z-index: 10; margin: 0; }
         input[type=range]::-webkit-slider-thumb {
-            appearance: none; height: 36px; width: 36px; border-radius: 10px; background: #fff;
+            appearance: none; height: 38px; width: 38px; border-radius: 12px; background: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 4px solid var(--accent);
         }
 
@@ -73,30 +91,32 @@
             padding: 12px; border-radius: 16px; margin-bottom: 15px;
         }
         .bet-input-wrap label { font-size: 9px; color: #64748b; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .bet-input-wrap input { width: 100%; background: transparent; border: none; color: #fff; font-size: 22px; font-weight: 900; }
+        .bet-input-wrap input { width: 100%; background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 900; outline: none; text-align: center; }
 
         .roll-btn {
-            width: 100%; padding: 20px; border-radius: 16px; border: none;
-            background: var(--accent); color: #fff; font-size: 1.4rem; font-weight: 900;
-            text-transform: uppercase; cursor: pointer;
-            box-shadow: 0 6px 0 #5b21b6; transition: 0.1s;
+            width: 100%; padding: 22px; border-radius: 16px; border: none;
+            background: var(--accent); color: #fff; font-size: 1.3rem; font-weight: 900;
+            text-transform: uppercase; cursor: pointer; transition: 0.1s;
         }
-        .roll-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #5b21b6; }
-        .roll-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .roll-btn:active { transform: scale(0.98); opacity: 0.8; }
+        .roll-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        .win-pop { animation: popWin 0.2s ease-out; color: var(--up) !important; text-shadow: 0 0 25px var(--up); }
-        .loss-pop { animation: popLoss 0.2s ease-out; color: var(--down) !important; text-shadow: 0 0 25px var(--down); }
-
-        @keyframes popWin { 0% { transform: scale(0.8); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes popLoss { 0% { transform: scale(0.9); } 100% { transform: scale(1); } }
+        .win-pop { color: var(--up) !important; text-shadow: 0 0 20px var(--up); transform: scale(1.1); }
+        .loss-pop { color: var(--down) !important; transform: scale(0.9); }
     </style>
 </head>
 <body>
 
+    <div id="custom-alert">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="alert-msg">Insufficient Balance!</span>
+    </div>
+
     <header>
+        <a href="home.html" class="logo-a">A</a>
         <div class="balance-box">
             <i class="fa-solid fa-gem" style="color:var(--gold)"></i>
-            <span id="balText">1,000.00</span>
+            <span id="balText">0.00</span>
         </div>
     </header>
 
@@ -124,99 +144,107 @@
     <div class="controls">
         <div class="bet-input-wrap">
             <label>Bet Amount</label>
-            <input type="number" id="betAmount" value="10.00">
+            <input type="number" id="betAmount" value="10.00" inputmode="decimal">
         </div>
-        <button class="roll-btn" id="rollBtn" onclick="executeRoll()">Roll Dice</button>
+        <button class="roll-btn" id="rollBtn">Roll Dice</button>
     </div>
 
-<script>
-    let currentBalance = 1000.00;
-    let rollCount = 0; // عداد اللفات للاستنزاف
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = { apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA", authDomain: "ai-dodo.firebaseapp.com", projectId: "ai-dodo", storageBucket: "ai-dodo.firebasestorage.app", messagingSenderId: "261622335803", appId: "1:261622335803:web:0b066791230535e7d5cf1e" };
+    const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+
+    let uID, balance = 0;
 
     const slider = document.getElementById('mainSlider');
     const winFill = document.getElementById('winFill');
     const resDisplay = document.getElementById('resDisplay');
-    const mVal = document.getElementById('mVal');
-    const tVal = document.getElementById('tVal');
-    const cVal = document.getElementById('cVal');
     const balText = document.getElementById('balText');
     const rollBtn = document.getElementById('rollBtn');
+
+    // منع الزوم عند الخروج من الحقل
+    document.getElementById('betAmount').addEventListener('blur', () => window.scrollTo(0,0));
+
+    function showAlert(msg) {
+        const alertBox = document.getElementById('custom-alert');
+        document.getElementById('alert-msg').textContent = msg;
+        alertBox.classList.add('show');
+        setTimeout(() => alertBox.classList.remove('show'), 3000);
+    }
+
+    onAuthStateChanged(auth, user => {
+        if(user) {
+            uID = user.uid;
+            onSnapshot(doc(db, "users", uID), s => {
+                balance = s.data()?.balance || 0;
+                balText.innerText = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            });
+        }
+    });
 
     function refreshStats() {
         const val = parseFloat(slider.value);
         const winChance = 100 - val;
         winFill.style.width = winChance + "%";
-        tVal.innerText = val.toFixed(2);
-        cVal.innerText = winChance.toFixed(2);
-        mVal.innerText = (99 / winChance).toFixed(4) + "x";
+        document.getElementById('tVal').innerText = val.toFixed(2);
+        document.getElementById('cVal').innerText = winChance.toFixed(2);
+        document.getElementById('mVal').innerText = (99 / winChance).toFixed(4) + "x";
     }
 
     slider.oninput = refreshStats;
 
-    function executeRoll() {
+    window.executeRoll = async () => {
         const bet = parseFloat(document.getElementById('betAmount').value);
-        if (bet > currentBalance || bet <= 0 || isNaN(bet)) {
-            alert("رصيد غير كافٍ!");
-            return;
-        }
+        if (bet > balance) return showAlert("Insufficient Balance!");
+        if (bet <= 0 || isNaN(bet)) return showAlert("Invalid Bet Amount!");
 
-        currentBalance -= bet;
-        rollCount++;
-        updateUI();
         rollBtn.disabled = true;
+        resDisplay.classList.remove("win-pop", "loss-pop");
+        
+        // خصم الرصيد فوراً من Firebase
+        await updateDoc(doc(db, "users", uID), { balance: increment(-bet) });
 
         const target = parseFloat(slider.value);
         const winChance = 100 - target;
         const multiplier = 99 / winChance;
         
-        let final;
+        // الحسابات والنتيجة
         const luck = Math.random() * 100;
-
-        // منطق الاستنزاف:
-        if (bet > (currentBalance + bet) * 0.2) {
-            // إذا غامر بمبلغ كبير -> خسارة قريبة جداً
-            final = target - (Math.random() * 3); 
+        let final;
+        
+        // منطق الاستنزاف (نفس فكرة الكراش)
+        if (luck < (winChance * 0.95)) { // تخفيض فرصة الفوز الحقيقية بـ 5%
+            final = target + (Math.random() * (100 - target));
         } else {
-            // تزيد الصعوبة مع كل لفة (0.1% لكل لفة)
-            let houseEdge = rollCount * 0.1; 
-            if(houseEdge > 12) houseEdge = 12; // أقصى حد للتلاعب 12%
-
-            if (luck < (winChance - houseEdge)) {
-                final = target + (Math.random() * (100 - target)); // فوز
-            } else {
-                final = target - (Math.random() * 15); // خسارة
-            }
+            final = target - (Math.random() * 10);
         }
-
         final = Math.max(0.01, Math.min(99.99, final));
 
-        let frames = 0;
-        const speed = setInterval(() => {
-            resDisplay.innerText = (Math.random() * 100).toFixed(2);
-            resDisplay.className = "result-val";
-            frames++;
-            
-            if (frames > 5) {
-                clearInterval(speed);
+        // تأثير الدوران (Animation)
+        let count = 0;
+        const anim = setInterval(async () => {
+            resDisplay.innerText = (Math.random() * 99).toFixed(2);
+            count++;
+            if(count > 10) {
+                clearInterval(anim);
                 resDisplay.innerText = final.toFixed(2);
                 
                 if (final > target) {
-                    currentBalance += (bet * multiplier);
+                    const winAmt = bet * multiplier;
+                    await updateDoc(doc(db, "users", uID), { balance: increment(winAmt) });
                     resDisplay.classList.add("win-pop");
                 } else {
                     resDisplay.classList.add("loss-pop");
                 }
-                
-                updateUI();
                 rollBtn.disabled = false;
             }
-        }, 40);
-    }
+        }, 50);
+    };
 
-    function updateUI() {
-        balText.innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    }
-
+    rollBtn.onclick = window.executeRoll;
     refreshStats();
 </script>
 </body>
