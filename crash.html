@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>A | ELITE CRASH PRO</title>
+    <title>A | ELITE CRASH FINAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -18,7 +18,7 @@
             --border-ui: #2f4553;
         }
 
-        /* منع الزوم وتحسين استجابة اللمس */
+        /* منع الزوم والتعليق عند الكتابة */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -26,67 +26,78 @@
             touch-action: manipulation; 
         }
         
-        body { 
-            margin: 0; background: var(--bg-dark); color: #fff; 
-            display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; overflow: hidden; 
+        html, body { 
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            background: var(--bg-dark); color: #fff; overflow: hidden;
+            position: fixed; /* حل نهائي لمشكلة اهتزاز الشاشة */
         }
 
-        /* --- Custom Alert (English) --- */
+        body { display: flex; flex-direction: column; align-items: center; }
+
+        /* نظام التنبيهات */
         #custom-alert {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: rgba(255, 59, 59, 0.95); color: white; padding: 14px 28px;
-            border-radius: 12px; font-weight: 800; z-index: 2000; font-size: 14px;
+            border-radius: 12px; font-weight: 800; z-index: 9999; font-size: 14px;
             box-shadow: 0 10px 40px rgba(255, 59, 59, 0.5);
             transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2);
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase;
         }
         #custom-alert.show { top: 25px; }
 
-        /* --- Header --- */
-        .game-header { width: 100%; max-width: 500px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        /* الهيدر مع حرف A للرجوع للرئيسية */
+        .game-header { width: 100%; max-width: 500px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-a { 
             width: 42px; height: 42px; background: rgba(255, 0, 184, 0.1); border: 2px solid var(--brand-color); 
             border-radius: 12px; display: flex; align-items: center; justify-content: center; 
             font-size: 26px; font-weight: 900; text-shadow: 0 0 15px var(--brand-color); 
-            cursor: pointer; text-decoration: none; color: white;
+            cursor: pointer; text-decoration: none; color: white; transition: 0.3s;
         }
+        .logo-a:active { transform: scale(0.9); }
         .user-balance { background: var(--panel-bg); padding: 10px 18px; border-radius: 8px; font-weight: 800; color: var(--win-green); border: 1px solid var(--border-ui); }
 
-        /* --- History Bar --- */
-        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
-        .hist-item { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: var(--panel-bg); border: 1px solid var(--border-ui); min-width: 58px; text-align: center; }
+        /* شريط النتائج السابقة */
+        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; min-height: 45px; }
+        .history-bar::-webkit-scrollbar { display: none; }
+        .hist-item { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: var(--panel-bg); border: 1px solid var(--border-ui); min-width: 58px; text-align: center; display: flex; align-items: center; justify-content: center; }
         .hist-high { color: #ffd700; border-color: #ffd700; background: rgba(255,215,0,0.1); }
 
-        /* --- Stage --- */
+        /* منطقة اللعب (Stage) */
         .stage-container {
-            width: 95%; max-width: 480px; height: 340px; background: radial-gradient(circle at 10% 90%, #162431 0%, #070912 100%);
-            border-radius: 20px; border: 1px solid var(--border-ui); position: relative; overflow: hidden; margin: 10px 0;
+            width: 92%; max-width: 460px; height: 320px; background: radial-gradient(circle at 10% 90%, #162431 0%, #070912 100%);
+            border-radius: 20px; border: 1px solid var(--border-ui); position: relative; overflow: hidden; margin: 5px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
         .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border-ui) 1px, transparent 1px), linear-gradient(90deg, var(--border-ui) 1px, transparent 1px); background-size: 45px 45px; opacity: 0.05; }
 
-        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 75px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
+        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 70px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
         #profit-display { position: absolute; top: 62%; left: 50%; transform: translateX(-50%); color: var(--win-green); font-weight: 800; font-size: 22px; display: none; background: rgba(0,231,1,0.1); padding: 5px 18px; border-radius: 30px; }
 
         .plane-wrapper { position: absolute; bottom: 50px; left: 50px; z-index: 5; transition: transform 0.1s linear; }
-        .plane-wrapper i { font-size: 42px; color: var(--accent-blue); transform: rotate(-15deg); filter: drop-shadow(0 0 20px var(--accent-blue)); }
+        .plane-wrapper i { font-size: 40px; color: var(--accent-blue); transform: rotate(-15deg); filter: drop-shadow(0 0 20px var(--accent-blue)); }
         
         .wait-screen { position: absolute; inset: 0; background: rgba(7, 9, 18, 0.96); z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .wait-timer { font-size: 48px; font-weight: 900; color: var(--brand-color); }
         .progress-bar { width: 220px; height: 5px; background: #1a2c38; border-radius: 10px; overflow: hidden; margin-top: 15px; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand-color), #ff66d4); }
 
-        /* --- Controls --- */
-        .control-panel { width: 95%; max-width: 480px; background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-ui); }
-        .input-group { background: var(--input-bg); border: 2px solid var(--border-ui); border-radius: 8px; display: flex; align-items: center; padding: 5px; margin-bottom: 15px; }
-        .input-group input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; font-weight: 800; outline: none; font-size: 18px; text-align: center; }
-        .quick-btn { background: #2f4553; border: none; color: #fff; width: 45px; height: 42px; font-weight: 800; border-radius: 6px; cursor: pointer; }
+        /* لوحة التحكم والرهان */
+        .control-panel { width: 92%; max-width: 460px; background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-ui); }
+        .input-group { background: var(--input-bg); border: 2px solid var(--border-ui); border-radius: 8px; display: flex; align-items: center; padding: 4px; margin-bottom: 15px; }
+        
+        .input-group input { 
+            flex: 1; background: transparent; border: none; color: #fff; 
+            padding: 12px; font-weight: 800; outline: none; 
+            font-size: 16px; /* 16px يمنع الأيفون من عمل زوم */
+            text-align: center; width: 100%;
+        }
 
-        .main-btn { width: 100%; padding: 22px; border: none; border-radius: 10px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .quick-btn { background: #2f4553; border: none; color: #fff; width: 45px; height: 42px; font-weight: 800; border-radius: 6px; cursor: pointer; }
+        .main-btn { width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         .btn-bet { background: var(--win-green); color: #000; box-shadow: 0 4px 15px rgba(0,231,1,0.2); }
-        .btn-bet.queued { background: var(--brand-color); color: #fff; box-shadow: 0 4px 15px rgba(255,0,184,0.2); }
-        .btn-cashout { background: #fff; color: #000; display: none; }
+        .btn-bet.queued { background: var(--brand-color); color: #fff; }
+        .btn-cashout { background: #fff; color: #000; display: none; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
@@ -120,7 +131,7 @@
     <div class="control-panel">
         <div class="input-group">
             <button class="quick-btn" onclick="modBet(0.5)">½</button>
-            <input type="number" id="bet-input" value="10.00">
+            <input type="number" id="bet-input" value="10.00" inputmode="decimal">
             <button class="quick-btn" onclick="modBet(2)">2x</button>
         </div>
 
@@ -137,7 +148,12 @@
     const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
 
     let uID, balance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, isQueued = false;
-    let history = [2.10, 1.05, 12.44, 1.88, 3.20];
+    let history = [1.20, 3.45, 1.00, 2.10, 8.50, 1.15];
+
+    // إصلاح مشكلة انزياح الشاشة عند الكتابة
+    document.getElementById('bet-input').addEventListener('blur', () => {
+        window.scrollTo(0, 0);
+    });
 
     function showAlert(msg) {
         const alertBox = document.getElementById('custom-alert');
@@ -150,32 +166,37 @@
         if(user) {
             uID = user.uid;
             onSnapshot(doc(db, "users", uID), s => {
-                balance = s.data().balance;
+                balance = s.data()?.balance || 0;
                 document.getElementById('balance-top').textContent = "$" + balance.toFixed(2);
             });
         }
     });
 
-    window.modBet = (m) => { let i = document.getElementById('bet-input'); i.value = (parseFloat(i.value) * m).toFixed(2); };
+    window.modBet = (m) => { 
+        let i = document.getElementById('bet-input'); 
+        i.value = (parseFloat(i.value) * m).toFixed(2); 
+    };
 
+    // المحرك الأساسي للعبة (مزامنة عالمية)
     async function engine() {
         while(true) {
-            const cycle = 18000; const now = Date.now(); const time = now % cycle;
+            const cycle = 18000; // 18 ثانية لكل جولة
+            const now = Date.now();
+            const time = now % cycle;
 
-            if(time < 6000) { // Betting Phase
+            if(time < 6000) { // مرحلة الرهان والانتظار (6 ثواني)
                 updateUI('betting', (6000 - time) / 1000);
+                
+                // تفعيل الرهان المحجوز (Queued)
                 if(isQueued && !isPlaying) {
                     const amt = parseFloat(document.getElementById('bet-input').value);
                     if(balance >= amt) {
                         await updateDoc(doc(db, "users", uID), { balance: increment(-amt) });
                         isPlaying = true; isQueued = false;
-                    } else {
-                        isQueued = false;
-                        showAlert("Insufficient Balance!");
-                    }
+                    } else { isQueued = false; showAlert("Insufficient Balance!"); }
                 }
                 await new Promise(r => setTimeout(r, 100));
-            } else { // Flying Phase
+            } else { // مرحلة الطيران
                 updateUI('flying');
                 const crash = calcCrash(Math.floor(now / cycle));
                 const start = now - (now % cycle) + 6000;
@@ -183,28 +204,39 @@
                 while(true) {
                     const elapsed = (Date.now() - start) / 1000;
                     if(elapsed < 0) break;
-                    currentMult = Math.pow(Math.E, 0.07 * elapsed);
+                    currentMult = Math.pow(Math.E, 0.072 * elapsed);
                     if(currentMult >= crash) break;
 
                     document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
+                    
                     if(isPlaying && !hasCashout) {
                         document.getElementById('profit-display').style.display = 'block';
                         document.getElementById('profit-display').textContent = "+$" + (document.getElementById('bet-input').value * currentMult).toFixed(2);
                     }
+                    
+                    // تحريك الطائرة
                     let x = Math.min(elapsed * 35, 80), y = Math.min(Math.pow(elapsed, 1.4) * 10, 70);
                     document.getElementById('plane-wrapper').style.transform = `translate(${x}vw, -${y}vh)`;
                     await new Promise(r => requestAnimationFrame(r));
                 }
+
+                // لحظة الانفجار
                 document.getElementById('multiplier').textContent = "CRASHED!";
+                document.getElementById('multiplier').style.color = "var(--lose-red)";
                 history.push(parseFloat(crash)); renderHistory();
+                
                 isPlaying = false; hasCashout = false;
-                await new Promise(r => setTimeout(r, 3000));
+                await new Promise(r => setTimeout(r, 3500));
+                document.getElementById('multiplier').style.color = "#fff";
+                document.getElementById('profit-display').style.display = "none";
             }
         }
     }
 
     function renderHistory() {
-        document.getElementById('history-bar').innerHTML = history.slice(-8).reverse().map(v => `<div class="hist-item ${v >= 2 ? 'hist-high' : ''}">${v.toFixed(2)}x</div>`).join('');
+        document.getElementById('history-bar').innerHTML = history.slice(-10).reverse().map(v => `
+            <div class="hist-item ${v >= 2 ? 'hist-high' : ''}">${v.toFixed(2)}x</div>
+        `).join('');
     }
 
     function calcCrash(seed) {
@@ -223,31 +255,38 @@
             document.getElementById('wait-timer').textContent = extra.toFixed(1);
             document.getElementById('progress-fill').style.width = (extra/6 * 100) + "%";
             if(!isPlaying && !isQueued) {
-                btnB.style.display = 'block'; btnB.className = "main-btn btn-bet"; btnB.textContent = "Place Bet";
+                btnB.style.display = 'block'; btnB.className = "main-btn btn-bet"; 
+                btnB.textContent = "Place Bet"; btnB.disabled = false;
                 btnC.style.display = 'none';
             }
         } else {
             wait.style.display = 'none'; plane.style.display = 'block';
-            if(isPlaying && !hasCashout) { btnB.style.display = 'none'; btnC.style.display = 'block'; btnC.style.background = "#fff"; btnC.textContent = "Cashout"; }
-            else if(!isQueued) { btnB.style.display = 'block'; btnB.className = "main-btn btn-bet queued"; btnB.textContent = "Next Round"; }
+            if(isPlaying && !hasCashout) { 
+                btnB.style.display = 'none'; btnC.style.display = 'block'; 
+                btnC.style.background = "#fff"; btnC.textContent = "Cashout"; 
+            } else if(!isQueued) { 
+                btnB.style.display = 'block'; btnB.className = "main-btn btn-bet queued"; 
+                btnB.textContent = "Next Round"; btnB.disabled = false;
+            }
         }
     }
 
     document.getElementById('btn-bet').onclick = () => {
         const amt = parseFloat(document.getElementById('bet-input').value);
         if(amt > balance) return showAlert("Insufficient Balance!");
-        if(amt <= 0) return showAlert("Please enter a valid amount!");
+        if(amt <= 0) return showAlert("Enter a valid amount!");
         isQueued = true;
         document.getElementById('btn-bet').textContent = "QUEUED...";
+        document.getElementById('btn-bet').disabled = true;
     };
 
     document.getElementById('btn-cashout').onclick = async () => {
-        if(!isPlaying || hasCashout) return;
+        if(!isPlaying || hasCashout || currentMult < 1.01) return;
         hasCashout = true;
         const win = parseFloat(document.getElementById('bet-input').value) * currentMult;
         await updateDoc(doc(db, "users", uID), { balance: increment(win) });
         document.getElementById('btn-cashout').textContent = "WON!";
-        document.getElementById('btn-cashout').style.background = 'var(--win-green)';
+        document.getElementById('btn-cashout').style.background = "var(--win-green)";
     };
 
     engine(); renderHistory();
