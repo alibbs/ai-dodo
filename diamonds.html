@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>AMANA ELITE | Diamonds Ultra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>A | ELITE MINES</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -15,94 +15,101 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        body {
-            margin: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff;
-            background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
+        /* منع الزوم والتعليق */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        
+        html, body { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            position: fixed; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; 
         }
 
-        .logo-mini { position: absolute; top: 15px; left: 15px; font-size: 14px; font-weight: 900; }
-        .logo-mini span { color: var(--brand); }
+        body { display: flex; flex-direction: column; align-items: center; }
 
-        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; margin-top: 40px; }
-
-        .wallet-header { display: flex; justify-content: flex-end; margin-bottom: 15px; }
-        .bal-display { 
-            background: rgba(0, 255, 150, 0.08); border: 1px solid var(--up); 
-            padding: 6px 12px; border-radius: 50px; color: var(--up); 
-            font-weight: 800; font-size: 13px;
+        /* Custom Alert System */
+        #custom-alert {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 59, 59, 0.95); color: white; padding: 14px 28px;
+            border-radius: 12px; font-weight: 800; z-index: 9999; font-size: 14px;
+            box-shadow: 0 10px 40px rgba(255, 59, 59, 0.5);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2);
+            text-transform: uppercase;
         }
+        #custom-alert.show { top: 25px; }
 
+        /* Header */
+        header { width: 100%; max-width: 420px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-a { 
+            width: 40px; height: 40px; border: 2px solid var(--brand); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;
+            text-decoration: none; color: white; background: rgba(255,0,184,0.1);
+        }
+        .bal-display { background: rgba(0, 255, 150, 0.08); border: 1px solid var(--up); padding: 8px 15px; border-radius: 10px; color: var(--up); font-weight: 800; font-size: 14px; }
+
+        .container { width: 100%; max-width: 420px; padding: 10px; box-sizing: border-box; }
+
+        .stats-float { display: flex; justify-content: space-between; padding: 10px; font-size: 13px; font-weight: 800; }
+
+        /* Grid System */
         .grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
             background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 15px;
-            border: 1px solid var(--border); margin-bottom: 20px;
+            border: 1px solid var(--border); margin-bottom: 15px;
         }
 
         .tile {
             aspect-ratio: 1; background: #213743; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 22px; transition: background 0.1s; 
-            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
-            border: none; outline: none; position: relative;
+            font-size: 22px; transition: 0.1s; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
+            border: none; position: relative;
         }
-        .tile:active { transform: scale(0.95); }
         .tile.revealed { background: #0f212e; box-shadow: none; cursor: default; }
-        .tile.bomb-hit { background: rgba(255, 0, 80, 0.4) !important; }
-        
+        .tile.bomb-hit { background: rgba(255, 0, 80, 0.5) !important; }
         .tile i { opacity: 0; transform: scale(0.4); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tile.revealed i { opacity: 1; transform: scale(1); }
 
+        /* Controls */
         .controls {
-            background: var(--card); padding: 20px; border-radius: 20px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
+            background: var(--card); padding: 15px; border-radius: 20px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
         }
 
-        .input-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 11px; color: #8b8da3; font-weight: 700; text-transform: uppercase; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10px; color: #8b8da3; font-weight: 800; text-transform: uppercase; }
 
-        .bet-input-wrapper { display: flex; gap: 5px; }
-        .bet-input-wrapper input { flex: 1; min-width: 0; }
-        .btn-adjust { 
-            background: #2f4553; border: none; color: #fff; 
-            padding: 0 15px; border-radius: 8px; font-weight: 800; font-size: 12px;
-            cursor: pointer;
-        }
-
+        .bet-input-wrapper { display: flex; gap: 8px; }
         input, select {
             background: #0f212e; border: 1px solid var(--border);
-            padding: 14px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
+            padding: 12px; border-radius: 10px; color: #fff; font-weight: 800; outline: none;
+            font-size: 16px; /* منع الزوم */
         }
-        input:disabled, select:disabled, .btn-adjust:disabled { opacity: 0.5; }
+        .bet-input-wrapper input { flex: 1; text-align: center; }
+
+        .btn-adjust { background: #2f4553; border: none; color: #fff; padding: 0 15px; border-radius: 8px; font-weight: 800; cursor: pointer; }
 
         .btn-main {
-            background: var(--up); color: #060914;
-            border: none; padding: 16px; border-radius: 10px;
-            font-weight: 900; font-size: 16px; cursor: pointer;
+            background: var(--up); color: #060914; border: none; padding: 18px; 
+            border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase;
         }
         .cashout-btn { background: #fff; color: #000; display: none; }
-        .cashout-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #ccc; }
-
-        .stats-float {
-            display: flex; justify-content: space-between; padding: 0 10px 10px 10px;
-            font-size: 13px; font-weight: 800;
-        }
-
+        
         .d-gem { color: var(--accent); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
         .d-bomb { color: #ff0050; }
     </style>
 </head>
 <body>
 
-<div class="logo-mini">AMANA <span>ELITE</span></div>
+<div id="custom-alert">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span id="alert-msg">Insufficient Balance!</span>
+</div>
+
+<header>
+    <a href="home.html" class="logo-a">A</a>
+    <div class="bal-display" id="userBalance"><i class="fa-solid fa-wallet"></i> 0.00</div>
+</header>
 
 <div class="container">
-    <div class="wallet-header">
-        <div class="bal-display" id="userBalance"><i class="fa-solid fa-wallet"></i> 0.00</div>
-    </div>
-
     <div class="stats-float">
         <span>Multiplier: <span id="multText" style="color:var(--accent)">1.00x</span></span>
         <span>Profit: <span id="profitText" style="color:var(--up)">$0.00</span></span>
@@ -114,9 +121,9 @@
         <div class="input-group">
             <label>Bet Amount</label>
             <div class="bet-input-wrapper">
-                <input type="number" id="betAmount" value="10.00" step="1">
-                <button class="btn-adjust" id="halfBtn" onclick="adjustBet(0.5)">½</button>
-                <button class="btn-adjust" id="doubleBtn" onclick="adjustBet(2)">x2</button>
+                <input type="number" id="betAmount" value="10.00" inputmode="decimal">
+                <button class="btn-adjust" onclick="adjustBet(0.5)">½</button>
+                <button class="btn-adjust" onclick="adjustBet(2)">x2</button>
             </div>
         </div>
         <div class="input-group">
@@ -129,8 +136,8 @@
                 <option value="24">24 Mines</option>
             </select>
         </div>
-        <button class="btn-main" id="startBtn">Bet</button>
-        <button class="btn-main cashout-btn" id="cashoutBtn" disabled>Cashout</button>
+        <button class="btn-main" id="startBtn">Place Bet</button>
+        <button class="btn-main cashout-btn" id="cashoutBtn">Cashout</button>
     </div>
 </div>
 
@@ -139,95 +146,54 @@
     import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-        authDomain: "ai-dodo.firebaseapp.com",
-        projectId: "ai-dodo",
-        storageBucket: "ai-dodo.firebasestorage.app",
-        messagingSenderId: "261622335803",
-        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playDiamondSound() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-    }
-
-    function playBombSound() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
-    }
+    const firebaseConfig = { apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA", authDomain: "ai-dodo.firebaseapp.com", projectId: "ai-dodo", storageBucket: "ai-dodo.firebasestorage.app", messagingSenderId: "261622335803", appId: "1:261622335803:web:0b066791230535e7d5cf1e" };
+    const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
 
     let userBalance = 0, userId = null, gameActive = false, bombs = [], revealedCount = 0, currentMult = 1.00;
     
-    const grid = document.getElementById('gameGrid'), 
-          startBtn = document.getElementById('startBtn'), 
-          cashoutBtn = document.getElementById('cashoutBtn'), 
-          balDisplay = document.getElementById('userBalance'),
-          betInput = document.getElementById('betAmount'),
-          bombSelect = document.getElementById('bombCount');
+    const grid = document.getElementById('gameGrid'), startBtn = document.getElementById('startBtn'), cashoutBtn = document.getElementById('cashoutBtn'), balDisplay = document.getElementById('userBalance'), betInput = document.getElementById('betAmount'), bombSelect = document.getElementById('bombCount');
+
+    // منع الزوم والتعليق عند الخروج من الحقل
+    betInput.addEventListener('blur', () => window.scrollTo(0,0));
+
+    function showAlert(msg) {
+        const alertBox = document.getElementById('custom-alert');
+        document.getElementById('alert-msg').textContent = msg;
+        alertBox.classList.add('show');
+        setTimeout(() => alertBox.classList.remove('show'), 3000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userId = user.uid;
+            onSnapshot(doc(db, "users", userId), (snap) => {
+                userBalance = snap.data()?.balance || 0;
+                balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            });
+        }
+    });
 
     window.adjustBet = (factor) => {
         if(gameActive) return;
         betInput.value = (parseFloat(betInput.value || 0) * factor).toFixed(2);
     };
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            userId = user.uid;
-            onSnapshot(doc(db, "users", userId), (snap) => {
-                if (snap.exists()) {
-                    userBalance = snap.data().balance || 0;
-                    balDisplay.innerHTML = `<i class="fa-solid fa-wallet"></i> ${userBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-                }
-            });
-        }
-    });
-
     function createBoard() {
         grid.innerHTML = '';
         for (let i = 0; i < 25; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
-            tile.innerHTML = "&nbsp;";
             tile.onclick = () => revealTile(i);
             grid.appendChild(tile);
         }
     }
 
-    async function initGame() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+    startBtn.onclick = async () => {
         const bet = parseFloat(betInput.value);
-        if (bet > userBalance || bet <= 0) return;
+        if (bet > userBalance) return showAlert("Insufficient Balance!");
+        if (bet <= 0 || isNaN(bet)) return showAlert("Invalid Bet Amount!");
 
-        betInput.disabled = bombSelect.disabled = true;
-        document.getElementById('halfBtn').disabled = document.getElementById('doubleBtn').disabled = true;
-
+        gameActive = true; revealedCount = 0; currentMult = 1.00;
         await updateDoc(doc(db, "users", userId), { balance: increment(-bet) });
 
         const bombNum = parseInt(bombSelect.value);
@@ -237,13 +203,10 @@
             if(!bombs.includes(r)) bombs.push(r);
         }
 
-        gameActive = true; revealedCount = 0; currentMult = 1.00;
-        updateStats();
-        startBtn.style.display = 'none';
-        cashoutBtn.style.display = 'block';
-        cashoutBtn.disabled = true; // Disabled until first gem
-        createBoard();
-    }
+        startBtn.style.display = 'none'; cashoutBtn.style.display = 'block';
+        cashoutBtn.disabled = true; betInput.disabled = bombSelect.disabled = true;
+        updateStats(); createBoard();
+    };
 
     async function revealTile(index) {
         if (!gameActive) return;
@@ -251,20 +214,14 @@
         if (tile.classList.contains('revealed')) return;
 
         tile.classList.add('revealed');
-        
         if (bombs.includes(index)) {
-            playBombSound();
             tile.innerHTML = '<i class="fa-solid fa-bomb d-bomb"></i>';
             tile.classList.add('bomb-hit');
             endGame(false);
         } else {
-            playDiamondSound();
             tile.innerHTML = '<i class="fa-solid fa-gem d-gem"></i>';
             revealedCount++;
-            
-            // Enable cashout as soon as 1 gem is found
-            if(revealedCount >= 1) cashoutBtn.disabled = false;
-
+            cashoutBtn.disabled = false;
             calculateMultiplier();
             updateStats();
         }
@@ -274,7 +231,7 @@
         const bombNum = parseInt(bombSelect.value);
         let m = 1;
         for(let i=0; i<revealedCount; i++) { m *= (25 - i) / (25 - bombNum - i); }
-        currentMult = m * 0.99; 
+        currentMult = m * 0.98; // House Edge 2%
     }
 
     function updateStats() {
@@ -285,29 +242,24 @@
 
     async function endGame(isWin) {
         gameActive = false;
-        startBtn.style.display = 'block';
-        cashoutBtn.style.display = 'none';
-        cashoutBtn.disabled = true;
-
         if (isWin) {
-            const bet = parseFloat(betInput.value);
-            await updateDoc(doc(db, "users", userId), { balance: increment(bet * currentMult) });
+            const win = parseFloat(betInput.value) * currentMult;
+            await updateDoc(doc(db, "users", userId), { balance: increment(win) });
         }
-
+        
         bombs.forEach(i => {
             const t = grid.children[i];
             if(!t.classList.contains('revealed')) {
                 t.classList.add('revealed');
-                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.2"></i>';
+                t.innerHTML = '<i class="fa-solid fa-bomb d-bomb" style="opacity:0.3"></i>';
             }
         });
 
+        startBtn.style.display = 'block'; cashoutBtn.style.display = 'none';
         betInput.disabled = bombSelect.disabled = false;
-        document.getElementById('halfBtn').disabled = document.getElementById('doubleBtn').disabled = false;
     }
 
-    startBtn.onclick = initGame;
-    cashoutBtn.onclick = () => { if(gameActive && revealedCount > 0) { playDiamondSound(); endGame(true); } };
+    cashoutBtn.onclick = () => endGame(true);
     createBoard();
 </script>
 </body>
