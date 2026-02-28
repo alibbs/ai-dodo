@@ -3,107 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>A | ELITE CRASH FINAL</title>
+    <title>A | ELITE CRASH PREMIER</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #070912;
-            --panel-bg: #0f212e;
-            --input-bg: #071620;
+            --bg-dark: #0b0e18;
+            --panel-bg: #1a1d29;
+            --input-bg: #0d0f17;
             --brand-color: #ff00b8;
             --accent-blue: #00f2ff;
-            --win-green: #00e701;
-            --lose-red: #ff3b3b;
-            --text-main: #b1bad3;
-            --border-ui: #2f4553;
+            --win-green: #00ffa3;
+            --lose-red: #ff3b5c;
+            --text-main: #94a3b8;
+            --border-ui: rgba(255, 255, 255, 0.05);
         }
 
-        /* منع الزوم والتعليق عند الكتابة */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            font-family: 'Inter', sans-serif; 
-            touch-action: manipulation; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; touch-action: manipulation; }
         
         html, body { 
             height: 100%; width: 100%; margin: 0; padding: 0;
             background: var(--bg-dark); color: #fff; overflow: hidden;
-            position: fixed; /* حل نهائي لمشكلة اهتزاز الشاشة */
+            position: fixed;
         }
 
         body { display: flex; flex-direction: column; align-items: center; }
 
-        /* نظام التنبيهات */
+        /* Alert System */
         #custom-alert {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 59, 59, 0.95); color: white; padding: 14px 28px;
+            background: var(--lose-red); color: white; padding: 14px 28px;
             border-radius: 12px; font-weight: 800; z-index: 9999; font-size: 14px;
-            box-shadow: 0 10px 40px rgba(255, 59, 59, 0.5);
+            box-shadow: 0 10px 40px rgba(255, 59, 92, 0.4);
             transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2);
-            text-transform: uppercase;
+            display: flex; align-items: center; gap: 12px;
         }
         #custom-alert.show { top: 25px; }
 
-        /* الهيدر مع حرف A للرجوع للرئيسية */
-        .game-header { width: 100%; max-width: 500px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        /* Header */
+        .game-header { width: 100%; max-width: 500px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-a { 
-            width: 42px; height: 42px; background: rgba(255, 0, 184, 0.1); border: 2px solid var(--brand-color); 
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-size: 26px; font-weight: 900; text-shadow: 0 0 15px var(--brand-color); 
-            cursor: pointer; text-decoration: none; color: white; transition: 0.3s;
+            width: 44px; height: 44px; background: linear-gradient(135deg, var(--brand-color), #8b5cf6);
+            border-radius: 14px; display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: 900; color: white; text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 0, 184, 0.3);
         }
-        .logo-a:active { transform: scale(0.9); }
-        .user-balance { background: var(--panel-bg); padding: 10px 18px; border-radius: 8px; font-weight: 800; color: var(--win-green); border: 1px solid var(--border-ui); }
+        .user-balance { 
+            background: rgba(255, 255, 255, 0.03); padding: 10px 20px; border-radius: 12px; 
+            font-weight: 800; color: var(--win-green); border: 1px solid var(--border-ui);
+            font-family: 'Monaco', monospace;
+        }
 
-        /* شريط النتائج السابقة */
-        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; min-height: 45px; }
-        .history-bar::-webkit-scrollbar { display: none; }
-        .hist-item { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: var(--panel-bg); border: 1px solid var(--border-ui); min-width: 58px; text-align: center; display: flex; align-items: center; justify-content: center; }
-        .hist-high { color: #ffd700; border-color: #ffd700; background: rgba(255,215,0,0.1); }
+        /* History */
+        .history-bar { width: 100%; max-width: 500px; display: flex; gap: 8px; padding: 5px 20px; overflow-x: auto; scrollbar-width: none; }
+        .hist-item { 
+            padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 800; 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-ui); color: var(--text-main);
+        }
+        .hist-high { color: var(--accent-blue); border-color: rgba(0, 242, 255, 0.3); background: rgba(0, 242, 255, 0.05); }
 
-        /* منطقة اللعب (Stage) */
+        /* Stage Area */
         .stage-container {
-            width: 92%; max-width: 460px; height: 320px; background: radial-gradient(circle at 10% 90%, #162431 0%, #070912 100%);
-            border-radius: 20px; border: 1px solid var(--border-ui); position: relative; overflow: hidden; margin: 5px 0;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            width: 94%; max-width: 480px; height: 340px; 
+            background: radial-gradient(circle at 50% 50%, #1e2235 0%, #0b0e18 100%);
+            border-radius: 24px; border: 1px solid var(--border-ui); position: relative; overflow: hidden; margin: 10px 0;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
         }
-        .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border-ui) 1px, transparent 1px), linear-gradient(90deg, var(--border-ui) 1px, transparent 1px); background-size: 45px 45px; opacity: 0.05; }
-
-        #multiplier { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 70px; font-weight: 900; z-index: 10; font-variant-numeric: tabular-nums; }
-        #profit-display { position: absolute; top: 62%; left: 50%; transform: translateX(-50%); color: var(--win-green); font-weight: 800; font-size: 22px; display: none; background: rgba(0,231,1,0.1); padding: 5px 18px; border-radius: 30px; }
-
-        .plane-wrapper { position: absolute; bottom: 50px; left: 50px; z-index: 5; transition: transform 0.1s linear; }
-        .plane-wrapper i { font-size: 40px; color: var(--accent-blue); transform: rotate(-15deg); filter: drop-shadow(0 0 20px var(--accent-blue)); }
         
-        .wait-screen { position: absolute; inset: 0; background: rgba(7, 9, 18, 0.96); z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .wait-timer { font-size: 48px; font-weight: 900; color: var(--brand-color); }
-        .progress-bar { width: 220px; height: 5px; background: #1a2c38; border-radius: 10px; overflow: hidden; margin-top: 15px; }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand-color), #ff66d4); }
-
-        /* لوحة التحكم والرهان */
-        .control-panel { width: 92%; max-width: 460px; background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-ui); }
-        .input-group { background: var(--input-bg); border: 2px solid var(--border-ui); border-radius: 8px; display: flex; align-items: center; padding: 4px; margin-bottom: 15px; }
+        #multiplier { 
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); 
+            font-size: 72px; font-weight: 900; z-index: 10; letter-spacing: -2px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
+        }
         
-        .input-group input { 
+        #profit-display { 
+            position: absolute; top: 65%; left: 50%; transform: translateX(-50%); 
+            color: var(--win-green); font-weight: 800; font-size: 20px; display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        .plane-wrapper { position: absolute; bottom: 60px; left: 60px; z-index: 5; }
+        .plane-wrapper i { font-size: 38px; color: var(--accent-blue); filter: drop-shadow(0 0 15px var(--accent-blue)); }
+
+        .wait-screen { 
+            position: absolute; inset: 0; background: rgba(11, 14, 24, 0.9); z-index: 30; 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .wait-timer { font-size: 56px; font-weight: 900; color: #fff; margin-bottom: 10px; }
+
+        /* Controls */
+        .control-panel { 
+            width: 94%; max-width: 480px; background: var(--panel-bg); 
+            border-radius: 24px; padding: 20px; border: 1px solid var(--border-ui);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+        }
+
+        .bet-input-container {
+            background: var(--input-bg); border-radius: 14px; 
+            display: flex; align-items: center; padding: 6px; margin-bottom: 15px;
+            border: 1px solid var(--border-ui);
+        }
+        .bet-input-container input { 
             flex: 1; background: transparent; border: none; color: #fff; 
-            padding: 12px; font-weight: 800; outline: none; 
-            font-size: 16px; /* 16px يمنع الأيفون من عمل زوم */
-            text-align: center; width: 100%;
+            font-weight: 800; font-size: 18px; text-align: center; outline: none;
         }
+        .btn-small { 
+            background: #2a2e3f; border: none; color: #fff; 
+            width: 46px; height: 46px; border-radius: 10px; font-weight: 800; cursor: pointer;
+            margin: 0 2px; transition: 0.2s;
+        }
+        .btn-small:active { background: #3f445e; }
+        .btn-max { width: 60px; background: rgba(255, 0, 184, 0.15); color: var(--brand-color); }
 
-        .quick-btn { background: #2f4553; border: none; color: #fff; width: 45px; height: 42px; font-weight: 800; border-radius: 6px; cursor: pointer; }
-        .main-btn { width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-bet { background: var(--win-green); color: #000; box-shadow: 0 4px 15px rgba(0,231,1,0.2); }
+        .main-btn { 
+            width: 100%; padding: 22px; border: none; border-radius: 16px; 
+            font-size: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase;
+        }
+        .btn-bet { background: var(--win-green); color: #064e3b; box-shadow: 0 4px 20px rgba(0, 255, 163, 0.2); }
         .btn-bet.queued { background: var(--brand-color); color: #fff; }
-        .btn-cashout { background: #fff; color: #000; display: none; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        .btn-cashout { background: #fff; color: #000; display: none; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
     </style>
 </head>
 <body>
 
     <div id="custom-alert">
-        <i class="fa-solid fa-circle-exclamation"></i>
+        <i class="fa-solid fa-triangle-exclamation"></i>
         <span id="alert-msg">Insufficient Balance!</span>
     </div>
 
@@ -115,24 +140,26 @@
     <div class="history-bar" id="history-bar"></div>
 
     <div class="stage-container">
-        <div class="grid-bg"></div>
         <div id="multiplier">1.00x</div>
         <div id="profit-display">$ 0.00</div>
 
         <div class="wait-screen" id="wait-screen">
-            <div style="font-size: 11px; font-weight: 800; color: var(--text-main); letter-spacing: 1px;">NEXT ROUND IN</div>
+            <span style="color:var(--text-main); font-size: 12px; font-weight: 800;">PREPARING TAKEOFF</span>
             <div class="wait-timer" id="wait-timer">5.0</div>
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div style="width: 180px; height: 4px; background: #2a2e3f; border-radius: 10px; overflow: hidden;">
+                <div id="progress-fill" style="height: 100%; width: 0%; background: var(--brand-color);"></div>
+            </div>
         </div>
 
         <div class="plane-wrapper" id="plane-wrapper" style="display:none;"><i class="fa-solid fa-paper-plane"></i></div>
     </div>
 
     <div class="control-panel">
-        <div class="input-group">
-            <button class="quick-btn" onclick="modBet(0.5)">½</button>
+        <div class="bet-input-container">
+            <button class="btn-small" onclick="modBet(0.5)">½</button>
             <input type="number" id="bet-input" value="10.00" inputmode="decimal">
-            <button class="quick-btn" onclick="modBet(2)">2x</button>
+            <button class="btn-small" onclick="modBet(2)">2x</button>
+            <button class="btn-small btn-max" onclick="setMax()">MAX</button>
         </div>
 
         <button id="btn-bet" class="main-btn btn-bet">Place Bet</button>
@@ -148,18 +175,16 @@
     const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
 
     let uID, balance = 0, currentMult = 1.0, isPlaying = false, hasCashout = false, isQueued = false;
-    let history = [1.20, 3.45, 1.00, 2.10, 8.50, 1.15];
+    let history = [1.45, 2.10, 1.05, 5.20, 1.12];
 
-    // إصلاح مشكلة انزياح الشاشة عند الكتابة
-    document.getElementById('bet-input').addEventListener('blur', () => {
-        window.scrollTo(0, 0);
-    });
+    const betInp = document.getElementById('bet-input');
+    betInp.addEventListener('blur', () => window.scrollTo(0, 0));
 
     function showAlert(msg) {
-        const alertBox = document.getElementById('custom-alert');
+        const a = document.getElementById('custom-alert');
         document.getElementById('alert-msg').textContent = msg;
-        alertBox.classList.add('show');
-        setTimeout(() => alertBox.classList.remove('show'), 3000);
+        a.classList.add('show');
+        setTimeout(() => a.classList.remove('show'), 3000);
     }
 
     onAuthStateChanged(auth, user => {
@@ -167,66 +192,57 @@
             uID = user.uid;
             onSnapshot(doc(db, "users", uID), s => {
                 balance = s.data()?.balance || 0;
-                document.getElementById('balance-top').textContent = "$" + balance.toFixed(2);
+                document.getElementById('balance-top').textContent = "$" + balance.toLocaleString(undefined, {minimumFractionDigits: 2});
             });
         }
     });
 
-    window.modBet = (m) => { 
-        let i = document.getElementById('bet-input'); 
-        i.value = (parseFloat(i.value) * m).toFixed(2); 
-    };
+    window.modBet = (m) => { if(!isQueued && !isPlaying) betInp.value = (parseFloat(betInp.value) * m).toFixed(2); };
+    window.setMax = () => { if(!isQueued && !isPlaying) betInp.value = balance.toFixed(2); };
 
-    // المحرك الأساسي للعبة (مزامنة عالمية)
     async function engine() {
         while(true) {
-            const cycle = 18000; // 18 ثانية لكل جولة
+            const cycle = 20000; // 20 sec total
             const now = Date.now();
             const time = now % cycle;
 
-            if(time < 6000) { // مرحلة الرهان والانتظار (6 ثواني)
-                updateUI('betting', (6000 - time) / 1000);
-                
-                // تفعيل الرهان المحجوز (Queued)
+            if(time < 7000) { // Betting phase
+                updateUI('betting', (7000 - time) / 1000);
                 if(isQueued && !isPlaying) {
-                    const amt = parseFloat(document.getElementById('bet-input').value);
-                    if(balance >= amt) {
+                    const amt = parseFloat(betInp.value);
+                    if(balance >= amt && amt > 0) {
                         await updateDoc(doc(db, "users", uID), { balance: increment(-amt) });
                         isPlaying = true; isQueued = false;
-                    } else { isQueued = false; showAlert("Insufficient Balance!"); }
+                    } else { isQueued = false; showAlert("Check Balance!"); }
                 }
                 await new Promise(r => setTimeout(r, 100));
-            } else { // مرحلة الطيران
+            } else { // Flight phase
                 updateUI('flying');
                 const crash = calcCrash(Math.floor(now / cycle));
-                const start = now - (now % cycle) + 6000;
+                const start = now - (now % cycle) + 7000;
 
                 while(true) {
                     const elapsed = (Date.now() - start) / 1000;
                     if(elapsed < 0) break;
-                    currentMult = Math.pow(Math.E, 0.072 * elapsed);
+                    currentMult = Math.pow(Math.E, 0.065 * elapsed);
                     if(currentMult >= crash) break;
 
                     document.getElementById('multiplier').textContent = currentMult.toFixed(2) + 'x';
-                    
                     if(isPlaying && !hasCashout) {
                         document.getElementById('profit-display').style.display = 'block';
-                        document.getElementById('profit-display').textContent = "+$" + (document.getElementById('bet-input').value * currentMult).toFixed(2);
+                        document.getElementById('profit-display').textContent = "+$" + (betInp.value * currentMult).toFixed(2);
                     }
-                    
-                    // تحريك الطائرة
-                    let x = Math.min(elapsed * 35, 80), y = Math.min(Math.pow(elapsed, 1.4) * 10, 70);
+
+                    let x = Math.min(elapsed * 30, 80), y = Math.min(Math.pow(elapsed, 1.3) * 8, 70);
                     document.getElementById('plane-wrapper').style.transform = `translate(${x}vw, -${y}vh)`;
                     await new Promise(r => requestAnimationFrame(r));
                 }
 
-                // لحظة الانفجار
-                document.getElementById('multiplier').textContent = "CRASHED!";
+                document.getElementById('multiplier').textContent = "CRASHED";
                 document.getElementById('multiplier').style.color = "var(--lose-red)";
                 history.push(parseFloat(crash)); renderHistory();
-                
                 isPlaying = false; hasCashout = false;
-                await new Promise(r => setTimeout(r, 3500));
+                await new Promise(r => setTimeout(r, 4000));
                 document.getElementById('multiplier').style.color = "#fff";
                 document.getElementById('profit-display').style.display = "none";
             }
@@ -234,26 +250,24 @@
     }
 
     function renderHistory() {
-        document.getElementById('history-bar').innerHTML = history.slice(-10).reverse().map(v => `
+        document.getElementById('history-bar').innerHTML = history.slice(-8).reverse().map(v => `
             <div class="hist-item ${v >= 2 ? 'hist-high' : ''}">${v.toFixed(2)}x</div>
         `).join('');
     }
 
     function calcCrash(seed) {
         let r = ((seed * 16807) % 2147483647) / 2147483647;
-        return r < 0.04 ? 1.00 : Math.max(1.00, (0.96 / (1 - r))).toFixed(2);
+        return r < 0.03 ? 1.00 : (0.97 / (1 - r)).toFixed(2);
     }
 
     function updateUI(state, extra) {
-        const wait = document.getElementById('wait-screen');
-        const plane = document.getElementById('plane-wrapper');
-        const btnB = document.getElementById('btn-bet');
-        const btnC = document.getElementById('btn-cashout');
+        const wait = document.getElementById('wait-screen'), plane = document.getElementById('plane-wrapper');
+        const btnB = document.getElementById('btn-bet'), btnC = document.getElementById('btn-cashout');
 
         if(state === 'betting') {
             wait.style.display = 'flex'; plane.style.display = 'none';
             document.getElementById('wait-timer').textContent = extra.toFixed(1);
-            document.getElementById('progress-fill').style.width = (extra/6 * 100) + "%";
+            document.getElementById('progress-fill').style.width = (extra/7 * 100) + "%";
             if(!isPlaying && !isQueued) {
                 btnB.style.display = 'block'; btnB.className = "main-btn btn-bet"; 
                 btnB.textContent = "Place Bet"; btnB.disabled = false;
@@ -272,9 +286,9 @@
     }
 
     document.getElementById('btn-bet').onclick = () => {
-        const amt = parseFloat(document.getElementById('bet-input').value);
+        const amt = parseFloat(betInp.value);
         if(amt > balance) return showAlert("Insufficient Balance!");
-        if(amt <= 0) return showAlert("Enter a valid amount!");
+        if(amt <= 0 || isNaN(amt)) return showAlert("Invalid Amount!");
         isQueued = true;
         document.getElementById('btn-bet').textContent = "QUEUED...";
         document.getElementById('btn-bet').disabled = true;
@@ -283,7 +297,7 @@
     document.getElementById('btn-cashout').onclick = async () => {
         if(!isPlaying || hasCashout || currentMult < 1.01) return;
         hasCashout = true;
-        const win = parseFloat(document.getElementById('bet-input').value) * currentMult;
+        const win = parseFloat(betInp.value) * currentMult;
         await updateDoc(doc(db, "users", uID), { balance: increment(win) });
         document.getElementById('btn-cashout').textContent = "WON!";
         document.getElementById('btn-cashout').style.background = "var(--win-green)";
