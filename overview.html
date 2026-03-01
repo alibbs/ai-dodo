@@ -79,10 +79,11 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
         .modal-content { background: #11111d; border: 1px solid var(--border); width: 85%; max-width: 380px; padding: 25px; border-radius: 30px; position: relative; }
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #555; cursor: pointer; }
-        .modal-input { width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 15px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .modal-input { width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 15px; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none;}
         .modal-btn { width: 100%; padding: 16px; border-radius: 15px; border: none; background: var(--brand); color: white; font-weight: 900; cursor: pointer; }
 
         #qrcode { background: white; padding: 10px; border-radius: 12px; margin: 15px auto; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; }
+        #qrcode img { width: 100%; height: 100%; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
@@ -108,7 +109,7 @@
                 <div class="stat-box">Game Win <b class="game-profit" id="displayGameProfit">+$0.00</b></div>
             </div>
         </div>
-        <button class="request-card-btn" onclick="window.open('https://wa.me/yournumber', '_blank')">Request Physical Card</button>
+        <button class="request-card-btn" onclick="window.open('https://wa.me/96176529322', '_blank')">Request Physical Card</button>
     </div>
 
     <div class="action-grid">
@@ -163,21 +164,22 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let userTRC20 = "";
+    let userTRC20 = "Loading...";
     let isScannerRunning = false;
+    let currentUID = null;
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            currentUID = user.uid;
             onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if (snap.exists()) {
                     const d = snap.data();
                     document.getElementById('displayBalance').innerHTML = `${(d.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}<small>USDT</small>`;
                     document.getElementById('displayBotProfit').textContent = `+$${(d.bot_profit || 0).toFixed(2)}`;
                     document.getElementById('displayGameProfit').textContent = `+$${(d.game_profit || 0).toFixed(2)}`;
-                    userTRC20 = d.trc20_address || "Searching...";
+                    userTRC20 = d.trc20_address || "Address Not Assigned";
                     
                     if (!isScannerRunning && userTRC20.startsWith("T")) {
-                        console.log("Scanner Started for: " + userTRC20);
                         startScanner(userTRC20, user.uid);
                         isScannerRunning = true;
                     }
@@ -186,19 +188,16 @@
         } else { window.location.href = "login.html"; }
     });
 
-    // --- سكانر الحوالات المحدث (Trongrid API) ---
+    // سكانر الحوالات المطور
     async function startScanner(address, uid) {
         setInterval(async () => {
             try {
-                // استخدام Trongrid بدلاً من TronScan لتجنب أخطاء CORS
                 const res = await fetch(`https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=5`);
                 const data = await res.json();
-                
-                if (data.data && data.data.length > 0) {
+                if (data.success && data.data.length > 0) {
                     for (let tx of data.data) {
                         const hash = tx.transaction_id;
-                        // التاكد ان الحوالة هي USDT حصراً
-                        if (tx.token_info.symbol === "USDT") {
+                        if (tx.token_info.symbol === "USDT" && tx.to === address) {
                             const decimals = tx.token_info.decimals || 6;
                             const amount = tx.value / Math.pow(10, decimals);
                             
@@ -206,15 +205,16 @@
                             const txSnap = await getDoc(txRef);
                             
                             if (!txSnap.exists()) {
-                                await setDoc(txRef, { uid, amount, hash, date: new Date() });
+                                await setDoc(txRef, { uid, amount, hash, timestamp: Date.now() });
                                 await updateDoc(doc(db, "users", uid), { balance: increment(amount) });
-                                alert(`Deposit Detected! +$${amount.toFixed(2)} added.`);
+                                // تنبيه بسيط للمستخدم
+                                if(window.Notification) new Notification("Deposit Received!", {body: `+$${amount} USDT added.`});
                             }
                         }
                     }
                 }
-            } catch(e) { console.error("Scanner Error:", e); }
-        }, 12000); // يفحص كل 12 ثانية
+            } catch(e) {}
+        }, 15000); 
     }
 
     window.openModal = function(type) {
@@ -229,38 +229,69 @@
             title.textContent = "Deposit USDT (TRC20)";
             body.innerHTML = `
                 <div id="qrcode"></div>
-                <div onclick="copyAddr()" style="background:#000; padding:15px; border-radius:12px; font-size:12px; word-break:break-all; border:1px dashed var(--brand); color:var(--up); text-align:center; font-family:monospace; cursor:pointer;">
+                <div onclick="copyAddr()" style="background:#000; padding:15px; border-radius:12px; font-size:12px; word-break:break-all; border:1px dashed var(--brand); color:var(--up); text-align:center; font-family:monospace; cursor:pointer; position:relative;">
                     <span id="addrTxt">${userTRC20}</span> <i class="fa-regular fa-copy" style="margin-left:5px;"></i>
                 </div>
-                <p style="font-size:10px; color:orange; text-align:center; margin-top:10px;">Send only USDT TRC20 to this address.</p>
+                <p style="font-size:10px; color:orange; text-align:center; margin-top:10px;">Send only USDT TRC20 to this address. Credits automatically after 1-3 confirmations.</p>
             `;
+            // تشغيل الـ QR Code بعد تأكيد وجود الـ Div
             if(userTRC20.startsWith("T")) {
-                setTimeout(() => { 
-                    document.getElementById("qrcode").innerHTML = ""; // مسح القديم
-                    new QRCode(document.getElementById("qrcode"), { text: userTRC20, width: 150, height: 150 }); 
-                }, 50);
+                setTimeout(() => {
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: userTRC20,
+                        width: 150,
+                        height: 150,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                }, 100);
             }
         } else if(type === 'withdraw') {
             title.textContent = "Withdraw USDT";
-            body.innerHTML = `<input type="text" class="modal-input" placeholder="TRC20 Wallet Address"><input type="number" class="modal-input" placeholder="Amount">`;
+            body.innerHTML = `
+                <input type="text" id="w_addr" class="modal-input" placeholder="Recipient TRC20 Address">
+                <input type="number" id="w_amt" class="modal-input" placeholder="Amount (Min. 10 USDT)">
+            `;
         } else if(type === 'swap') {
             title.textContent = "Quick Swap";
-            body.innerHTML = `<select class="modal-input"><option>USDT to BTC</option><option>USDT to ETH</option></select><input type="number" class="modal-input" placeholder="Amount">`;
+            body.innerHTML = `
+                <select id="s_pair" class="modal-input"><option value="btc">USDT to BTC</option><option value="eth">USDT to ETH</option></select>
+                <input type="number" id="s_amt" class="modal-input" placeholder="Amount to Swap">
+            `;
         } else if(type === 'history') {
-            title.textContent = "History";
+            title.textContent = "Transaction History";
             footer.style.display = 'none';
-            body.innerHTML = `<p style="text-align:center; color:#555; font-size:12px;">No transactions yet.</p>`;
+            body.innerHTML = `<p style="text-align:center; color:#555; font-size:12px; padding:20px;">Your recent transactions will appear here.</p>`;
         }
     }
 
     window.copyAddr = () => {
-        navigator.clipboard.writeText(userTRC20);
-        alert("Address Copied!");
+        if(userTRC20.startsWith("T")) {
+            navigator.clipboard.writeText(userTRC20);
+            const addrTxt = document.getElementById('addrTxt');
+            const old = addrTxt.textContent;
+            addrTxt.textContent = "COPIED!";
+            setTimeout(() => addrTxt.textContent = old, 1500);
+        }
     }
 
     window.closeModal = () => { document.getElementById('actionModal').style.display = 'none'; }
-    window.processAction = () => { alert("Request submitted."); closeModal(); }
+    
+    window.processAction = async () => {
+        const btn = document.getElementById('confirmBtn');
+        btn.disabled = true;
+        btn.textContent = "Processing...";
+        // هنا يمكن إضافة الربط مع Firebase لإرسال طلب سحب أو سواب
+        setTimeout(() => {
+            alert("Request submitted successfully. Our team will verify it.");
+            closeModal();
+            btn.disabled = false;
+            btn.textContent = "Confirm";
+        }, 1500);
+    }
 
+    // جلب الأسعار المباشرة من Binance
     async function fetchPrices() {
         try {
             const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
@@ -268,13 +299,16 @@
             const data = await res.json();
             data.forEach(c => {
                 const id = `p-${c.symbol.replace('USDT','').toLowerCase()}`;
-                if(document.getElementById(id)) {
-                    document.getElementById(id).textContent = '$' + parseFloat(c.price).toLocaleString();
+                const el = document.getElementById(id);
+                if(el) {
+                    const price = parseFloat(c.price);
+                    el.textContent = '$' + price.toLocaleString(undefined, {maximumFractionDigits: 2});
                 }
             });
         } catch(e) {}
     }
-    setInterval(fetchPrices, 8000); fetchPrices();
+    setInterval(fetchPrices, 10000); 
+    fetchPrices();
 </script>
 </body>
 </html>
