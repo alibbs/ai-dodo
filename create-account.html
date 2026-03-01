@@ -75,7 +75,6 @@
             text-transform: uppercase; letter-spacing: 2px;
             box-shadow: 0 8px 25px rgba(255, 0, 184, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            appearance: none; -webkit-appearance: none;
         }
         .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 0, 184, 0.4); }
         .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; filter: grayscale(1); }
@@ -205,46 +204,57 @@
         statusBox.className = "status-msg " + (type === 'success' ? 'ok' : 'err');
     }
 
-    // --- الفحص الذكي: لو مسجل دخول، اطلعه بره الصفحة دغري ---
+    // الفحص التلقائي لو المستخدم مسجل دخول
     onAuthStateChanged(auth, (user) => {
         if (user) { 
-            window.location.replace("home.html"); 
+            // الانتظار قليلاً للتأكد من انتهاء حفظ البيانات
+            setTimeout(() => {
+                window.location.replace("home.html"); 
+            }, 1000);
         }
     });
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         submitBtn.disabled = true;
-        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> CREATING VAULT...';
+        btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING VAULT...';
 
         try {
-            // 1. سحب محفظة من الـ Pool
+            const emailVal = document.getElementById("email").value.trim();
+            const passwordVal = document.getElementById("password").value;
+            const usernameVal = document.getElementById("username").value.trim();
+
+            // 1. إنشاء المستخدم في Firebase Auth أولاً ليصبح لديه صلاحية الوصول (Permissions)
+            const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
+            const user = userCredential.user;
+
+            // 2. تحديث الاسم في البروفايل
+            await updateProfile(user, { displayName: usernameVal });
+
+            // 3. البحث عن محفظة من مجمع المحافظ (المستخدم الآن لديه Auth وسيتم السماح له بالقراءة)
             const poolRef = collection(db, "wallet_pool");
             const q = query(poolRef, where("isUsed", "==", false), limit(1));
             const poolSnap = await getDocs(q);
 
-            if (poolSnap.empty) throw new Error("Our Investment Pool is currently full. Contact Admin.");
+            let walletAddress = "ASSIGNING..."; // افتراضي
+            let walletDocId = null;
 
-            const walletDoc = poolSnap.docs[0];
-            const walletAddress = walletDoc.data().address;
+            if (!poolSnap.empty) {
+                walletDocId = poolSnap.docs[0].id;
+                walletAddress = poolSnap.docs[0].data().address;
+            }
 
-            // 2. إنشاء المستخدم في Firebase Auth
-            const emailVal = document.getElementById("email").value.trim();
-            const passwordVal = document.getElementById("password").value;
-            const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
-            const user = userCredential.user;
-
-            // 3. تحديث الاسم
-            const usernameVal = document.getElementById("username").value.trim();
-            await updateProfile(user, { displayName: usernameVal });
-
-            // 4. الربط في الـ Database بنظام الـ Transaction لضمان الأمان
+            // 4. حفظ البيانات في Firestore باستخدام Transaction لضمان الأمان
             await runTransaction(db, async (transaction) => {
-                transaction.update(doc(db, "wallet_pool", walletDoc.id), { 
-                    isUsed: true, 
-                    assignedTo: user.uid 
-                });
+                // تحديث حالة المحفظة إذا وجدت
+                if (walletDocId) {
+                    transaction.update(doc(db, "wallet_pool", walletDocId), { 
+                        isUsed: true, 
+                        assignedTo: user.uid 
+                    });
+                }
 
+                // إنشاء ملف المستخدم
                 transaction.set(doc(db, "users", user.uid), {
                     uid: user.uid,
                     username: usernameVal,
@@ -262,15 +272,16 @@
             });
 
             btnText.innerHTML = '<i class="fa-solid fa-check"></i> DEPLOYED!';
-            showStatus("Account & Wallet Synchronized! Redirecting...", "success");
-            // التحويل سيتم تلقائياً عبر onAuthStateChanged
+            showStatus("Account Created! Securely redirecting...", "success");
             
         } catch (err) {
             submitBtn.disabled = false;
             btnText.textContent = "CREATE ACCOUNT";
             let friendlyError = err.message;
             if(err.code === "auth/email-already-in-use") friendlyError = "Email already registered.";
+            if(err.code === "permission-denied") friendlyError = "Database Access Denied. Contact Admin.";
             showStatus(friendlyError, "error");
+            console.error(err);
         }
     });
 </script>
