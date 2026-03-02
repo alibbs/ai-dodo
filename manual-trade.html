@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA ELITE+ | Pro Terminal</title>
+    <title>AMANA ELITE+ | Live Terminal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     
@@ -11,7 +11,7 @@
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
             --up: #00ff96; --down: #ff3b3b;
-            --card-bg: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08);
+            --card: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
@@ -20,204 +20,187 @@
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* --- Asset Selector Bar --- */
-        .asset-bar {
-            display: flex; gap: 10px; padding: 15px;
-            overflow-x: auto; white-space: nowrap;
-            background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);
+        /* --- Top Bar (Balance) --- */
+        .top-status {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border);
         }
-        .asset-bar::-webkit-scrollbar { display: none; }
-        
-        .asset-chip {
-            padding: 8px 16px; border-radius: 12px;
-            background: var(--card-bg); border: 1px solid var(--border);
-            font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        .user-balance { font-weight: 900; color: var(--accent); font-size: 18px; }
+        .user-balance span { font-size: 10px; color: #aaa; text-transform: uppercase; display: block; }
+
+        /* --- Asset Tabs --- */
+        .asset-tabs {
+            display: flex; overflow-x: auto; background: #0b0e1a; padding: 5px 10px; gap: 8px;
         }
-        .asset-chip.active {
-            border-color: var(--brand); color: var(--brand);
-            background: rgba(255, 0, 184, 0.1);
+        .asset-tabs::-webkit-scrollbar { display: none; }
+        .tab {
+            padding: 8px 15px; border-radius: 8px; font-size: 11px; font-weight: 700;
+            background: var(--card); border: 1px solid var(--border); cursor: pointer;
+        }
+        .tab.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
+
+        /* --- Chart --- */
+        #chart-box { flex-grow: 1; position: relative; width: 100%; }
+        .live-label {
+            position: absolute; top: 15px; right: 15px; z-index: 5;
+            background: rgba(255, 59, 59, 0.2); color: var(--down);
+            padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: 900;
+            border: 1px solid var(--down);
         }
 
-        /* --- Chart Section --- */
-        #chart-container {
-            flex-grow: 1; width: 100%; position: relative;
-        }
-        .price-overlay {
-            position: absolute; top: 15px; left: 15px; z-index: 10;
-            pointer-events: none;
-        }
-        .price-overlay h2 { margin: 0; font-size: 24px; font-weight: 900; }
-        .price-overlay span { font-size: 14px; color: var(--up); }
-
-        /* --- Trading Panel (Bottom) --- */
-        .trade-panel {
+        /* --- Trading Controls (IQ Style) --- */
+        .controls {
             background: #0b0e1a; padding: 20px;
-            border-top-left-radius: 30px; border-top-right-radius: 30px;
             border-top: 1px solid var(--border);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+        }
+        .control-group { position: relative; }
+        .control-group label {
+            position: absolute; top: -8px; left: 12px; background: #0b0e1a;
+            padding: 0 5px; font-size: 10px; color: #666; font-weight: 700;
+        }
+        .control-group input {
+            width: 100%; background: transparent; border: 1px solid var(--border);
+            padding: 15px; border-radius: 12px; color: #fff; font-weight: 900; font-size: 16px;
+            box-sizing: border-box;
         }
 
-        .inputs-row { display: flex; gap: 15px; margin-bottom: 20px; }
-        .input-box { flex: 1; }
-        .input-box label { font-size: 10px; color: #666; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .input-box input {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            border-radius: 12px; padding: 12px; color: #fff; font-weight: 700; box-sizing: border-box;
+        .action-btns {
+            grid-column: span 2; display: flex; gap: 15px; margin-top: 5px;
         }
+        .btn {
+            flex: 1; padding: 18px; border-radius: 15px; border: none;
+            font-weight: 900; font-size: 18px; color: #fff; cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-up { background: var(--up); box-shadow: 0 5px 15px rgba(0, 255, 150, 0.2); }
+        .btn-down { background: var(--down); box-shadow: 0 5px 15px rgba(255, 59, 59, 0.2); }
+        .btn:active { transform: scale(0.95); }
 
-        .leverage-selector {
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(0,0,0,0.3); padding: 5px; border-radius: 15px; margin-bottom: 20px;
-        }
-        .lev-btn {
-            flex: 1; padding: 8px; border-radius: 10px; border: none;
-            background: transparent; color: #666; font-size: 11px; font-weight: 800; cursor: pointer;
-        }
-        .lev-btn.active { background: var(--brand); color: #fff; }
-
-        .actions { display: flex; gap: 15px; }
-        .trade-btn {
-            flex: 1; padding: 18px; border-radius: 18px; border: none;
-            color: #fff; font-weight: 900; font-size: 16px; cursor: pointer;
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .trade-btn.buy { background: var(--up); box-shadow: 0 8px 20px rgba(0, 255, 150, 0.2); }
-        .trade-btn.sell { background: var(--down); box-shadow: 0 8px 20px rgba(255, 59, 59, 0.2); }
-        .trade-btn:active { transform: scale(0.95); opacity: 0.8; }
-
-        /* --- Navigation --- */
         .bottom-nav { 
             height: 70px; background: #060914; border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center;
         }
-        .nav-item { text-decoration: none; color: #444; font-size: 10px; text-align: center; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
-        .nav-item.active { color: var(--brand); }
     </style>
 </head>
 <body>
 
-    <div class="asset-bar" id="assetBar">
-        <div class="asset-chip active" onclick="changeAsset('BTCUSDT', this)">BTC / USDT</div>
-        <div class="asset-chip" onclick="changeAsset('ETHUSDT', this)">ETH / USDT</div>
-        <div class="asset-chip" onclick="changeAsset('SOLUSDT', this)">SOL / USDT</div>
-        <div class="asset-chip" onclick="changeAsset('BNBUSDT', this)">BNB / USDT</div>
-        <div class="asset-chip" onclick="changeAsset('XRPUSDT', this)">XRP / USDT</div>
+    <div class="top-status">
+        <div class="user-info">
+            <span data-key="balance">Wallet Balance</span>
+            <div class="user-balance"><span id="userBalance">0.00</span> USDT</div>
+        </div>
+        <div id="livePriceHeader" style="text-align: right; font-weight: 900; font-size: 20px;">0.00</div>
     </div>
 
-    <div id="chart-container">
-        <div class="price-overlay">
-            <h2 id="livePrice">0.00</h2>
-            <span id="priceChange">+0.00%</span>
-        </div>
+    <div class="asset-tabs">
+        <div class="tab active" onclick="setSymbol('BTCUSDT', this)">BTC</div>
+        <div class="tab" onclick="setSymbol('ETHUSDT', this)">ETH</div>
+        <div class="tab" onclick="setSymbol('SOLUSDT', this)">SOL</div>
+        <div class="tab" onclick="setSymbol('BNBUSDT', this)">BNB</div>
+        <div class="tab" onclick="setSymbol('XRPUSDT', this)">XRP</div>
     </div>
 
-    <div class="trade-panel">
-        <div class="inputs-row">
-            <div class="input-box">
-                <label data-key="amount">Investment (USDT)</label>
-                <input type="number" id="tradeAmount" value="100">
-            </div>
-            <div class="input-box">
-                <label data-key="leverage">Leverage</label>
-                <input type="number" id="levInput" value="10" max="75">
-            </div>
+    <div id="chart-box">
+        <div class="live-label">LIVE BINANCE</div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>AMOUNT</label>
+            <input type="number" id="amountInput" value="10">
+        </div>
+        <div class="control-group">
+            <label>LEVERAGE (MAX 75x)</label>
+            <input type="number" id="levInput" value="10" max="75">
         </div>
 
-        <div class="leverage-selector">
-            <button class="lev-btn" onclick="setLev(10, this)">10x</button>
-            <button class="lev-btn" onclick="setLev(25, this)">25x</button>
-            <button class="lev-btn" onclick="setLev(50, this)">50x</button>
-            <button class="lev-btn active" onclick="setLev(75, this)">Max 75x</button>
-        </div>
-
-        <div class="actions">
-            <button class="trade-btn sell" onclick="executeTrade('SELL')">
-                <i class="fa-solid fa-arrow-trend-down"></i> SELL
-            </button>
-            <button class="trade-btn buy" onclick="executeTrade('BUY')">
-                <i class="fa-solid fa-arrow-trend-up"></i> BUY
-            </button>
+        <div class="action-btns">
+            <button class="btn btn-down" onclick="trade('SELL')">PUT</button>
+            <button class="btn btn-up" onclick="trade('BUY')">CALL</button>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-        <a href="game.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
-        <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-        <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
-    </nav>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    <script>
-        // --- Chart Configuration ---
-        const chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
-            layout: { backgroundColor: '#060914', textColor: '#666' },
-            grid: { vertLines: { color: '#1a1d26' }, horzLines: { color: '#1a1d26' } },
-            crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-            rightPriceScale: { borderColor: '#1a1d26' },
-            timeScale: { borderColor: '#1a1d26', timeVisible: true, secondsVisible: false },
-        });
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
 
-        const lineSeries = chart.addLineSeries({
-            color: '#00f2ff',
-            lineWidth: 2,
-            priceLineVisible: true,
-            lastValueVisible: true,
-        });
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-        let currentSymbol = 'BTCUSDT';
-        let ws;
+    let currentBalance = 0;
+    let userUID = null;
 
-        function connectWS(symbol) {
-            if (ws) ws.close();
-            ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`);
-            
-            ws.onmessage = (event) => {
-                const msg = JSON.parse(event.data);
-                const candle = msg.k;
-                const price = parseFloat(candle.c);
-                
-                lineSeries.update({
-                    time: candle.t / 1000,
-                    value: price
-                });
+    // --- Chart Setup ---
+    const chart = LightweightCharts.createChart(document.getElementById('chart-box'), {
+        layout: { backgroundColor: '#060914', textColor: '#555' },
+        grid: { vertLines: { color: '#131722' }, horzLines: { color: '#131722' } },
+        timeScale: { timeVisible: true, secondsVisible: true }
+    });
+    const lineSeries = chart.addLineSeries({ color: '#ff00b8', lineWidth: 2 });
 
-                document.getElementById('livePrice').textContent = price.toLocaleString();
-                // محاكاة بسيطة للنسبة المئوية
-                const change = ((price - candle.o) / candle.o * 100).toFixed(2);
-                document.getElementById('priceChange').textContent = (change >= 0 ? '+' : '') + change + '%';
-                document.getElementById('priceChange').style.color = change >= 0 ? 'var(--up)' : 'var(--down)';
-            };
+    // --- Firebase Auth & Balance ---
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userUID = user.uid;
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if (snap.exists()) {
+                    currentBalance = snap.data().balance || 0;
+                    document.getElementById('userBalance').textContent = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+                }
+            });
+        } else { window.location.href = "login.html"; }
+    });
+
+    // --- Binance WebSocket ---
+    let ws;
+    window.setSymbol = (symbol, el) => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        if (ws) ws.close();
+        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1s`);
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            const price = parseFloat(data.k.c);
+            lineSeries.update({ time: data.k.t / 1000, value: price });
+            document.getElementById('livePriceHeader').textContent = price.toLocaleString();
+            document.getElementById('livePriceHeader').style.color = data.k.c >= data.k.o ? 'var(--up)' : 'var(--down)';
+        };
+    };
+    setSymbol('BTCUSDT', document.querySelector('.tab'));
+
+    // --- Trade Execution ---
+    window.trade = async (type) => {
+        const amount = parseFloat(document.getElementById('amountInput').value);
+        if (amount > currentBalance) {
+            alert("Insufficient Balance!");
+            return;
         }
+        if (amount <= 0) return;
 
-        function changeAsset(symbol, el) {
-            currentSymbol = symbol;
-            document.querySelectorAll('.asset-chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            connectWS(symbol);
-        }
+        // خصم الرصيد من Firebase
+        try {
+            const userRef = doc(db, "users", userUID);
+            await updateDoc(userRef, { balance: increment(-amount) });
+            alert(`Order Placed: ${type}\nAmount: ${amount} USDT\nStatus: Pending Result...`);
+            // هنا يمكنك إضافة منطق حساب الربح بعد فترة زمنية كما في IQ Option
+        } catch (e) { console.error(e); }
+    };
 
-        function setLev(val, el) {
-            document.getElementById('levInput').value = val;
-            document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function executeTrade(type) {
-            const amount = document.getElementById('tradeAmount').value;
-            const lev = document.getElementById('levInput').value;
-            alert(`Order Placed: ${type} ${currentSymbol}\nAmount: ${amount} USDT\nLeverage: x${lev}`);
-            // هنا يتم الربط مع Firebase لاحقاً
-        }
-
-        // Initialize
-        connectWS('BTCUSDT');
-        
-        // Resize chart on window change
-        window.addEventListener('resize', () => {
-            chart.applyOptions({ width: window.innerWidth, height: document.getElementById('chart-container').offsetHeight });
-        });
-    </script>
-    <script src="translate.js"></script>
+    window.addEventListener('resize', () => {
+        chart.applyOptions({ width: document.getElementById('chart-box').offsetWidth });
+    });
+</script>
 </body>
 </html>
