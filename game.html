@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA ELITE | Selection</title>
+    <title>AMANA ELITE+ | Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --card-bg: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.08);
             --text: #ffffff; --muted: #888;
         }
 
@@ -16,52 +16,79 @@
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: var(--text);
             background: radial-gradient(circle at top right, #1a0b2e, #060914);
-            min-height: 100vh; display: flex; flex-direction: column;
+            min-height: 100vh;
         }
 
-        .container { padding: 25px; max-width: 450px; margin: auto; width: 100%; box-sizing: border-box; }
+        .container { padding: 20px; max-width: 450px; margin: auto; }
 
-        .header { text-align: center; margin-bottom: 40px; margin-top: 20px; }
-        .header h1 { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin: 0; }
-        .header p { color: var(--muted); font-size: 14px; margin-top: 5px; }
+        /* --- App Branding Header --- */
+        .app-header {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+        .app-header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -1.5px;
+            background: linear-gradient(to right, #fff, var(--brand));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .app-header span {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: block;
+            margin-top: 5px;
+        }
 
-        /* --- Selection Cards --- */
-        .selection-grid { display: flex; flex-direction: column; gap: 20px; }
+        /* --- Options Grid --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
 
-        .select-card {
+        .opt-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 30px;
+            border-radius: 25px;
+            padding: 25px 15px;
+            text-align: center;
             text-decoration: none;
             color: white;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .opt-card:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+
+        .opt-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 5px;
         }
 
-        .select-card:active { transform: scale(0.97); background: rgba(255,255,255,0.08); }
+        /* Colors for icons */
+        .bg-manual { background: rgba(0, 242, 255, 0.1); color: var(--accent); border: 1px solid rgba(0, 242, 255, 0.2); }
+        .bg-game { background: rgba(255, 0, 184, 0.1); color: var(--brand); border: 1px solid rgba(255, 0, 184, 0.2); }
+        .bg-market { background: rgba(255, 215, 0, 0.1); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.2); }
+        .bg-box { background: rgba(161, 0, 255, 0.1); color: #a100ff; border: 1px solid rgba(161, 0, 255, 0.2); }
 
-        .icon-box {
-            width: 70px; height: 70px;
-            border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px;
-            flex-shrink: 0;
-        }
-
-        /* تدرج خاص بكل خيار */
-        .trading-icon { background: linear-gradient(135deg, #00f2ff, #0066ff); box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2); }
-        .gaming-icon { background: linear-gradient(135deg, #ff00b8, #a100ff); box-shadow: 0 10px 20px rgba(255, 0, 184, 0.2); }
-
-        .info h3 { margin: 0; font-size: 20px; font-weight: 800; }
-        .info p { margin: 5px 0 0; font-size: 13px; color: var(--muted); line-height: 1.4; }
-
-        .arrow { margin-left: auto; color: var(--muted); font-size: 18px; }
+        .opt-card b { font-size: 14px; font-weight: 800; display: block; }
+        .opt-card span { font-size: 10px; color: var(--muted); }
 
         /* --- Bottom Nav --- */
         .bottom-nav { 
@@ -78,32 +105,34 @@
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1 data-key="game_hub_title">Elite Center</h1>
-        <p data-key="game_hub_desc">Choose your path to profit</p>
+    <div class="app-header">
+        <h1>AMANA ELITE+</h1>
+        <span data-key="digital_ecosystem">Digital Ecosystem</span>
     </div>
 
-    <div class="selection-grid">
-        <a href="bot-trade.html" class="select-card">
-            <div class="icon-box trading-icon">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <div class="info">
-                <h3 data-key="ai_trading">AI Trading</h3>
-                <p data-key="trading_sub">Passive income with Neural Bots</p>
-            </div>
-            <i class="fa-solid fa-chevron-right arrow"></i>
+    <div class="options-grid">
+        <a href="manual-trade.html" class="opt-card">
+            <div class="opt-icon bg-manual"><i class="fa-solid fa-chart-line"></i></div>
+            <b data-key="manual_trade">Manual Trade</b>
+            <span data-key="trade_desc">Pro Terminal</span>
         </a>
 
-        <a href="game-list.html" class="select-card">
-            <div class="icon-box gaming-icon">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
-            <div class="info">
-                <h3 data-key="elite_games">Elite Games</h3>
-                <p data-key="games_sub">Play & win provably fair assets</p>
-            </div>
-            <i class="fa-solid fa-chevron-right arrow"></i>
+        <a href="game-list.html" class="opt-card">
+            <div class="opt-icon bg-game"><i class="fa-solid fa-gamepad"></i></div>
+            <b data-key="game_center">Game Center</b>
+            <span data-key="game_desc">Play & Earn</span>
+        </a>
+
+        <a href="market.html" class="opt-card">
+            <div class="opt-icon bg-market"><i class="fa-solid fa-store"></i></div>
+            <b data-key="market_place">Market Place</b>
+            <span data-key="market_desc">Assets Store</span>
+        </a>
+
+        <a href="mystery-box.html" class="opt-card">
+            <div class="opt-icon bg-box"><i class="fa-solid fa-box-open"></i></div>
+            <b data-key="mystery_box">Mystery Box</b>
+            <span data-key="box_desc">Lucky Drop</span>
         </a>
     </div>
 </div>
