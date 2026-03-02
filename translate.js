@@ -120,4 +120,4 @@ window.changeLanguage = (lang) => {
     if (typeof window.closeModals === 'function') {
         window.closeModals();
     }
-};s
+};
