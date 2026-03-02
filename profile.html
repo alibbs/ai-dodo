@@ -3,187 +3,305 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA ELITE | Profile</title>
+    <title>AMANA ELITE | Profile Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --bg: #060914;
-            --brand: #ff00b8;
-            --accent: #00f2ff;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #ffffff;
-            --muted: #888;
-            --danger: #ff3b3b;
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --card-bg: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff; --muted: #888; --danger: #ff3b3b; --success: #00ff96;
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: var(--text);
-            padding-bottom: 110px;
+            padding-bottom: 110px; min-height: 100vh;
             background: radial-gradient(circle at bottom left, #1c0833, #060914);
-            min-height: 100vh;
         }
 
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
-        /* --- Profile Header --- */
-        .profile-header { text-align: center; padding: 40px 0 20px; }
-        .avatar-wrapper {
-            position: relative; width: 100px; height: 100px; margin: 0 auto 15px;
-        }
-        .avatar {
-            width: 100%; height: 100%; border-radius: 50%;
-            border: 3px solid var(--brand); padding: 3px;
-            background: var(--card-bg); object-fit: cover;
-        }
-        .status-badge {
-            position: absolute; bottom: 5px; right: 5px;
-            background: #00ff96; width: 18px; height: 18px;
-            border-radius: 50%; border: 3px solid var(--bg);
-        }
-        .user-name { font-size: 24px; font-weight: 900; margin: 0; }
-        .user-id { font-size: 12px; color: var(--muted); margin-top: 5px; font-family: monospace; }
+        /* Profile Header */
+        .profile-header { text-align: center; padding: 30px 0 15px; }
+        .avatar-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 10px; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--brand); padding: 3px; object-fit: cover; }
+        .status-badge { position: absolute; bottom: 5px; right: 5px; background: var(--success); width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--bg); }
+        .user-name { font-size: 22px; font-weight: 800; margin: 0; }
+        .user-id { font-size: 11px; color: var(--muted); font-family: monospace; }
 
-        /* --- Stats Row --- */
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
-        .stat-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 15px; border-radius: 22px; text-align: center; backdrop-filter: blur(10px);
-        }
-        .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
-        .stat-value { font-size: 16px; font-weight: 800; color: var(--accent); }
+        /* Stats & Quick Actions */
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 20px; text-align: center; }
+        .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 14px; font-weight: 700; color: var(--accent); }
 
-        /* --- Menu List --- */
-        .menu-group {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 24px; overflow: hidden; margin-bottom: 20px;
-        }
-        .menu-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 18px 20px; text-decoration: none; color: var(--text);
-            border-bottom: 1px solid var(--border); transition: 0.3s;
-        }
+        /* Menu Groups */
+        .section-title { font-size: 12px; color: var(--muted); margin: 20px 0 10px 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-group { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 15px; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; text-decoration: none; color: var(--text); border-bottom: 1px solid var(--border); transition: 0.2s; cursor: pointer; }
         .menu-item:last-child { border-bottom: none; }
-        .menu-item:active { background: rgba(255,255,255,0.05); }
-        .menu-left { display: flex; align-items: center; gap: 15px; }
-        .menu-left i { font-size: 18px; width: 24px; text-align: center; color: var(--brand); }
-        .menu-item span { font-size: 14px; font-weight: 600; }
-        .menu-right { color: var(--muted); font-size: 12px; }
+        .menu-item i.icon-l { color: var(--brand); width: 25px; }
+        .menu-item span { font-size: 14px; font-weight: 500; }
+        .menu-right { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
 
-        .logout-btn { color: var(--danger); border: 1px solid rgba(255, 59, 59, 0.2); }
-        .logout-btn i { color: var(--danger); }
+        /* Modals */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; }
+        .primary-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--brand); color: white; font-weight: 700; cursor: pointer; }
 
-        /* --- BOTTOM NAV (Shared & Linked) --- */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 80px; 
-            background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); 
-            display: flex; justify-content: space-around; align-items: center; 
-            z-index: 1000; backdrop-filter: blur(10px); 
-        }
-        .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; transition: 0.3s; }
+        /* Activity List */
+        .tx-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .tx-info div { font-size: 13px; font-weight: 600; }
+        .tx-info small { color: var(--muted); font-size: 10px; }
+        .tx-amt { text-align: right; }
+        .status-pending { color: #f3ba2f; }
+        .status-success { color: var(--success); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
         .nav-item.active { color: var(--brand); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="profile-header">
-            <div class="avatar-wrapper">
-                <img src="https://ui-avatars.com/api/?name=User&background=ff00b8&color=fff&size=128" alt="Avatar" class="avatar" id="userAvatar">
-                <div class="status-badge"></div>
-            </div>
-            <h1 class="user-name" id="profileName">Loading...</h1>
-            <div class="user-id">UID: <span id="userUID">--------</span></div>
+<div class="container">
+    <div class="profile-header">
+        <div class="avatar-wrapper">
+            <img src="https://ui-avatars.com/api/?background=ff00b8&color=fff&size=128" class="avatar" id="dispAvatar">
+            <div class="status-badge"></div>
         </div>
+        <h1 class="user-name" id="dispName">Loading...</h1>
+        <div class="user-id">UID: <span id="dispUID">--------</span></div>
+    </div>
 
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-label">Account Level</div>
-                <div class="stat-value">VIP 1 Elite</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">KYC Status</div>
-                <div class="stat-value" style="color: #00ff96;">Verified</div>
-            </div>
+    <div class="stats-row">
+        <div class="stat-card" onclick="location.href='overview.html'">
+            <div class="stat-label">Wallet Balance</div>
+            <div class="stat-value" id="dispBal">0.00 USDT</div>
         </div>
-
-        <div class="menu-group">
-            <a href="#" class="menu-item">
-                <div class="menu-left">
-                    <i class="fa-solid fa-wallet"></i>
-                    <span>My Wallet</span>
-                </div>
-                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
-            </a>
-            <a href="#" class="menu-item">
-                <div class="menu-left">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Security Settings</span>
-                </div>
-                <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
-            </a>
-        </div>
-
-        <div class="menu-group">
-            <a href="#" class="menu-item">
-                <div class="menu-left">
-                    <i class="fa-solid fa-language"></i>
-                    <span>Language</span>
-                </div>
-                <div class="menu-right">English <i class="fa-solid fa-chevron-right" style="margin-left:5px"></i></div>
-            </a>
-        </div>
-
-        <div class="menu-group">
-            <a href="#" class="menu-item logout-btn" id="logoutBtn">
-                <div class="menu-left">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout Account</span>
-                </div>
-            </a>
+        <div class="stat-card" onclick="openModal('kycModal')">
+            <div class="stat-label">KYC Status</div>
+            <div class="stat-value" id="kycStatus">Unverified</div>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-        <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
-        <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-        <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
-        <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
-    </nav>
+    <div class="section-title">Finance & Activity</div>
+    <div class="menu-group">
+        <div class="menu-item" onclick="location.href='overview.html'">
+            <div class="menu-left"><i class="fa-solid fa-wallet icon-l"></i><span>My Wallet</span></div>
+            <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+        <div class="menu-item" onclick="openModal('activityModal')">
+            <div class="menu-left"><i class="fa-solid fa-receipt icon-l"></i><span>Activity & Transactions</span></div>
+            <div class="menu-right" id="pendingCount">No Pending</div>
+        </div>
+    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <div class="section-title">Settings</div>
+    <div class="menu-group">
+        <div class="menu-item" onclick="openModal('securityModal')">
+            <div class="menu-left"><i class="fa-solid fa-shield-halved icon-l"></i><span>Security Settings</span></div>
+            <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+        <div class="menu-item" onclick="openModal('langModal')">
+            <div class="menu-left"><i class="fa-solid fa-language icon-l"></i><span>Language</span></div>
+            <div class="menu-right"><span id="currLang">English</span> <i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-            authDomain: "ai-dodo.firebaseapp.com",
-            projectId: "ai-dodo",
-            storageBucket: "ai-dodo.firebasestorage.app",
-            messagingSenderId: "261622335803",
-            appId: "1:261622335803:web:0b066791230535e7d5cf1e",
-            measurementId: "G-60CEST92TT"
-        };
+    <div class="section-title">Support</div>
+    <div class="menu-group">
+        <a href="https://wa.me/447412600275" class="menu-item">
+            <div class="menu-left"><i class="fa-brands fa-whatsapp icon-l"></i><span>WhatsApp Support</span></div>
+            <div class="menu-right">+44 7412 600275</div>
+        </a>
+        <a href="mailto:amana.elite@outlook.com" class="menu-item">
+            <div class="menu-left"><i class="fa-solid fa-envelope icon-l"></i><span>Email Us</span></div>
+            <div class="menu-right">Click to Send</div>
+        </a>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    <div class="menu-group">
+        <div class="menu-item logout-btn" id="logoutBtn" style="color:var(--danger)">
+            <div class="menu-left"><i class="fa-solid fa-right-from-bracket icon-l" style="color:var(--danger)"></i><span>Logout</span></div>
+        </div>
+    </div>
+</div>
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('profileName').textContent = user.displayName || "Elite User";
-                document.getElementById('userUID').textContent = user.uid.substring(0, 10).toUpperCase();
-            } else {
-                window.location.href = "login.html";
+<div id="kycModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>KYC Verification</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <p style="font-size:12px; color:var(--muted)">Upload your documents to unlock withdrawals.</p>
+        <select class="modal-input" id="kycType">
+            <option value="id">National ID</option>
+            <option value="passport">Passport</option>
+            <option value="driver">Driving License</option>
+        </select>
+        <input type="text" class="modal-input" placeholder="Document Number" id="kycNum">
+        <div style="border:1px dashed var(--border); padding:20px; text-align:center; border-radius:12px; margin-bottom:15px;">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:24px; color:var(--brand)"></i>
+            <div style="font-size:11px; margin-top:5px;">Upload Document Photo</div>
+        </div>
+        <button class="primary-btn" onclick="submitKYC()">Submit for Review</button>
+    </div>
+</div>
+
+<div id="activityModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>Activity Logs</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div id="txList">
+            <p style="text-align:center; color:var(--muted)">No transactions yet.</p>
+        </div>
+    </div>
+</div>
+
+<div id="securityModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>Security</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <input type="text" class="modal-input" placeholder="New Display Name" id="newName">
+        <input type="password" class="modal-input" placeholder="New Password" id="newPass">
+        <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+        <input type="password" class="modal-input" placeholder="Current Password (Required)" id="currPass">
+        <button class="primary-btn" onclick="updateSecurity()">Save Changes</button>
+        <div style="margin-top:15px; font-size:11px; color:var(--muted)">
+            Location: <span id="userLoc">Lebanon</span><br>
+            Time: <span id="userTime">2026-03-02</span>
+        </div>
+    </div>
+</div>
+
+<div id="langModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>Select Language</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div class="menu-group">
+            <div class="menu-item" onclick="setLang('English')"><span>English</span></div>
+            <div class="menu-item" onclick="setLang('العربية')"><span>العربية</span></div>
+            <div class="menu-item" onclick="setLang('Türkçe')"><span>Türkçe</span></div>
+            <div class="menu-item" onclick="setLang('Español')"><span>Español</span></div>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
+    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
+    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+    <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+</nav>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('dispName').textContent = user.displayName || "Elite Member";
+            document.getElementById('dispUID').textContent = user.uid.substring(0, 12).toUpperCase();
+            document.getElementById('dispAvatar').src = `https://ui-avatars.com/api/?name=${user.displayName || 'U'}&background=ff00b8&color=fff`;
+            
+            // جلب البيانات الحية من الداتابيز
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if(snap.exists()){
+                    const d = snap.data();
+                    document.getElementById('dispBal').textContent = (d.balance || 0).toFixed(2) + " USDT";
+                    document.getElementById('kycStatus').textContent = d.kyc_status || "Unverified";
+                    if(d.kyc_status === "Verified") document.getElementById('kycStatus').style.color = "#00ff96";
+                }
+            });
+
+            loadTransactions(user.uid);
+        } else { window.location.href = "login.html"; }
+    });
+
+    async function loadTransactions(uid) {
+        const q = query(collection(db, "transactions"), where("uid", "==", uid));
+        const snap = await getDocs(q);
+        const list = document.getElementById('txList');
+        let pending = 0;
+        
+        if(!snap.empty) {
+            list.innerHTML = "";
+            snap.forEach(doc => {
+                const tx = doc.data();
+                if(tx.status === 'pending') pending++;
+                list.innerHTML += `
+                    <div class="tx-item">
+                        <div class="tx-info">
+                            <div>${tx.type.toUpperCase()}</div>
+                            <small>${new Date(tx.timestamp).toLocaleDateString()}</small>
+                        </div>
+                        <div class="tx-amt">
+                            <div class="${tx.status === 'pending' ? 'status-pending' : 'status-success'}">${tx.amount} USDT</div>
+                            <small>${tx.status}</small>
+                        </div>
+                    </div>`;
+            });
+        }
+        document.getElementById('pendingCount').textContent = pending > 0 ? `${pending} Pending` : "No Pending";
+    }
+
+    window.submitKYC = async () => {
+        const user = auth.currentUser;
+        await updateDoc(doc(db, "users", user.uid), {
+            kyc_status: "Pending Admin Review",
+            kyc_details: {
+                type: document.getElementById('kycType').value,
+                number: document.getElementById('kycNum').value,
+                submittedAt: Date.now()
             }
         });
+        alert("Documents submitted for admin review!");
+        closeModals();
+    };
 
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            signOut(auth).then(() => { window.location.href = "login.html"; });
-        });
-    </script>
+    window.updateSecurity = async () => {
+        const user = auth.currentUser;
+        const cp = document.getElementById('currPass').value;
+        const nn = document.getElementById('newName').value;
+        const np = document.getElementById('newPass').value;
+
+        if(!cp) return alert("Current password required!");
+
+        try {
+            const credential = EmailAuthProvider.credential(user.email, cp);
+            await reauthenticateWithCredential(user, credential);
+            
+            if(nn) await updateProfile(user, { displayName: nn });
+            if(np) await updatePassword(user, np);
+            
+            alert("Security settings updated!");
+            location.reload();
+        } catch(e) { alert("Error: " + e.message); }
+    };
+
+    window.setLang = (l) => {
+        document.getElementById('currLang').textContent = l;
+        closeModals();
+        // هنا يمكن إضافة logic تبديل النصوص إذا كانت لديك ملفات ترجمة
+    };
+
+    window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+    window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    
+    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+</script>
 </body>
 </html>
