@@ -27,7 +27,6 @@
 
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
-        /* --- 3D Dashboard Core --- */
         .dashboard-3d {
             position: relative; width: 250px; height: 250px;
             margin: 20px auto; display: flex; align-items: center; justify-content: center;
@@ -49,7 +48,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes breathe { 0%, 100% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
 
-        /* --- Coin Selector --- */
         .label-sm { font-size: 11px; color: #888; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 1.5px; }
         .coin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; transition: 0.3s; }
         .coin-opt {
@@ -61,7 +59,6 @@
         .coin-opt.active { border-color: var(--brand); background: rgba(255, 0, 184, 0.12); box-shadow: 0 0 15px var(--brand-glow); }
         .coin-opt.active span { color: #fff; }
 
-        /* --- Investment Panel --- */
         .invest-panel {
             background: var(--card-bg); border: 1px solid var(--border);
             border-radius: 28px; padding: 22px; backdrop-filter: blur(20px);
@@ -72,8 +69,8 @@
         }
         .input-box input { background: transparent; border: none; color: white; font-size: 20px; font-weight: 700; width: 65%; outline: none; }
         
-        .days-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
-        .day-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px 0; border-radius: 12px; font-size: 11px; cursor: pointer; color: #fff; transition: 0.2s; }
+        .days-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; }
+        .day-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px 0; border-radius: 10px; font-size: 10px; cursor: pointer; color: #fff; transition: 0.2s; }
         .day-btn.active { background: var(--brand); border-color: var(--brand); font-weight: 800; }
 
         .activate-btn {
@@ -141,6 +138,7 @@
             </div>
 
             <div class="days-grid">
+                <button class="day-btn" onclick="setD(this, 1)">1D</button>
                 <button class="day-btn active" onclick="setD(this, 5)">5D</button>
                 <button class="day-btn" onclick="setD(this, 15)">15D</button>
                 <button class="day-btn" onclick="setD(this, 30)">30D</button>
@@ -161,7 +159,7 @@
         <h4><i class="fa-solid fa-circle-nodes"></i> Operational Summary</h4>
         The Amana Global <b>AI Vault</b> combines high-frequency trading bots with a secure <b>Investment Fund</b> structure. 
         <br><br>
-        Your capital (Max <b>5,000 USDT</b>) is locked for the selected period to ensure market liquidity. A <b>5% service fee</b> is applied only to generated profits.
+        Your capital (Max <b>5,000 USDT</b>) is locked for the selected period. A <b>5% service fee</b> is applied only to generated profits.
     </div>
 </div>
 
@@ -212,8 +210,10 @@
                         renderRunningMode();
                     } else {
                         activeInvest = null;
-                        document.getElementById('coinGrid').style.opacity = "1";
-                        document.getElementById('coinGrid').style.pointerEvents = "all";
+                        if(document.getElementById('coinGrid')){
+                             document.getElementById('coinGrid').style.opacity = "1";
+                             document.getElementById('coinGrid').style.pointerEvents = "all";
+                        }
                     }
                 }
             });
@@ -221,8 +221,11 @@
     });
 
     function renderRunningMode() {
-        document.getElementById('coinGrid').style.opacity = "0.3";
-        document.getElementById('coinGrid').style.pointerEvents = "none";
+        const coinGrid = document.getElementById('coinGrid');
+        if(coinGrid){
+            coinGrid.style.opacity = "0.3";
+            coinGrid.style.pointerEvents = "none";
+        }
         document.getElementById('mainPanel').innerHTML = `
             <div style="text-align:center; padding:10px;">
                 <div style="margin-bottom:15px;"><i class="fas fa-microchip fa-spin" style="color:var(--brand); font-size:30px;"></i></div>
@@ -277,9 +280,13 @@
         const profit = activeInvest.amount * (activeInvest.rate / 100) * activeInvest.days;
         const totalRefund = activeInvest.amount + profit;
         const userRef = doc(db, "users", currentUser.uid);
+        const snap = await getDoc(userRef);
+        const currentBal = snap.data().balance || 0;
+        const currentBotProfit = snap.data().bot_profit || 0;
+
         await updateDoc(userRef, {
-            balance: currentBalance + totalRefund,
-            bot_profit: (activeInvest.bot_profit || 0) + profit,
+            balance: currentBal + totalRefund,
+            bot_profit: currentBotProfit + profit,
             active_investment: deleteField()
         });
         alert("Investment Cycle Completed! Profit Added.");
