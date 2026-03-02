@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA ELITE | Security Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --card-bg: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff; --muted: #888; --danger: #ff3b3b; --success: #00ff96;
+        }
+
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: var(--text);
+            padding-bottom: 40px; min-height: 100vh;
+            background: radial-gradient(circle at top right, #1c0833, #060914);
+        }
+
+        .container { padding: 20px; max-width: 450px; margin: auto; }
+
+        .header { display: flex; align-items: center; gap: 15px; padding: 20px 0; }
+        .back-btn { color: white; text-decoration: none; font-size: 20px; }
+        .title { font-size: 20px; font-weight: 700; margin: 0; }
+
+        /* Locked Info Style */
+        .info-card { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            border-radius: 20px; padding: 20px; margin-bottom: 25px;
+        }
+        .info-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-size: 13px; color: var(--muted); }
+        .info-value { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .lock-icon { font-size: 12px; color: var(--muted); opacity: 0.6; }
+
+        /* Form Style */
+        .section-title { font-size: 12px; color: var(--brand); margin: 25px 0 15px 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .input-group { margin-bottom: 15px; position: relative; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--brand); }
+        .modal-input { 
+            width: 100%; padding: 14px 14px 14px 45px; background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border); border-radius: 12px; color: white; 
+            box-sizing: border-box; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        .modal-input:focus { border-color: var(--brand); background: rgba(255,255,255,0.08); }
+
+        .primary-btn { 
+            width: 100%; padding: 16px; border-radius: 15px; border: none; 
+            background: linear-gradient(90deg, var(--brand), #ff4db8); 
+            color: white; font-weight: 700; cursor: pointer; font-size: 15px;
+            box-shadow: 0 4px 15px rgba(255, 0, 184, 0.3); margin-top: 15px;
+        }
+
+        .alert-box {
+            background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent);
+            padding: 12px; border-radius: 12px; font-size: 11px; color: var(--accent);
+            line-height: 1.4; margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <a href="profile.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1 class="title">Security Settings</h1>
+    </div>
+
+    <div class="section-title">Account Information</div>
+    <div class="info-card">
+        <div class="info-row">
+            <span class="info-label">Full Name</span>
+            <span class="info-value" id="lockedName">Elite Member <i class="fa-solid fa-lock lock-icon"></i></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">User ID (UID)</span>
+            <span class="info-value" id="lockedUID">-------- <i class="fa-solid fa-lock lock-icon"></i></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email Address</span>
+            <span class="info-value" id="lockedEmail">---@---.com <i class="fa-solid fa-lock lock-icon"></i></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Phone Number</span>
+            <span class="info-value" id="lockedPhone">+--- ------- <i class="fa-solid fa-lock lock-icon"></i></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">KYC Status</span>
+            <span class="info-value" id="lockedKYC" style="color:var(--success)">Verified</span>
+        </div>
+    </div>
+
+    <div class="alert-box">
+        <i class="fa-solid fa-shield-halved"></i> 
+        Account information is locked for security. To update your email or phone, please contact support.
+    </div>
+
+    <div class="section-title">Security Updates</div>
+    
+    <div class="input-group">
+        <i class="fa-solid fa-key"></i>
+        <input type="password" class="modal-input" id="newPass" placeholder="New Account Password">
+    </div>
+
+    <div class="input-group">
+        <i class="fa-solid fa-shield-dots"></i>
+        <input type="number" class="modal-input" id="newPin" placeholder="New 6-Digit Withdrawal PIN" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
+    </div>
+
+    <hr style="border:0; border-top:1px solid var(--border); margin: 25px 0;">
+
+    <div class="section-title" style="color:var(--accent)">Verify Identity to Save</div>
+    <div class="input-group">
+        <i class="fa-solid fa-lock-open"></i>
+        <input type="password" class="modal-input" id="currPass" placeholder="Current Account Password" style="border-color: var(--accent)">
+    </div>
+
+    <button class="primary-btn" onclick="applyChanges()">Update Security</button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
+        authDomain: "ai-dodo.firebaseapp.com",
+        projectId: "ai-dodo",
+        storageBucket: "ai-dodo.firebasestorage.app",
+        messagingSenderId: "261622335803",
+        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('lockedEmail').innerHTML = `${user.email} <i class="fa-solid fa-lock lock-icon"></i>`;
+            document.getElementById('lockedUID').innerHTML = `${user.uid.substring(0, 10).toUpperCase()} <i class="fa-solid fa-lock lock-icon"></i>`;
+            
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if(snap.exists()){
+                    const d = snap.data();
+                    document.getElementById('lockedName').innerHTML = `${user.displayName || 'Elite Member'} <i class="fa-solid fa-lock lock-icon"></i>`;
+                    document.getElementById('lockedPhone').innerHTML = `${d.phone || 'Not Linked'} <i class="fa-solid fa-lock lock-icon"></i>`;
+                    document.getElementById('lockedKYC').textContent = d.kyc_status || "Unverified";
+                    document.getElementById('lockedKYC').style.color = (d.kyc_status === 'Verified') ? 'var(--success)' : 'var(--danger)';
+                }
+            });
+        } else { window.location.href = "login.html"; }
+    });
+
+    window.applyChanges = async () => {
+        const user = auth.currentUser;
+        const cp = document.getElementById('currPass').value;
+        const np = document.getElementById('newPass').value;
+        const pin = document.getElementById('newPin').value;
+
+        if(!cp) return alert("Please enter current password to confirm.");
+
+        try {
+            const credential = EmailAuthProvider.credential(user.email, cp);
+            await reauthenticateWithCredential(user, credential);
+            
+            let updates = {};
+            if(np) await updatePassword(user, np);
+            if(pin) {
+                if(pin.length !== 6) return alert("PIN must be 6 digits.");
+                updates.pin_security = pin;
+            }
+
+            if(Object.keys(updates).length > 0) {
+                await updateDoc(doc(db, "users", user.uid), updates);
+            }
+
+            alert("Security updated successfully!");
+            location.reload();
+        } catch(e) {
+            alert("Verification failed. Check current password.");
+        }
+    };
+</script>
+
+</body>
+</html>
