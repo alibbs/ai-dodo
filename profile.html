@@ -29,7 +29,8 @@
         .user-id { font-size: 11px; color: var(--muted); font-family: monospace; }
 
         .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
-        .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 20px; text-align: center; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 20px; text-align: center; transition: 0.3s; cursor: pointer; }
+        .stat-card:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.08); }
         .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
         .stat-value { font-size: 14px; font-weight: 700; color: var(--accent); }
 
@@ -75,7 +76,7 @@
             <div class="stat-label" data-key="balance">Wallet Balance</div>
             <div class="stat-value" id="dispBal">0.00 USDT</div>
         </div>
-        <div class="stat-card" onclick="openModal('kycModal')">
+        <div class="stat-card" onclick="location.href='kyc.html'">
             <div class="stat-label" data-key="kyc">KYC Status</div>
             <div class="stat-value" id="kycStatus">Unverified</div>
         </div>
@@ -176,7 +177,6 @@
 </div>
 
 <div id="activityModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Transactions</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><div id="txList"></div></div></div>
-<div id="kycModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>KYC Verification</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><input type="text" class="modal-input" placeholder="ID / Passport Number" id="kycNum"><button class="primary-btn" onclick="submitKYC()">Submit</button></div></div>
 
 <nav class="bottom-nav">
     <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
