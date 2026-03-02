@@ -12,89 +12,113 @@
             --border: rgba(255,255,255,0.1);
         }
 
-        * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
+        /* منع التفاعل العشوائي وتحسين المظهر على كل الهواتف */
+        * { 
+            touch-action: pan-x pan-y; 
+            box-sizing: border-box; 
+            -webkit-user-select: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
-            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
-            height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column;
+            margin: 0; font-family: 'Inter', sans-serif; 
+            background: var(--bg); color: #fff;
+            height: 100vh; width: 100vw; 
+            display: flex; flex-direction: column; 
+            overflow: hidden; /* تثبيت الشاشة */
         }
 
-        /* --- Header --- */
+        /* --- Header: حجم متكيف --- */
         .header {
-            padding: 10px 15px; background: var(--card); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; z-index: 10;
+            height: 60px; padding: 0 15px; 
+            background: var(--card); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
         }
-        .header h1 { margin: 0; font-size: 16px; font-weight: 900; }
+        .header h1 { font-size: clamp(14px, 4vw, 18px); margin: 0; font-weight: 900; }
         .header h1 span { color: var(--brand); }
         .bal-display { text-align: right; }
-        .bal-display small { font-size: 9px; color: #888; display: block; }
-        .bal-display b { color: var(--accent); font-size: 14px; }
+        .bal-display b { color: var(--accent); font-size: clamp(12px, 3.5vw, 15px); }
 
-        /* --- Asset Selector --- */
+        /* --- Asset Selector: شريط العملات --- */
         .assets {
-            display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; background: #0b0e1a;
+            height: 45px; display: flex; gap: 8px; padding: 5px 10px; 
+            overflow-x: auto; background: #0b0e1a; flex-shrink: 0;
+            align-items: center;
         }
         .assets::-webkit-scrollbar { display: none; }
         .tab {
-            padding: 6px 14px; background: var(--card); border: 1px solid var(--border);
-            border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap;
+            padding: 6px 12px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;
         }
         .tab.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
 
-        /* --- Chart Section --- */
-        #chart-wrap { flex-grow: 1; background: #000; position: relative; width: 100%; }
-
-        /* --- Trade Panel --- */
-        .trade-ui {
-            background: #0b0e1a; border-top: 1px solid var(--border);
-            padding: 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom));
+        /* --- Chart Section: يأخذ كل المساحة المتبقية --- */
+        #chart-container { 
+            flex: 1; /* التمدد لملء الفراغ */
+            background: #000; position: relative; width: 100%; 
         }
 
-        .inputs { display: flex; gap: 10px; margin-bottom: 12px; }
-        .in-box { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; }
-        .in-box label { display: block; font-size: 9px; color: #666; margin-bottom: 2px; }
-        .in-box input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 15px; outline: none; }
+        /* --- Trade UI: الجزء السفلي --- */
+        .trade-ui {
+            background: #0b0e1a; border-top: 1px solid var(--border);
+            padding: 15px; flex-shrink: 0;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        }
 
-        .slider-wrap { margin-bottom: 15px; }
-        .slider-head { display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-bottom: 6px; }
-        .slider-head b { color: var(--brand); }
+        .inputs-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; 
+        }
+        .in-box { 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            padding: 8px 10px; border-radius: 8px; 
+        }
+        .in-box label { display: block; font-size: 9px; color: #666; margin-bottom: 2px; }
+        .in-box input { 
+            width: 100%; background: transparent; border: none; 
+            color: #fff; font-weight: 800; font-size: 15px; outline: none; 
+        }
+
+        .slider-wrap { margin-bottom: 12px; }
         .range-slider {
             width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px;
             background: #1a1d26; outline: none;
         }
         .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 20px; height: 20px;
+            -webkit-appearance: none; width: 22px; height: 22px;
             background: var(--brand); border-radius: 50%; cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 184, 0.4);
         }
 
         .btns { display: flex; gap: 10px; }
         .btn {
-            flex: 1; padding: 14px; border-radius: 12px; border: none;
+            flex: 1; padding: 14px; border-radius: 10px; border: none;
             font-weight: 900; font-size: 14px; color: #fff;
+            transition: 0.1s;
         }
         .btn-up { background: var(--up); }
         .btn-down { background: var(--down); }
+        .btn:active { opacity: 0.7; transform: scale(0.98); }
 
-        /* --- Floating Position --- */
+        /* --- Position Floating Card --- */
         #pos-card {
             position: absolute; top: 10px; left: 10px; right: 10px;
-            background: rgba(18, 21, 28, 0.96); border: 1px solid var(--border);
-            border-radius: 15px; padding: 12px; display: none; z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(18, 21, 28, 0.98); border: 1px solid var(--border);
+            border-radius: 12px; padding: 12px; display: none; z-index: 100;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
         }
-        .pnl-plus { color: var(--up); }
-        .pnl-minus { color: var(--down); }
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
         <div class="bal-display">
-            <small>WALLET BALANCE</small>
-            <b id="walletBal">0.00</b> <span style="font-size: 10px; color: #555;">USDT</span>
+            <small style="font-size: 8px; color: #666; display: block;">BALANCE</small>
+            <b id="walletBal">0.00</b> <small style="font-size: 10px; color: #444;">USDT</small>
         </div>
-    </div>
+    </header>
 
     <div class="assets">
         <div class="tab active" onclick="setSym('BTCUSDT', this)">BTC</div>
@@ -104,33 +128,30 @@
         <div class="tab" onclick="setSym('XRPUSDT', this)">XRP</div>
     </div>
 
-    <div id="chart-wrap">
-        <div id="tv_widget" style="height: 100%;"></div>
+    <main id="chart-container">
+        <div id="tv_widget" style="height: 100%; width: 100%;"></div>
         
         <div id="pos-card">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <b id="p-side" style="font-size: 12px;">LONG</b>
-                <span id="p-sym" style="font-size: 11px; color: #888;"></span>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <div id="p-pnl" style="font-size: 18px; font-weight: 900;">+0.00</div>
+                    <b id="p-side" style="font-size: 12px;">LONG</b>
+                    <div id="p-pnl" style="font-size: 18px; font-weight: 900; margin-top: 2px;">+0.00</div>
                     <div id="p-roe" style="font-size: 11px;">+0.00%</div>
                 </div>
-                <button onclick="closePos()" style="background:#f84960; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:11px; font-weight:bold;">CLOSE</button>
+                <button onclick="closePos()" style="background:#333; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-size:10px; font-weight:bold;">CLOSE</button>
             </div>
-            <div style="margin-top: 8px; font-size: 9px; color: #666; display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 8px;">
+            <div style="margin-top: 10px; font-size: 9px; color: #777; display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 8px;">
                 <span>ENTRY: <span id="p-entry" style="color:#eee">0.00</span></span>
-                <span>LIQ: <span id="p-liq" style="color:var(--down)">0.00</span></span>
+                <span>LIQUIDATION: <span id="p-liq" style="color:var(--down)">0.00</span></span>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="trade-ui">
-        <div class="inputs">
+    <section class="trade-ui">
+        <div class="inputs-grid">
             <div class="in-box">
-                <label>AMOUNT</label>
-                <input type="number" id="t-amount" value="100">
+                <label>SIZE (USDT)</label>
+                <input type="number" id="t-amount" value="100" inputmode="decimal">
             </div>
             <div class="in-box">
                 <label>LEVERAGE</label>
@@ -138,15 +159,15 @@
             </div>
         </div>
         <div class="slider-wrap">
-            <div class="slider-head"><span>Adj. Leverage</span> <b>75x Max</b></div>
             <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-range">
         </div>
         <div class="btns">
-            <button class="btn btn-down" onclick="trade('SHORT')">SELL / SHORT</button>
-            <button class="btn btn-up" onclick="trade('LONG')">BUY / LONG</button>
+            <button class="btn btn-down" onclick="trade('SHORT')">SHORT</button>
+            <button class="btn btn-up" onclick="trade('LONG')">LONG</button>
         </div>
-    </div>
+    </section>
 
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -167,7 +188,6 @@
 
         let uBal = 0, uID = null, curPrice = 0, activeP = null, rawSym = "BTCUSDT";
 
-        // Firebase Balance Sync
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 uID = user.uid;
@@ -178,17 +198,19 @@
             }
         });
 
-        // TradingView & Price
         function loadTV(s) {
             new window.TradingView.widget({
                 "autosize": true, "symbol": "BINANCE:"+s, "interval": "1", "theme": "dark", "style": "1",
-                "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914"
+                "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914",
+                "save_image": false, "hide_legend": true, "withdateranges": false
             });
         }
+
         window.setSym = (s, el) => {
             document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
             el.classList.add('active'); rawSym = s; loadTV(s); connectWS(s);
         }
+
         function connectWS(s) {
             const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${s.toLowerCase()}@ticker`);
             ws.onmessage = (e) => {
@@ -197,17 +219,13 @@
             };
         }
 
-        // Trade Logic
         window.trade = async (side) => {
             const amt = parseFloat(document.getElementById('t-amount').value);
             const lev = parseInt(document.getElementById('lev-range').value);
-            const fee = amt * 0.025; // 2.5% Fee
+            const fee = amt * 0.025; 
 
-            if(amt + fee > uBal) return alert("Insufficient Balance (incl. 2.5% fee)");
+            if(amt + fee > uBal) return alert("Insufficient Balance");
             if(activeP) return alert("Position already open");
-
-            const confirmT = confirm(`Open ${side}?\nAmount: ${amt} USDT\nFee: ${fee.toFixed(2)} USDT`);
-            if(!confirmT) return;
 
             await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + fee)) });
 
@@ -215,7 +233,11 @@
                 side, sym: rawSym, entry: curPrice, amt, lev,
                 liq: side === 'LONG' ? curPrice * (1 - (0.68/lev)) : curPrice * (1 + (0.68/lev))
             };
-            showP();
+            document.getElementById('pos-card').style.display = 'block';
+            document.getElementById('p-side').textContent = side + " " + lev + "x";
+            document.getElementById('p-side').style.color = side === 'LONG'?'var(--up)':'var(--down)';
+            document.getElementById('p-entry').textContent = curPrice.toFixed(2);
+            document.getElementById('p-liq').textContent = activeP.liq.toFixed(2);
         };
 
         function updateLivePNL() {
@@ -226,29 +248,21 @@
 
             if(roe <= -68) { alert("LIQUIDATED!"); closePos(); return; }
 
-            document.getElementById('p-pnl').textContent = (pnl>=0?'+':'') + pnl.toFixed(2) + " USDT";
-            document.getElementById('p-pnl').className = pnl>=0 ? "pnl-plus":"pnl-minus";
+            const pnlEl = document.getElementById('p-pnl');
+            pnlEl.textContent = (pnl>=0?'+':'') + pnl.toFixed(2) + " USDT";
+            pnlEl.style.color = pnl>=0 ? "var(--up)":"var(--down)";
             document.getElementById('p-roe').textContent = (roe>=0?'+':'') + roe.toFixed(2) + "%";
             document.getElementById('p-roe').style.color = roe>=0 ? "var(--up)":"var(--down)";
         }
 
-        function showP() {
-            const c = document.getElementById('pos-card');
-            c.style.display = 'block';
-            document.getElementById('p-side').textContent = activeP.side + " " + activeP.lev + "x";
-            document.getElementById('p-side').style.color = activeP.side === 'LONG'?'var(--up)':'var(--down)';
-            document.getElementById('p-sym').textContent = activeP.sym + " Perp";
-            document.getElementById('p-entry').textContent = activeP.entry.toFixed(2);
-            document.getElementById('p-liq').textContent = activeP.liq.toFixed(2);
-        }
-
         window.closePos = () => { activeP = null; document.getElementById('pos-card').style.display='none'; };
         
-        const r = document.getElementById('lev-range');
-        r.oninput = () => document.getElementById('lev-val').value = r.value + "x";
+        document.getElementById('lev-range').oninput = function() {
+            document.getElementById('lev-val').value = this.value + "x";
+        }
 
-        setSym('BTCUSDT', document.querySelector('.tab'));
+        // إطلاق الشارت الأول عند التحميل
+        setTimeout(() => setSym('BTCUSDT', document.querySelector('.tab')), 500);
     </script>
-    <script src="https://s3.tradingview.com/tv.js"></script>
 </body>
 </html>
