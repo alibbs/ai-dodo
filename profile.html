@@ -21,7 +21,6 @@
 
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
-        /* Profile Header */
         .profile-header { text-align: center; padding: 30px 0 15px; }
         .avatar-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 10px; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--brand); padding: 3px; object-fit: cover; }
@@ -29,13 +28,11 @@
         .user-name { font-size: 22px; font-weight: 800; margin: 0; }
         .user-id { font-size: 11px; color: var(--muted); font-family: monospace; }
 
-        /* Stats & Quick Actions */
         .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
         .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 20px; text-align: center; }
         .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
         .stat-value { font-size: 14px; font-weight: 700; color: var(--accent); }
 
-        /* Menu Groups */
         .section-title { font-size: 12px; color: var(--muted); margin: 20px 0 10px 10px; text-transform: uppercase; letter-spacing: 1px; }
         .menu-group { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 15px; }
         .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; text-decoration: none; color: var(--text); border-bottom: 1px solid var(--border); transition: 0.2s; cursor: pointer; }
@@ -44,14 +41,12 @@
         .menu-item span { font-size: 14px; font-weight: 500; }
         .menu-right { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
 
-        /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 85vh; overflow-y: auto; position: relative; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; }
+        .modal-input { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; }
         .primary-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--brand); color: white; font-weight: 700; cursor: pointer; }
 
-        /* Chat Bot Styles */
         #chatBody { height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-bottom: 10px; }
         .msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; }
         .bot-msg { background: var(--card-bg); align-self: flex-start; border: 1px solid var(--border); }
@@ -116,6 +111,10 @@
             <div class="menu-left"><i class="fa-solid fa-robot icon-l"></i><span data-key="ai_support">AI Live Support</span></div>
             <div class="menu-right"><span style="color:var(--success)">Online</span></div>
         </div>
+        <a href="mailto:amana.global@outlook.com" class="menu-item">
+            <div class="menu-left"><i class="fa-solid fa-envelope icon-l"></i><span>Email Support</span></div>
+            <div class="menu-right">amana.global@outlook.com</div>
+        </a>
         <a href="https://wa.me/447412600275" class="menu-item">
             <div class="menu-left"><i class="fa-brands fa-whatsapp icon-l"></i><span>WhatsApp Support</span></div>
             <div class="menu-right">+44 7412 600275</div>
@@ -131,30 +130,35 @@
 
 <div id="securityModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h3 data-key="security_title">Security Panel</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
-        <div style="margin-bottom:15px; font-size:12px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
-            <p style="margin:5px 0">Email: <span id="userEmail" style="color:var(--accent)">-</span></p>
-            <p style="margin:5px 0">Phone: <span id="userPhone" style="color:var(--accent)">Not Linked</span></p>
+        <div class="modal-header"><h3 data-key="security_title">Security Hub</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        
+        <div style="margin-bottom:15px; font-size:12px; background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; border: 1px solid var(--border);">
+            <p style="margin:5px 0; display:flex; justify-content:space-between;"><span>Email:</span> <span id="userEmail" style="color:var(--accent)">-</span></p>
+            <p style="margin:5px 0; display:flex; justify-content:space-between;"><span>Account PIN:</span> <span id="pinStatus" style="color:var(--brand)">Checking...</span></p>
         </div>
-        <input type="text" class="modal-input" placeholder="New Display Name" id="newName">
-        <input type="tel" class="modal-input" placeholder="Update Phone Number" id="newPhone">
-        <input type="password" class="modal-input" placeholder="New Password" id="newPass">
-        <input type="number" class="modal-input" placeholder="Set 6-Digit PIN Security" id="newPin" maxlength="6">
+
+        <p style="font-size:11px; color:var(--muted); margin-bottom:8px;">Profile & Security</p>
+        <input type="text" class="modal-input" placeholder="Update Display Name" id="newName">
+        <input type="password" class="modal-input" placeholder="New Password (Leave blank to keep)" id="newPass">
+        <input type="number" class="modal-input" placeholder="Set 6-Digit Withdrawal PIN" id="newPin" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
+        
         <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-        <input type="password" class="modal-input" placeholder="Current Password (To Save)" id="currPass">
-        <button class="primary-btn" onclick="updateSecurity()">Save Security Settings</button>
+        <p style="font-size:11px; color:var(--brand); margin-bottom:8px; text-align:center;">Required to confirm changes:</p>
+        <input type="password" class="modal-input" placeholder="Current Password" id="currPass" style="border: 1px solid var(--brand);">
+        
+        <button class="primary-btn" onclick="updateSecurity()">Apply Security Changes</button>
     </div>
 </div>
 
 <div id="aiBotModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h3>AI Assistant</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div class="modal-header"><h3>AMANA AI Support</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
         <div id="chatBody">
-            <div class="msg bot-msg">Hello! I am AMANA AI. How can I help you with our program today?</div>
+            <div class="msg bot-msg">Hello! I am AMANA AI. How can I assist you with deposits, withdrawals, or security today?</div>
         </div>
         <div style="display:flex; gap:5px;">
-            <input type="text" id="botInput" class="modal-input" style="margin:0" placeholder="Ask something...">
-            <button onclick="askBot()" style="background:var(--brand); border:none; color:white; padding:0 15px; border-radius:12px;"><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="botInput" class="modal-input" style="margin:0" placeholder="Type your message...">
+            <button onclick="askBot()" style="background:var(--brand); border:none; color:white; padding:0 15px; border-radius:12px; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
@@ -172,7 +176,7 @@
 </div>
 
 <div id="activityModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Transactions</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><div id="txList"></div></div></div>
-<div id="kycModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>KYC</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><input type="text" class="modal-input" placeholder="ID / Passport Number" id="kycNum"><button class="primary-btn" onclick="submitKYC()">Submit</button></div></div>
+<div id="kycModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>KYC Verification</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><input type="text" class="modal-input" placeholder="ID / Passport Number" id="kycNum"><button class="primary-btn" onclick="submitKYC()">Submit</button></div></div>
 
 <nav class="bottom-nav">
     <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
@@ -204,7 +208,7 @@
         en: { balance: "Wallet Balance", kyc: "KYC Status", wallet: "My Wallet", activity: "Activity", security: "Security Settings", language: "Language", logout: "Logout", finance: "Finance", ai_support: "AI Support", settings: "Settings", support_title: "Support" },
         ar: { balance: "رصيد المحفظة", kyc: "حالة التوثيق", wallet: "محفظتي", activity: "النشاطات", security: "إعدادات الأمان", language: "اللغة", logout: "تسجيل الخروج", finance: "المالية", ai_support: "الدعم الذكي", settings: "الإعدادات", support_title: "الدعم الفني" },
         es: { balance: "Saldo de Cartera", kyc: "Estado KYC", wallet: "Mi Cartera", activity: "Actividad", security: "Seguridad", language: "Idioma", logout: "Cerrar Sesión", finance: "Finanzas", ai_support: "Soporte IA", settings: "Ajustes", support_title: "Soporte" },
-        tr: { balance: "Cüzdan Bakiyesi", kyc: "KYC Durumu", wallet: "Cüzdanım", activity: "Etkinlik", security: "Güvenlik Ayarları", language: "Dil", logout: "Çıkış Yap", finance: "Finans", ai_support: "AI Desteği", settings: "Ayarlar", support_title: "Destek" }
+        tr: { balance: "Cüzdan Bakiyesi", kyc: "KYC Durumu", wallet: "Cüzdanيم", activity: "Etkinlik", security: "Güvenlik Ayarları", language: "Dil", logout: "Çıkış Yap", finance: "Finans", ai_support: "AI Desteği", settings: "Ayarlar", support_title: "Destek" }
     };
 
     onAuthStateChanged(auth, (user) => {
@@ -218,13 +222,68 @@
                     const d = snap.data();
                     document.getElementById('dispBal').textContent = (d.balance || 0).toFixed(2) + " USDT";
                     document.getElementById('kycStatus').textContent = d.kyc_status || "Unverified";
-                    document.getElementById('userPhone').textContent = d.phone || "Not Linked";
+                    document.getElementById('pinStatus').textContent = d.pin_security ? "Active" : "Not Set";
+                    document.getElementById('pinStatus').style.color = d.pin_security ? "var(--success)" : "var(--danger)";
                 }
             });
         } else { window.location.href = "login.html"; }
     });
 
-    // Translation Function
+    window.updateSecurity = async () => {
+        const user = auth.currentUser;
+        const cp = document.getElementById('currPass').value;
+        const np = document.getElementById('newPass').value;
+        const nn = document.getElementById('newName').value;
+        const pin = document.getElementById('newPin').value;
+
+        if(!cp) return alert("Please enter your current password to save changes.");
+
+        try {
+            const credential = EmailAuthProvider.credential(user.email, cp);
+            await reauthenticateWithCredential(user, credential);
+            
+            let dbUpdates = {};
+            if(nn) await updateProfile(user, { displayName: nn });
+            if(np) await updatePassword(user, np);
+            if(pin) {
+                if(pin.length !== 6) return alert("PIN must be exactly 6 digits.");
+                dbUpdates.pin_security = pin;
+            }
+
+            if(Object.keys(dbUpdates).length > 0 || nn) {
+                await updateDoc(doc(db, "users", user.uid), dbUpdates);
+            }
+
+            alert("Security settings updated successfully!");
+            closeModals();
+            location.reload();
+        } catch(e) { 
+            alert("Error: Check your current password or try again."); 
+            console.error(e);
+        }
+    };
+
+    window.askBot = () => {
+        const input = document.getElementById('botInput').value.toLowerCase();
+        const chat = document.getElementById('chatBody');
+        if(!input) return;
+
+        chat.innerHTML += `<div class="msg user-msg">${input}</div>`;
+        document.getElementById('botInput').value = "";
+
+        let reply = "I'm still learning. For complex issues, email amana.global@outlook.com.";
+        if(input.includes("deposit")) reply = "To deposit: Open 'My Wallet', click 'Deposit', and transfer USDT (TRC20) to the displayed address.";
+        if(input.includes("withdraw")) reply = "Withdrawals are processed within 24 hours. You need a verified KYC and your 6-digit PIN.";
+        if(input.includes("kyc")) reply = "Go to the KYC section in your profile and submit your ID number for verification.";
+        if(input.includes("pin")) reply = "You can set or change your 6-digit withdrawal PIN in 'Security Settings'. This protects your funds.";
+        if(input.includes("hi") || input.includes("hello")) reply = "Hello! I am AMANA AI. How can I help you manage your elite account?";
+
+        setTimeout(() => {
+            chat.innerHTML += `<div class="msg bot-msg">${reply}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }, 600);
+    };
+
     window.changeLanguage = (lang) => {
         const set = translations[lang];
         document.querySelectorAll('[data-key]').forEach(el => {
@@ -236,54 +295,10 @@
         localStorage.setItem('selectedLang', lang);
     };
 
-    // AI Support Bot Logic
-    window.askBot = () => {
-        const input = document.getElementById('botInput').value.toLowerCase();
-        const chat = document.getElementById('chatBody');
-        if(!input) return;
-
-        chat.innerHTML += `<div class="msg user-msg">${input}</div>`;
-        document.getElementById('botInput').value = "";
-
-        let reply = "I'm not sure about that. Please contact our WhatsApp support for manual help.";
-        if(input.includes("deposit")) reply = "To deposit USDT, go to My Wallet and click 'Deposit'. Copy the TRC20 address.";
-        if(input.includes("withdraw")) reply = "Withdrawals are processed within 24 hours after KYC verification.";
-        if(input.includes("kyc")) reply = "Please upload your ID or Passport in the KYC section to verify your account.";
-        if(input.includes("pin")) reply = "You can set your 6-digit transaction PIN in Security Settings.";
-
-        setTimeout(() => {
-            chat.innerHTML += `<div class="msg bot-msg">${reply}</div>`;
-            chat.scrollTop = chat.scrollHeight;
-        }, 600);
-    };
-
-    window.updateSecurity = async () => {
-        const user = auth.currentUser;
-        const cp = document.getElementById('currPass').value;
-        const pin = document.getElementById('newPin').value;
-        const phone = document.getElementById('newPhone').value;
-
-        if(!cp) return alert("Current password is required to save changes.");
-
-        try {
-            const credential = EmailAuthProvider.credential(user.email, cp);
-            await reauthenticateWithCredential(user, credential);
-            
-            let updates = {};
-            if(pin) updates.pin_security = pin;
-            if(phone) updates.phone = phone;
-            
-            await updateDoc(doc(db, "users", user.uid), updates);
-            alert("Security Data Updated Successfully!");
-            closeModals();
-        } catch(e) { alert("Error: " + e.message); }
-    };
-
     window.openModal = (id) => document.getElementById(id).style.display = 'flex';
     window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-    // Load saved language
     const savedLang = localStorage.getItem('selectedLang') || 'en';
     changeLanguage(savedLang);
 </script>
