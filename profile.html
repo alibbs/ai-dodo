@@ -46,8 +46,7 @@
         .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 85vh; overflow-y: auto; position: relative; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-input { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; }
-        .primary-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--brand); color: white; font-weight: 700; cursor: pointer; }
-
+        
         #chatBody { height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-bottom: 10px; }
         .msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; }
         .bot-msg { background: var(--card-bg); align-self: flex-start; border: 1px solid var(--border); }
@@ -89,7 +88,7 @@
             <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="menu-item" onclick="openModal('activityModal')">
-            <div class="menu-left"><i class="fa-solid fa-receipt icon-l"></i><span data-key="activity">Activity & Transactions</span></div>
+            <div class="menu-left"><i class="fa-solid fa-receipt icon-l"></i><span data-key="activity">Activity</span></div>
             <div class="menu-right" id="pendingCount">No Pending</div>
         </div>
     </div>
@@ -102,7 +101,7 @@
         </div>
         <div class="menu-item" onclick="openModal('langModal')">
             <div class="menu-left"><i class="fa-solid fa-language icon-l"></i><span data-key="language">Language</span></div>
-            <div class="menu-right"><span id="currLang">English</span> <i class="fa-solid fa-chevron-right"></i></div>
+            <div class="menu-right"><span id="currLang">EN</span> <i class="fa-solid fa-chevron-right"></i></div>
         </div>
     </div>
 
@@ -113,12 +112,8 @@
             <div class="menu-right"><span style="color:var(--success)">Online</span></div>
         </div>
         <a href="mailto:amana.global@outlook.com" class="menu-item">
-            <div class="menu-left"><i class="fa-solid fa-envelope icon-l"></i><span>Email Support</span></div>
+            <div class="menu-left"><i class="fa-solid fa-envelope icon-l"></i><span data-key="email_support">Email Support</span></div>
             <div class="menu-right">amana.global@outlook.com</div>
-        </a>
-        <a href="https://wa.me/447412600275" class="menu-item">
-            <div class="menu-left"><i class="fa-brands fa-whatsapp icon-l"></i><span>WhatsApp Support</span></div>
-            <div class="menu-right">+44 7412 600275</div>
         </a>
     </div>
 
@@ -133,10 +128,10 @@
     <div class="modal-content">
         <div class="modal-header"><h3>AMANA AI Support</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
         <div id="chatBody">
-            <div class="msg bot-msg">Hello! I am AMANA AI. How can I assist you with deposits, withdrawals, or security today?</div>
+            <div class="msg bot-msg">Hello! I am AMANA AI. How can I assist you today?</div>
         </div>
         <div style="display:flex; gap:5px;">
-            <input type="text" id="botInput" class="modal-input" style="margin:0" placeholder="Type your message...">
+            <input type="text" id="botInput" class="modal-input" style="margin:0" placeholder="Type message...">
             <button onclick="askBot()" style="background:var(--brand); border:none; color:white; padding:0 15px; border-radius:12px; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
@@ -146,10 +141,10 @@
     <div class="modal-content">
         <div class="modal-header"><h3>Language / اللغة</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
         <div class="menu-group">
-            <div class="menu-item" onclick="changeLanguage('en')"><span>English</span></div>
-            <div class="menu-item" onclick="changeLanguage('ar')"><span>العربية</span></div>
-            <div class="menu-item" onclick="changeLanguage('es')"><span>Español</span></div>
-            <div class="menu-item" onclick="changeLanguage('tr')"><span>Türkçe</span></div>
+            <div class="menu-item" onclick="window.changeLanguage('en')"><span>English</span></div>
+            <div class="menu-item" onclick="window.changeLanguage('ar')"><span>العربية</span></div>
+            <div class="menu-item" onclick="window.changeLanguage('es')"><span>Español</span></div>
+            <div class="menu-item" onclick="window.changeLanguage('tr')"><span>Türkçe</span></div>
         </div>
     </div>
 </div>
@@ -157,17 +152,17 @@
 <div id="activityModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Transactions</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><div id="txList"></div></div></div>
 
 <nav class="bottom-nav">
-    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
-    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
-    <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span data-key="home">Home</span></a>
+    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span data-key="game">Game</span></a>
+    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span data-key="bot">Bot</span></a>
+    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span data-key="overview">Overview</span></a>
+    <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span data-key="profile">Profile</span></a>
 </nav>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
@@ -182,17 +177,9 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const translations = {
-        en: { balance: "Wallet Balance", kyc: "KYC Status", wallet: "My Wallet", activity: "Activity", security: "Security Settings", language: "Language", logout: "Logout", finance: "Finance", ai_support: "AI Support", settings: "Settings", support_title: "Support" },
-        ar: { balance: "رصيد المحفظة", kyc: "حالة التوثيق", wallet: "محفظتي", activity: "النشاطات", security: "إعدادات الأمان", language: "اللغة", logout: "تسجيل الخروج", finance: "المالية", ai_support: "الدعم الذكي", settings: "الإعدادات", support_title: "الدعم الفني" },
-        es: { balance: "Saldo de Cartera", kyc: "Estado KYC", wallet: "Mi Cartera", activity: "Actividad", security: "Seguridad", language: "Idioma", logout: "Cerrar Sesión", finance: "Finanzas", ai_support: "Soporte IA", settings: "Ajustes", support_title: "Soporte" },
-        tr: { balance: "Cüzdan Bakiyesi", kyc: "KYC Durumu", wallet: "Cüzdanيم", activity: "Etkinlik", security: "Güvenlik Ayarları", language: "Dil", logout: "Çıkış Yap", finance: "Finans", ai_support: "AI Desteği", settings: "Ayarlar", support_title: "Destek" }
-    };
-
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('dispName').textContent = user.displayName || "Elite Member";
-            document.getElementById('userEmail').textContent = user.email;
             document.getElementById('dispUID').textContent = user.uid.substring(0, 12).toUpperCase();
             
             onSnapshot(doc(db, "users", user.uid), (snap) => {
@@ -205,44 +192,23 @@
         } else { window.location.href = "login.html"; }
     });
 
-    window.askBot = () => {
-        const input = document.getElementById('botInput').value.toLowerCase();
-        const chat = document.getElementById('chatBody');
-        if(!input) return;
-
-        chat.innerHTML += `<div class="msg user-msg">${input}</div>`;
-        document.getElementById('botInput').value = "";
-
-        let reply = "I'm still learning. For complex issues, email amana.global@outlook.com.";
-        if(input.includes("deposit")) reply = "To deposit: Open 'My Wallet', click 'Deposit', and transfer USDT (TRC20) to the displayed address.";
-        if(input.includes("withdraw")) reply = "Withdrawals are processed within 24 hours. You need a verified KYC and your 6-digit PIN.";
-        if(input.includes("kyc")) reply = "Go to the KYC section in your profile and submit your ID number for verification.";
-        if(input.includes("pin")) reply = "You can set or change your 6-digit withdrawal PIN in 'Security Settings'. This protects your funds.";
-        if(input.includes("hi") || input.includes("hello")) reply = "Hello! I am AMANA AI. How can I help you manage your elite account?";
-
-        setTimeout(() => {
-            chat.innerHTML += `<div class="msg bot-msg">${reply}</div>`;
-            chat.scrollTop = chat.scrollHeight;
-        }, 600);
-    };
-
-    window.changeLanguage = (lang) => {
-        const set = translations[lang];
-        document.querySelectorAll('[data-key]').forEach(el => {
-            const key = el.getAttribute('data-key');
-            if(set[key]) el.textContent = set[key];
-        });
-        document.getElementById('currLang').textContent = lang.toUpperCase();
-        closeModals();
-        localStorage.setItem('selectedLang', lang);
-    };
-
     window.openModal = (id) => document.getElementById(id).style.display = 'flex';
     window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-    const savedLang = localStorage.getItem('selectedLang') || 'en';
-    changeLanguage(savedLang);
+    window.askBot = () => {
+        const input = document.getElementById('botInput').value.toLowerCase();
+        const chat = document.getElementById('chatBody');
+        if(!input) return;
+        chat.innerHTML += `<div class="msg user-msg">${input}</div>`;
+        document.getElementById('botInput').value = "";
+        setTimeout(() => {
+            chat.innerHTML += `<div class="msg bot-msg">I am processing your request. For immediate help, contact support.</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }, 600);
+    };
 </script>
+
+<script src="translate.js"></script>
 </body>
 </html>
