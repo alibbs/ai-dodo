@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE+ | Pro Terminal</title>
+    <title>AMANA ELITE+ | Professional Terminal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -11,116 +11,132 @@
             --up: #00ff96; --down: #ff3b3b; --card: #11141d;
             --border: rgba(255,255,255,0.08);
         }
+
         * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        
-        /* Header */
+
+        /* --- Header --- */
         .header { height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .header h1 { font-size: 14px; font-weight: 900; margin: 0; }
         .header h1 span { color: var(--brand); }
         .bal-display { text-align: right; line-height: 1; }
+        .bal-display small { font-size: 8px; color: #666; }
         .bal-display b { color: var(--accent); font-size: 13px; display: block; }
 
+        /* --- Upper Half: Chart --- */
         #chart-half { height: 45vh; background: #000; position: relative; border-bottom: 2px solid var(--border); }
+
+        /* --- Lower Half: Management --- */
         #manage-half { height: 55vh; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
 
-        /* Tabs */
         .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 11px; text-transform: uppercase; }
         .tab-btn.active { color: var(--brand); border-bottom: 2px solid var(--brand); }
+
         .tab-content { flex: 1; overflow-y: auto; padding: 12px; display: none; }
         .tab-content.active { display: block; }
 
-        /* Inputs & Sliders */
-        .control-group { margin-bottom: 15px; }
-        .control-label { display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
-        .control-label span { color: var(--accent); }
+        /* Trade UI Custom Sliders */
+        .trade-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .in-box { background: var(--card); border: 1px solid var(--border); padding: 8px; border-radius: 8px; }
+        .in-box label { display: block; font-size: 8px; color: #666; margin-bottom: 4px; }
+        .in-box input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 14px; outline: none; }
 
-        .in-box { background: var(--card); border: 1px solid var(--border); padding: 10px; border-radius: 8px; display: flex; align-items: center; }
-        .in-box input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 16px; outline: none; }
-        
-        .perc-row { display: flex; gap: 5px; margin-top: 8px; }
-        .perc-btn { flex: 1; background: #1a1d26; border: 1px solid var(--border); color: #888; padding: 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
-        .perc-btn:active { background: var(--brand); color: #fff; }
+        .slide-container { margin-bottom: 15px; }
+        .range-slider {
+            width: 100%; -webkit-appearance: none; height: 4px; border-radius: 5px;
+            background: #222; outline: none; margin: 10px 0;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 18px; height: 18px;
+            border-radius: 50%; background: var(--brand); cursor: pointer;
+            box-shadow: 0 0 10px var(--brand);
+        }
 
-        .range-slider { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 5px; background: #222; margin: 12px 0; outline: none; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); border: 3px solid var(--bg); box-shadow: 0 0 10px rgba(255,0,184,0.3); }
+        .btns-row { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-trade { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 900; color: #fff; font-size: 14px; }
+        .bg-up { background: var(--up); }
+        .bg-down { background: var(--down); }
 
-        /* Buttons */
-        .btns-row { display: flex; gap: 8px; margin-top: 5px; }
-        .btn-trade { flex: 1; padding: 16px; border: none; border-radius: 8px; font-weight: 900; color: #fff; font-size: 14px; letter-spacing: 1px; }
-        .bg-up { background: var(--up); box-shadow: 0 4px 15px rgba(0,255,150,0.2); }
-        .bg-down { background: var(--down); box-shadow: 0 4px 15px rgba(255,59,59,0.2); }
+        /* Position Display Card */
+        .pos-card { background: #1a1d26; border-radius: 12px; padding: 12px; margin-top: 10px; border-left: 4px solid var(--brand); }
+        .pnl-val { font-size: 24px; font-weight: 900; margin: 5px 0; }
+        .close-pos-btn { width: 100%; background: #333; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 800; margin-top: 10px; }
 
-        /* Active Position */
-        .pos-card { background: #1a1d26; border-radius: 12px; padding: 15px; border-left: 4px solid var(--brand); }
-        .pnl-val { font-size: 28px; font-weight: 900; margin: 8px 0; }
-        .close-pos-btn { width: 100%; background: #333; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 15px; }
-        
-        .hist-item { background: var(--card); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); }
-        .txt-up { color: var(--up); } .txt-down { color: var(--down); }
+        /* History Items */
+        .hist-item { background: var(--card); padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 11px; border: 1px solid var(--border); }
+        .hist-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .txt-up { color: var(--up); }
+        .txt-down { color: var(--down); }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
-        <div class="bal-display"><small style="font-size:8px;color:#666">AVAILABLE</small><b id="walletBal">0.00</b></div>
+        <div class="bal-display">
+            <small>WALLET BALANCE</small>
+            <b id="walletBal">0.00</b>
+        </div>
     </header>
 
-    <section id="chart-half"><div id="tv_widget" style="height: 100%;"></div></section>
+    <section id="chart-half">
+        <div id="tv_widget" style="height: 100%;"></div>
+    </section>
 
     <section id="manage-half">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('trade', this)">Trade</button>
+            <button class="tab-btn active" onclick="switchTab('trade', this)">Trade / Position</button>
             <button class="tab-btn" onclick="switchTab('hist', this)">History</button>
         </div>
 
         <div id="tab-trade" class="tab-content active">
-            <div id="trade-controls">
-                
-                <div class="control-group">
-                    <div class="control-label">Size <span>USDT</span></div>
+            <div class="slide-container">
+                <div class="trade-inputs" style="margin-bottom:0">
                     <div class="in-box">
-                        <input type="number" id="t-amount" value="0" step="0.01">
+                        <label>AMOUNT (USDT)</label>
+                        <input type="number" id="t-amount" value="0">
                     </div>
-                    <input type="range" min="0" max="100" value="0" class="range-slider" id="amount-slider">
-                    <div class="perc-row">
-                        <button class="perc-btn" onclick="setPerc(25)">25%</button>
-                        <button class="perc-btn" onclick="setPerc(50)">50%</button>
-                        <button class="perc-btn" onclick="setPerc(75)">75%</button>
-                        <button class="perc-btn" onclick="setPerc(100)">MAX</button>
+                    <div class="in-box">
+                        <label>LEVERAGE</label>
+                        <input type="text" id="t-lev-txt" value="10x" readonly>
                     </div>
                 </div>
-
-                <div class="control-group">
-                    <div class="control-label">Leverage <span id="lev-display">10x</span></div>
-                    <input type="range" min="10" max="75" value="10" class="range-slider" id="lev-slider" style="margin-top:5px">
+                <input type="range" min="0" max="100" value="0" class="range-slider" id="amount-slider">
+                <div style="display:flex; justify-content:space-between; font-size:9px; color:#555; margin-top:-5px;">
+                    <span>0%</span><span>50%</span><span>MAX</span>
                 </div>
+            </div>
 
-                <div class="btns-row">
-                    <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SELL / SHORT</button>
-                    <button class="btn-trade bg-up" onclick="executeTrade('LONG')">BUY / LONG</button>
-                </div>
+            <div class="slide-container">
+                <label style="font-size: 9px; color: #666;">ADJUST LEVERAGE (10x - 75x)</label>
+                <input type="range" min="10" max="75" value="10" class="range-slider" id="lev-slider">
+            </div>
+            
+            <div class="btns-row">
+                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SHORT</button>
+                <button class="btn-trade bg-up" onclick="executeTrade('LONG')">LONG</button>
             </div>
 
             <div id="active-pos-area" style="display: none;">
                 <div class="pos-card">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#888;">
-                        <b id="p-info" style="color:var(--brand)">BTCUSDT LONG 10x</b>
-                        <span>Entry: <span id="p-entry" style="color:#fff">0.00</span></span>
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#888;">
+                        <b id="p-info" style="color:var(--brand)">BTCUSDT 10x</b>
+                        <span>Entry: <span id="p-entry">0.00</span></span>
                     </div>
                     <div class="pnl-val" id="p-pnl">+0.00</div>
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
-                        <span id="p-roe" class="txt-up">+0.00% ROE</span>
-                        <span style="color:#666">Liq: <span id="p-liq" style="color:var(--down)">0.00</span></span>
+                    <div style="display:flex; justify-content:space-between; font-size:11px;">
+                        <span id="p-roe">+0.00%</span>
+                        <span style="color:var(--down)">Liq: <span id="p-liq">0.00</span></span>
                     </div>
                     <button class="close-pos-btn" onclick="closePosition()">CLOSE POSITION</button>
                 </div>
             </div>
         </div>
 
-        <div id="tab-hist" class="tab-content"><div id="history-list"></div></div>
+        <div id="tab-hist" class="tab-content">
+            <div id="history-list"></div>
+        </div>
     </section>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -148,48 +164,26 @@
             if (user) {
                 uID = user.uid;
                 onSnapshot(doc(db, "users", uID), (s) => {
-                    const data = s.data();
-                    uBal = data.balance || 0;
+                    uBal = s.data().balance || 0;
                     document.getElementById('walletBal').textContent = uBal.toFixed(2);
-                    if (data.activePosition) {
-                        activeP = data.activePosition;
-                        showPositionUI(true);
-                    } else {
-                        activeP = null;
-                        showPositionUI(false);
-                    }
                 });
             }
         });
 
-        // Sliders & Perc Buttons
+        // Amount Slider Logic
         const amtSlider = document.getElementById('amount-slider');
         const amtInput = document.getElementById('t-amount');
-        const levSlider = document.getElementById('lev-slider');
-        const levDisp = document.getElementById('lev-display');
-
         amtSlider.oninput = () => {
-            amtInput.value = ((amtSlider.value / 100) * uBal).toFixed(2);
+            let val = (amtSlider.value / 100) * uBal;
+            amtInput.value = val.toFixed(2);
         };
 
-        window.setPerc = (p) => {
-            amtSlider.value = p;
-            amtInput.value = ((p / 100) * uBal).toFixed(2);
-        };
-
+        // Leverage Slider Logic
+        const levSlider = document.getElementById('lev-slider');
+        const levTxt = document.getElementById('t-lev-txt');
         levSlider.oninput = () => {
-            levDisp.textContent = levSlider.value + "x";
+            levTxt.value = levSlider.value + "x";
         };
-
-        function showPositionUI(show) {
-            document.getElementById('active-pos-area').style.display = show ? 'block' : 'none';
-            document.getElementById('trade-controls').style.display = show ? 'none' : 'block';
-            if(show && activeP) {
-                document.getElementById('p-info').textContent = `BTCUSDT ${activeP.side} ${activeP.lev}x`;
-                document.getElementById('p-entry').textContent = activeP.entry.toFixed(2);
-                document.getElementById('p-liq').textContent = activeP.liq.toFixed(2);
-            }
-        }
 
         new window.TradingView.widget({
             "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
@@ -199,53 +193,7 @@
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/btcusdt@ticker`);
         ws.onmessage = (e) => {
             curPrice = parseFloat(JSON.parse(e.data).c);
-            if(activeP) updateLivePNL();
-        };
-
-        window.executeTrade = async (side) => {
-            const amt = parseFloat(amtInput.value);
-            const lev = parseInt(levSlider.value);
-            const fee = amt * 0.025;
-            if(amt <= 1 || amt + fee > uBal) return alert("Min 1 USDT / Insufficient Balance");
-
-            const posData = {
-                side, entry: curPrice, amt, lev, fee,
-                liq: side === 'LONG' ? curPrice * (1 - (0.68/lev)) : curPrice * (1 + (0.68/lev))
-            };
-
-            await updateDoc(doc(db, "users", uID), { 
-                balance: increment(-(amt + fee)),
-                activePosition: posData 
-            });
-        };
-
-        function updateLivePNL() {
-            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
-            let roe = (diff / activeP.entry) * 100 * activeP.lev;
-            let pnl = (roe / 100) * activeP.amt;
-
-            if(roe <= -68) { closePosition(true); return; }
-
-            const pnlEl = document.getElementById('p-pnl');
-            const roeEl = document.getElementById('p-roe');
-            
-            pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
-            pnlEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
-            roeEl.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
-            roeEl.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
-        }
-
-        window.closePosition = async (isLiq = false) => {
-            if(!activeP) return;
-            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
-            let pnl = ((diff / activeP.entry) * activeP.lev) * activeP.amt;
-            let finalReturn = isLiq ? 0 : (activeP.amt + pnl);
-
-            await updateDoc(doc(db, "users", uID), { 
-                balance: increment(finalReturn),
-                activePosition: null 
-            });
-            if(isLiq) alert("Liquidated!");
+            updateLivePNL();
         };
 
         window.switchTab = (t, btn) => {
@@ -254,6 +202,69 @@
             btn.classList.add('active');
             document.getElementById('tab-' + t).classList.add('active');
         };
+
+        window.executeTrade = async (side) => {
+            const amt = parseFloat(amtInput.value);
+            const lev = parseInt(levSlider.value);
+            const fee = amt * 0.025;
+
+            if(amt <= 0) return alert("Please enter an amount");
+            if(amt + fee > uBal) return alert("Insufficient Balance (Inc. 2.5% Fee)");
+            if(activeP) return alert("Close active position first");
+
+            await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + fee)) });
+
+            activeP = {
+                side, entry: curPrice, amt, lev, fee,
+                liq: side === 'LONG' ? curPrice * (1 - (0.68/lev)) : curPrice * (1 + (0.68/lev))
+            };
+
+            document.getElementById('active-pos-area').style.display = 'block';
+            document.getElementById('p-info').textContent = "BTCUSDT " + side + " " + lev + "x";
+            document.getElementById('p-entry').textContent = curPrice.toFixed(2);
+            document.getElementById('p-liq').textContent = activeP.liq.toFixed(2);
+        };
+
+        function updateLivePNL() {
+            if(!activeP) return;
+            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
+            let roe = (diff / activeP.entry) * 100 * activeP.lev;
+            let pnl = (roe / 100) * activeP.amt;
+
+            if(roe <= -68) { closePosition(true); return; }
+
+            const pnlEl = document.getElementById('p-pnl');
+            pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
+            pnlEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
+            document.getElementById('p-roe').textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
+            document.getElementById('p-roe').style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
+        }
+
+        window.closePosition = async (isLiq = false) => {
+            if(!activeP) return;
+            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
+            let pnl = ((diff / activeP.entry) * activeP.lev) * activeP.amt;
+            let finalReturn = isLiq ? 0 : (activeP.amt + pnl);
+
+            if(finalReturn > 0) {
+                await updateDoc(doc(db, "users", uID), { balance: increment(finalReturn) });
+            }
+
+            addToHistory(activeP.side, pnl, activeP.fee);
+            activeP = null;
+            document.getElementById('active-pos-area').style.display = 'none';
+        };
+
+        function addToHistory(side, pnl, fee) {
+            const list = document.getElementById('history-list');
+            const item = document.createElement('div');
+            item.className = 'hist-item';
+            item.innerHTML = `
+                <div class="hist-row"><b>BTCUSDT ${side}</b><span class="${pnl>=0?'txt-up':'txt-down'}">${pnl>=0?'+':''}${pnl.toFixed(2)} USDT</span></div>
+                <div class="hist-row" style="color:#555"><span>Fee: ${fee.toFixed(2)}</span><span>Net: ${(pnl-fee).toFixed(2)}</span></div>
+            `;
+            list.prepend(item);
+        }
     </script>
 </body>
 </html>
