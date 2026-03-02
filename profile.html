@@ -96,7 +96,7 @@
 
     <div class="section-title" data-key="settings">Settings</div>
     <div class="menu-group">
-        <div class="menu-item" onclick="openModal('securityModal')">
+        <div class="menu-item" onclick="location.href='securitysetting.html'">
             <div class="menu-left"><i class="fa-solid fa-shield-halved icon-l"></i><span data-key="security">Security Settings</span></div>
             <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
@@ -126,28 +126,6 @@
         <div class="menu-item logout-btn" id="logoutBtn" style="color:var(--danger)">
             <div class="menu-left"><i class="fa-solid fa-right-from-bracket icon-l" style="color:var(--danger)"></i><span data-key="logout">Logout</span></div>
         </div>
-    </div>
-</div>
-
-<div id="securityModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h3 data-key="security_title">Security Hub</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
-        
-        <div style="margin-bottom:15px; font-size:12px; background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; border: 1px solid var(--border);">
-            <p style="margin:5px 0; display:flex; justify-content:space-between;"><span>Email:</span> <span id="userEmail" style="color:var(--accent)">-</span></p>
-            <p style="margin:5px 0; display:flex; justify-content:space-between;"><span>Account PIN:</span> <span id="pinStatus" style="color:var(--brand)">Checking...</span></p>
-        </div>
-
-        <p style="font-size:11px; color:var(--muted); margin-bottom:8px;">Profile & Security</p>
-        <input type="text" class="modal-input" placeholder="Update Display Name" id="newName">
-        <input type="password" class="modal-input" placeholder="New Password (Leave blank to keep)" id="newPass">
-        <input type="number" class="modal-input" placeholder="Set 6-Digit Withdrawal PIN" id="newPin" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
-        
-        <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-        <p style="font-size:11px; color:var(--brand); margin-bottom:8px; text-align:center;">Required to confirm changes:</p>
-        <input type="password" class="modal-input" placeholder="Current Password" id="currPass" style="border: 1px solid var(--brand);">
-        
-        <button class="primary-btn" onclick="updateSecurity()">Apply Security Changes</button>
     </div>
 </div>
 
@@ -222,46 +200,10 @@
                     const d = snap.data();
                     document.getElementById('dispBal').textContent = (d.balance || 0).toFixed(2) + " USDT";
                     document.getElementById('kycStatus').textContent = d.kyc_status || "Unverified";
-                    document.getElementById('pinStatus').textContent = d.pin_security ? "Active" : "Not Set";
-                    document.getElementById('pinStatus').style.color = d.pin_security ? "var(--success)" : "var(--danger)";
                 }
             });
         } else { window.location.href = "login.html"; }
     });
-
-    window.updateSecurity = async () => {
-        const user = auth.currentUser;
-        const cp = document.getElementById('currPass').value;
-        const np = document.getElementById('newPass').value;
-        const nn = document.getElementById('newName').value;
-        const pin = document.getElementById('newPin').value;
-
-        if(!cp) return alert("Please enter your current password to save changes.");
-
-        try {
-            const credential = EmailAuthProvider.credential(user.email, cp);
-            await reauthenticateWithCredential(user, credential);
-            
-            let dbUpdates = {};
-            if(nn) await updateProfile(user, { displayName: nn });
-            if(np) await updatePassword(user, np);
-            if(pin) {
-                if(pin.length !== 6) return alert("PIN must be exactly 6 digits.");
-                dbUpdates.pin_security = pin;
-            }
-
-            if(Object.keys(dbUpdates).length > 0 || nn) {
-                await updateDoc(doc(db, "users", user.uid), dbUpdates);
-            }
-
-            alert("Security settings updated successfully!");
-            closeModals();
-            location.reload();
-        } catch(e) { 
-            alert("Error: Check your current password or try again."); 
-            console.error(e);
-        }
-    };
 
     window.askBot = () => {
         const input = document.getElementById('botInput').value.toLowerCase();
