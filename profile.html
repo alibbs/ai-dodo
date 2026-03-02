@@ -46,18 +46,16 @@
 
         /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background: #11111d; border: 1px solid var(--border); width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; position: relative; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; }
+        .modal-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; }
         .primary-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--brand); color: white; font-weight: 700; cursor: pointer; }
 
-        /* Activity List */
-        .tx-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .tx-info div { font-size: 13px; font-weight: 600; }
-        .tx-info small { color: var(--muted); font-size: 10px; }
-        .tx-amt { text-align: right; }
-        .status-pending { color: #f3ba2f; }
-        .status-success { color: var(--success); }
+        /* Chat Bot Styles */
+        #chatBody { height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-bottom: 10px; }
+        .msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; }
+        .bot-msg { background: var(--card-bg); align-self: flex-start; border: 1px solid var(--border); }
+        .user-msg { background: var(--brand); align-self: flex-end; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; }
@@ -79,111 +77,102 @@
 
     <div class="stats-row">
         <div class="stat-card" onclick="location.href='overview.html'">
-            <div class="stat-label">Wallet Balance</div>
+            <div class="stat-label" data-key="balance">Wallet Balance</div>
             <div class="stat-value" id="dispBal">0.00 USDT</div>
         </div>
         <div class="stat-card" onclick="openModal('kycModal')">
-            <div class="stat-label">KYC Status</div>
+            <div class="stat-label" data-key="kyc">KYC Status</div>
             <div class="stat-value" id="kycStatus">Unverified</div>
         </div>
     </div>
 
-    <div class="section-title">Finance & Activity</div>
+    <div class="section-title" data-key="finance">Finance & Activity</div>
     <div class="menu-group">
         <div class="menu-item" onclick="location.href='overview.html'">
-            <div class="menu-left"><i class="fa-solid fa-wallet icon-l"></i><span>My Wallet</span></div>
+            <div class="menu-left"><i class="fa-solid fa-wallet icon-l"></i><span data-key="wallet">My Wallet</span></div>
             <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="menu-item" onclick="openModal('activityModal')">
-            <div class="menu-left"><i class="fa-solid fa-receipt icon-l"></i><span>Activity & Transactions</span></div>
+            <div class="menu-left"><i class="fa-solid fa-receipt icon-l"></i><span data-key="activity">Activity & Transactions</span></div>
             <div class="menu-right" id="pendingCount">No Pending</div>
         </div>
     </div>
 
-    <div class="section-title">Settings</div>
+    <div class="section-title" data-key="settings">Settings</div>
     <div class="menu-group">
         <div class="menu-item" onclick="openModal('securityModal')">
-            <div class="menu-left"><i class="fa-solid fa-shield-halved icon-l"></i><span>Security Settings</span></div>
+            <div class="menu-left"><i class="fa-solid fa-shield-halved icon-l"></i><span data-key="security">Security Settings</span></div>
             <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="menu-item" onclick="openModal('langModal')">
-            <div class="menu-left"><i class="fa-solid fa-language icon-l"></i><span>Language</span></div>
+            <div class="menu-left"><i class="fa-solid fa-language icon-l"></i><span data-key="language">Language</span></div>
             <div class="menu-right"><span id="currLang">English</span> <i class="fa-solid fa-chevron-right"></i></div>
         </div>
     </div>
 
-    <div class="section-title">Support</div>
+    <div class="section-title" data-key="support_title">Support</div>
     <div class="menu-group">
+        <div class="menu-item" onclick="openModal('aiBotModal')">
+            <div class="menu-left"><i class="fa-solid fa-robot icon-l"></i><span data-key="ai_support">AI Live Support</span></div>
+            <div class="menu-right"><span style="color:var(--success)">Online</span></div>
+        </div>
         <a href="https://wa.me/447412600275" class="menu-item">
             <div class="menu-left"><i class="fa-brands fa-whatsapp icon-l"></i><span>WhatsApp Support</span></div>
             <div class="menu-right">+44 7412 600275</div>
-        </a>
-        <a href="mailto:amana.elite@outlook.com" class="menu-item">
-            <div class="menu-left"><i class="fa-solid fa-envelope icon-l"></i><span>Email Us</span></div>
-            <div class="menu-right">Click to Send</div>
         </a>
     </div>
 
     <div class="menu-group">
         <div class="menu-item logout-btn" id="logoutBtn" style="color:var(--danger)">
-            <div class="menu-left"><i class="fa-solid fa-right-from-bracket icon-l" style="color:var(--danger)"></i><span>Logout</span></div>
-        </div>
-    </div>
-</div>
-
-<div id="kycModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h3>KYC Verification</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
-        <p style="font-size:12px; color:var(--muted)">Upload your documents to unlock withdrawals.</p>
-        <select class="modal-input" id="kycType">
-            <option value="id">National ID</option>
-            <option value="passport">Passport</option>
-            <option value="driver">Driving License</option>
-        </select>
-        <input type="text" class="modal-input" placeholder="Document Number" id="kycNum">
-        <div style="border:1px dashed var(--border); padding:20px; text-align:center; border-radius:12px; margin-bottom:15px;">
-            <i class="fa-solid fa-cloud-arrow-up" style="font-size:24px; color:var(--brand)"></i>
-            <div style="font-size:11px; margin-top:5px;">Upload Document Photo</div>
-        </div>
-        <button class="primary-btn" onclick="submitKYC()">Submit for Review</button>
-    </div>
-</div>
-
-<div id="activityModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h3>Activity Logs</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
-        <div id="txList">
-            <p style="text-align:center; color:var(--muted)">No transactions yet.</p>
+            <div class="menu-left"><i class="fa-solid fa-right-from-bracket icon-l" style="color:var(--danger)"></i><span data-key="logout">Logout</span></div>
         </div>
     </div>
 </div>
 
 <div id="securityModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h3>Security</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div class="modal-header"><h3 data-key="security_title">Security Panel</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div style="margin-bottom:15px; font-size:12px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+            <p style="margin:5px 0">Email: <span id="userEmail" style="color:var(--accent)">-</span></p>
+            <p style="margin:5px 0">Phone: <span id="userPhone" style="color:var(--accent)">Not Linked</span></p>
+        </div>
         <input type="text" class="modal-input" placeholder="New Display Name" id="newName">
+        <input type="tel" class="modal-input" placeholder="Update Phone Number" id="newPhone">
         <input type="password" class="modal-input" placeholder="New Password" id="newPass">
+        <input type="number" class="modal-input" placeholder="Set 6-Digit PIN Security" id="newPin" maxlength="6">
         <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-        <input type="password" class="modal-input" placeholder="Current Password (Required)" id="currPass">
-        <button class="primary-btn" onclick="updateSecurity()">Save Changes</button>
-        <div style="margin-top:15px; font-size:11px; color:var(--muted)">
-            Location: <span id="userLoc">Lebanon</span><br>
-            Time: <span id="userTime">2026-03-02</span>
+        <input type="password" class="modal-input" placeholder="Current Password (To Save)" id="currPass">
+        <button class="primary-btn" onclick="updateSecurity()">Save Security Settings</button>
+    </div>
+</div>
+
+<div id="aiBotModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>AI Assistant</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div id="chatBody">
+            <div class="msg bot-msg">Hello! I am AMANA AI. How can I help you with our program today?</div>
+        </div>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="botInput" class="modal-input" style="margin:0" placeholder="Ask something...">
+            <button onclick="askBot()" style="background:var(--brand); border:none; color:white; padding:0 15px; border-radius:12px;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
 <div id="langModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h3>Select Language</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
+        <div class="modal-header"><h3>Language / اللغة</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div>
         <div class="menu-group">
-            <div class="menu-item" onclick="setLang('English')"><span>English</span></div>
-            <div class="menu-item" onclick="setLang('العربية')"><span>العربية</span></div>
-            <div class="menu-item" onclick="setLang('Türkçe')"><span>Türkçe</span></div>
-            <div class="menu-item" onclick="setLang('Español')"><span>Español</span></div>
+            <div class="menu-item" onclick="changeLanguage('en')"><span>English</span></div>
+            <div class="menu-item" onclick="changeLanguage('ar')"><span>العربية</span></div>
+            <div class="menu-item" onclick="changeLanguage('es')"><span>Español</span></div>
+            <div class="menu-item" onclick="changeLanguage('tr')"><span>Türkçe</span></div>
         </div>
     </div>
 </div>
+
+<div id="activityModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Transactions</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><div id="txList"></div></div></div>
+<div id="kycModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>KYC</h3><i class="fa-solid fa-xmark" onclick="closeModals()"></i></div><input type="text" class="modal-input" placeholder="ID / Passport Number" id="kycNum"><button class="primary-btn" onclick="submitKYC()">Submit</button></div></div>
 
 <nav class="bottom-nav">
     <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
@@ -211,97 +200,92 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const translations = {
+        en: { balance: "Wallet Balance", kyc: "KYC Status", wallet: "My Wallet", activity: "Activity", security: "Security Settings", language: "Language", logout: "Logout", finance: "Finance", ai_support: "AI Support", settings: "Settings", support_title: "Support" },
+        ar: { balance: "رصيد المحفظة", kyc: "حالة التوثيق", wallet: "محفظتي", activity: "النشاطات", security: "إعدادات الأمان", language: "اللغة", logout: "تسجيل الخروج", finance: "المالية", ai_support: "الدعم الذكي", settings: "الإعدادات", support_title: "الدعم الفني" },
+        es: { balance: "Saldo de Cartera", kyc: "Estado KYC", wallet: "Mi Cartera", activity: "Actividad", security: "Seguridad", language: "Idioma", logout: "Cerrar Sesión", finance: "Finanzas", ai_support: "Soporte IA", settings: "Ajustes", support_title: "Soporte" },
+        tr: { balance: "Cüzdan Bakiyesi", kyc: "KYC Durumu", wallet: "Cüzdanım", activity: "Etkinlik", security: "Güvenlik Ayarları", language: "Dil", logout: "Çıkış Yap", finance: "Finans", ai_support: "AI Desteği", settings: "Ayarlar", support_title: "Destek" }
+    };
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('dispName').textContent = user.displayName || "Elite Member";
+            document.getElementById('userEmail').textContent = user.email;
             document.getElementById('dispUID').textContent = user.uid.substring(0, 12).toUpperCase();
-            document.getElementById('dispAvatar').src = `https://ui-avatars.com/api/?name=${user.displayName || 'U'}&background=ff00b8&color=fff`;
             
-            // جلب البيانات الحية من الداتابيز
             onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if(snap.exists()){
                     const d = snap.data();
                     document.getElementById('dispBal').textContent = (d.balance || 0).toFixed(2) + " USDT";
                     document.getElementById('kycStatus').textContent = d.kyc_status || "Unverified";
-                    if(d.kyc_status === "Verified") document.getElementById('kycStatus').style.color = "#00ff96";
+                    document.getElementById('userPhone').textContent = d.phone || "Not Linked";
                 }
             });
-
-            loadTransactions(user.uid);
         } else { window.location.href = "login.html"; }
     });
 
-    async function loadTransactions(uid) {
-        const q = query(collection(db, "transactions"), where("uid", "==", uid));
-        const snap = await getDocs(q);
-        const list = document.getElementById('txList');
-        let pending = 0;
-        
-        if(!snap.empty) {
-            list.innerHTML = "";
-            snap.forEach(doc => {
-                const tx = doc.data();
-                if(tx.status === 'pending') pending++;
-                list.innerHTML += `
-                    <div class="tx-item">
-                        <div class="tx-info">
-                            <div>${tx.type.toUpperCase()}</div>
-                            <small>${new Date(tx.timestamp).toLocaleDateString()}</small>
-                        </div>
-                        <div class="tx-amt">
-                            <div class="${tx.status === 'pending' ? 'status-pending' : 'status-success'}">${tx.amount} USDT</div>
-                            <small>${tx.status}</small>
-                        </div>
-                    </div>`;
-            });
-        }
-        document.getElementById('pendingCount').textContent = pending > 0 ? `${pending} Pending` : "No Pending";
-    }
-
-    window.submitKYC = async () => {
-        const user = auth.currentUser;
-        await updateDoc(doc(db, "users", user.uid), {
-            kyc_status: "Pending Admin Review",
-            kyc_details: {
-                type: document.getElementById('kycType').value,
-                number: document.getElementById('kycNum').value,
-                submittedAt: Date.now()
-            }
+    // Translation Function
+    window.changeLanguage = (lang) => {
+        const set = translations[lang];
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if(set[key]) el.textContent = set[key];
         });
-        alert("Documents submitted for admin review!");
+        document.getElementById('currLang').textContent = lang.toUpperCase();
         closeModals();
+        localStorage.setItem('selectedLang', lang);
+    };
+
+    // AI Support Bot Logic
+    window.askBot = () => {
+        const input = document.getElementById('botInput').value.toLowerCase();
+        const chat = document.getElementById('chatBody');
+        if(!input) return;
+
+        chat.innerHTML += `<div class="msg user-msg">${input}</div>`;
+        document.getElementById('botInput').value = "";
+
+        let reply = "I'm not sure about that. Please contact our WhatsApp support for manual help.";
+        if(input.includes("deposit")) reply = "To deposit USDT, go to My Wallet and click 'Deposit'. Copy the TRC20 address.";
+        if(input.includes("withdraw")) reply = "Withdrawals are processed within 24 hours after KYC verification.";
+        if(input.includes("kyc")) reply = "Please upload your ID or Passport in the KYC section to verify your account.";
+        if(input.includes("pin")) reply = "You can set your 6-digit transaction PIN in Security Settings.";
+
+        setTimeout(() => {
+            chat.innerHTML += `<div class="msg bot-msg">${reply}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }, 600);
     };
 
     window.updateSecurity = async () => {
         const user = auth.currentUser;
         const cp = document.getElementById('currPass').value;
-        const nn = document.getElementById('newName').value;
-        const np = document.getElementById('newPass').value;
+        const pin = document.getElementById('newPin').value;
+        const phone = document.getElementById('newPhone').value;
 
-        if(!cp) return alert("Current password required!");
+        if(!cp) return alert("Current password is required to save changes.");
 
         try {
             const credential = EmailAuthProvider.credential(user.email, cp);
             await reauthenticateWithCredential(user, credential);
             
-            if(nn) await updateProfile(user, { displayName: nn });
-            if(np) await updatePassword(user, np);
+            let updates = {};
+            if(pin) updates.pin_security = pin;
+            if(phone) updates.phone = phone;
             
-            alert("Security settings updated!");
-            location.reload();
+            await updateDoc(doc(db, "users", user.uid), updates);
+            alert("Security Data Updated Successfully!");
+            closeModals();
         } catch(e) { alert("Error: " + e.message); }
-    };
-
-    window.setLang = (l) => {
-        document.getElementById('currLang').textContent = l;
-        closeModals();
-        // هنا يمكن إضافة logic تبديل النصوص إذا كانت لديك ملفات ترجمة
     };
 
     window.openModal = (id) => document.getElementById(id).style.display = 'flex';
     window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    
     document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+    // Load saved language
+    const savedLang = localStorage.getItem('selectedLang') || 'en';
+    changeLanguage(savedLang);
 </script>
 </body>
 </html>
