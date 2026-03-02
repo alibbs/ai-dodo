@@ -2,251 +2,200 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-    <title>AMANA ELITE+ | Futures Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA ELITE+ | LIVE FUTURES</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
-            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --up: #02c076; --down: #f84960;
-            --border: rgba(255, 255, 255, 0.08); --card: #12151c;
+            --bg: #060914; --brand: #ff00b8; --up: #02c076; --down: #f84960;
+            --card: #12151c; --border: rgba(255,255,255,0.08);
         }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; padding-bottom: 100px; }
+        
+        /* Header & Balance */
+        .top-nav { padding: 15px; display: flex; justify-content: space-between; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .price-info h2 { margin: 0; font-size: 16px; }
+        #livePrice { font-size: 20px; font-weight: 900; color: var(--up); }
+        .balance-box { text-align: right; }
+        .balance-box span { display: block; font-size: 10px; color: #888; }
+        #userBalance { color: var(--brand); font-weight: 800; }
 
-        body {
-            margin: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-        }
+        /* Chart */
+        #chart { width: 100%; height: 300px; background: #000; position: relative; }
 
-        /* --- Top Header (Binance Style) --- */
-        .header {
-            padding: 15px; background: var(--card); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .pair-info h2 { margin: 0; font-size: 18px; color: #fff; }
-        .pair-info span { font-size: 12px; color: var(--up); font-weight: bold; }
+        /* Trade Panel */
+        .trade-inputs { padding: 15px; background: var(--card); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-group { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px; border-radius: 8px; }
+        .input-group label { display: block; font-size: 9px; color: #666; margin-bottom: 4px; }
+        .input-group input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 900; outline: none; }
 
-        .wallet-info { text-align: right; }
-        .wallet-info small { color: #888; display: block; font-size: 10px; }
-        .wallet-info b { color: var(--accent); font-size: 14px; }
+        .btn-row { display: flex; gap: 10px; padding: 0 15px 15px; background: var(--card); }
+        .trade-btn { flex: 1; padding: 15px; border: none; border-radius: 10px; color: #fff; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .long { background: var(--up); box-shadow: 0 4px 15px rgba(2, 192, 118, 0.3); }
+        .short { background: var(--down); box-shadow: 0 4px 15px rgba(248, 73, 96, 0.3); }
+        .trade-btn:active { transform: scale(0.95); }
 
-        /* --- Asset Selector --- */
-        .asset-nav {
-            display: flex; overflow-x: auto; background: #0b0e1a; padding: 10px; gap: 10px;
-        }
-        .asset-nav::-webkit-scrollbar { display: none; }
-        .asset-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            padding: 6px 15px; border-radius: 6px; font-size: 11px; color: #ccc; cursor: pointer;
-        }
-        .asset-btn.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
-
-        /* --- Chart Section --- */
-        #chart-container { flex-grow: 1; position: relative; }
-
-        /* --- Trading Panel --- */
-        .trade-box {
-            background: var(--card); border-top: 1px solid var(--border);
-            padding: 20px; padding-bottom: 100px;
-        }
-        .mode-tabs {
-            display: flex; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 4px; margin-bottom: 15px;
-        }
-        .mode-btn {
-            flex: 1; border: none; background: transparent; color: #666; 
-            padding: 8px; font-weight: bold; border-radius: 8px;
-        }
-        .mode-btn.active-buy { background: var(--up); color: #fff; }
-        .mode-btn.active-sell { background: var(--down); color: #fff; }
-
-        .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .field { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
-        .field label { display: block; font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 4px; }
-        .field input { width: 100%; background: transparent; border: none; color: #fff; font-weight: bold; outline: none; }
-
-        .liq-warning {
-            font-size: 10px; color: #f84960; text-align: center; margin-bottom: 10px; display: none;
-        }
-
-        .main-action {
-            width: 100%; padding: 16px; border-radius: 12px; border: none;
-            color: #fff; font-weight: 900; font-size: 16px; cursor: pointer;
-        }
-        .bg-buy { background: var(--up); }
-        .bg-sell { background: var(--down); }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
-            background: #0b0e1a; border-top: 1px solid var(--border); 
-            display: flex; justify-content: space-around; align-items: center; 
-        }
-        .nav-link { text-decoration: none; color: #444; font-size: 10px; text-align: center; }
-        .nav-link.active { color: var(--brand); }
-        .nav-link i { font-size: 20px; display: block; margin-bottom: 4px; }
+        /* Positions Table (Like Binance) */
+        .positions-sec { padding: 15px; }
+        .pos-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 10px; position: relative; overflow: hidden; }
+        .pos-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .pos-side { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 900; }
+        .side-long { background: rgba(2,192,118,0.2); color: var(--up); }
+        .side-short { background: rgba(248,73,96,0.2); color: var(--down); }
+        
+        .pnl-row { display: flex; justify-content: space-between; align-items: center; }
+        .pnl-val { font-size: 20px; font-weight: 900; }
+        .roe { font-size: 12px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="pair-info">
-            <h2 id="pairName">BTCUSDT Perpendicular</h2>
-            <span id="livePrice">0.00</span>
+    <div class="top-nav">
+        <div class="price-info">
+            <h2 id="activeSymbol">BTCUSDT Perp</h2>
+            <div id="livePrice">Loading...</div>
         </div>
-        <div class="wallet-info">
-            <small>Available Balance</small>
-            <b id="userBalance">0.00</b> <span style="font-size: 10px; color: #888;">USDT</span>
+        <div class="balance-box">
+            <span>Available Balance</span>
+            <b id="userBalance">0.00</b> <small>USDT</small>
         </div>
     </div>
 
-    <div class="asset-nav">
-        <div class="asset-btn active" onclick="changeSymbol('BTCUSDT', this)">BTC</div>
-        <div class="asset-btn" onclick="changeSymbol('ETHUSDT', this)">ETH</div>
-        <div class="asset-btn" onclick="changeSymbol('SOLUSDT', this)">SOL</div>
-        <div class="asset-btn" onclick="changeSymbol('BNBUSDT', this)">BNB</div>
-        <div class="asset-btn" onclick="changeSymbol('XRPUSDT', this)">XRP</div>
+    <div id="chart"></div>
+
+    <div class="trade-inputs">
+        <div class="input-group">
+            <label>AMOUNT (USDT)</label>
+            <input type="number" id="amount" value="100">
+        </div>
+        <div class="input-group">
+            <label>LEVERAGE (1x - 75x)</label>
+            <input type="number" id="leverage" value="10" max="75">
+        </div>
     </div>
 
-    <div id="chart-container"></div>
+    <div class="btn-row">
+        <button class="trade-btn long" onclick="openPos('LONG')">BUY / LONG</button>
+        <button class="trade-btn short" onclick="openPos('SHORT')">SELL / SHORT</button>
+    </div>
 
-    <div class="trade-box">
-        <div class="mode-tabs">
-            <button class="mode-btn active-buy" id="buyTab" onclick="setMode('BUY')">Buy / Long</button>
-            <button class="mode-btn" id="sellTab" onclick="setMode('SELL')">Sell / Short</button>
-        </div>
-
-        <div class="input-row">
-            <div class="field">
-                <label>Amount (USDT)</label>
-                <input type="number" id="tradeAmount" value="50">
+    <div class="positions-sec">
+        <h4 style="margin: 0 0 10px 5px; color: #888;">Open Positions (1)</h4>
+        <div id="positionsList">
             </div>
-            <div class="field">
-                <label>Leverage (Max 75x)</label>
-                <input type="number" id="levInput" value="10" max="75">
-            </div>
-        </div>
-
-        <div class="liq-warning" id="liqMsg">⚠ WARNING: LIQUIDATION AT 68% LOSS</div>
-
-        <button class="main-action bg-buy" id="actionBtn" onclick="openPosition()">Open Long</button>
     </div>
-
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
-        <a href="game.html" class="nav-link active"><i class="fa-solid fa-chart-line"></i><span>Futures</span></a>
-        <a href="overview.html" class="nav-link"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a>
-    </nav>
 
 <script type="module">
-    // --- Firebase Configuration ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-        authDomain: "ai-dodo.firebaseapp.com",
-        projectId: "ai-dodo",
-        storageBucket: "ai-dodo.firebasestorage.app",
-        messagingSenderId: "261622335803",
-        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    let currentBalance = 0;
-    let userUID = null;
-    let currentMode = 'BUY';
-    let currentSymbol = 'BTCUSDT';
-    let entryPrice = 0;
-
-    // --- Chart Setup ---
-    const chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
-        layout: { backgroundColor: 'transparent', textColor: '#888' },
+    // --- الشارت الحي (Binance Live Chart) ---
+    const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+        layout: { backgroundColor: '#060914', textColor: '#d1d4dc' },
         grid: { vertLines: { color: '#1a1d26' }, horzLines: { color: '#1a1d26' } },
-        rightPriceScale: { borderColor: '#333' },
-        timeScale: { borderColor: '#333' }
+        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+        timeScale: { timeVisible: true, secondsVisible: true }
     });
-    const candleSeries = chart.addCandlestickSeries({
-        upColor: '#02c076', downColor: '#f84960', borderVisible: false,
-        wickUpColor: '#02c076', wickDownColor: '#f84960'
-    });
+    const candleSeries = chart.addCandlestickSeries({ upColor: '#02c076', downColor: '#f84960' });
 
-    // --- Data Fetching ---
-    let ws;
-    window.changeSymbol = (symbol, el) => {
-        currentSymbol = symbol;
-        document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('pairName').textContent = symbol + " Perp";
-        initStream(symbol);
+    let currentPrice = 0;
+    let activePosition = null;
+
+    // اتصال مباشر بـ Binance WebSocket
+    const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
+    ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        const k = msg.k;
+        currentPrice = parseFloat(k.c);
+        
+        // تحديث السعر في الهيدر
+        const priceEl = document.getElementById('livePrice');
+        priceEl.textContent = currentPrice.toFixed(2);
+        priceEl.style.color = k.c >= k.o ? 'var(--up)' : 'var(--down)';
+
+        // تحديث الشمعة على الشارت
+        candleSeries.update({
+            time: k.t / 1000,
+            open: parseFloat(k.o),
+            high: parseFloat(k.h),
+            low: parseFloat(k.l),
+            close: parseFloat(k.c)
+        });
+
+        // تحديث الـ PNL إذا كانت هناك صفقة مفتوحة
+        updatePNL();
     };
 
-    function initStream(symbol) {
-        if (ws) ws.close();
-        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`);
-        ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            const k = data.k;
-            const price = parseFloat(k.c);
-            candleSeries.update({
-                time: k.t / 1000, open: k.o, high: k.h, low: k.l, close: k.c
-            });
-            document.getElementById('livePrice').textContent = price.toFixed(2);
-            entryPrice = price; // Current market price for entry
+    // --- منطق التداول (Trading Logic) ---
+    window.openPos = (side) => {
+        const amount = parseFloat(document.getElementById('amount').value);
+        const lev = parseInt(document.getElementById('leverage').value);
+        
+        activePosition = {
+            side: side,
+            entry: currentPrice,
+            amount: amount,
+            leverage: lev,
+            liqPrice: side === 'LONG' ? currentPrice * (1 - (0.68/lev)) : currentPrice * (1 + (0.68/lev))
         };
+        renderPosition();
+    };
+
+    function updatePNL() {
+        if (!activePosition) return;
+        
+        const pos = activePosition;
+        let diff = pos.side === 'LONG' ? (currentPrice - pos.entry) : (pos.entry - currentPrice);
+        let pnl = (diff / pos.entry) * pos.amount * pos.leverage;
+        let roe = (diff / pos.entry) * 100 * pos.leverage;
+
+        // نظام التصفية (Liquidation) عند خسارة 68%
+        if (roe <= -68) {
+            alert("LIQUIDATED! Position Closed at 68% Loss.");
+            activePosition = null;
+            document.getElementById('positionsList').innerHTML = "";
+            return;
+        }
+
+        const pnlEl = document.getElementById('pnlDisplay');
+        const roeEl = document.getElementById('roeDisplay');
+        if(pnlEl) {
+            pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
+            pnlEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
+            roeEl.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "%";
+            roeEl.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
+        }
     }
 
-    // --- Trade Logic ---
-    window.setMode = (mode) => {
-        currentMode = mode;
-        const buyTab = document.getElementById('buyTab');
-        const sellTab = document.getElementById('sellTab');
-        const btn = document.getElementById('actionBtn');
+    function renderPosition() {
+        const container = document.getElementById('positionsList');
+        if (!activePosition) { container.innerHTML = ""; return; }
         
-        if(mode === 'BUY') {
-            buyTab.classList.add('active-buy'); sellTab.classList.remove('active-sell');
-            btn.className = "main-action bg-buy"; btn.textContent = "Open Long";
-        } else {
-            sellTab.classList.add('active-sell'); buyTab.classList.remove('active-buy');
-            btn.className = "main-action bg-sell"; btn.textContent = "Open Short";
-        }
+        const p = activePosition;
+        container.innerHTML = `
+            <div class="pos-card">
+                <div class="pos-header">
+                    <span class="pos-side ${p.side === 'LONG' ? 'side-long' : 'side-short'}">${p.side} ${p.leverage}x</span>
+                    <span style="font-size: 11px; color: #666;">BTCUSDT Perp</span>
+                </div>
+                <div class="pnl-row">
+                    <div>
+                        <div class="pnl-val" id="pnlDisplay">0.00 USDT</div>
+                        <div class="roe" id="roeDisplay">0.00%</div>
+                    </div>
+                    <button onclick="closePos()" style="background: #333; border: none; color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 11px;">Close</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 11px; color: #888;">
+                    <div>Entry: ${p.entry.toFixed(2)}</div>
+                    <div style="color: #f84960;">Liq: ${p.liqPrice.toFixed(2)}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    window.closePos = () => {
+        activePosition = null;
+        renderPosition();
     };
 
-    window.openPosition = async () => {
-        const amount = parseFloat(document.getElementById('tradeAmount').value);
-        if (amount > currentBalance) return alert("Insufficient Margin!");
-
-        const lev = parseInt(document.getElementById('levInput').value);
-        const liqPrice = currentMode === 'BUY' ? 
-            entryPrice * (1 - (0.68 / lev)) : 
-            entryPrice * (1 + (0.68 / lev));
-
-        const confirmTrade = confirm(`Confirm Position:\n${currentSymbol} x${lev}\nEntry: ${entryPrice}\nEst. Liquidation: ${liqPrice.toFixed(2)}`);
-        
-        if(confirmTrade) {
-            const userRef = doc(db, "users", userUID);
-            await updateDoc(userRef, { balance: increment(-amount) });
-            alert("Position Opened! Monitoring for Liquidation...");
-            // Logic to track liquidation can be added here
-        }
-    };
-
-    // --- User Data ---
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            userUID = user.uid;
-            onSnapshot(doc(db, "users", user.uid), (snap) => {
-                currentBalance = snap.data().balance || 0;
-                document.getElementById('userBalance').textContent = currentBalance.toFixed(2);
-            });
-        }
-    });
-
-    initStream('BTCUSDT');
 </script>
 </body>
 </html>
