@@ -36,25 +36,14 @@
         .tab-content { flex: 1; overflow-y: auto; padding: 12px; display: none; }
         .tab-content.active { display: block; }
 
-        /* Trade UI Custom Sliders */
-        .trade-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        /* Trade UI Inside Position Tab */
+        .trade-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .in-box { background: var(--card); border: 1px solid var(--border); padding: 8px; border-radius: 8px; }
-        .in-box label { display: block; font-size: 8px; color: #666; margin-bottom: 4px; }
+        .in-box label { display: block; font-size: 8px; color: #666; margin-bottom: 2px; }
         .in-box input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 14px; outline: none; }
 
-        .slide-container { margin-bottom: 15px; }
-        .range-slider {
-            width: 100%; -webkit-appearance: none; height: 4px; border-radius: 5px;
-            background: #222; outline: none; margin: 10px 0;
-        }
-        .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 18px; height: 18px;
-            border-radius: 50%; background: var(--brand); cursor: pointer;
-            box-shadow: 0 0 10px var(--brand);
-        }
-
         .btns-row { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-trade { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 900; color: #fff; font-size: 14px; }
+        .btn-trade { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; color: #fff; font-size: 13px; }
         .bg-up { background: var(--up); }
         .bg-down { background: var(--down); }
 
@@ -91,26 +80,15 @@
         </div>
 
         <div id="tab-trade" class="tab-content active">
-            <div class="slide-container">
-                <div class="trade-inputs" style="margin-bottom:0">
-                    <div class="in-box">
-                        <label>AMOUNT (USDT)</label>
-                        <input type="number" id="t-amount" value="0">
-                    </div>
-                    <div class="in-box">
-                        <label>LEVERAGE</label>
-                        <input type="text" id="t-lev-txt" value="10x" readonly>
-                    </div>
+            <div class="trade-inputs">
+                <div class="in-box">
+                    <label>AMOUNT (USDT)</label>
+                    <input type="number" id="t-amount" value="100">
                 </div>
-                <input type="range" min="0" max="100" value="0" class="range-slider" id="amount-slider">
-                <div style="display:flex; justify-content:space-between; font-size:9px; color:#555; margin-top:-5px;">
-                    <span>0%</span><span>50%</span><span>MAX</span>
+                <div class="in-box">
+                    <label>LEVERAGE (MAX 75x)</label>
+                    <input type="number" id="t-lev" value="10" max="75">
                 </div>
-            </div>
-
-            <div class="slide-container">
-                <label style="font-size: 9px; color: #666;">ADJUST LEVERAGE (10x - 75x)</label>
-                <input type="range" min="10" max="75" value="10" class="range-slider" id="lev-slider">
             </div>
             
             <div class="btns-row">
@@ -135,7 +113,8 @@
         </div>
 
         <div id="tab-hist" class="tab-content">
-            <div id="history-list"></div>
+            <div id="history-list">
+                </div>
         </div>
     </section>
 
@@ -170,26 +149,13 @@
             }
         });
 
-        // Amount Slider Logic
-        const amtSlider = document.getElementById('amount-slider');
-        const amtInput = document.getElementById('t-amount');
-        amtSlider.oninput = () => {
-            let val = (amtSlider.value / 100) * uBal;
-            amtInput.value = val.toFixed(2);
-        };
-
-        // Leverage Slider Logic
-        const levSlider = document.getElementById('lev-slider');
-        const levTxt = document.getElementById('t-lev-txt');
-        levSlider.oninput = () => {
-            levTxt.value = levSlider.value + "x";
-        };
-
+        // Chart Setup
         new window.TradingView.widget({
             "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
             "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914"
         });
 
+        // Price Feed
         const ws = new WebSocket(`wss://stream.binance.com:9443/ws/btcusdt@ticker`);
         ws.onmessage = (e) => {
             curPrice = parseFloat(JSON.parse(e.data).c);
@@ -204,12 +170,11 @@
         };
 
         window.executeTrade = async (side) => {
-            const amt = parseFloat(amtInput.value);
-            const lev = parseInt(levSlider.value);
+            const amt = parseFloat(document.getElementById('t-amount').value);
+            const lev = parseInt(document.getElementById('t-lev').value);
             const fee = amt * 0.025;
 
-            if(amt <= 0) return alert("Please enter an amount");
-            if(amt + fee > uBal) return alert("Insufficient Balance (Inc. 2.5% Fee)");
+            if(amt + fee > uBal) return alert("Insufficient Balance");
             if(activeP) return alert("Close active position first");
 
             await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + fee)) });
@@ -242,6 +207,7 @@
 
         window.closePosition = async (isLiq = false) => {
             if(!activeP) return;
+            
             let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
             let pnl = ((diff / activeP.entry) * activeP.lev) * activeP.amt;
             let finalReturn = isLiq ? 0 : (activeP.amt + pnl);
@@ -253,6 +219,7 @@
             addToHistory(activeP.side, pnl, activeP.fee);
             activeP = null;
             document.getElementById('active-pos-area').style.display = 'none';
+            if(isLiq) alert("LIQUIDATED at 68% Loss");
         };
 
         function addToHistory(side, pnl, fee) {
@@ -260,8 +227,14 @@
             const item = document.createElement('div');
             item.className = 'hist-item';
             item.innerHTML = `
-                <div class="hist-row"><b>BTCUSDT ${side}</b><span class="${pnl>=0?'txt-up':'txt-down'}">${pnl>=0?'+':''}${pnl.toFixed(2)} USDT</span></div>
-                <div class="hist-row" style="color:#555"><span>Fee: ${fee.toFixed(2)}</span><span>Net: ${(pnl-fee).toFixed(2)}</span></div>
+                <div class="hist-row">
+                    <b>BTCUSDT ${side}</b>
+                    <span class="${pnl >= 0 ? 'txt-up' : 'txt-down'}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} USDT</span>
+                </div>
+                <div class="hist-row" style="color:#555">
+                    <span>Fee Paid: ${fee.toFixed(2)} USDT</span>
+                    <span>Net: ${(pnl - fee).toFixed(2)} USDT</span>
+                </div>
             `;
             list.prepend(item);
         }
