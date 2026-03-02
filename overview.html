@@ -39,6 +39,7 @@
             background: var(--card-bg); border: 1px solid var(--border);
             padding: 15px 10px; border-radius: 20px; text-align: center;
             color: var(--text); text-decoration: none; transition: 0.3s;
+            display: block; /* لضمان قابلية الضغط */
         }
         .action-btn i { display: block; font-size: 20px; margin-bottom: 8px; color: var(--brand); }
         .action-btn span { font-size: 11px; font-weight: 600; }
@@ -137,9 +138,9 @@
                     const bal = data.balance || 0;
                     const profit = data.bot_profit || 0;
 
-                    document.getElementById('mainBal').textContent = bal.toFixed(2) + " USDT";
-                    document.getElementById('spotBal').textContent = bal.toFixed(2);
-                    document.getElementById('profitBal').textContent = "+" + profit.toFixed(2);
+                    document.getElementById('mainBal').textContent = bal.toLocaleString(undefined, {minimumFractionDigits: 2}) + " USDT";
+                    document.getElementById('spotBal').textContent = bal.toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('profitBal').textContent = "+" + profit.toLocaleString(undefined, {minimumFractionDigits: 2});
                 }
             });
         } else { window.location.href = "login.html"; }
