@@ -9,59 +9,67 @@
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
             --up: #00ff96; --down: #ff3b3b; --card: #11141d;
-            --border: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.12);
         }
         * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        .header { height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .header h1 { font-size: 14px; font-weight: 900; margin: 0; }
+        /* Header Enhanced */
+        .header { height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 2px solid var(--brand); flex-shrink: 0; }
+        .header h1 { font-size: 16px; font-weight: 900; }
         .header h1 span { color: var(--brand); }
-        .bal-display { text-align: right; line-height: 1; }
-        .bal-display b { color: var(--accent); font-size: 13px; display: block; }
+        .bal-display { text-align: right; background: rgba(0,242,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.2); }
+        .bal-display small { font-size: 9px; color: #888; display: block; }
+        .bal-display b { color: var(--accent); font-size: 16px; }
 
-        /* Asset Selector */
-        .asset-bar { background: #000; padding: 5px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); }
-        .asset-chip { padding: 5px 12px; background: #1a1d26; border-radius: 20px; font-size: 10px; font-weight: 800; white-space: nowrap; border: 1px solid transparent; }
-        .asset-chip.active { border-color: var(--brand); color: var(--brand); }
+        .asset-bar { background: #000; padding: 8px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); }
+        .asset-chip { padding: 6px 15px; background: #1a1d26; border-radius: 6px; font-size: 11px; font-weight: 800; white-space: nowrap; border: 1px solid var(--border); transition: 0.2s; }
+        .asset-chip.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
 
-        #chart-half { height: 40vh; background: #000; position: relative; }
-        #manage-half { height: 60vh; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; border-top: 2px solid var(--border); }
+        #chart-half { height: 35vh; background: #000; position: relative; }
+        
+        /* Middle Positions Summary Area */
+        .pos-summary-bar { background: #0c0f1a; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        
+        #manage-half { height: 65vh; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
 
         .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 11px; text-transform: uppercase; }
-        .tab-btn.active { color: var(--brand); border-bottom: 2px solid var(--brand); }
-        .tab-content { flex: 1; overflow-y: auto; padding: 12px; display: none; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 12px; text-transform: uppercase; }
+        .tab-btn.active { color: var(--brand); border-bottom: 3px solid var(--brand); }
+        .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; }
         .tab-content.active { display: block; }
 
-        /* Sliders */
-        .slider-box { margin-bottom: 15px; }
-        .slider-label { display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-bottom: 5px; }
-        .slider-label b { color: #fff; }
-        .range-slider { width: 100%; -webkit-appearance: none; height: 6px; border-radius: 5px; background: #222; outline: none; margin: 10px 0; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); border: 4px solid var(--bg); box-shadow: 0 0 10px var(--brand); cursor: pointer; }
+        /* Controls */
+        .slider-box { margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 8px; }
+        .slider-label b { color: #fff; font-size: 14px; }
+        .range-slider { width: 100%; -webkit-appearance: none; height: 8px; border-radius: 10px; background: #222; outline: none; }
+        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 15px var(--brand); cursor: pointer; border: 3px solid #fff; }
 
-        .in-box { background: var(--card); border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-        .in-box input { width: 100%; background: transparent; border: none; color: #fff; font-weight: 800; font-size: 16px; outline: none; }
+        .btns-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-trade { flex: 1; padding: 18px; border: none; border-radius: 10px; font-weight: 900; color: #fff; font-size: 15px; letter-spacing: 1px; }
+        .bg-up { background: var(--up); box-shadow: 0 4px 15px rgba(0,255,150,0.2); }
+        .bg-down { background: var(--down); box-shadow: 0 4px 15px rgba(255,59,59,0.2); }
 
-        .btns-row { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-trade { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: 900; color: #fff; font-size: 14px; }
-        .bg-up { background: var(--up); } .bg-down { background: var(--down); }
-
-        .pos-card { background: #1a1d26; border-radius: 12px; padding: 15px; border-left: 4px solid var(--brand); position: relative; }
-        .pnl-val { font-size: 26px; font-weight: 900; margin: 5px 0; }
-        .close-pos-btn { width: 100%; background: #333; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 10px; }
+        /* Multi-Position Cards */
+        #positions-list { display: flex; flex-direction: column; gap: 12px; }
+        .pos-card { background: #161922; border-radius: 12px; padding: 15px; border-left: 5px solid var(--brand); position: relative; border: 1px solid var(--border); }
+        .pos-card-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; }
+        .pnl-val { font-size: 24px; font-weight: 900; margin: 5px 0; }
+        .close-pos-btn { width: 100%; background: #2a2d37; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 12px; }
         
-        .hist-item { background: var(--card); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 12px; }
-        .entry-line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--accent); z-index: 10; pointer-events: none; }
-        .entry-label { position: absolute; right: 5px; background: var(--accent); color: #000; font-size: 8px; padding: 2px 4px; border-radius: 3px; transform: translateY(-50%); }
+        .hist-item { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .fee-tag { font-size: 10px; color: var(--down); background: rgba(255,59,59,0.1); padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
-        <div class="bal-display"><small style="font-size:8px;color:#666">AVAILABLE</small><b id="walletBal">0.00</b></div>
+        <div class="bal-display">
+            <small>AVAILABLE MARGIN</small>
+            <b id="walletBal">0.00</b>
+        </div>
     </header>
 
     <div class="asset-bar" id="assetBar">
@@ -74,58 +82,53 @@
 
     <section id="chart-half">
         <div id="tv_widget" style="height: 100%;"></div>
-        <div id="chart-entry-line" style="display:none;" class="entry-line">
-            <span class="entry-label">ENTRY</span>
-        </div>
     </section>
+
+    <div class="pos-summary-bar">
+        <span>Active Positions: <b id="pos-count" style="color:var(--brand)">0</b></span>
+        <span>Total PNL: <b id="total-pnl">0.00 USDT</b></span>
+    </div>
 
     <section id="manage-half">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('trade', this)">Trade</button>
+            <button class="tab-btn active" onclick="switchTab('trade', this)">Execution</button>
+            <button class="tab-btn" onclick="switchTab('positions', this)">Open Orders</button>
             <button class="tab-btn" onclick="switchTab('hist', this)">History</button>
         </div>
 
         <div id="tab-trade" class="tab-content active">
-            <div id="trade-controls">
-                <div class="slider-box">
-                    <div class="slider-label">Amount: <b id="amt-val">0.00 USDT</b></div>
-                    <input type="range" min="0" max="100" value="0" class="range-slider" id="amt-slider">
-                </div>
-
-                <div class="slider-box">
-                    <div class="slider-label">Leverage: <b id="lev-val">10x</b></div>
-                    <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-slider">
-                </div>
-
-                <div class="btns-row">
-                    <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SELL / SHORT</button>
-                    <button class="btn-trade bg-up" onclick="executeTrade('LONG')">BUY / LONG</button>
-                </div>
+            <div class="slider-box">
+                <div class="slider-label">Amount Size: <b id="amt-val">0.00 USDT</b></div>
+                <input type="range" min="0" max="100" value="0" class="range-slider" id="amt-slider">
             </div>
-
-            <div id="active-pos-area" style="display: none;">
-                <div class="pos-card">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#888;">
-                        <b id="p-info" style="color:var(--brand)">BTCUSDT</b>
-                        <span>Entry: <span id="p-entry" style="color:#fff">0.00</span></span>
-                    </div>
-                    <div class="pnl-val" id="p-pnl">+0.00</div>
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
-                        <span id="p-roe">+0.00% ROE</span>
-                        <span style="color:#666">Liq: <span id="p-liq" style="color:var(--down)">0.00</span></span>
-                    </div>
-                    <button class="close-pos-btn" onclick="closePosition()">CLOSE POSITION</button>
-                </div>
+            <div class="slider-box" style="border-left: 3px solid var(--accent);">
+                <div class="slider-label">Leverage Multiplier: <b id="lev-val">10x</b></div>
+                <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-slider">
+            </div>
+            <div style="font-size: 10px; color: #666; text-align: center; margin-bottom: 10px;">
+                Estimated Entry Fee (2.5%): <span id="fee-est">0.00</span> USDT
+            </div>
+            <div class="btns-row">
+                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SHORT</button>
+                <button class="btn-trade bg-up" onclick="executeTrade('LONG')">LONG</button>
             </div>
         </div>
 
-        <div id="tab-hist" class="tab-content"><div id="history-list"></div></div>
+        <div id="tab-positions" class="tab-content">
+            <div id="positions-list">
+                <div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>
+            </div>
+        </div>
+
+        <div id="tab-hist" class="tab-content">
+            <div id="history-list"></div>
+        </div>
     </section>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -141,7 +144,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let uBal = 0, uID = null, curPrice = 0, activeP = null, symbol = "BTCUSDT", tvWidget = null;
+        let uBal = 0, uID = null, prices = {}, positions = [], symbol = "BTCUSDT";
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -150,116 +153,132 @@
                     const data = s.data();
                     uBal = data.balance || 0;
                     document.getElementById('walletBal').textContent = uBal.toFixed(2);
-                    
-                    if (data.activePosition) {
-                        activeP = data.activePosition;
-                        symbol = activeP.symbol;
-                        showPositionUI(true);
-                    } else {
-                        activeP = null;
-                        showPositionUI(false);
-                    }
+                    positions = data.activePositions || [];
+                    renderPositions();
                     renderHistory(data.history || []);
                 });
             }
         });
 
-        // Sliders Logic
+        // Sliders
         const amtSlider = document.getElementById('amt-slider');
         const levSlider = document.getElementById('lev-slider');
         
-        amtSlider.oninput = () => document.getElementById('amt-val').textContent = ((amtSlider.value/100)*uBal).toFixed(2) + " USDT";
+        amtSlider.oninput = () => {
+            const val = ((amtSlider.value/100)*uBal).toFixed(2);
+            document.getElementById('amt-val').textContent = val + " USDT";
+            document.getElementById('fee-est').textContent = (val * 0.025).toFixed(2);
+        };
         levSlider.oninput = () => document.getElementById('lev-val').textContent = levSlider.value + "x";
 
-        // Asset Change
         window.changeAsset = (newSym) => {
-            if(activeP) return alert("Close your position first!");
             symbol = newSym;
             document.querySelectorAll('.asset-chip').forEach(c => c.classList.remove('active'));
             event.target.classList.add('active');
-            initChart();
-            initPriceFeed();
-        };
-
-        function initChart() {
-            tvWidget = new window.TradingView.widget({
+            new window.TradingView.widget({
                 "autosize": true, "symbol": "BINANCE:"+symbol, "interval": "1", "theme": "dark",
                 "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914"
             });
-        }
-        initChart();
+            initPriceFeed(newSym);
+        };
 
-        let priceWs;
-        function initPriceFeed() {
-            if(priceWs) priceWs.close();
-            priceWs = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@ticker`);
-            priceWs.onmessage = (e) => {
-                curPrice = parseFloat(JSON.parse(e.data).c);
-                if(activeP) updateLivePNL();
+        function initPriceFeed(sym) {
+            const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${sym.toLowerCase()}@ticker`);
+            ws.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                prices[sym] = parseFloat(data.c);
+                updateLiveUI();
             };
         }
-        initPriceFeed();
+        initPriceFeed('BTCUSDT'); // Default
 
         window.executeTrade = async (side) => {
             const amt = (amtSlider.value / 100) * uBal;
             const lev = parseInt(levSlider.value);
-            const fee = amt * 0.001; 
+            const entryFee = amt * 0.025; // 2.5% Fee
 
-            if(amt < 1) return alert("Select Amount");
-            
-            const posData = {
-                symbol, side, entry: curPrice, amt, lev, fee,
-                liq: side === 'LONG' ? curPrice * (1 - (0.8/lev)) : curPrice * (1 + (0.8/lev))
+            if(amt < 5) return alert("Minimum trade 5 USDT");
+            if(amt + entryFee > uBal) return alert("Insufficient balance for trade + 2.5% fee");
+
+            const newPos = {
+                id: Date.now(),
+                symbol, side, entry: prices[symbol], amt, lev, entryFee,
+                liq: side === 'LONG' ? prices[symbol] * (1 - (0.7/lev)) : prices[symbol] * (1 + (0.7/lev))
             };
 
             await updateDoc(doc(db, "users", uID), { 
-                balance: increment(-(amt + fee)),
-                activePosition: posData 
+                balance: increment(-(amt + entryFee)),
+                activePositions: arrayUnion(newPos)
             });
+            switchTab('positions', document.querySelectorAll('.tab-btn')[1]);
         };
 
-        function updateLivePNL() {
-            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
-            let roe = (diff / activeP.entry) * 100 * activeP.lev;
-            let pnl = (roe / 100) * activeP.amt;
+        function updateLiveUI() {
+            let totalPnl = 0;
+            positions.forEach(pos => {
+                const curPrice = prices[pos.symbol] || pos.entry;
+                let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
+                let roe = (diff / pos.entry) * 100 * pos.lev;
+                let pnl = (roe / 100) * pos.amt;
+                totalPnl += pnl;
 
-            if(roe <= -80) { closePosition(true); return; }
-
-            const pnlEl = document.getElementById('p-pnl');
-            pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
-            pnlEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
-            document.getElementById('p-roe').textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
+                const cardPnl = document.getElementById(`pnl-${pos.id}`);
+                const cardRoe = document.getElementById(`roe-${pos.id}`);
+                if(cardPnl) {
+                    cardPnl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
+                    cardPnl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
+                    cardRoe.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
+                    cardRoe.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
+                }
+                if(roe <= -75) closePosition(pos.id, true);
+            });
+            document.getElementById('total-pnl').textContent = totalPnl.toFixed(2) + " USDT";
+            document.getElementById('total-pnl').style.color = totalPnl >= 0 ? 'var(--up)' : 'var(--down)';
+            document.getElementById('pos-count').textContent = positions.length;
         }
 
-        window.closePosition = async (isLiq = false) => {
-            if(!activeP) return;
-            let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
-            let pnl = ((diff / activeP.entry) * activeP.lev) * activeP.amt;
-            let finalReturn = isLiq ? 0 : (activeP.amt + pnl);
+        function renderPositions() {
+            const container = document.getElementById('positions-list');
+            if(positions.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>`;
+                return;
+            }
+            container.innerHTML = positions.map(pos => `
+                <div class="pos-card">
+                    <div class="pos-card-header">
+                        <b>${pos.symbol} <span style="color:${pos.side==='LONG'?'var(--up)':'var(--down)'}">${pos.side} ${pos.lev}x</span></b>
+                        <span>Entry: ${pos.entry.toFixed(2)}</span>
+                    </div>
+                    <div class="pnl-val" id="pnl-${pos.id}">Calculating...</div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px;">
+                        <span id="roe-${pos.id}">0.00%</span>
+                        <span style="color:#666">Liq: <span style="color:var(--down)">${pos.liq.toFixed(2)}</span></span>
+                    </div>
+                    <button class="close-pos-btn" onclick="closePosition(${pos.id})">CLOSE POSITION</button>
+                </div>
+            `).join('');
+        }
+
+        window.closePosition = async (posId, isLiq = false) => {
+            const pos = positions.find(p => p.id === posId);
+            if(!pos) return;
+
+            const curPrice = prices[pos.symbol] || pos.entry;
+            let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
+            let pnl = ((diff / pos.entry) * pos.lev) * pos.amt;
+            let finalReturn = isLiq ? 0 : (pos.amt + pnl);
 
             const record = {
-                symbol: activeP.symbol,
-                side: activeP.side,
-                pnl: pnl.toFixed(2),
-                time: new Date().toLocaleTimeString()
+                symbol: pos.symbol, side: pos.side, pnl: pnl.toFixed(2),
+                fee: pos.entryFee.toFixed(2), time: new Date().toLocaleTimeString()
             };
 
             await updateDoc(doc(db, "users", uID), { 
                 balance: increment(finalReturn),
-                activePosition: null,
+                activePositions: arrayRemove(pos),
                 history: arrayUnion(record)
             });
         };
-
-        function showPositionUI(show) {
-            document.getElementById('active-pos-area').style.display = show ? 'block' : 'none';
-            document.getElementById('trade-controls').style.display = show ? 'none' : 'block';
-            if(show && activeP) {
-                document.getElementById('p-info').textContent = `${activeP.symbol} ${activeP.side} ${activeP.lev}x`;
-                document.getElementById('p-entry').textContent = activeP.entry.toFixed(symbol.includes('XRP')?4:2);
-                document.getElementById('p-liq').textContent = activeP.liq.toFixed(symbol.includes('XRP')?4:2);
-            }
-        }
 
         function renderHistory(history) {
             const container = document.getElementById('history-list');
@@ -269,7 +288,10 @@
                         <b>${h.symbol} ${h.side}</b>
                         <span style="color:${h.pnl>=0?'var(--up)':'var(--down)'}">${h.pnl>=0?'+':''}${h.pnl} USDT</span>
                     </div>
-                    <div style="font-size:10px; color:#555; margin-top:5px;">Time: ${h.time}</div>
+                    <div style="font-size:10px; color:#555; margin-top:8px; display:flex; justify-content:space-between">
+                        <span>Fee Paid: ${h.fee} USDT</span>
+                        <span>${h.time}</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -280,6 +302,9 @@
             btn.classList.add('active');
             document.getElementById('tab-' + t).classList.add('active');
         };
+
+        // Initialize Chart
+        changeAsset('BTCUSDT');
     </script>
 </body>
 </html>
