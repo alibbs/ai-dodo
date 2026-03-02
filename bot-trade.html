@@ -8,14 +8,9 @@
 
     <style>
         :root {
-            --bg: #060914;
-            --brand: #ff00b8;
-            --brand-glow: rgba(255, 0, 184, 0.4);
-            --accent: #00f2ff;
-            --text: #ffffff;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-            --success: #00ff96;
+            --bg: #060914; --brand: #ff00b8; --brand-glow: rgba(255, 0, 184, 0.4);
+            --accent: #00f2ff; --text: #ffffff; --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1); --success: #00ff96;
         }
 
         body {
@@ -28,7 +23,7 @@
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
         .dashboard-3d {
-            position: relative; width: 250px; height: 250px;
+            position: relative; width: 220px; height: 220px;
             margin: 20px auto; display: flex; align-items: center; justify-content: center;
         }
         .outer-ring {
@@ -42,13 +37,13 @@
             filter: blur(20px); animation: breathe 3s ease-in-out infinite;
         }
         .core-info { z-index: 10; text-align: center; }
-        .main-balance { font-size: 32px; font-weight: 900; margin: 5px 0; text-shadow: 0 0 15px var(--brand-glow); }
-        .uptime { font-family: monospace; font-size: 13px; color: #aaa; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); }
+        .main-balance { font-size: 28px; font-weight: 900; margin: 5px 0; text-shadow: 0 0 15px var(--brand-glow); }
+        .uptime { font-family: monospace; font-size: 12px; color: #aaa; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes breathe { 0%, 100% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
 
-        .label-sm { font-size: 11px; color: #888; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 1.5px; }
+        .label-sm { font-size: 11px; color: #888; margin: 20px 0 10px; display: block; text-transform: uppercase; letter-spacing: 1.5px; }
         .coin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; transition: 0.3s; }
         .coin-opt {
             background: var(--card-bg); border: 1px solid var(--border);
@@ -85,9 +80,8 @@
             font-size: 12px; line-height: 1.6; color: #888; border: 1px solid var(--border);
         }
         .desc-box h4 { margin: 0 0 10px; color: #fff; font-size: 14px; }
-        .desc-box b { color: var(--brand); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; backdrop-filter: blur(10px); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { text-decoration: none; color: #555; text-align: center; flex: 1; font-size: 10px; }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
         .nav-item.active { color: var(--brand); }
@@ -101,12 +95,12 @@
         <div class="inner-glow"></div>
         <div class="core-info">
             <span id="activeCoinLabel" style="font-size: 10px; color: var(--accent); letter-spacing: 1px;">BTC CORE VAULT</span>
-            <div class="main-balance" id="displayBalance"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="main-balance" id="displayBalance">$0.00</div>
             <div class="uptime" id="uptimeDisplay">00:00:00:00</div>
         </div>
     </div>
 
-    <span class="label-sm">Select Asset Fund</span>
+    <span class="label-sm" data-key="select_asset">Select Asset Fund</span>
     <div class="coin-grid" id="coinGrid">
         <div class="coin-opt active" onclick="selectCoin(this, 'BTC', 1.0)" data-name="BTC CORE VAULT">
             <i class="fa-brands fa-bitcoin" style="color:#f7931a;"></i>
@@ -147,28 +141,26 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
-                <span style="color: #666;">Daily ROI: <b id="rateDisp" style="color:var(--success)">1.0%</b></span>
+                <span style="color: #666;"><span data-key="daily_roi">Daily ROI</span>: <b id="rateDisp" style="color:var(--success)">1.0%</b></span>
                 <span id="netProfit" style="color: var(--accent); font-weight: 800;">$2.50 USDT</span>
             </div>
 
-            <button class="activate-btn" id="startBtn">INITIALIZE AI CORE</button>
+            <button class="activate-btn" id="startBtn" data-key="initialize_bot">INITIALIZE AI CORE</button>
         </div>
     </div>
 
     <div class="desc-box">
-        <h4><i class="fa-solid fa-circle-nodes"></i> Operational Summary</h4>
-        The Amana Global <b>AI Vault</b> combines high-frequency trading bots with a secure <b>Investment Fund</b> structure. 
-        <br><br>
-        Your capital (Max <b>5,000 USDT</b>) is locked for the selected period. A <b>5% service fee</b> is applied only to generated profits.
+        <h4 data-key="op_summary"><i class="fa-solid fa-circle-nodes"></i> Operational Summary</h4>
+        <span data-key="bot_desc">The Amana Global AI Vault combines high-frequency trading bots with a secure Investment Fund structure.</span>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
-    <a href="bot-trade.html" class="nav-item active"><i class="fa-solid fa-robot"></i><span>Bot</span></a>
-    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
-    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span data-key="home">Home</span></a>
+    <a href="game.html" class="nav-item"><i class="fa-solid fa-gamepad"></i><span data-key="game">Game</span></a>
+    <a href="bot-trade.html" class="nav-item active"><i class="fa-solid fa-robot"></i><span data-key="bot">Bot</span></a>
+    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span data-key="overview">Overview</span></a>
+    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span data-key="profile">Profile</span></a>
 </nav>
 
 <script type="module">
@@ -210,10 +202,7 @@
                         renderRunningMode();
                     } else {
                         activeInvest = null;
-                        if(document.getElementById('coinGrid')){
-                             document.getElementById('coinGrid').style.opacity = "1";
-                             document.getElementById('coinGrid').style.pointerEvents = "all";
-                        }
+                        resetToInputMode();
                     }
                 }
             });
@@ -222,10 +211,8 @@
 
     function renderRunningMode() {
         const coinGrid = document.getElementById('coinGrid');
-        if(coinGrid){
-            coinGrid.style.opacity = "0.3";
-            coinGrid.style.pointerEvents = "none";
-        }
+        if(coinGrid) { coinGrid.style.opacity = "0.3"; coinGrid.style.pointerEvents = "none"; }
+        
         document.getElementById('mainPanel').innerHTML = `
             <div style="text-align:center; padding:10px;">
                 <div style="margin-bottom:15px;"><i class="fas fa-microchip fa-spin" style="color:var(--brand); font-size:30px;"></i></div>
@@ -241,6 +228,12 @@
             </div>
         `;
         startLiveTracking();
+    }
+
+    function resetToInputMode() {
+        // إذا لم يكن هناك استثمار نشط، نعيد الصفحة لوضع الإدخال (يمكنك ببساطة عمل reload أو إعادة بناء HTML)
+        const coinGrid = document.getElementById('coinGrid');
+        if(coinGrid) { coinGrid.style.opacity = "1"; coinGrid.style.pointerEvents = "all"; }
     }
 
     function startLiveTracking() {
@@ -282,14 +275,12 @@
         const userRef = doc(db, "users", currentUser.uid);
         const snap = await getDoc(userRef);
         const currentBal = snap.data().balance || 0;
-        const currentBotProfit = snap.data().bot_profit || 0;
 
         await updateDoc(userRef, {
             balance: currentBal + totalRefund,
-            bot_profit: currentBotProfit + profit,
             active_investment: deleteField()
         });
-        alert("Investment Cycle Completed! Profit Added.");
+        alert("Cycle Completed!");
         location.reload();
     }
 
@@ -322,7 +313,7 @@
 
         const btn = document.getElementById('startBtn');
         btn.disabled = true;
-        btn.textContent = "WAIT...";
+        btn.textContent = "INITIALIZING...";
 
         try {
             await updateDoc(doc(db, "users", currentUser.uid), {
@@ -336,8 +327,8 @@
             });
         } catch (e) { alert(e.message); btn.disabled = false; }
     });
-
-    window.calc();
 </script>
+
+<script src="translate.js"></script>
 </body>
 </html>
