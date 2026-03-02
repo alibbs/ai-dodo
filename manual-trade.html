@@ -3,266 +3,190 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>AMANA ELITE+ | Pro Terminal</title>
+    <title>AMANA ELITE+ | Split Terminal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --up: #00ff96; --down: #ff3b3b; --card: rgba(255,255,255,0.05);
-            --border: rgba(255,255,255,0.1);
+            --up: #00ff96; --down: #ff3b3b; --card: #11141d;
+            --border: rgba(255,255,255,0.08);
         }
 
-        /* منع التفاعل العشوائي وتحسين المظهر على كل الهواتف */
-        * { 
-            touch-action: pan-x pan-y; 
-            box-sizing: border-box; 
-            -webkit-user-select: none; 
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        body {
-            margin: 0; font-family: 'Inter', sans-serif; 
-            background: var(--bg); color: #fff;
-            height: 100vh; width: 100vw; 
-            display: flex; flex-direction: column; 
-            overflow: hidden; /* تثبيت الشاشة */
-        }
-
-        /* --- Header: حجم متكيف --- */
-        .header {
-            height: 60px; padding: 0 15px; 
-            background: var(--card); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
-        }
-        .header h1 { font-size: clamp(14px, 4vw, 18px); margin: 0; font-weight: 900; }
+        /* --- Header --- */
+        .header { height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .header h1 { font-size: 14px; font-weight: 900; margin: 0; }
         .header h1 span { color: var(--brand); }
-        .bal-display { text-align: right; }
-        .bal-display b { color: var(--accent); font-size: clamp(12px, 3.5vw, 15px); }
+        #live-price { font-weight: 900; color: var(--accent); font-size: 14px; }
 
-        /* --- Asset Selector: شريط العملات --- */
-        .assets {
-            height: 45px; display: flex; gap: 8px; padding: 5px 10px; 
-            overflow-x: auto; background: #0b0e1a; flex-shrink: 0;
-            align-items: center;
-        }
-        .assets::-webkit-scrollbar { display: none; }
-        .tab {
-            padding: 6px 12px; background: var(--card); border: 1px solid var(--border);
-            border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;
-        }
-        .tab.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
+        /* --- Upper Half: Chart --- */
+        #chart-half { height: 50vh; background: #000; position: relative; border-bottom: 2px solid var(--border); }
 
-        /* --- Chart Section: يأخذ كل المساحة المتبقية --- */
-        #chart-container { 
-            flex: 1; /* التمدد لملء الفراغ */
-            background: #000; position: relative; width: 100%; 
-        }
+        /* --- Lower Half: Management --- */
+        #manage-half { height: 50vh; display: flex; flex-direction: column; background: var(--bg); }
 
-        /* --- Trade UI: الجزء السفلي --- */
-        .trade-ui {
-            background: #0b0e1a; border-top: 1px solid var(--border);
-            padding: 15px; flex-shrink: 0;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-        }
+        /* Tabs Navigation */
+        .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 12px; cursor: pointer; text-transform: uppercase; }
+        .tab-btn.active { color: var(--brand); border-bottom: 2px solid var(--brand); }
 
-        .inputs-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; 
-        }
-        .in-box { 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
-            padding: 8px 10px; border-radius: 8px; 
-        }
-        .in-box label { display: block; font-size: 9px; color: #666; margin-bottom: 2px; }
-        .in-box input { 
-            width: 100%; background: transparent; border: none; 
-            color: #fff; font-weight: 800; font-size: 15px; outline: none; 
-        }
+        .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; }
+        .tab-content.active { display: block; }
 
-        .slider-wrap { margin-bottom: 12px; }
-        .range-slider {
-            width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px;
-            background: #1a1d26; outline: none;
-        }
-        .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 22px; height: 22px;
-            background: var(--brand); border-radius: 50%; cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 0, 184, 0.4);
-        }
+        /* Position Details */
+        .pos-card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .stat-item label { display: block; font-size: 10px; color: #666; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-item div { font-size: 16px; font-weight: 800; }
 
-        .btns { display: flex; gap: 10px; }
-        .btn {
-            flex: 1; padding: 14px; border-radius: 10px; border: none;
-            font-weight: 900; font-size: 14px; color: #fff;
-            transition: 0.1s;
-        }
-        .btn-up { background: var(--up); }
-        .btn-down { background: var(--down); }
-        .btn:active { opacity: 0.7; transform: scale(0.98); }
+        .profit-large { font-size: 32px; font-weight: 900; text-align: center; margin: 10px 0; }
+        
+        .close-btn { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--down); color: #fff; font-weight: 900; font-size: 16px; margin-top: 10px; }
 
-        /* --- Position Floating Card --- */
-        #pos-card {
-            position: absolute; top: 10px; left: 10px; right: 10px;
-            background: rgba(18, 21, 28, 0.98); border: 1px solid var(--border);
-            border-radius: 12px; padding: 12px; display: none; z-index: 100;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-        }
+        /* History List */
+        .hist-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
+        .hist-item b { color: var(--up); }
+        .hist-item.loss b { color: var(--down); }
+
+        /* Empty State */
+        .empty { text-align: center; color: #444; margin-top: 40px; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
-        <div class="bal-display">
-            <small style="font-size: 8px; color: #666; display: block;">BALANCE</small>
-            <b id="walletBal">0.00</b> <small style="font-size: 10px; color: #444;">USDT</small>
-        </div>
+        <div id="live-price">0.00</div>
     </header>
 
-    <div class="assets">
-        <div class="tab active" onclick="setSym('BTCUSDT', this)">BTC</div>
-        <div class="tab" onclick="setSym('ETHUSDT', this)">ETH</div>
-        <div class="tab" onclick="setSym('SOLUSDT', this)">SOL</div>
-        <div class="tab" onclick="setSym('BNBUSDT', this)">BNB</div>
-        <div class="tab" onclick="setSym('XRPUSDT', this)">XRP</div>
-    </div>
+    <section id="chart-half">
+        <div id="tv_chart_container" style="height: 100%;"></div>
+    </section>
 
-    <main id="chart-container">
-        <div id="tv_widget" style="height: 100%; width: 100%;"></div>
-        
-        <div id="pos-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <b id="p-side" style="font-size: 12px;">LONG</b>
-                    <div id="p-pnl" style="font-size: 18px; font-weight: 900; margin-top: 2px;">+0.00</div>
-                    <div id="p-roe" style="font-size: 11px;">+0.00%</div>
+    <section id="manage-half">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('pos', this)">Open Position</button>
+            <button class="tab-btn" onclick="switchTab('hist', this)">Trade History</button>
+        </div>
+
+        <div id="tab-pos" class="tab-content active">
+            <div id="no-pos" class="empty">No active trades.<br>Open a trade from the Market.</div>
+            
+            <div id="active-pos-ui" style="display: none;">
+                <div class="pos-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <b id="ui-side" style="color:var(--up)">LONG 10x</b>
+                        <span id="ui-symbol" style="color:#888">BTC/USDT</span>
+                    </div>
+                    
+                    <div class="profit-large" id="ui-pnl">+0.00</div>
+                    <div id="ui-roe" style="text-align:center; font-weight:bold; margin-bottom:20px;">+0.00%</div>
+
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <label>Entry Price</label>
+                            <div id="ui-entry">0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Liquidation</label>
+                            <div id="ui-liq" style="color:var(--down)">0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Margin</label>
+                            <div id="ui-margin">0.00 USDT</div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Current</label>
+                            <div id="ui-current">0.00</div>
+                        </div>
+                    </div>
+
+                    <button class="close-btn" onclick="requestClose()">CLOSE TRADE</button>
                 </div>
-                <button onclick="closePos()" style="background:#333; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-size:10px; font-weight:bold;">CLOSE</button>
-            </div>
-            <div style="margin-top: 10px; font-size: 9px; color: #777; display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 8px;">
-                <span>ENTRY: <span id="p-entry" style="color:#eee">0.00</span></span>
-                <span>LIQUIDATION: <span id="p-liq" style="color:var(--down)">0.00</span></span>
             </div>
         </div>
-    </main>
 
-    <section class="trade-ui">
-        <div class="inputs-grid">
-            <div class="in-box">
-                <label>SIZE (USDT)</label>
-                <input type="number" id="t-amount" value="100" inputmode="decimal">
+        <div id="tab-hist" class="tab-content">
+            <div id="history-list">
+                <div class="hist-item"><span>BTC/USDT (Long)</span> <b>+12.40 USDT</b></div>
+                <div class="hist-item loss"><span>ETH/USDT (Short)</span> <b>-5.20 USDT</b></div>
             </div>
-            <div class="in-box">
-                <label>LEVERAGE</label>
-                <input type="text" id="lev-val" value="10x" readonly>
-            </div>
-        </div>
-        <div class="slider-wrap">
-            <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-range">
-        </div>
-        <div class="btns">
-            <button class="btn btn-down" onclick="trade('SHORT')">SHORT</button>
-            <button class="btn btn-up" onclick="trade('LONG')">LONG</button>
         </div>
     </section>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-            authDomain: "ai-dodo.firebaseapp.com",
-            projectId: "ai-dodo",
-            storageBucket: "ai-dodo.firebasestorage.app",
-            messagingSenderId: "261622335803",
-            appId: "1:261622335803:web:0b066791230535e7d5cf1e"
-        };
-
-        const app = initializeApp(firebaseConfig);
+        // Firebase Config (نفس الإعدادات)
+        const app = initializeApp({ /* ... config ... */ });
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let uBal = 0, uID = null, curPrice = 0, activeP = null, rawSym = "BTCUSDT";
+        let uID = null, curPrice = 0, activeP = null;
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                uID = user.uid;
-                onSnapshot(doc(db, "users", uID), (s) => {
-                    uBal = s.data().balance || 0;
-                    document.getElementById('walletBal').textContent = uBal.toLocaleString(undefined, {minimumFractionDigits:2});
-                });
-            }
+        // تبديل التبويبات
+        window.switchTab = (target, btn) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + target).classList.add('active');
+        }
+
+        // تشغيل الشارت
+        new TradingView.widget({
+            "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
+            "container_id": "tv_chart_container", "hide_top_toolbar": true, "backgroundColor": "#000000"
         });
 
-        function loadTV(s) {
-            new window.TradingView.widget({
-                "autosize": true, "symbol": "BINANCE:"+s, "interval": "1", "theme": "dark", "style": "1",
-                "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914",
-                "save_image": false, "hide_legend": true, "withdateranges": false
-            });
-        }
-
-        window.setSym = (s, el) => {
-            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-            el.classList.add('active'); rawSym = s; loadTV(s); connectWS(s);
-        }
-
-        function connectWS(s) {
-            const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${s.toLowerCase()}@ticker`);
-            ws.onmessage = (e) => {
-                curPrice = parseFloat(JSON.parse(e.data).c);
-                updateLivePNL();
-            };
-        }
-
-        window.trade = async (side) => {
-            const amt = parseFloat(document.getElementById('t-amount').value);
-            const lev = parseInt(document.getElementById('lev-range').value);
-            const fee = amt * 0.025; 
-
-            if(amt + fee > uBal) return alert("Insufficient Balance");
-            if(activeP) return alert("Position already open");
-
-            await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + fee)) });
-
-            activeP = {
-                side, sym: rawSym, entry: curPrice, amt, lev,
-                liq: side === 'LONG' ? curPrice * (1 - (0.68/lev)) : curPrice * (1 + (0.68/lev))
-            };
-            document.getElementById('pos-card').style.display = 'block';
-            document.getElementById('p-side').textContent = side + " " + lev + "x";
-            document.getElementById('p-side').style.color = side === 'LONG'?'var(--up)':'var(--down)';
-            document.getElementById('p-entry').textContent = curPrice.toFixed(2);
-            document.getElementById('p-liq').textContent = activeP.liq.toFixed(2);
+        // مراقبة السعر
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+        ws.onmessage = (e) => {
+            curPrice = parseFloat(JSON.parse(e.data).c);
+            document.getElementById('live-price').textContent = curPrice.toFixed(2);
+            updateUI();
         };
 
-        function updateLivePNL() {
-            if(!activeP) return;
+        function updateUI() {
+            if(!activeP) {
+                document.getElementById('no-pos').style.display = 'block';
+                document.getElementById('active-pos-ui').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('no-pos').style.display = 'none';
+            document.getElementById('active-pos-ui').style.display = 'block';
+
             let diff = activeP.side === 'LONG' ? (curPrice - activeP.entry) : (activeP.entry - curPrice);
             let roe = (diff / activeP.entry) * 100 * activeP.lev;
             let pnl = (roe / 100) * activeP.amt;
 
-            if(roe <= -68) { alert("LIQUIDATED!"); closePos(); return; }
+            // تحديث الأرقام في الواجهة
+            document.getElementById('ui-pnl').textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2);
+            document.getElementById('ui-pnl').style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
+            document.getElementById('ui-roe').textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "%";
+            document.getElementById('ui-roe').style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
+            document.getElementById('ui-current').textContent = curPrice.toFixed(2);
 
-            const pnlEl = document.getElementById('p-pnl');
-            pnlEl.textContent = (pnl>=0?'+':'') + pnl.toFixed(2) + " USDT";
-            pnlEl.style.color = pnl>=0 ? "var(--up)":"var(--down)";
-            document.getElementById('p-roe').textContent = (roe>=0?'+':'') + roe.toFixed(2) + "%";
-            document.getElementById('p-roe').style.color = roe>=0 ? "var(--up)":"var(--down)";
+            // Liquidation
+            if(roe <= -68) { closeTrade(true); }
         }
 
-        window.closePos = () => { activeP = null; document.getElementById('pos-card').style.display='none'; };
-        
-        document.getElementById('lev-range').oninput = function() {
-            document.getElementById('lev-val').value = this.value + "x";
+        window.requestClose = () => { if(confirm("Close this position at market price?")) closeTrade(false); };
+
+        async function closeTrade(isLiq) {
+            // منطق إغلاق الصفقة وإرجاع الربح/الخسارة للرصيد
+            // إضافة العملية لـ history-list في Firestore
+            activeP = null;
+            alert(isLiq ? "Position Liquidated!" : "Position Closed.");
+            updateUI();
         }
 
-        // إطلاق الشارت الأول عند التحميل
-        setTimeout(() => setSym('BTCUSDT', document.querySelector('.tab')), 500);
+        // ملاحظة: كود فتح الصفقة (Open) سيكون في صفحة منفصلة أو Modal يرسل البيانات لـ activeP
     </script>
 </body>
 </html>
