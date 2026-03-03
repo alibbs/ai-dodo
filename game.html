@@ -66,6 +66,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+            cursor: pointer; /* للتأكد أن اليد تظهر عند التأشير */
         }
 
         .opt-card:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
@@ -88,63 +89,4 @@
         .bg-box { background: rgba(161, 0, 255, 0.1); color: #a100ff; border: 1px solid rgba(161, 0, 255, 0.2); }
 
         .opt-card b { font-size: 14px; font-weight: 800; display: block; }
-        .opt-card span { font-size: 10px; color: var(--muted); }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 85px; 
-            background: rgba(6, 9, 20, 0.98); border-top: 1px solid var(--border); 
-            display: flex; justify-content: space-around; align-items: center; 
-            z-index: 1000; backdrop-filter: blur(15px); padding-bottom: 10px;
-        }
-        .nav-item { text-decoration: none; color: #444; text-align: center; flex: 1; font-size: 10px; }
-        .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
-        .nav-item.active { color: var(--brand); }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="app-header">
-        <h1>AMANA ELITE+</h1>
-        <span data-key="digital_ecosystem">Digital Ecosystem</span>
-    </div>
-
-    <div class="options-grid">
-        <a href="manual-trade.html" class="opt-card">
-            <div class="opt-icon bg-manual"><i class="fa-solid fa-chart-line"></i></div>
-            <b data-key="manual_trade">Manual Trade</b>
-            <span data-key="trade_desc">Pro Terminal</span>
-        </a>
-
-        <a href="game-list.html" class="opt-card">
-            <div class="opt-icon bg-game"><i class="fa-solid fa-gamepad"></i></div>
-            <b data-key="game_center">Game Center</b>
-            <span data-key="game_desc">Play & Earn</span>
-        </a>
-
-        <a href="marketplace.html" class="opt-card">
-            <div class="opt-icon bg-market"><i class="fa-solid fa-store"></i></div>
-            <b data-key="market_place">Market Place</b>
-            <span data-key="market_desc">Assets Store</span>
-        </a>
-
-        <a href="mystery-box.html" class="opt-card">
-            <div class="opt-icon bg-box"><i class="fa-solid fa-box-open"></i></div>
-            <b data-key="mystery_box">Mystery Box</b>
-            <span data-key="box_desc">Lucky Drop</span>
-        </a>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span data-key="home">Home</span></a>
-    <a href="game.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i><span data-key="game">Game</span></a>
-    <a href="bot-trade.html" class="nav-item"><i class="fa-solid fa-robot"></i><span data-key="bot">Bot</span></a>
-    <a href="overview.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span data-key="overview">Overview</span></a>
-    <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span data-key="profile">Profile</span></a>
-</nav>
-
-<script src="translate.js"></script>
-</body>
-</html>
+        .opt-card span { font-
