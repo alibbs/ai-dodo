@@ -14,7 +14,6 @@
         * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Header Enhanced */
         .header { height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 2px solid var(--brand); flex-shrink: 0; }
         .header h1 { font-size: 16px; font-weight: 900; }
         .header h1 span { color: var(--brand); }
@@ -22,44 +21,43 @@
         .bal-display small { font-size: 9px; color: #888; display: block; }
         .bal-display b { color: var(--accent); font-size: 16px; }
 
-        .asset-bar { background: #000; padding: 8px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); }
+        .asset-bar { background: #000; padding: 8px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .asset-chip { padding: 6px 15px; background: #1a1d26; border-radius: 6px; font-size: 11px; font-weight: 800; white-space: nowrap; border: 1px solid var(--border); transition: 0.2s; }
         .asset-chip.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
 
-        #chart-half { height: 35vh; background: #000; position: relative; }
+        #chart-half { height: 35vh; background: #000; position: relative; flex-shrink: 0; }
         
-        /* Middle Positions Summary Area */
-        .pos-summary-bar { background: #0c0f1a; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .pos-summary-bar { background: #0c0f1a; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; flex-shrink: 0; }
         
-        #manage-half { height: 65vh; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+        /* التعديل هنا لضمان السكرول */
+        #manage-half { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
 
-        .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); }
+        .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 12px; text-transform: uppercase; }
         .tab-btn.active { color: var(--brand); border-bottom: 3px solid var(--brand); }
-        .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; }
+
+        /* تفعيل السكرول داخل التابات */
+        .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; -webkit-overflow-scrolling: touch; }
         .tab-content.active { display: block; }
 
-        /* Controls */
         .slider-box { margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px; }
         .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 8px; }
         .slider-label b { color: #fff; font-size: 14px; }
         .range-slider { width: 100%; -webkit-appearance: none; height: 8px; border-radius: 10px; background: #222; outline: none; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 15px var(--brand); cursor: pointer; border: 3px solid #fff; }
+        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); border: 3px solid #fff; cursor: pointer; }
 
-        .btns-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btns-row { display: flex; gap: 10px; margin-top: 10px; padding-bottom: 10px; }
         .btn-trade { flex: 1; padding: 18px; border: none; border-radius: 10px; font-weight: 900; color: #fff; font-size: 15px; letter-spacing: 1px; }
-        .bg-up { background: var(--up); box-shadow: 0 4px 15px rgba(0,255,150,0.2); }
-        .bg-down { background: var(--down); box-shadow: 0 4px 15px rgba(255,59,59,0.2); }
+        .bg-up { background: var(--up); }
+        .bg-down { background: var(--down); }
 
-        /* Multi-Position Cards */
-        #positions-list { display: flex; flex-direction: column; gap: 12px; }
-        .pos-card { background: #161922; border-radius: 12px; padding: 15px; border-left: 5px solid var(--brand); position: relative; border: 1px solid var(--border); }
-        .pos-card-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; }
+        #positions-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
+        .pos-card { background: #161922; border-radius: 12px; padding: 15px; border-left: 5px solid var(--brand); border: 1px solid var(--border); }
         .pnl-val { font-size: 24px; font-weight: 900; margin: 5px 0; }
         .close-pos-btn { width: 100%; background: #2a2d37; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 12px; }
         
+        #history-list { padding-bottom: 20px; }
         .hist-item { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border); }
-        .fee-tag { font-size: 10px; color: var(--down); background: rgba(255,59,59,0.1); padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -150,7 +148,7 @@
             if (user) {
                 uID = user.uid;
                 onSnapshot(doc(db, "users", uID), (s) => {
-                    const data = s.data();
+                    const data = s.data() || {};
                     uBal = data.balance || 0;
                     document.getElementById('walletBal').textContent = uBal.toFixed(2);
                     positions = data.activePositions || [];
@@ -160,7 +158,6 @@
             }
         });
 
-        // Sliders
         const amtSlider = document.getElementById('amt-slider');
         const levSlider = document.getElementById('lev-slider');
         
@@ -174,7 +171,7 @@
         window.changeAsset = (newSym) => {
             symbol = newSym;
             document.querySelectorAll('.asset-chip').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event) event.target.classList.add('active');
             new window.TradingView.widget({
                 "autosize": true, "symbol": "BINANCE:"+symbol, "interval": "1", "theme": "dark",
                 "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914"
@@ -190,27 +187,16 @@
                 updateLiveUI();
             };
         }
-        initPriceFeed('BTCUSDT'); // Default
+        initPriceFeed('BTCUSDT'); 
 
         window.executeTrade = async (side) => {
             const amt = (amtSlider.value / 100) * uBal;
             const lev = parseInt(levSlider.value);
-            const entryFee = amt * 0.025; // 2.5% Fee
-
-            if(amt < 5) return alert("Minimum trade 5 USDT");
-            if(amt + entryFee > uBal) return alert("Insufficient balance for trade + 2.5% fee");
-
-            const newPos = {
-                id: Date.now(),
-                symbol, side, entry: prices[symbol], amt, lev, entryFee,
-                liq: side === 'LONG' ? prices[symbol] * (1 - (0.7/lev)) : prices[symbol] * (1 + (0.7/lev))
-            };
-
-            await updateDoc(doc(db, "users", uID), { 
-                balance: increment(-(amt + entryFee)),
-                activePositions: arrayUnion(newPos)
-            });
-            switchTab('positions', document.querySelectorAll('.tab-btn')[1]);
+            const entryFee = amt * 0.025;
+            if(amt < 5) return alert("Min trade 5 USDT");
+            if(amt + entryFee > uBal) return alert("Low balance");
+            const newPos = { id: Date.now(), symbol, side, entry: prices[symbol], amt, lev, entryFee, liq: side === 'LONG' ? prices[symbol]*(1-(0.7/lev)) : prices[symbol]*(1+(0.7/lev)) };
+            await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + entryFee)), activePositions: arrayUnion(newPos) });
         };
 
         function updateLiveUI() {
@@ -218,19 +204,17 @@
             positions.forEach(pos => {
                 const curPrice = prices[pos.symbol] || pos.entry;
                 let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
-                let roe = (diff / pos.entry) * 100 * pos.lev;
-                let pnl = (roe / 100) * pos.amt;
+                let pnl = ((diff / pos.entry) * pos.lev) * pos.amt;
                 totalPnl += pnl;
-
-                const cardPnl = document.getElementById(`pnl-${pos.id}`);
-                const cardRoe = document.getElementById(`roe-${pos.id}`);
-                if(cardPnl) {
-                    cardPnl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
-                    cardPnl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
-                    cardRoe.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
-                    cardRoe.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
+                const pEl = document.getElementById(`pnl-${pos.id}`);
+                const rEl = document.getElementById(`roe-${pos.id}`);
+                if(pEl) {
+                    pEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
+                    pEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
+                    let roe = (diff / pos.entry) * 100 * pos.lev;
+                    rEl.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
+                    rEl.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
                 }
-                if(roe <= -75) closePosition(pos.id, true);
             });
             document.getElementById('total-pnl').textContent = totalPnl.toFixed(2) + " USDT";
             document.getElementById('total-pnl').style.color = totalPnl >= 0 ? 'var(--up)' : 'var(--down)';
@@ -239,17 +223,14 @@
 
         function renderPositions() {
             const container = document.getElementById('positions-list');
-            if(positions.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>`;
-                return;
-            }
+            if(positions.length === 0) { container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>`; return; }
             container.innerHTML = positions.map(pos => `
                 <div class="pos-card">
-                    <div class="pos-card-header">
+                    <div style="display:flex; justify-content:space-between; font-size:12px;">
                         <b>${pos.symbol} <span style="color:${pos.side==='LONG'?'var(--up)':'var(--down)'}">${pos.side} ${pos.lev}x</span></b>
                         <span>Entry: ${pos.entry.toFixed(2)}</span>
                     </div>
-                    <div class="pnl-val" id="pnl-${pos.id}">Calculating...</div>
+                    <div class="pnl-val" id="pnl-${pos.id}">...</div>
                     <div style="display:flex; justify-content:space-between; font-size:12px;">
                         <span id="roe-${pos.id}">0.00%</span>
                         <span style="color:#666">Liq: <span style="color:var(--down)">${pos.liq.toFixed(2)}</span></span>
@@ -259,38 +240,26 @@
             `).join('');
         }
 
-        window.closePosition = async (posId, isLiq = false) => {
+        window.closePosition = async (posId) => {
             const pos = positions.find(p => p.id === posId);
             if(!pos) return;
-
             const curPrice = prices[pos.symbol] || pos.entry;
             let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
             let pnl = ((diff / pos.entry) * pos.lev) * pos.amt;
-            let finalReturn = isLiq ? 0 : (pos.amt + pnl);
-
-            const record = {
-                symbol: pos.symbol, side: pos.side, pnl: pnl.toFixed(2),
-                fee: pos.entryFee.toFixed(2), time: new Date().toLocaleTimeString()
-            };
-
-            await updateDoc(doc(db, "users", uID), { 
-                balance: increment(finalReturn),
-                activePositions: arrayRemove(pos),
-                history: arrayUnion(record)
-            });
+            const record = { symbol: pos.symbol, side: pos.side, pnl: pnl.toFixed(2), fee: pos.entryFee.toFixed(2), time: new Date().toLocaleTimeString() };
+            await updateDoc(doc(db, "users", uID), { balance: increment(pos.amt + pnl), activePositions: arrayRemove(pos), history: arrayUnion(record) });
         };
 
         function renderHistory(history) {
             const container = document.getElementById('history-list');
-            container.innerHTML = history.reverse().map(h => `
+            container.innerHTML = [...history].reverse().map(h => `
                 <div class="hist-item">
                     <div style="display:flex; justify-content:space-between">
                         <b>${h.symbol} ${h.side}</b>
                         <span style="color:${h.pnl>=0?'var(--up)':'var(--down)'}">${h.pnl>=0?'+':''}${h.pnl} USDT</span>
                     </div>
                     <div style="font-size:10px; color:#555; margin-top:8px; display:flex; justify-content:space-between">
-                        <span>Fee Paid: ${h.fee} USDT</span>
-                        <span>${h.time}</span>
+                        <span>Fee: ${h.fee} USDT</span><span>${h.time}</span>
                     </div>
                 </div>
             `).join('');
@@ -302,8 +271,6 @@
             btn.classList.add('active');
             document.getElementById('tab-' + t).classList.add('active');
         };
-
-        // Initialize Chart
         changeAsset('BTCUSDT');
     </script>
 </body>
