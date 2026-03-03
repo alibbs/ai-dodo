@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA | Unboxing Pro</title>
+    <title>AMANA | Pro Unboxing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
@@ -22,7 +22,6 @@
             background: radial-gradient(circle at center, #1a0b2e, #060914);
         }
 
-        /* --- Header / Balance --- */
         .top-bar {
             width: 100%; padding: 15px 20px; display: flex; justify-content: space-between;
             align-items: center; box-sizing: border-box; position: fixed; top: 0; z-index: 100;
@@ -34,20 +33,16 @@
             font-weight: 800; color: var(--accent);
         }
 
-        /* --- شريط الجوائز المتوقعة (طويل جداً وواقعي) --- */
         .rewards-slider-wrapper {
             width: 100%; padding: 80px 0 20px;
-            background: rgba(0,0,0,0.4);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.05);
             overflow: hidden; position: relative;
         }
-        .slider-title { 
-            position: absolute; top: 65px; left: 20px; 
-            font-size: 9px; color: #888; letter-spacing: 2px;
-        }
+        .slider-title { position: absolute; top: 65px; left: 20px; font-size: 9px; color: #888; letter-spacing: 2px; }
+        
         .rewards-track {
             display: flex; gap: 12px; padding: 10px 20px;
-            overflow-x: auto; scroll-snap-type: x mandatory;
+            overflow-x: auto; scroll-behavior: smooth;
         }
         .rewards-track::-webkit-scrollbar { height: 4px; }
         .rewards-track::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 10px; }
@@ -57,34 +52,28 @@
             border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; font-size: 10px; text-align: center;
+            transition: 0.3s;
         }
         .reward-item i { font-size: 26px; margin-bottom: 8px; }
-        .reward-item.rare { border-color: var(--gold); background: rgba(255, 215, 0, 0.05); }
-        .reward-item.rare i { color: var(--gold); }
+        .reward-item.highlight { border-color: var(--brand); box-shadow: 0 0 15px var(--brand); transform: scale(1.05); }
         .reward-item b { display: block; margin-top: 4px; color: var(--accent); }
 
-        /* --- منطقة الصندوق --- */
         .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 40px 20px; margin-top: 20px; }
-        #box-visual { font-size: 110px; color: var(--accent); margin-bottom: 25px; transition: 0.5s; filter: drop-shadow(0 0 20px rgba(0,242,255,0.2)); }
+        #box-visual { font-size: 110px; color: var(--accent); margin-bottom: 25px; transition: 0.5s; }
         
         .box-title { font-size: 26px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
         .box-info { color: #888; margin-bottom: 35px; font-size: 14px; }
 
-        /* --- Buttons --- */
         .action-btn {
             width: 100%; padding: 18px; border-radius: 18px; border: none;
             font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
-        .buy-btn { background: linear-gradient(45deg, var(--brand), #b000ff); color: #fff; box-shadow: 0 10px 20px rgba(255,0,184,0.2); }
+        .buy-btn { background: linear-gradient(45deg, var(--brand), #b000ff); color: #fff; }
         .buy-btn:disabled { background: #333; cursor: not-allowed; opacity: 0.6; }
         .sell-btn { background: #22c55e; color: #fff; display: none; margin-top: 15px; }
 
-        /* --- Animations --- */
         .shake { animation: shake 0.4s infinite; }
-        @keyframes shake {
-            0% { transform: rotate(0); } 25% { transform: rotate(4deg); } 
-            50% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } 100% { transform: rotate(0); }
-        }
+        @keyframes shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
         .reveal { animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1.1); opacity: 1; } }
 
@@ -95,35 +84,28 @@
 
     <div class="top-bar">
         <a href="mystery-box.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="user-balance">
-            <i class="fa-solid fa-wallet"></i> $<span id="balance-val">0.00</span>
-        </div>
+        <div class="user-balance"><i class="fa-solid fa-wallet"></i> $<span id="balance-val">0.00</span></div>
     </div>
 
     <div class="rewards-slider-wrapper">
-        <span class="slider-title">POTENTIAL DROPS (SCROLL)</span>
+        <span class="slider-title">ITEMS IN THIS CHEST</span>
         <div class="rewards-track" id="rewards-track"></div>
     </div>
 
     <div class="unbox-container">
         <div id="box-visual"><i class="fa-solid fa-box-open"></i></div>
         <div class="box-title" id="display-name">...</div>
-        <div class="box-info">Cost to open: <span id="display-price" style="color: #fff;">$0</span></div>
+        <div class="box-info">Cost: <span id="display-price" style="color: #fff;">$0</span></div>
         
         <button class="action-btn buy-btn" id="main-btn" onclick="startUnboxing()">OPEN BOX</button>
-        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">COLLECT & SELL (+$<span id="win-val">0</span>)</button>
+        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">SELL ITEM (+$<span id="win-val">0</span>)</button>
         
-        <p id="status-text" style="margin-top: 25px; color: #888; font-size: 13px; line-height: 1.5;"></p>
+        <p id="status-text" style="margin-top: 25px; color: #888; font-size: 13px;"></p>
     </div>
 
 <script>
-    // --- إعدادات Firebase (ضع بياناتك هنا) ---
-    const firebaseConfig = { /* انسخ إعداداتك هنا */ };
-    // firebase.initializeApp(firebaseConfig);
-    // const db = firebase.database();
-
-    // متغيرات وهمية في حال عدم وجود Firebase حالياً ليعمل الكود أمامك
-    let userBalance = 500.00; 
+    // --- إعدادات Firebase الوهمية (يجب ربطها فعلياً بـ Database) ---
+    let userBalance = 1000.00; 
 
     const urlParams = new URLSearchParams(window.location.search);
     const price = parseInt(urlParams.get('price')) || 0;
@@ -131,48 +113,51 @@
 
     document.getElementById('display-name').innerText = boxName;
     document.getElementById('display-price').innerText = `$${price}`;
-    updateBalanceDisplay();
+    
+    // تعريف مكتبة الجوائز لكل نوع من الصناديق
+    const allPossibleItems = {
+        low: [ // للصناديق من 5$ لـ 25$
+            { n: 'Rusty Nail', v: 0.1, i: 'fa-screwdriver', prob: 60 },
+            { n: 'Old Coin', v: 1.5, i: 'fa-coins', prob: 25 },
+            { n: 'Basic Chip', v: 5.0, i: 'fa-microchip', prob: 10 },
+            { n: 'Silver Ring', v: 30.0, i: 'fa-ring', prob: 5 }
+        ],
+        high: [ // للصناديق من 40$ لـ 100$
+            { n: 'Broken Glass', v: 2.0, i: 'fa-wine-glass-empty', prob: 65 },
+            { n: 'Cyber Watch', v: 20.0, i: 'fa-stopwatch', prob: 20 },
+            { n: 'Gold Ingot', v: 150.0, i: 'fa-bars', prob: 10 },
+            { n: 'Bitcoin Core', v: 1500.0, i: 'fa-brands fa-bitcoin', prob: 4.5 },
+            { n: 'Lamborghini', v: 250000.0, i: 'fa-car-side', prob: 0.5 }
+        ]
+    };
 
-    // 1. توليد جوائز واقعية وكثيرة حسب سعر الصندوق
+    // اختيار القائمة المناسبة حسب السعر
+    const currentPool = (price >= 40) ? allPossibleItems.high : allPossibleItems.low;
     const track = document.getElementById('rewards-track');
-    const items = [
-        { n: 'Broken Key', p: 0.05, i: 'fa-key', r: false },
-        { n: 'Digital Dust', p: 0.15, i: 'fa-wind', r: false },
-        { n: 'Bronze Coin', p: 0.50, i: 'fa-coins', r: false },
-        { n: 'Silver Shard', p: 1.20, i: 'fa-gem', r: false },
-        { n: 'Crypto Card', p: 5.00, i: 'fa-credit-card', r: true },
-        { n: 'Gold Bar', p: 25.0, i: 'fa-bars', r: true },
-        { n: 'Diamond', p: 150.0, i: 'fa-gem', r: true },
-        { n: 'Bitcoin', p: 1000.0, i: 'fa-brands fa-bitcoin', r: true },
-        { n: 'Rolex Watch', p: 5000.0, i: 'fa-clock', r: true },
-        { n: 'Private Jet', p: 50000.0, i: 'fa-plane', r: true }
-    ];
 
-    // ملء الشريط بجوائز تعتمد على مضاعفات السعر
-    items.forEach(item => {
-        const value = (price * item.p).toFixed(2);
+    // عرض الجوائز في الشريط العلوي
+    currentPool.forEach((item, index) => {
         track.innerHTML += `
-            <div class="reward-item ${item.r ? 'rare' : ''}">
+            <div class="reward-item" id="item-${index}">
                 <i class="fa-solid ${item.i}"></i>
                 <span>${item.n}</span>
-                <b>$${value}</b>
+                <b>$${item.v.toFixed(2)}</b>
             </div>
         `;
     });
-
-    let currentWin = 0;
 
     function updateBalanceDisplay() {
         document.getElementById('balance-val').innerText = userBalance.toFixed(2);
         document.getElementById('main-btn').disabled = (userBalance < price);
     }
+    updateBalanceDisplay();
 
-    // 2. منطق الحظ السيء (واقعي جداً)
+    let wonItem = null;
+
     function startUnboxing() {
-        if (userBalance < price) return alert("Insufficient Balance!");
-
-        // خصم الرصيد (Firebase Update Here)
-        userBalance -= price;
+        if (userBalance < price) return;
+        
+        userBalance -= price; // سحب الرصيد عند الشراء
         updateBalanceDisplay();
 
         const btn = document.getElementById('main-btn');
@@ -181,51 +166,45 @@
 
         btn.style.display = 'none';
         box.classList.add('shake');
-        status.innerText = "Processing transaction on blockchain...";
+        status.innerText = "Generating secure hash...";
+
+        // منطق الاحتمالات (Probability Logic)
+        let rand = Math.random() * 100;
+        let cumulative = 0;
+        
+        for (let item of currentPool) {
+            cumulative += item.prob;
+            if (rand <= cumulative) {
+                wonItem = item;
+                break;
+            }
+        }
 
         setTimeout(() => {
             box.classList.remove('shake');
             box.classList.add('reveal');
             
-            const luck = Math.random() * 100; // من 0 لـ 100
-
-            if (luck > 99.9) { // 0.1% احتمال ربح خرافي
-                currentWin = price * 50;
-                box.innerHTML = '<i class="fa-solid fa-crown" style="color:#ffd700"></i>';
-                status.innerText = "UNBELIEVABLE! YOU HIT THE JACKPOT!";
-            } else if (luck > 95) { // 5% ربح جيد
-                currentWin = price * 1.5;
-                box.innerHTML = '<i class="fa-solid fa-gem" style="color:#00f2ff"></i>';
-                status.innerText = "Great! You found a rare item.";
-            } else if (luck > 70) { // 25% استرداد جزء بسيط
-                currentWin = price * 0.4;
-                box.innerHTML = '<i class="fa-solid fa-coins" style="color:#cd7f32"></i>';
-                status.innerText = "You found some loose change.";
-            } else { // 70% خسارة شبه كاملة
-                currentWin = price * 0.05;
-                box.innerHTML = '<i class="fa-solid fa-trash-can" style="color:#555"></i>';
-                status.innerText = "Ouch... You found digital scrap metal.";
-            }
-
-            document.getElementById('win-val').innerText = currentWin.toFixed(2);
+            // عرض الجائزة التي خرجت من الصندوق
+            box.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color: ${wonItem.v > price ? '#ffd700' : '#fff'}"></i>`;
+            status.innerText = `YOU GOT: ${wonItem.n}`;
+            
+            document.getElementById('win-val').innerText = wonItem.v.toFixed(2);
             document.getElementById('sell-btn').style.display = 'block';
-        }, 3000);
+        }, 2500);
     }
 
-    // 3. البيع وإعادة الرصيد
     function sellItem() {
-        // إضافة الربح (Firebase Update Here)
-        userBalance += currentWin;
+        userBalance += wonItem.v; // إضافة ثمن الجائزة للرصيد
         updateBalanceDisplay();
         
-        alert(`Item sold! $${currentWin.toFixed(2)} added to balance.`);
+        alert(`Sold for $${wonItem.v.toFixed(2)}`);
         
-        // إعادة تهيئة الصفحة للشراء مرة أخرى بدون مغادرة
+        // إعادة تصفير الحالة للشراء مرة أخرى
         document.getElementById('sell-btn').style.display = 'none';
         document.getElementById('main-btn').style.display = 'block';
         document.getElementById('box-visual').classList.remove('reveal');
         document.getElementById('box-visual').innerHTML = '<i class="fa-solid fa-box-open"></i>';
-        document.getElementById('status-text').innerText = "Ready for another round?";
+        document.getElementById('status-text').innerText = "";
     }
 </script>
 </body>
