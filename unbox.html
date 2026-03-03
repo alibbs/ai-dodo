@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA | Elite Unboxing</title>
+    <title>AMANA | Black Edition Unboxing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -22,72 +22,81 @@
             background-image: radial-gradient(circle at 50% -20%, #1a0b2e, #020205);
         }
 
+        /* --- Header --- */
         .top-bar {
             width: 100%; padding: 25px; display: flex; justify-content: space-between;
             align-items: center; box-sizing: border-box; position: fixed; top: 0; z-index: 100;
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
         }
-
         .balance-card {
             background: linear-gradient(90deg, rgba(255, 0, 184, 0.1), rgba(0, 242, 255, 0.1));
             padding: 10px 20px; border-radius: 40px; border: 1px solid var(--brand);
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
+        .balance-card span { color: var(--accent); font-weight: 900; font-family: 'Monaco', monospace; }
 
-        .balance-card span { color: var(--accent); font-weight: 900; }
-
+        /* --- Rewards Track --- */
         .slider-section {
             width: 100%; padding: 120px 0 40px; background: rgba(0,0,0,0.3);
-            border-bottom: 1px solid var(--border); overflow: hidden;
+            border-bottom: 1px solid var(--border); position: relative; overflow: hidden;
         }
-
         .track-container {
             display: flex; gap: 15px; padding: 0 25px; overflow-x: auto; scrollbar-width: none;
         }
         .track-container::-webkit-scrollbar { display: none; }
-
+        
         .item-node {
             min-width: 100px; height: 130px; background: var(--surface); border: 1px solid var(--border);
             border-radius: 24px; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; flex-shrink: 0;
+            justify-content: center; transition: 0.4s; flex-shrink: 0;
         }
         .item-node i { font-size: 30px; margin-bottom: 10px; }
-        .item-node.rare { border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        .item-node.rare { border-color: var(--gold); background: rgba(255, 215, 0, 0.05); }
+        .item-node b { font-size: 11px; color: var(--accent); }
 
+        /* --- Main Area --- */
         .main-stage {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; max-width: 450px; padding: 20px; text-align: center;
         }
-
-        .box-glow-zone { position: relative; margin-bottom: 30px; }
+        .box-glow-zone { position: relative; margin-bottom: 40px; }
         .glow-sphere {
-            position: absolute; width: 180px; height: 180px; background: var(--brand);
-            filter: blur(60px); opacity: 0.2; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; width: 200px; height: 200px; background: var(--brand);
+            filter: blur(80px); opacity: 0.2; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            transition: 1s;
         }
+        #box-icon { font-size: 140px; position: relative; z-index: 2; transition: 0.5s cubic-bezier(.5,0,.5,1.5); }
 
-        #box-icon { font-size: 120px; position: relative; z-index: 2; transition: 0.5s cubic-bezier(.5,0,.5,1.5); }
+        .info-panel h2 { font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .info-panel p { color: #555; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin: 10px 0 30px; }
 
+        /* --- Buttons --- */
         .master-btn {
             width: 100%; padding: 22px; border-radius: 24px; border: none;
-            font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s;
+            font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.4s;
             text-transform: uppercase;
         }
-        .btn-open { background: #fff; color: #000; }
-        .btn-open:disabled { background: #333; color: #666; cursor: not-allowed; }
-        .btn-sell { background: linear-gradient(45deg, #22c55e, #10b981); color: #fff; display: none; margin-top: 15px; }
+        .btn-open { background: #fff; color: #000; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+        .btn-open:disabled { background: #1a1a1a; color: #444; cursor: not-allowed; opacity: 0.5; }
+        .btn-sell { 
+            background: linear-gradient(45deg, #22c55e, #10b981); color: #fff;
+            display: none; margin-top: 20px; 
+        }
 
+        /* --- Animations --- */
         .shaking { animation: pro-shake 0.3s infinite; }
         @keyframes pro-shake { 
-            0% { transform: rotate(3deg); } 50% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); }
+            0% { transform: scale(1.1) rotate(2deg); }
+            50% { transform: scale(1.1) rotate(-2deg); }
         }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="mystery-box.html" style="color: #fff;"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="mystery-box.html" style="color: #fff; font-size: 20px;"><i class="fa-solid fa-arrow-left-long"></i></a>
         <div class="balance-card">
-            <i class="fa-solid fa-wallet"></i>
+            <i class="fa-solid fa-coins" style="color: var(--gold)"></i>
             <span id="balance-val">0.00</span>
         </div>
     </div>
@@ -101,15 +110,16 @@
             <div class="glow-sphere" id="sphere"></div>
             <i class="fa-solid fa-box-open" id="box-icon"></i>
         </div>
-        <h2 id="display-name">Loading...</h2>
-        <p id="status-msg" style="color: #666; margin-bottom: 20px;">READY TO UNBOX</p>
-
-        <button class="master-btn btn-open" id="main-btn" onclick="startUnboxing()">Open (<span id="display-price">$0</span>)</button>
-        <button class="master-btn btn-sell" id="sell-btn" onclick="sellItem()">Sell +$<span id="win-val">0</span></button>
+        <div class="info-panel">
+            <h2 id="display-name">...</h2>
+            <p id="status-msg">READY TO UNBOX</p>
+        </div>
+        <button class="master-btn btn-open" id="main-btn" onclick="startUnboxing()">Open For <span id="display-price">$0</span></button>
+        <button class="master-btn btn-sell" id="sell-btn" onclick="sellItem()">Claim & Sell +$<span id="win-val">0</span></button>
     </div>
 
 <script>
-    // ⚠️ تنبيه: ضع بيانات الـ Firebase الخاصة بمشروعك هنا لكي يعمل الرصيد
+    // 1. CONFIGURATION (ضع بياناتك هنا)
     const firebaseConfig = {
         apiKey: "AIzaSy...", 
         authDomain: "your-app.firebaseapp.com",
@@ -120,10 +130,11 @@
         appId: "..."
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-    const userId = "USER_123"; 
+    const userId = "USER_123"; // تأكد من مطابقة الـ ID
 
+    // 2. POOLS DATA
     const pools = {
         low: [
             { n: 'Rusty Key', v: 0.05, i: 'fa-key', p: 40 },
@@ -141,6 +152,7 @@
         ]
     };
 
+    // 3. INITIALIZATION
     const urlParams = new URLSearchParams(window.location.search);
     const price = parseFloat(urlParams.get('price')) || 5;
     const boxName = urlParams.get('name') || "Mystery Box";
@@ -148,13 +160,11 @@
     let userBalance = 0;
     let wonItem = null;
 
-    // تهيئة الواجهة
     document.getElementById('display-name').innerText = boxName;
     document.getElementById('display-price').innerText = `$${price}`;
     
-    const track = document.getElementById('rewards-track');
     currentPool.forEach(item => {
-        track.innerHTML += `
+        document.getElementById('rewards-track').innerHTML += `
             <div class="item-node ${item.p < 2 ? 'rare' : ''}">
                 <i class="fa-solid ${item.i}"></i>
                 <b>$${item.v}</b>
@@ -162,30 +172,31 @@
         `;
     });
 
-    // مراقبة الرصيد من Firebase
-    function initBalance() {
-        const balanceRef = database.ref('users/' + userId + '/balance');
-        balanceRef.on('value', (snapshot) => {
-            userBalance = snapshot.val() || 0;
+    // 4. SYNC BALANCE
+    function syncBalance() {
+        database.ref('users/' + userId + '/balance').on('value', (snapshot) => {
+            userBalance = parseFloat(snapshot.val()) || 0;
             document.getElementById('balance-val').innerText = userBalance.toFixed(2);
             document.getElementById('main-btn').disabled = (userBalance < price);
         });
     }
 
+    // 5. GAME FUNCTIONS
     function startUnboxing() {
         if (userBalance < price) return;
 
-        // خصم السعر
-        const newBalance = userBalance - price;
-        database.ref('users/' + userId).update({ balance: newBalance });
+        // خصم فوري من فايربيس
+        database.ref('users/' + userId).update({ balance: userBalance - price });
 
         const btn = document.getElementById('main-btn');
         const icon = document.getElementById('box-icon');
+        const sphere = document.getElementById('sphere');
+
         btn.style.display = 'none';
         icon.classList.add('shaking');
-        document.getElementById('status-msg').innerText = "UNBOXING...";
+        sphere.style.opacity = "0.6";
+        document.getElementById('status-msg').innerText = "GENERATING LUCK...";
 
-        // حساب الجائزة
         let rand = Math.random() * 100;
         let cumulative = 0;
         for (let item of currentPool) {
@@ -195,28 +206,28 @@
 
         setTimeout(() => {
             icon.classList.remove('shaking');
-            icon.style.transform = "scale(1.3)";
+            icon.style.transform = "scale(1.5)";
             let color = wonItem.v >= price ? "#ffd700" : "#00f2ff";
             icon.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color:${color}"></i>`;
+            sphere.style.background = color;
             
-            document.getElementById('status-msg').innerText = `YOU GOT: ${wonItem.n}`;
             document.getElementById('win-val').innerText = wonItem.v.toFixed(2);
             document.getElementById('sell-btn').style.display = 'block';
+            document.getElementById('status-msg').innerText = `UNLOCKED: ${wonItem.n}`;
         }, 2000);
     }
 
     function sellItem() {
-        const finalBalance = userBalance + wonItem.v;
-        database.ref('users/' + userId).update({ balance: finalBalance }).then(() => {
-            document.getElementById('sell-btn').style.display = 'none';
-            document.getElementById('main-btn').style.display = 'block';
-            document.getElementById('box-icon').style.transform = "scale(1)";
-            document.getElementById('box-icon').innerHTML = '<i class="fa-solid fa-box-open"></i>';
-            document.getElementById('status-msg').innerText = "SOLD!";
-        });
+        database.ref('users/' + userId).update({ balance: userBalance + wonItem.v });
+        document.getElementById('sell-btn').style.display = 'none';
+        document.getElementById('main-btn').style.display = 'block';
+        document.getElementById('box-icon').style.transform = "scale(1)";
+        document.getElementById('box-icon').innerHTML = '<i class="fa-solid fa-box-open"></i>';
+        document.getElementById('sphere').style.background = "var(--brand)";
+        document.getElementById('status-msg').innerText = "SOLD SUCCESSFULLY";
     }
 
-    initBalance();
+    window.onload = syncBalance;
 </script>
 </body>
 </html>
