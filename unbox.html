@@ -3,256 +3,250 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA | Elite Unboxing</title>
+    <title>AMANA | Black Edition Unboxing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
-            --bg: #03050a; 
-            --brand: #ff00b8; 
-            --accent: #00f2ff;
-            --gold: #ffb800;
-            --card: rgba(255, 255, 255, 0.03); 
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #020205; --brand: #ff00b8; --accent: #00f2ff; --gold: #ffd700;
+            --surface: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08);
         }
 
         body {
-            margin: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
-            background: radial-gradient(circle at center, #1a0b2e, #03050a);
+            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a0b2e, #020205);
         }
 
-        /* --- Top Bar --- */
+        /* --- شريط علوي فخم --- */
         .top-bar {
-            width: 100%; padding: 20px; display: flex; justify-content: space-between;
+            width: 100%; padding: 25px; display: flex; justify-content: space-between;
             align-items: center; box-sizing: border-box; position: fixed; top: 0; z-index: 100;
-            background: rgba(3, 5, 10, 0.8); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
         }
-        .user-balance {
-            background: rgba(255, 255, 255, 0.05); padding: 10px 18px;
-            border-radius: 30px; border: 1px solid var(--brand);
-            font-weight: 800; color: var(--accent); font-size: 14px;
-            box-shadow: 0 0 15px rgba(255, 0, 184, 0.2);
+        .balance-card {
+            background: linear-gradient(90deg, rgba(255, 0, 184, 0.1), rgba(0, 242, 255, 0.1));
+            padding: 10px 20px; border-radius: 40px; border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
+        .balance-card span { color: var(--accent); font-weight: 900; font-family: 'Monaco', monospace; }
 
-        /* --- Rewards Slider --- */
-        .rewards-slider-wrapper {
-            width: 100%; padding: 100px 0 30px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border);
-            position: relative;
+        /* --- شريط الجوائز (عرض سينمائي) --- */
+        .slider-section {
+            width: 100%; padding: 120px 0 40px; background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border); position: relative;
         }
-        .slider-title { 
-            position: absolute; top: 80px; left: 20px; 
-            font-size: 9px; color: var(--muted); letter-spacing: 2px; font-weight: 700;
-            opacity: 0.5;
+        .track-container {
+            display: flex; gap: 15px; padding: 0 25px; overflow-x: auto; scrollbar-width: none;
         }
+        .track-container::-webkit-scrollbar { display: none; }
         
-        .rewards-track {
-            display: flex; gap: 12px; padding: 10px 20px;
-            overflow-x: auto; -webkit-overflow-scrolling: touch;
+        .item-node {
+            min-width: 100px; height: 130px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 24px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; transition: 0.4s; position: relative;
         }
-        .rewards-track::-webkit-scrollbar { display: none; }
-        
-        .reward-item {
-            min-width: 90px; height: 110px; background: var(--card);
-            border-radius: 20px; border: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; font-size: 10px; text-align: center;
-            transition: 0.3s; backdrop-filter: blur(10px);
-        }
-        .reward-item i { font-size: 24px; margin-bottom: 8px; color: #fff; }
-        .reward-item b { color: var(--accent); margin-top: 4px; font-size: 11px; }
-        .reward-item.legendary { 
-            border-color: var(--gold); 
-            background: rgba(255, 184, 0, 0.05);
-            box-shadow: inset 0 0 15px rgba(255, 184, 0, 0.1);
-        }
-        .reward-item.legendary i { color: var(--gold); }
+        .item-node i { font-size: 30px; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
+        .item-node.rare { border-color: var(--gold); background: rgba(255, 215, 0, 0.05); }
+        .item-node b { font-size: 11px; color: var(--accent); }
 
-        /* --- Unboxing Area --- */
-        .unbox-container { 
-            text-align: center; width: 100%; max-width: 400px; 
-            padding: 40px 20px; margin-top: 30px; 
+        /* --- منطقة الفتح المركزية --- */
+        .main-stage {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; max-width: 450px; padding: 20px;
         }
 
-        #box-visual { 
-            font-size: 120px; color: var(--accent); 
-            margin-bottom: 25px; transition: 0.5s; 
-            filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
+        .box-glow-zone {
+            position: relative; margin-bottom: 40px;
         }
-        
-        .box-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; letter-spacing: -1px; }
-        .box-info { color: #666; margin-bottom: 40px; font-size: 14px; font-weight: 500; }
-        .box-info span { font-weight: 800; }
+        .glow-sphere {
+            position: absolute; width: 200px; height: 200px; background: var(--brand);
+            filter: blur(80px); opacity: 0.2; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            transition: 1s;
+        }
+        #box-icon { font-size: 140px; position: relative; z-index: 2; transition: 0.5s cubic-bezier(.5,0,.5,1.5); }
 
-        /* --- Buttons --- */
-        .action-btn {
-            width: 100%; padding: 20px; border-radius: 20px; border: none;
-            font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .buy-btn { 
-            background: linear-gradient(45deg, var(--brand), #b000ff); 
-            color: #fff; 
-            box-shadow: 0 10px 25px rgba(255, 0, 184, 0.3);
-        }
-        .buy-btn:active { transform: scale(0.95); }
-        .buy-btn:disabled { background: #1a1a1a; color: #444; box-shadow: none; cursor: not-allowed; }
+        .info-panel h2 { font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .info-panel p { color: #555; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin: 10px 0 30px; }
 
-        .sell-btn { 
-            background: #fff; color: #000; 
-            display: none; margin-top: 15px;
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        /* --- أزرار احترافية --- */
+        .btn-group { width: 100%; }
+        .master-btn {
+            width: 100%; padding: 22px; border-radius: 24px; border: none;
+            font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.4s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-open { 
+            background: #fff; color: #000;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+        .btn-open:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255,255,255,0.2); }
+        .btn-open:disabled { opacity: 0.2; cursor: wait; }
+
+        .btn-sell { 
+            background: linear-gradient(45deg, #22c55e, #10b981); color: #fff;
+            display: none; margin-top: 20px; animation: slideUp 0.5s forwards;
         }
 
         /* --- Animations --- */
-        .shake { animation: luxury-shake 0.4s infinite; }
-        @keyframes luxury-shake {
-            0% { transform: translate(0,0) rotate(0); }
-            25% { transform: translate(2px, 2px) rotate(3deg); }
-            50% { transform: translate(-2px, -2px) rotate(-3deg); }
-            75% { transform: translate(2px, -2px) rotate(3deg); }
-            100% { transform: translate(0,0) rotate(0); }
+        @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+        .shaking { animation: pro-shake 0.3s infinite; }
+        @keyframes pro-shake { 
+            0% { transform: scale(1.1) rotate(2deg); }
+            50% { transform: scale(1.1) rotate(-2deg); }
         }
-
-        .reveal { animation: luxury-reveal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes luxury-reveal {
-            from { transform: scale(0) rotate(-20deg); opacity: 0; filter: blur(10px); }
-            to { transform: scale(1) rotate(0); opacity: 1; filter: blur(0); }
-        }
-
-        #status-text { margin-top: 25px; color: #555; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-        .back-btn { color: #fff; transition: 0.3s; opacity: 0.7; }
-        .back-btn:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="mystery-box.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <div class="user-balance"><i class="fa-solid fa-wallet"></i> $<span id="balance-val">0.00</span></div>
+        <a href="mystery-box.html" style="color: #fff; font-size: 20px;"><i class="fa-solid fa-arrow-left-long"></i></a>
+        <div class="balance-card">
+            <i class="fa-solid fa-coins" style="color: var(--gold)"></i>
+            <span id="balance-val">LOADING...</span>
+        </div>
     </div>
 
-    <div class="rewards-slider-wrapper">
-        <span class="slider-title">CHEST CONTENTS</span>
-        <div class="rewards-track" id="rewards-track"></div>
+    <div class="slider-section">
+        <div class="track-container" id="rewards-track"></div>
     </div>
 
-    <div class="unbox-container">
-        <div id="box-visual"><i class="fa-solid fa-box-open"></i></div>
-        <div class="box-title" id="display-name">...</div>
-        <div class="box-info">Requirement: <span>$0.00</span></div>
+    <div class="main-stage">
+        <div class="box-glow-zone">
+            <div class="glow-sphere" id="sphere"></div>
+            <i class="fa-solid fa-box-open" id="box-icon"></i>
+        </div>
         
-        <button class="action-btn buy-btn" id="main-btn" onclick="startUnboxing()">OPEN CHEST</button>
-        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">SELL FOR $<span id="win-val">0</span></button>
+        <div class="info-panel">
+            <h2 id="display-name">...</h2>
+            <p>Exclusive Digital Asset Drop</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="master-btn btn-open" id="main-btn" onclick="startUnboxing()">Open For <span id="display-price">$0</span></button>
+            <button class="master-btn btn-sell" id="sell-btn" onclick="sellItem()">Claim & Sell +$<span id="win-val">0</span></button>
+        </div>
         
-        <p id="status-text"></p>
+        <p id="status-msg" style="margin-top: 20px; font-size: 12px; color: #444;"></p>
     </div>
 
 <script>
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const userId = "USER_123"; // استبدله بـ ID المستخدم الحقيقي من الـ Auth
+
+    // 2. State & Data
     const pools = {
         low: [
             { n: 'Rusty Key', v: 0.05, i: 'fa-key', p: 40 },
-            { n: 'Plastic Bag', v: 0.10, i: 'fa-bag-shopping', p: 30 },
-            { n: 'Old Battery', v: 0.50, i: 'fa-battery-quarter', p: 15 },
-            { n: 'Copper Wire', v: 2.00, i: 'fa-bolt', p: 8 },
-            { n: 'Silver Coin', v: 10.0, i: 'fa-coins', p: 4 },
-            { n: 'Gold Ring', v: 50.0, i: 'fa-ring', p: 2.5 },
-            { n: 'Rare NFT', v: 200.0, i: 'fa-image', p: 0.4 },
-            { n: 'JACKPOT', v: 1000.0, i: 'fa-crown', p: 0.1 }
+            { n: 'Old Battery', v: 0.50, i: 'fa-battery-quarter', p: 30 },
+            { n: 'Silver Coin', v: 8.0, i: 'fa-coins', p: 20 },
+            { n: 'Gold Ring', v: 45.0, i: 'fa-ring', p: 9.9 },
+            { n: 'JACKPOT', v: 888.0, i: 'fa-crown', p: 0.1 }
         ],
         high: [
-            { n: 'Digital Trash', v: 1.00, i: 'fa-trash', p: 45 },
-            { n: 'Empty Wallet', v: 2.50, i: 'fa-wallet', p: 25 },
-            { n: 'Used GPU', v: 15.0, i: 'fa-microchip', p: 15 },
-            { n: 'ETH Shard', v: 80.0, i: 'fa-brands fa-ethereum', p: 9 },
-            { n: 'Golden Bar', v: 400.0, i: 'fa-bars', p: 4 },
-            { n: 'Cyber Truck', v: 5000.0, i: 'fa-truck-monster', p: 1.5 },
-            { n: 'BTC Whole', v: 60000.0, i: 'fa-brands fa-bitcoin', p: 0.4 },
-            { n: 'THE ISLAND', v: 500000.0, i: 'fa-island-tropical', p: 0.1 }
+            { n: 'Used GPU', v: 10.0, i: 'fa-microchip', p: 50 },
+            { n: 'ETH Shard', v: 50.0, i: 'fa-brands fa-ethereum', p: 30 },
+            { n: 'Golden Bar', v: 300.0, i: 'fa-bars', p: 18 },
+            { n: 'Cyber Truck', v: 2500.0, i: 'fa-truck-monster', p: 1.5 },
+            { n: 'BTC Whole', v: 55000.0, i: 'fa-brands fa-bitcoin', p: 0.5 }
         ]
     };
 
-    let userBalance = 1000.00; 
     const urlParams = new URLSearchParams(window.location.search);
     const price = parseInt(urlParams.get('price')) || 0;
     const boxName = urlParams.get('name') || "Mystery Box";
     const currentPool = (price >= 40) ? pools.high : pools.low;
+    let userBalance = 0;
+    let wonItem = null;
 
+    // 3. Sync with Firebase
+    function syncBalance() {
+        database.ref('users/' + userId + '/balance').on('value', (snapshot) => {
+            userBalance = snapshot.val() || 0;
+            document.getElementById('balance-val').innerText = userBalance.toFixed(2);
+            document.getElementById('main-btn').disabled = (userBalance < price);
+        });
+    }
+
+    // Initialize UI
     document.getElementById('display-name').innerText = boxName;
-    document.querySelector('.box-info span').innerText = `$${price.toFixed(2)}`;
-    
-    const track = document.getElementById('rewards-track');
+    document.getElementById('display-price').innerText = `$${price}`;
     currentPool.forEach(item => {
-        track.innerHTML += `
-            <div class="reward-item ${item.p < 1 ? 'legendary' : ''}">
+        document.getElementById('rewards-track').innerHTML += `
+            <div class="item-node ${item.p < 2 ? 'rare' : ''}">
                 <i class="fa-solid ${item.i}"></i>
-                <span>${item.n}</span>
-                <b>$${item.v.toFixed(2)}</b>
+                <b>$${item.v}</b>
             </div>
         `;
     });
+    syncBalance();
 
-    function updateBalanceDisplay() {
-        document.getElementById('balance-val').innerText = userBalance.toFixed(2);
-        document.getElementById('main-btn').disabled = (userBalance < price);
-    }
-    updateBalanceDisplay();
-
-    let wonItem = null;
-
+    // 4. Game Logic (The Cruel Luck)
     function startUnboxing() {
         if (userBalance < price) return;
-        userBalance -= price;
-        updateBalanceDisplay();
+
+        // خصم الرصيد من فايربيس فوراً
+        const newBalance = userBalance - price;
+        database.ref('users/' + userId).update({ balance: newBalance });
 
         const btn = document.getElementById('main-btn');
-        const box = document.getElementById('box-visual');
-        const status = document.getElementById('status-text');
+        const icon = document.getElementById('box-icon');
+        const sphere = document.getElementById('sphere');
 
         btn.style.display = 'none';
-        box.classList.add('shake');
-        status.innerText = "Processing Transaction...";
+        icon.classList.add('shaking');
+        sphere.style.opacity = "0.6";
+        document.getElementById('status-msg').innerText = "GENERATING HASH...";
 
+        // حظ سيء جداً
         let rand = Math.random() * 100;
         let cumulative = 0;
         for (let item of currentPool) {
             cumulative += item.p;
-            if (rand <= cumulative) {
-                wonItem = item;
-                break;
-            }
+            if (rand <= cumulative) { wonItem = item; break; }
         }
-        if (!wonItem) wonItem = currentPool[0];
 
         setTimeout(() => {
-            box.classList.remove('shake');
-            box.classList.add('reveal');
+            icon.classList.remove('shaking');
+            icon.style.transform = "scale(1.5)";
             
-            let color = wonItem.v >= price ? '#ffb800' : '#00f2ff';
-            box.style.filter = `drop-shadow(0 0 30px ${color})`;
-            box.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color:${color}"></i>`;
+            let color = wonItem.v >= price ? "#ffd700" : "#00f2ff";
+            icon.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color:${color}"></i>`;
+            sphere.style.background = color;
             
-            status.innerText = `REVEALED: ${wonItem.n}`;
             document.getElementById('win-val').innerText = wonItem.v.toFixed(2);
             document.getElementById('sell-btn').style.display = 'block';
-        }, 2500);
+            document.getElementById('status-msg').innerText = `UNLOCKED: ${wonItem.n}`;
+        }, 2000);
     }
 
     function sellItem() {
-        userBalance += wonItem.v;
-        updateBalanceDisplay();
+        const finalBalance = userBalance + wonItem.v;
+        database.ref('users/' + userId).update({ balance: finalBalance });
+
         document.getElementById('sell-btn').style.display = 'none';
         document.getElementById('main-btn').style.display = 'block';
-        document.getElementById('box-visual').classList.remove('reveal');
-        document.getElementById('box-visual').style.filter = 'drop-shadow(0 0 30px rgba(0, 242, 255, 0.3))';
-        document.getElementById('box-visual').innerHTML = '<i class="fa-solid fa-box-open"></i>';
-        document.getElementById('status-text').innerText = "Asset Sold Successfully";
+        document.getElementById('box-icon').style.transform = "scale(1)";
+        document.getElementById('box-icon').innerHTML = '<i class="fa-solid fa-box-open"></i>';
+        document.getElementById('sphere').style.background = "var(--brand)";
+        document.getElementById('status-msg').innerText = "ASSET CONVERTED TO CASH";
     }
 </script>
 </body>
