@@ -8,100 +8,119 @@
     <style>
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --up: #00ff96; --down: #ff3b3b; --card: #11141d;
-            --border: rgba(255,255,255,0.12);
+            --up: #00ff96; --down: #ff3b3b; --card: #121624;
+            --border: rgba(255,255,255,0.08);
+            --bank-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Header & Assets */
-        .header { height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 2px solid var(--brand); flex-shrink: 0; }
-        .header h1 { font-size: 16px; font-weight: 900; }
+        /* Header & Styles */
+        .header { height: 65px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .header h1 { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
         .header h1 span { color: var(--brand); }
-        .bal-display { text-align: right; background: rgba(0,242,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.2); }
-        .bal-display b { color: var(--accent); font-size: 16px; }
+        .bal-display { background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(255,0,184,0.1)); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border); text-align: right; }
+        .bal-display b { color: var(--accent); font-size: 16px; font-family: 'Roboto Mono', monospace; }
 
-        .asset-bar { background: #000; padding: 8px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .asset-chip { padding: 6px 15px; background: #1a1d26; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid var(--border); }
-        .asset-chip.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
+        .asset-bar { background: #000; padding: 10px 15px; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+        .asset-chip { padding: 8px 16px; background: #1a1d26; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); white-space: nowrap; transition: 0.3s; }
+        .asset-chip.active { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 15px rgba(255,0,184,0.3); }
 
-        #chart-half { height: 35vh; background: #000; flex-shrink: 0; }
-        .pos-summary-bar { background: #0c0f1a; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; flex-shrink: 0; }
+        #chart-half { height: 32vh; background: #000; flex-shrink: 0; }
+        .pos-summary-bar { background: #0c0f1a; padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #888; }
 
-        /* Navigation & Tabs */
-        #manage-half { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 11px; text-transform: uppercase; }
-        .tab-btn.active { color: var(--brand); border-bottom: 3px solid var(--brand); }
+        #manage-half { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #080b16; }
+        .tabs-nav { display: flex; background: var(--card); padding: 5px; gap: 5px; flex-shrink: 0; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-weight: 700; font-size: 12px; border-radius: 8px; transition: 0.2s; }
+        .tab-btn.active { background: rgba(255,255,255,0.05); color: #fff; }
 
         .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; -webkit-overflow-scrolling: touch; }
         .tab-content.active { display: block; }
 
-        /* Trading UI */
-        .slider-box { margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
-        .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 8px; }
-        .slider-label b { color: #fff; font-size: 14px; }
-        .range-slider { width: 100%; -webkit-appearance: none; height: 6px; border-radius: 10px; background: #222; outline: none; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); border: 2px solid #fff; }
-
-        .btns-row { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-trade { flex: 1; padding: 16px; border: none; border-radius: 10px; font-weight: 900; color: #fff; font-size: 15px; }
-        .bg-up { background: var(--up); } .bg-down { background: var(--down); }
-
-        /* List Styling */
-        .pos-card, .hist-item { background: #161922; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); border-left: 4px solid var(--brand); }
-        .pnl-val { font-size: 22px; font-weight: 900; margin: 8px 0; }
+        /* Modern Banking Cards */
+        .pos-card, .hist-item { background: var(--card); border-radius: 16px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--bank-shadow); position: relative; overflow: hidden; }
+        .pos-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--brand); }
         
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; color: #888; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-        .info-grid b { color: #ddd; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .symbol-info { display: flex; flex-direction: column; }
+        .symbol-name { font-size: 16px; font-weight: 800; }
+        .side-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; width: fit-content; font-weight: 900; }
 
-        .close-pos-btn { width: 100%; background: #2a2d37; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 10px; }
+        .pnl-section { text-align: center; padding: 10px 0; }
+        .pnl-val { font-size: 28px; font-weight: 900; font-family: 'Roboto Mono', monospace; }
+        
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .grid-item { display: flex; flex-direction: column; gap: 4px; }
+        .grid-item label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .grid-item span { font-size: 13px; font-weight: 600; color: #ddd; }
+
+        /* Auto Close UI */
+        .auto-close-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
+        .auto-close-box label { font-size: 10px; color: var(--accent); display: block; margin-bottom: 8px; font-weight: 700; }
+        .ac-input-group { display: flex; gap: 8px; }
+        .ac-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; font-size: 12px; text-align: center; }
+        .ac-btn { background: var(--accent); color: #000; border: none; padding: 0 15px; border-radius: 6px; font-weight: 800; font-size: 10px; }
+
+        .close-pos-btn { width: 100%; background: #ff3b3b20; color: #ff3b3b; border: 1px solid #ff3b3b40; padding: 14px; border-radius: 12px; font-weight: 800; margin-top: 15px; transition: 0.2s; }
+        
+        /* Execution UI */
+        .slider-box { margin-bottom: 15px; background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); }
+        .range-slider { width: 100%; -webkit-appearance: none; height: 4px; background: #333; border-radius: 2px; }
+        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); border: 4px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        
+        .btn-trade { flex: 1; padding: 18px; border: none; border-radius: 14px; font-weight: 900; color: #fff; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
-        <div class="bal-display"><small style="font-size:9px;color:#888;">BALANCE</small><b id="walletBal">0.00</b></div>
+        <div class="bal-display"><small style="display:block;font-size:8px;color:#888;">EQUITY</small><b id="walletBal">0.00</b></div>
     </header>
 
     <div class="asset-bar" id="assetBar">
-        <div class="asset-chip active" onclick="changeAsset('BTCUSDT')">BTC</div>
-        <div class="asset-chip" onclick="changeAsset('ETHUSDT')">ETH</div>
-        <div class="asset-chip" onclick="changeAsset('SOLUSDT')">SOL</div>
-        <div class="asset-chip" onclick="changeAsset('BNBUSDT')">BNB</div>
-        <div class="asset-chip" onclick="changeAsset('XRPUSDT')">XRP</div>
+        <div class="asset-chip active" onclick="changeAsset('BTCUSDT')">BTC / USDT</div>
+        <div class="asset-chip" onclick="changeAsset('ETHUSDT')">ETH / USDT</div>
+        <div class="asset-chip" onclick="changeAsset('SOLUSDT')">SOL / USDT</div>
+        <div class="asset-chip" onclick="changeAsset('XRPUSDT')">XRP / USDT</div>
     </div>
 
     <section id="chart-half"><div id="tv_widget" style="height: 100%;"></div></section>
 
     <div class="pos-summary-bar">
-        <span>Positions: <b id="pos-count" style="color:var(--brand)">0</b></span>
-        <span>Total PNL: <b id="total-pnl">0.00 USDT</b></span>
+        <span>Active Portfolio: <b id="pos-count" style="color:var(--brand)">0</b></span>
+        <span>Unrealized PNL: <b id="total-pnl">0.00</b></span>
     </div>
 
     <section id="manage-half">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('trade', this)">Trade</button>
-            <button class="tab-btn" onclick="switchTab('positions', this)">Orders</button>
-            <button class="tab-btn" onclick="switchTab('hist', this)">History</button>
+            <button class="tab-btn active" onclick="switchTab('trade', this)">Execution</button>
+            <button class="tab-btn" onclick="switchTab('positions', this)">Positions</button>
+            <button class="tab-btn" onclick="switchTab('hist', this)">Activity</button>
         </div>
 
         <div id="tab-trade" class="tab-content active">
             <div class="slider-box">
-                <div class="slider-label">Margin Amount: <b id="amt-val">0.00 USDT</b></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-size:12px;color:#666;">Order Size</span>
+                    <b id="amt-val" style="color:var(--accent)">0.00 USDT</b>
+                </div>
                 <input type="range" min="0" max="100" value="0" class="range-slider" id="amt-slider">
             </div>
             <div class="slider-box">
-                <div class="slider-label">Leverage: <b id="lev-val">10x</b></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-size:12px;color:#666;">Leverage</span>
+                    <b id="lev-val">10x</b>
+                </div>
                 <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-slider">
             </div>
-            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 10px;">
-                Open Fee (2.5%): <span id="fee-est" style="color:var(--down)">0.00</span> USDT
+            <div style="text-align:center; font-size:10px; color:#555; margin-bottom:15px;">
+                Estimated Fee: <span id="fee-est">0.00</span> USDT
             </div>
             <div class="btns-row">
-                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SELL / SHORT</button>
-                <button class="btn-trade bg-up" onclick="executeTrade('LONG')">BUY / LONG</button>
+                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')"><i class="fa fa-arrow-down"></i> SELL SHORT</button>
+                <div style="width:10px;"></div>
+                <button class="btn-trade bg-up" onclick="executeTrade('LONG')"><i class="fa fa-arrow-up"></i> BUY LONG</button>
             </div>
         </div>
 
@@ -136,7 +155,7 @@
                 onSnapshot(doc(db, "users", uID), (s) => {
                     const data = s.data() || {};
                     uBal = data.balance || 0;
-                    document.getElementById('walletBal').textContent = uBal.toLocaleString();
+                    document.getElementById('walletBal').textContent = uBal.toLocaleString(undefined, {minimumFractionDigits:2});
                     positions = data.activePositions || [];
                     renderPositions();
                     renderHistory(data.history || []);
@@ -156,7 +175,7 @@
         window.changeAsset = (newSym) => {
             symbol = newSym;
             document.querySelectorAll('.asset-chip').forEach(c => c.classList.remove('active'));
-            if(event) event.target.classList.add('active');
+            event.target.classList.add('active');
             new window.TradingView.widget({
                 "autosize": true, "symbol": "BINANCE:"+symbol, "interval": "1", "theme": "dark",
                 "container_id": "tv_widget", "hide_top_toolbar": true, "backgroundColor": "#060914"
@@ -168,6 +187,7 @@
             const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${sym.toLowerCase()}@ticker`);
             ws.onmessage = (e) => {
                 prices[sym] = parseFloat(JSON.parse(e.data).c);
+                checkAutoClose();
                 updateLiveUI();
             };
         }
@@ -177,12 +197,30 @@
             const amt = (amtSlider.value / 100) * uBal;
             const lev = parseInt(levSlider.value);
             const openFee = amt * 0.025;
-            if(amt < 5) return alert("Min 5 USDT");
-            if(amt + openFee > uBal) return alert("Insufficient Balance");
-            const newPos = { id: Date.now(), symbol, side, entry: prices[symbol], amt, lev, openFee, liq: side === 'LONG' ? prices[symbol]*(1-(0.8/lev)) : prices[symbol]*(1+(0.8/lev)) };
+            if(amt < 5) return alert("Min. Order 5 USDT");
+            const newPos = { id: Date.now(), symbol, side, entry: prices[symbol], amt, lev, openFee, autoClose: null, liq: side === 'LONG' ? prices[symbol]*(1-(0.8/lev)) : prices[symbol]*(1+(0.8/lev)) };
             await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + openFee)), activePositions: arrayUnion(newPos) });
             switchTab('positions', document.querySelectorAll('.tab-btn')[1]);
         };
+
+        window.setAutoClose = async (posId) => {
+            const price = document.getElementById(`ac-input-${posId}`).value;
+            if(!price) return alert("Enter Target Price");
+            const pos = positions.find(p => p.id === posId);
+            const updatedPositions = positions.map(p => p.id === posId ? {...p, autoClose: parseFloat(price)} : p);
+            await updateDoc(doc(db, "users", uID), { activePositions: updatedPositions });
+            alert("Auto-Close set at " + price);
+        };
+
+        function checkAutoClose() {
+            positions.forEach(pos => {
+                if(pos.autoClose) {
+                    const curPrice = prices[pos.symbol];
+                    const triggered = pos.side === 'LONG' ? (curPrice >= pos.autoClose) : (curPrice <= pos.autoClose);
+                    if(triggered) closePosition(pos.id);
+                }
+            });
+        }
 
         function updateLiveUI() {
             let totalPnl = 0;
@@ -197,34 +235,46 @@
                     pEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + " USDT";
                     pEl.style.color = pnl >= 0 ? 'var(--up)' : 'var(--down)';
                     let roe = (diff / pos.entry) * 100 * pos.lev;
-                    rEl.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "% ROE";
+                    rEl.textContent = (roe >= 0 ? '+' : '') + roe.toFixed(2) + "%";
                     rEl.style.color = roe >= 0 ? 'var(--up)' : 'var(--down)';
                 }
             });
-            document.getElementById('total-pnl').textContent = totalPnl.toFixed(2) + " USDT";
+            document.getElementById('total-pnl').textContent = totalPnl.toFixed(2);
             document.getElementById('total-pnl').style.color = totalPnl >= 0 ? 'var(--up)' : 'var(--down)';
             document.getElementById('pos-count').textContent = positions.length;
         }
 
         function renderPositions() {
             const container = document.getElementById('positions-list');
-            if(positions.length === 0) { container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No Active Orders</div>`; return; }
+            if(positions.length === 0) { container.innerHTML = `<div style="text-align:center; color:#444; margin-top:40px;">No Active Positions</div>`; return; }
             container.innerHTML = positions.map(pos => `
                 <div class="pos-card">
-                    <div style="display:flex; justify-content:space-between; font-size:12px;">
-                        <b>${pos.symbol} <span style="color:${pos.side==='LONG'?'var(--up)':'var(--down)'}">${pos.side} ${pos.lev}x</span></b>
-                        <span>Entry: ${pos.entry.toFixed(2)}</span>
+                    <div class="card-header">
+                        <div class="symbol-info">
+                            <span class="symbol-name">${pos.symbol}</span>
+                            <span class="side-tag" style="background:${pos.side==='LONG'?'var(--up)':'var(--down)'}33; color:${pos.side==='LONG'?'var(--up)':'var(--down)'}">${pos.side} ${pos.lev}x</span>
+                        </div>
+                        <div style="text-align:right">
+                            <span id="roe-${pos.id}" style="font-weight:900; font-size:14px;">0.00%</span>
+                        </div>
                     </div>
-                    <div class="pnl-val" id="pnl-${pos.id}">...</div>
-                    <div style="display:flex; justify-content:space-between; font-size:12px;">
-                        <span id="roe-${pos.id}">0.00%</span>
-                        <span style="color:#666">Liq Price: <span style="color:var(--down)">${pos.liq.toFixed(2)}</span></span>
+                    <div class="pnl-section">
+                        <div class="pnl-val" id="pnl-${pos.id}">0.00</div>
                     </div>
-                    <div class="info-grid">
-                        <span>Margin: <b>${pos.amt.toFixed(2)}</b></span>
-                        <span>Open Fee: <b style="color:var(--down)">${pos.openFee.toFixed(2)}</b></span>
+                    <div class="bank-grid">
+                        <div class="grid-item"><label>Entry Price</label><span>${pos.entry.toFixed(2)}</span></div>
+                        <div class="grid-item"><label>Margin</label><span>${pos.amt.toFixed(2)} USDT</span></div>
+                        <div class="grid-item"><label>Liq. Price</label><span style="color:var(--down)">${pos.liq.toFixed(2)}</span></div>
+                        <div class="grid-item"><label>Open Fee</label><span>${pos.openFee.toFixed(2)}</span></div>
                     </div>
-                    <button class="close-pos-btn" onclick="closePosition(${pos.id})">CLOSE (2% Exit Fee)</button>
+                    <div class="auto-close-box">
+                        <label><i class="fa fa-robot"></i> AI AUTO-CLOSE TARGET</label>
+                        <div class="ac-input-group">
+                            <input type="number" step="any" class="ac-input" id="ac-input-${pos.id}" placeholder="Target Price" value="${pos.autoClose || ''}">
+                            <button class="ac-btn" onclick="setAutoClose(${pos.id})">SET</button>
+                        </div>
+                    </div>
+                    <button class="close-pos-btn" onclick="closePosition(${pos.id})">CLOSE POSITION (2% FEE)</button>
                 </div>
             `).join('');
         }
@@ -233,33 +283,24 @@
             const pos = positions.find(p => p.id === posId);
             if(!pos) return;
             const curPrice = prices[pos.symbol] || pos.entry;
-            let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
-            let pnl = ((diff / pos.entry) * pos.lev) * pos.amt;
-            const exitFee = pos.amt * 0.02; // 2% Exit Fee
-            const totalFees = pos.openFee + exitFee;
-            const finalPnl = pnl - exitFee; 
-
-            const record = { 
-                symbol: pos.symbol, side: pos.side, pnl: finalPnl.toFixed(2), 
-                entry: pos.entry.toFixed(2), exit: curPrice.toFixed(2),
-                lev: pos.lev, fees: totalFees.toFixed(2), time: new Date().toLocaleString() 
-            };
-            await updateDoc(doc(db, "users", uID), { balance: increment(pos.amt + finalPnl), activePositions: arrayRemove(pos), history: arrayUnion(record) });
+            let pnl = (((pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice)) / pos.entry) * pos.lev) * pos.amt;
+            const exitFee = pos.amt * 0.02;
+            const record = { symbol: pos.symbol, side: pos.side, pnl: (pnl - exitFee).toFixed(2), entry: pos.entry.toFixed(2), exit: curPrice.toFixed(2), lev: pos.lev, fees: (pos.openFee + exitFee).toFixed(2), time: new Date().toLocaleString() };
+            await updateDoc(doc(db, "users", uID), { balance: increment(pos.amt + pnl - exitFee), activePositions: arrayRemove(pos), history: arrayUnion(record) });
         };
 
         function renderHistory(history) {
             const container = document.getElementById('history-list');
-            container.innerHTML = [...history].reverse().slice(0,30).map(h => `
-                <div class="hist-item" style="border-left-color: ${parseFloat(h.pnl)>=0?'var(--up)':'var(--down)'}">
-                    <div style="display:flex; justify-content:space-between; font-weight:800;">
-                        <span>${h.symbol} ${h.side} ${h.lev}x</span>
-                        <span style="color:${parseFloat(h.pnl)>=0?'var(--up)':'var(--down)'}">${parseFloat(h.pnl)>=0?'+':''}${h.pnl} USDT</span>
+            container.innerHTML = [...history].reverse().slice(0,20).map(h => `
+                <div class="hist-item">
+                    <div class="card-header" style="margin-bottom:5px;">
+                        <span style="font-weight:800; font-size:14px;">${h.symbol}</span>
+                        <span style="color:${parseFloat(h.pnl)>=0?'var(--up)':'var(--down)'}; font-weight:900;">${parseFloat(h.pnl)>=0?'+':''}${h.pnl} USDT</span>
                     </div>
-                    <div class="info-grid">
-                        <span>Entry: <b>${h.entry}</b></span>
-                        <span>Exit: <b>${h.exit}</b></span>
-                        <span>Total Fees: <b style="color:var(--down)">${h.fees}</b></span>
-                        <span>Time: <b>${h.time.split(',')[1]}</b></span>
+                    <div style="font-size:10px; color:#555; margin-bottom:10px;">${h.time}</div>
+                    <div class="bank-grid" style="margin:0; border-bottom:none; padding-bottom:0;">
+                        <div class="grid-item"><label>Entry/Exit</label><span>${h.entry} → ${h.exit}</span></div>
+                        <div class="grid-item" style="text-align:right;"><label>Total Fees</label><span style="color:var(--down)">${h.fees} USDT</span></div>
                     </div>
                 </div>
             `).join('');
@@ -271,7 +312,6 @@
             btn.classList.add('active');
             document.getElementById('tab-' + t).classList.add('active');
         };
-        changeAsset('BTCUSDT');
     </script>
 </body>
 </html>
