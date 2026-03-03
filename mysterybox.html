@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>AMANA | Mystery Box</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --card: #11141d; --border: rgba(255,255,255,0.1);
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: #fff; text-align: center;
+            overflow: hidden;
+        }
+
+        .header { padding: 30px 20px; }
+        .header h1 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: 2px; }
+        .header span { color: var(--brand); text-shadow: 0 0 10px var(--brand); }
+
+        /* --- Box Area --- */
+        .box-container {
+            height: 350px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
+        }
+
+        .box-img {
+            width: 180px; cursor: pointer; transition: 0.3s;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.3));
+        }
+
+        .box-img.shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0) rotate(-5deg); }
+            20%, 80% { transform: translate3d(2px, 0, 0) rotate(5deg); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0) rotate(-10deg); }
+            40%, 60% { transform: translate3d(4px, 0, 0) rotate(10deg); }
+        }
+
+        /* --- Result Pop-up --- */
+        #result {
+            display: none; margin-top: 20px; padding: 20px;
+            background: rgba(255,255,255,0.05); border-radius: 20px;
+            border: 1px solid var(--accent); animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        .reward-title { color: var(--accent); font-weight: 800; font-size: 18px; display: block; }
+        .reward-val { font-size: 32px; font-weight: 900; margin: 10px 0; }
+
+        /* --- Controls --- */
+        .controls { padding: 20px; position: fixed; bottom: 100px; width: 100%; box-sizing: border-box; }
+        .price-tag { color: var(--text-gray); font-size: 14px; margin-bottom: 10px; display: block; }
+        .buy-box-btn {
+            width: 80%; max-width: 300px; background: linear-gradient(45deg, var(--brand), #ff54d1);
+            color: #fff; border: none; padding: 15px; border-radius: 15px;
+            font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 0, 184, 0.3);
+        }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; height: 80px;
+            background: rgba(17, 20, 29, 0.95); display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid var(--border);
+        }
+        .nav-item { color: #444; font-size: 22px; text-decoration: none; }
+        .nav-item.active { color: var(--brand); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>MYSTERY <span>BOX</span></h1>
+        <p style="color: #888; font-size: 12px;">Test your luck & win Elite Rewards</p>
+    </div>
+
+    <div class="box-container">
+        <img src="https://cdn-icons-png.flaticon.com/512/3043/3043868.png" id="mainBox" class="box-img" alt="Box">
+        
+        <div id="result">
+            <span class="reward-title">CONGRATULATIONS!</span>
+            <div class="reward-val" id="rewardText">ALFA $3.64 CARD</div>
+            <p style="font-size: 11px; color: #aaa;">Check your profile for the claim code.</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <span class="price-tag">Cost: <b style="color: #fff;">$5.00 + $1.00 Fee</b></span>
+        <button class="buy-box-btn" onclick="openBox()">OPEN BOX NOW</button>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i></a>
+        <a href="marketplace.html" class="nav-item"><i class="fa-solid fa-bag-shopping"></i></a>
+        <a href="mystery-box.html" class="nav-item active"><i class="fa-solid fa-box-open"></i></a>
+        <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i></a>
+    </nav>
+
+    <script>
+        const rewards = [
+            "ALFA $3.64 Card",
+            "TOUCH $3.64 Card",
+            "60 PUBG UC",
+            "$10 Trading Credit",
+            "Mystery Signal Bot (1 Day)",
+            "$1.00 Cashback",
+            "325 PUBG UC",
+            "Jawaker 10K Tokens"
+        ];
+
+        function openBox() {
+            const box = document.getElementById('mainBox');
+            const resultDiv = document.getElementById('result');
+            const rewardText = document.getElementById('rewardText');
+
+            // 1. Shake Box
+            box.classList.add('shake');
+            resultDiv.style.display = 'none';
+
+            // 2. Simulate Delay (فتح الصندوق)
+            setTimeout(() => {
+                box.classList.remove('shake');
+                
+                // اختر جائزة عشوائية
+                const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+                rewardText.innerText = randomReward;
+
+                // إظهار النتيجة
+                resultDiv.style.display = 'block';
+                
+                // تغيير صورة الصندوق لصندوق مفتوح (اختياري)
+                box.style.opacity = "0.5";
+                
+                alert(`Success! You won: ${randomReward}`);
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
