@@ -7,54 +7,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --bg: #060914;
-            --brand: #ff00b8;
-            --accent: #00f2ff;
-            --card: #11141d;
-            --border: rgba(255,255,255,0.1);
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --card: #11141d; --border: rgba(255,255,255,0.1);
             --text-gray: #8e8e93;
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff;
-            -webkit-user-select: none;
+            margin: 0; padding: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: #fff; -webkit-user-select: none;
         }
 
         .store-header {
-            padding: 20px;
-            background: linear-gradient(to bottom, #11141d, var(--bg));
-            border-bottom: 1px solid var(--border);
-            text-align: center;
+            padding: 20px; background: linear-gradient(to bottom, #11141d, var(--bg));
+            border-bottom: 1px solid var(--border); text-align: center;
         }
 
         .store-header h1 { font-size: 22px; font-weight: 900; margin: 0; letter-spacing: 1px; }
         .store-header h1 span { color: var(--brand); text-shadow: 0 0 15px rgba(255, 0, 184, 0.5); }
-        .store-header p { font-size: 12px; color: var(--text-gray); margin-top: 5px; }
+        .store-header p { font-size: 11px; color: var(--text-gray); margin-top: 5px; text-transform: uppercase; }
 
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; }
         .cat-chip { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 11px; white-space: nowrap; color: var(--text-gray); }
         .cat-chip.active { background: rgba(255, 0, 184, 0.1); border-color: var(--brand); color: #fff; }
 
-        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; padding-bottom: 100px; }
-        .item-card { background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.2s; }
-        .item-card:active { transform: scale(0.96); }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 100px; }
+        .item-card { background: var(--card); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
 
-        .item-img { width: 100%; height: 130px; background: #1a1d26; display: flex; align-items: center; justify-content: center; position: relative; }
-        .item-img img { max-width: 70%; max-height: 70%; object-fit: contain; }
+        .item-img { width: 100%; height: 110px; background: #1a1d26; display: flex; align-items: center; justify-content: center; position: relative; }
+        .item-img img { max-width: 60%; max-height: 60%; object-fit: contain; }
 
-        .badge { position: absolute; top: 10px; left: 10px; background: var(--brand); font-size: 8px; padding: 3px 7px; border-radius: 5px; font-weight: 900; }
+        .badge { position: absolute; top: 8px; left: 8px; background: var(--brand); font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
 
-        .item-info { padding: 12px; }
-        .item-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; display: block; height: 32px; overflow: hidden; }
-        .price-tag { display: flex; align-items: center; gap: 5px; }
-        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); }
-        .price-old { font-size: 11px; color: #555; text-decoration: line-through; }
+        .item-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
+        .item-name { font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #fff; display: block; }
 
-        .buy-btn { width: 100%; background: #fff; color: #000; border: none; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: 10px; }
+        .variant-select {
+            width: 100%; background: #060914; color: #fff; border: 1px solid var(--border);
+            padding: 8px; border-radius: 8px; font-size: 11px; margin-bottom: 10px; outline: none;
+        }
 
-        .bottom-bar { position: fixed; bottom: 0; width: 100%; background: rgba(17, 20, 29, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--border); z-index: 100; }
+        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); display: block; margin-bottom: 8px; }
+
+        .buy-btn { 
+            width: 100%; background: #fff; color: #000; border: none; padding: 10px; 
+            border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;
+        }
+
+        .bottom-bar { 
+            position: fixed; bottom: 0; width: 100%; background: rgba(17, 20, 29, 0.95); 
+            backdrop-filter: blur(10px); display: flex; justify-content: space-around; 
+            padding: 15px 0; border-top: 1px solid var(--border); z-index: 100; 
+        }
         .nav-item { color: var(--text-gray); font-size: 20px; }
         .nav-item.active { color: var(--brand); }
     </style>
@@ -63,36 +66,66 @@
 
     <header class="store-header">
         <h1>AMANA <span>MARKET</span></h1>
-        <p>Top Rated Gift Cards in Lebanon</p>
+        <p>Lebanon's Elite Digital Hub</p>
     </header>
 
     <div class="categories">
         <div class="cat-chip active">All Cards</div>
         <div class="cat-chip">Gaming</div>
-        <div class="cat-chip">Shopping</div>
-        <div class="cat-chip">Subway</div>
+        <div class="cat-chip">Mobile Topup</div>
+        <div class="cat-chip">Gift Cards</div>
     </div>
 
     <div class="market-grid" id="marketGrid"></div>
 
     <nav class="bottom-bar">
-        <div class="nav-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="nav-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></div>
         <div class="nav-item active"><i class="fa-solid fa-bag-shopping"></i></div>
         <div class="nav-item"><i class="fa-solid fa-user"></i></div>
     </nav>
 
     <script>
-        // داتا البطاقات الأكثر طلباً في لبنان (الأسعار أساسية، الكود يزيد 1$ تلقائياً)
         const products = [
-            { id: 1, name: "Razer Gold $10 (Global)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Razer_Gold_Logo.svg/1200px-Razer_Gold_Logo.svg.png", tag: "MOST POPULAR" },
-            { id: 2, name: "iTunes $5 (US Store)", basePrice: 5.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ITunes_logo.svg/1200px-ITunes_logo.svg.png", tag: "TOP SALE" },
-            { id: 3, name: "PlayStation $10 (US)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/PlayStation_logo.svg/1200px-PlayStation_logo.svg.png", tag: "GAMING" },
-            { id: 4, name: "Google Play $10 (US)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Google_Play_2022_logo.svg/1024px-Google_Play_2022_logo.svg.png", tag: "HOT" },
-            { id: 5, name: "Steam Wallet $5 (Global)", basePrice: 5.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png", tag: "PC ELITE" },
-            { id: 6, name: "Xbox $10 Gift Card", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Xbox_one_logo.svg/1024px-Xbox_one_logo.svg.png", tag: "PRO" },
-            { id: 7, name: "Netflix $25 Premium", basePrice: 25.00, img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", tag: "TRENDING" },
-            { id: 8, name: "Amazon $10 Card", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png", tag: "SHOPPING" }
+            { 
+                id: 1, name: "PUBG Mobile UC", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pubg_mobile_logo.png", tag: "HOT",
+                variants: [ {n: "60 UC", p: 1.00}, {n: "325 UC", p: 5.00}, {n: "660 UC", p: 10.00} ]
+            },
+            { 
+                id: 2, name: "Alfa Recharge", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", tag: "LEBANON",
+                variants: [ {n: "$3.64 Credit", p: 4.00}, {n: "$17.18 Credit", p: 18.00}, {n: "$22.73 Credit", p: 24.00} ]
+            },
+            { 
+                id: 3, name: "Touch Recharge", img: "https://www.touch.com.lb/touch/images/touch-logo.png", tag: "LEBANON",
+                variants: [ {n: "$3.64 Credit", p: 4.00}, {n: "$17.18 Credit", p: 18.00} ]
+            },
+            { 
+                id: 4, name: "Free Fire Diamonds", img: "https://upload.wikimedia.org/wikipedia/en/a/a1/Free_Fire_Logo.png", tag: "POPULAR",
+                variants: [ {n: "100 Diamonds", p: 1.00}, {n: "210 Diamonds", p: 2.00}, {n: "530 Diamonds", p: 5.00} ]
+            },
+            { 
+                id: 5, name: "Jawaker Tokens", img: "https://www.jawaker.com/assets/jawaker-logo.png", tag: "ARABIC",
+                variants: [ {n: "10,000 Tokens", p: 1.50}, {n: "50,000 Tokens", p: 6.00} ]
+            },
+            { 
+                id: 6, name: "Clash of Clans", img: "https://upload.wikimedia.org/wikipedia/en/7/70/Clash_of_Clans_logo.png", tag: "CLASSIC",
+                variants: [ {n: "Gold Pass", p: 7.00}, {n: "500 Gems", p: 5.00} ]
+            },
+            { 
+                id: 7, name: "Razer Gold", img: "https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Razer_Gold_Logo.svg/1200px-Razer_Gold_Logo.svg.png", tag: "GLOBAL",
+                variants: [ {n: "$5 Card", p: 5.00}, {n: "$10 Card", p: 10.00}, {n: "$20 Card", p: 20.00} ]
+            },
+            { 
+                id: 8, name: "iTunes Card", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ITunes_logo.svg/1200px-ITunes_logo.svg.png", tag: "US STORE",
+                variants: [ {n: "$5 Card", p: 5.00}, {n: "$10 Card", p: 10.00} ]
+            }
         ];
+
+        function updatePrice(productId) {
+            const select = document.getElementById(`select-${productId}`);
+            const priceSpan = document.getElementById(`price-${productId}`);
+            const selectedPrice = parseFloat(select.value) + 1; // إضافة 1 دولار
+            priceSpan.innerText = `$${selectedPrice.toFixed(2)}`;
+        }
 
         function loadMarketplace() {
             const grid = document.getElementById('marketGrid');
@@ -104,18 +137,23 @@
                     </div>
                     <div class="item-info">
                         <span class="item-name">${item.name}</span>
-                        <div class="price-tag">
-                            <span class="price-now">$${(item.basePrice + 1).toFixed(2)}</span>
-                            <span class="price-old">$${(item.basePrice + 3).toFixed(2)}</span>
-                        </div>
-                        <button class="buy-btn" onclick="buyItem('${item.name}', ${item.basePrice + 1})">PURCHASE CARD</button>
+                        <select class="variant-select" id="select-${item.id}" onchange="updatePrice(${item.id})">
+                            ${item.variants.map(v => `<option value="${v.p}">${v.n}</option>`).join('')}
+                        </select>
+                        <span class="price-now" id="price-${item.id}">$${(item.variants[0].p + 1).toFixed(2)}</span>
+                        <button class="buy-btn" onclick="buyItem(${item.id})">BUY NOW</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.buyItem = (name, price) => {
-            alert(`Order Placed: ${name}\nTotal: $${price.toFixed(2)}\n\nThe code will be sent to your Profile.`);
+        window.buyItem = (productId) => {
+            const product = products.find(p => p.id === productId);
+            const select = document.getElementById(`select-${productId}`);
+            const selectedVariant = select.options[select.selectedIndex].text;
+            const finalPrice = parseFloat(select.value) + 1;
+
+            alert(`Confirm Order:\n${product.name} - ${selectedVariant}\nPrice: $${finalPrice.toFixed(2)}\n\nOrder will be processed in 5-15 mins.`);
         };
 
         loadMarketplace();
