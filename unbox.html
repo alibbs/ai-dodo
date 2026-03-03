@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AMANA | Unboxing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+        }
+
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: #fff;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; overflow: hidden;
+            background: radial-gradient(circle at center, #1a0b2e, #060914);
+        }
+
+        .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 20px; }
+        
+        #box-visual {
+            font-size: 100px; color: var(--accent);
+            margin-bottom: 30px; transition: 0.5s;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.4));
+        }
+
+        .box-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .box-info { color: #888; font-size: 16px; margin-bottom: 40px; }
+        .box-info span { color: #fff; font-weight: bold; }
+
+        .buy-now-btn {
+            background: linear-gradient(45deg, var(--brand), #b000ff);
+            border: none; color: white; padding: 18px 0;
+            border-radius: 15px; font-size: 18px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(255, 0, 184, 0.3);
+            transition: 0.3s; width: 100%;
+        }
+
+        .buy-now-btn:active { transform: scale(0.95); }
+
+        /* Animation Classes */
+        .shake { animation: shake 0.4s infinite; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(-1deg); }
+            40% { transform: translate(3px, 2px) rotate(1deg); }
+            60% { transform: translate(-1px, -1px) rotate(1deg); }
+            80% { transform: translate(-3px, 1px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .reward-reveal {
+            animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            color: #ffd700 !important; font-size: 130px !important;
+            filter: drop-shadow(0 0 40px #ffd700) !important;
+        }
+
+        @keyframes zoomIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .reward-text { font-size: 22px; font-weight: 900; color: #fff; margin-top: 30px; display: none; }
+        .reward-text span { color: #ffd700; display: block; font-size: 14px; margin-top: 5px; }
+        
+        .back-btn {
+            position: absolute; top: 40px; left: 20px;
+            color: #fff; text-decoration: none; font-size: 20px; opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="mystery-box.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+
+    <div class="unbox-container">
+        <div id="box-visual"><i class="fa-solid fa-box-open"></i></div>
+        <div class="box-title" id="display-name">Mystery Box</div>
+        <div class="box-info">Price: <span id="display-price">$0</span></div>
+        
+        <button class="buy-now-btn" id="buy-action" onclick="startUnboxing()">CONFIRM PURCHASE</button>
+        
+        <div class="reward-text" id="reward-msg">
+            CONGRATULATIONS!
+            <span id="prize-detail">YOU RECEIVED A RARE ASSET</span>
+            <button class="buy-now-btn" style="margin-top:20px; background:#222;" onclick="location.reload()">OPEN ANOTHER</button>
+        </div>
+    </div>
+
+    <script>
+        // قراءة البيانات من الرابط
+        const urlParams = new URLSearchParams(window.location.search);
+        const price = urlParams.get('price') || "0";
+        const name = urlParams.get('name') || "Mystery Box";
+        
+        document.getElementById('display-price').innerText = `$${price}`;
+        document.getElementById('display-name').innerText = name;
+
+        // إذا الصندوق غالي نغير لونه لذهبي فوراً
+        if(parseInt(price) >= 40) {
+            document.getElementById('box-visual').style.color = "#ffd700";
+            document.getElementById('box-visual').style.filter = "drop-shadow(0 0 20px rgba(255, 215, 0, 0.4))";
+        }
+
+        function startUnboxing() {
+            const btn = document.getElementById('buy-action');
+            const box = document.getElementById('box-visual');
+            const rewardMsg = document.getElementById('reward-msg');
+            const title = document.getElementById('display-name');
+            const info = document.querySelector('.box-info');
+
+            btn.style.display = 'none';
+            title.style.opacity = '0.3';
+            info.style.opacity = '0.3';
+            
+            // اهتزاز
+            box.classList.add('shake');
+
+            setTimeout(() => {
+                box.classList.remove('shake');
+                // تغيير الأيقونة لجائزة (مثلاً كيس مال)
+                box.innerHTML = '<i class="fa-solid fa-coins"></i>'; 
+                box.classList.add('reward-reveal');
+                
+                rewardMsg.style.display = 'block';
+                // إخفاء العناوين القديمة
+                title.style.display = 'none';
+                info.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
