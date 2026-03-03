@@ -3,132 +3,165 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>AMANA | Unboxing</title>
+    <title>AMANA | Unboxing Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
+            --card: rgba(255, 255, 255, 0.05);
         }
 
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: var(--bg); color: #fff;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; min-height: 100vh; overflow: hidden;
+            min-height: 100vh; overflow-x: hidden;
             background: radial-gradient(circle at center, #1a0b2e, #060914);
         }
 
-        .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 20px; }
+        /* --- شريط الجوائز المتوقعة --- */
+        .rewards-slider-wrapper {
+            width: 100%; padding: 60px 0 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden; position: relative;
+        }
+        .slider-title { 
+            position: absolute; top: 10px; left: 20px; 
+            font-size: 10px; color: var(--muted); letter-spacing: 2px;
+        }
+        .rewards-track {
+            display: flex; gap: 10px; padding: 0 20px;
+            overflow-x: auto; scroll-behavior: smooth;
+        }
+        .rewards-track::-webkit-scrollbar { display: none; }
         
-        #box-visual {
-            font-size: 100px; color: var(--accent);
-            margin-bottom: 30px; transition: 0.5s;
-            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.4));
+        .reward-item {
+            min-width: 80px; height: 100px; background: var(--card);
+            border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; font-size: 10px;
         }
+        .reward-item i { font-size: 24px; margin-bottom: 8px; }
+        .reward-item b { color: #ffd700; }
 
-        .box-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
-        .box-info { color: #888; font-size: 16px; margin-bottom: 40px; }
-        .box-info span { color: #fff; font-weight: bold; }
+        /* --- منطقة الصندوق --- */
+        .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 40px 20px; }
+        #box-visual { font-size: 100px; color: var(--accent); margin-bottom: 20px; transition: 0.5s; }
+        
+        .box-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .box-info { color: #888; margin-bottom: 30px; }
 
-        .buy-now-btn {
-            background: linear-gradient(45deg, var(--brand), #b000ff);
-            border: none; color: white; padding: 18px 0;
-            border-radius: 15px; font-size: 18px; font-weight: 800;
-            cursor: pointer; box-shadow: 0 10px 30px rgba(255, 0, 184, 0.3);
-            transition: 0.3s; width: 100%;
+        /* --- Buttons --- */
+        .action-btn {
+            width: 100%; padding: 18px; border-radius: 15px; border: none;
+            font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
+        .buy-btn { background: linear-gradient(45deg, var(--brand), #b000ff); color: #fff; }
+        .sell-btn { background: #22c55e; color: #fff; display: none; margin-top: 15px; }
 
-        .buy-now-btn:active { transform: scale(0.95); }
-
-        /* Animation Classes */
+        /* --- Animations --- */
         .shake { animation: shake 0.4s infinite; }
         @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(-1deg); }
-            40% { transform: translate(3px, 2px) rotate(1deg); }
-            60% { transform: translate(-1px, -1px) rotate(1deg); }
-            80% { transform: translate(-3px, 1px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+            0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } 100% { transform: rotate(0deg); }
         }
+        .reveal { animation: zoomIn 0.5s forwards; font-size: 120px !important; color: #ffd700 !important; }
+        @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .reward-reveal {
-            animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            color: #ffd700 !important; font-size: 130px !important;
-            filter: drop-shadow(0 0 40px #ffd700) !important;
-        }
-
-        @keyframes zoomIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .reward-text { font-size: 22px; font-weight: 900; color: #fff; margin-top: 30px; display: none; }
-        .reward-text span { color: #ffd700; display: block; font-size: 14px; margin-top: 5px; }
-        
-        .back-btn {
-            position: absolute; top: 40px; left: 20px;
-            color: #fff; text-decoration: none; font-size: 20px; opacity: 0.6;
-        }
+        .back-btn { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 20px; }
     </style>
 </head>
 <body>
 
     <a href="mystery-box.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
 
+    <div class="rewards-slider-wrapper">
+        <span class="slider-title">POSSIBLE REWARDS</span>
+        <div class="rewards-track" id="rewards-track">
+            </div>
+    </div>
+
     <div class="unbox-container">
         <div id="box-visual"><i class="fa-solid fa-box-open"></i></div>
-        <div class="box-title" id="display-name">Mystery Box</div>
-        <div class="box-info">Price: <span id="display-price">$0</span></div>
+        <div class="box-title" id="display-name">Loading...</div>
+        <div class="box-info">Entry Fee: <span id="display-price" style="color: #fff;">$0</span></div>
         
-        <button class="buy-now-btn" id="buy-action" onclick="startUnboxing()">CONFIRM PURCHASE</button>
+        <button class="action-btn buy-btn" id="main-btn" onclick="startUnboxing()">OPEN BOX</button>
+        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">SELL ITEM (+$<span id="win-val">0</span>)</button>
         
-        <div class="reward-text" id="reward-msg">
-            CONGRATULATIONS!
-            <span id="prize-detail">YOU RECEIVED A RARE ASSET</span>
-            <button class="buy-now-btn" style="margin-top:20px; background:#222;" onclick="location.reload()">OPEN ANOTHER</button>
-        </div>
+        <p id="status-text" style="margin-top: 20px; color: #888; font-size: 12px;"></p>
     </div>
 
     <script>
-        // قراءة البيانات من الرابط
         const urlParams = new URLSearchParams(window.location.search);
-        const price = urlParams.get('price') || "0";
-        const name = urlParams.get('name') || "Mystery Box";
-        
-        document.getElementById('display-price').innerText = `$${price}`;
+        const price = parseInt(urlParams.get('price')) || 0;
+        const name = urlParams.get('name') || "Box";
+
         document.getElementById('display-name').innerText = name;
+        document.getElementById('display-price').innerText = `$${price}`;
 
-        // إذا الصندوق غالي نغير لونه لذهبي فوراً
-        if(parseInt(price) >= 40) {
-            document.getElementById('box-visual').style.color = "#ffd700";
-            document.getElementById('box-visual').style.filter = "drop-shadow(0 0 20px rgba(255, 215, 0, 0.4))";
-        }
+        // 1. توليد الجوائز المتوقعة (شي غالي وشي رخيص)
+        const track = document.getElementById('rewards-track');
+        const possibleRewards = [
+            { icon: 'fa-coins', val: (price * 0.1).toFixed(2), name: 'Dust' },
+            { icon: 'fa-gem', val: (price * 0.5).toFixed(2), name: 'Shard' },
+            { icon: 'fa-money-bill-wave', val: (price * 0.8).toFixed(2), name: 'Cash' },
+            { icon: 'fa-crown', val: (price * 5).toFixed(2), name: 'JACKPOT' },
+            { icon: 'fa-bolt', val: (price * 0.2).toFixed(2), name: 'Energy' }
+        ];
 
+        possibleRewards.forEach(item => {
+            track.innerHTML += `
+                <div class="reward-item">
+                    <i class="fa-solid ${item.icon}"></i>
+                    <span>${item.name}</span>
+                    <b>$${item.val}</b>
+                </div>
+            `;
+        });
+
+        let currentWin = 0;
+
+        // 2. منطق الحظ (غالبًا مش لصالح اللاعب)
         function startUnboxing() {
-            const btn = document.getElementById('buy-action');
+            const btn = document.getElementById('main-btn');
             const box = document.getElementById('box-visual');
-            const rewardMsg = document.getElementById('reward-msg');
-            const title = document.getElementById('display-name');
-            const info = document.querySelector('.box-info');
+            const status = document.getElementById('status-text');
 
             btn.style.display = 'none';
-            title.style.opacity = '0.3';
-            info.style.opacity = '0.3';
-            
-            // اهتزاز
             box.classList.add('shake');
+            status.innerText = "Unlocking assets...";
 
             setTimeout(() => {
                 box.classList.remove('shake');
-                // تغيير الأيقونة لجائزة (مثلاً كيس مال)
-                box.innerHTML = '<i class="fa-solid fa-coins"></i>'; 
-                box.classList.add('reward-reveal');
+                box.classList.add('reveal');
                 
-                rewardMsg.style.display = 'block';
-                // إخفاء العناوين القديمة
-                title.style.display = 'none';
-                info.style.display = 'none';
-            }, 2000);
+                // حساب الجائزة: 80% خسارة (جائزة صغيرة)، 20% ربح أو تعادل
+                const luck = Math.random();
+                if (luck > 0.9) { // 10% Jackpot
+                    currentWin = price * 3;
+                    box.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                    status.innerText = "OMG! EPIC WIN!";
+                } else if (luck > 0.7) { // 20% Small Profit
+                    currentWin = price * 1.2;
+                    box.innerHTML = '<i class="fa-solid fa-gem"></i>';
+                    status.innerText = "Nice! You got a rare item.";
+                } else { // 70% Loss
+                    currentWin = price * 0.3;
+                    box.innerHTML = '<i class="fa-solid fa-poo"></i>';
+                    status.innerText = "Better luck next time...";
+                }
+
+                document.getElementById('win-val').innerText = currentWin.toFixed(2);
+                document.getElementById('sell-btn').style.display = 'block';
+            }, 2500);
+        }
+
+        // 3. بيع الجائزة وإضافتها للرصيد
+        function sellItem() {
+            alert(`Item sold! $${currentWin.toFixed(2)} added to your balance.`);
+            window.location.href = 'mystery-box.html';
         }
     </script>
 </body>
