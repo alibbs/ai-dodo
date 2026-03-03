@@ -16,15 +16,12 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: #fff;
+            background: var(--bg); color: #fff;
             -webkit-user-select: none;
         }
 
-        /* Header Design */
         .store-header {
             padding: 20px;
             background: linear-gradient(to bottom, #11141d, var(--bg));
@@ -32,191 +29,69 @@
             text-align: center;
         }
 
-        .store-header h1 {
-            font-size: 22px;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: 1px;
-        }
+        .store-header h1 { font-size: 22px; font-weight: 900; margin: 0; letter-spacing: 1px; }
+        .store-header h1 span { color: var(--brand); text-shadow: 0 0 15px rgba(255, 0, 184, 0.5); }
+        .store-header p { font-size: 12px; color: var(--text-gray); margin-top: 5px; }
 
-        .store-header h1 span {
-            color: var(--brand);
-            text-shadow: 0 0 15px rgba(255, 0, 184, 0.5);
-        }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; }
+        .cat-chip { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 11px; white-space: nowrap; color: var(--text-gray); }
+        .cat-chip.active { background: rgba(255, 0, 184, 0.1); border-color: var(--brand); color: #fff; }
 
-        .store-header p {
-            font-size: 12px;
-            color: var(--text-gray);
-            margin-top: 5px;
-        }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; padding-bottom: 100px; }
+        .item-card { background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.2s; }
+        .item-card:active { transform: scale(0.96); }
 
-        /* Category Tabs */
-        .categories {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 15px;
-            scrollbar-width: none;
-        }
-        .cat-chip {
-            padding: 8px 18px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 12px;
-            white-space: nowrap;
-            color: var(--text-gray);
-        }
-        .cat-chip.active {
-            background: rgba(255, 0, 184, 0.1);
-            border-color: var(--brand);
-            color: #fff;
-        }
+        .item-img { width: 100%; height: 130px; background: #1a1d26; display: flex; align-items: center; justify-content: center; position: relative; }
+        .item-img img { max-width: 70%; max-height: 70%; object-fit: contain; }
 
-        /* Marketplace Grid */
-        .market-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 15px;
-            padding-bottom: 100px;
-        }
+        .badge { position: absolute; top: 10px; left: 10px; background: var(--brand); font-size: 8px; padding: 3px 7px; border-radius: 5px; font-weight: 900; }
 
-        .item-card {
-            background: var(--card);
-            border-radius: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            position: relative;
-            transition: transform 0.2s;
-        }
+        .item-info { padding: 12px; }
+        .item-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; display: block; height: 32px; overflow: hidden; }
+        .price-tag { display: flex; align-items: center; gap: 5px; }
+        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); }
+        .price-old { font-size: 11px; color: #555; text-decoration: line-through; }
 
-        .item-card:active {
-            transform: scale(0.96);
-        }
+        .buy-btn { width: 100%; background: #fff; color: #000; border: none; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: 10px; }
 
-        .item-img {
-            width: 100%;
-            height: 140px;
-            background: #1a1d26;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .item-img img {
-            max-width: 80%;
-            max-height: 80%;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
-        }
-
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--brand);
-            font-size: 9px;
-            padding: 3px 7px;
-            border-radius: 5px;
-            font-weight: 900;
-        }
-
-        .item-info {
-            padding: 12px;
-        }
-
-        .item-name {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .price-tag {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .price-now {
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--accent);
-        }
-
-        .price-old {
-            font-size: 11px;
-            color: #555;
-            text-decoration: line-through;
-        }
-
-        .buy-btn {
-            width: 100%;
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            margin-top: 10px;
-        }
-
-        /* Bottom Nav Simulator */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: rgba(17, 20, 29, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            border-top: 1px solid var(--border);
-        }
-
-        .nav-item {
-            color: var(--text-gray);
-            font-size: 20px;
-        }
-        .nav-item.active {
-            color: var(--brand);
-        }
+        .bottom-bar { position: fixed; bottom: 0; width: 100%; background: rgba(17, 20, 29, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--border); z-index: 100; }
+        .nav-item { color: var(--text-gray); font-size: 20px; }
+        .nav-item.active { color: var(--brand); }
     </style>
 </head>
 <body>
 
     <header class="store-header">
-        <h1>AMANA <span>STORE</span></h1>
-        <p>Premium Trading Tools & Power-ups</p>
+        <h1>AMANA <span>MARKET</span></h1>
+        <p>Top Rated Gift Cards in Lebanon</p>
     </header>
 
     <div class="categories">
-        <div class="cat-chip active">All Items</div>
-        <div class="cat-chip">Signals</div>
-        <div class="cat-chip">Bots</div>
-        <div class="cat-chip">Elite Packs</div>
+        <div class="cat-chip active">All Cards</div>
+        <div class="cat-chip">Gaming</div>
+        <div class="cat-chip">Shopping</div>
+        <div class="cat-chip">Subway</div>
     </div>
 
-    <div class="market-grid" id="marketGrid">
-        </div>
+    <div class="market-grid" id="marketGrid"></div>
 
     <nav class="bottom-bar">
-        <div class="nav-item"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="nav-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-chart-line"></i></div>
         <div class="nav-item active"><i class="fa-solid fa-bag-shopping"></i></div>
         <div class="nav-item"><i class="fa-solid fa-user"></i></div>
     </nav>
 
     <script>
-        // داتا المنتجات (تمت إضافة 1$ تلقائياً كما طلبت)
+        // داتا البطاقات الأكثر طلباً في لبنان (الأسعار أساسية، الكود يزيد 1$ تلقائياً)
         const products = [
-            { id: 1, name: "Neural Signal Bot", basePrice: 19.00, img: "https://cdn-icons-png.flaticon.com/512/2103/2103633.png", tag: "HOT" },
-            { id: 2, name: "Elite Scalper V4", basePrice: 49.00, img: "https://cdn-icons-png.flaticon.com/512/1541/1541415.png", tag: "POPULAR" },
-            { id: 3, name: "Anti-Liquidation Kit", basePrice: 29.00, img: "https://cdn-icons-png.flaticon.com/512/2452/2452137.png", tag: "PRO" },
-            { id: 4, name: "Whale Tracker AI", basePrice: 99.00, img: "https://cdn-icons-png.flaticon.com/512/3211/3211466.png", tag: "RARE" },
-            { id: 5, name: "Fast Execution Hub", basePrice: 14.00, img: "https://cdn-icons-png.flaticon.com/512/616/616490.png", tag: "NEW" },
-            { id: 6, name: "Diamond Hands Shield", basePrice: 9.00, img: "https://cdn-icons-png.flaticon.com/512/1067/1067357.png", tag: "SAFE" }
+            { id: 1, name: "Razer Gold $10 (Global)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Razer_Gold_Logo.svg/1200px-Razer_Gold_Logo.svg.png", tag: "MOST POPULAR" },
+            { id: 2, name: "iTunes $5 (US Store)", basePrice: 5.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ITunes_logo.svg/1200px-ITunes_logo.svg.png", tag: "TOP SALE" },
+            { id: 3, name: "PlayStation $10 (US)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/PlayStation_logo.svg/1200px-PlayStation_logo.svg.png", tag: "GAMING" },
+            { id: 4, name: "Google Play $10 (US)", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Google_Play_2022_logo.svg/1024px-Google_Play_2022_logo.svg.png", tag: "HOT" },
+            { id: 5, name: "Steam Wallet $5 (Global)", basePrice: 5.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png", tag: "PC ELITE" },
+            { id: 6, name: "Xbox $10 Gift Card", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Xbox_one_logo.svg/1024px-Xbox_one_logo.svg.png", tag: "PRO" },
+            { id: 7, name: "Netflix $25 Premium", basePrice: 25.00, img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", tag: "TRENDING" },
+            { id: 8, name: "Amazon $10 Card", basePrice: 10.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png", tag: "SHOPPING" }
         ];
 
         function loadMarketplace() {
@@ -231,16 +106,16 @@
                         <span class="item-name">${item.name}</span>
                         <div class="price-tag">
                             <span class="price-now">$${(item.basePrice + 1).toFixed(2)}</span>
-                            <span class="price-old">$${(item.basePrice + 10).toFixed(0)}</span>
+                            <span class="price-old">$${(item.basePrice + 3).toFixed(2)}</span>
                         </div>
-                        <button class="buy-btn" onclick="buyItem('${item.name}', ${item.basePrice + 1})">UNLOCK NOW</button>
+                        <button class="buy-btn" onclick="buyItem('${item.name}', ${item.basePrice + 1})">PURCHASE CARD</button>
                     </div>
                 </div>
             `).join('');
         }
 
         window.buyItem = (name, price) => {
-            alert(`Purchase Initialized: ${name} for $${price}\nConfirm on your terminal?`);
+            alert(`Order Placed: ${name}\nTotal: $${price.toFixed(2)}\n\nThe code will be sent to your Profile.`);
         };
 
         loadMarketplace();
