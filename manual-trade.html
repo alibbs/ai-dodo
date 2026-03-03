@@ -14,60 +14,55 @@
         * { touch-action: manipulation; box-sizing: border-box; -webkit-user-select: none; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
+        /* Header & Assets */
         .header { height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 2px solid var(--brand); flex-shrink: 0; }
         .header h1 { font-size: 16px; font-weight: 900; }
         .header h1 span { color: var(--brand); }
         .bal-display { text-align: right; background: rgba(0,242,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.2); }
-        .bal-display small { font-size: 9px; color: #888; display: block; }
         .bal-display b { color: var(--accent); font-size: 16px; }
 
         .asset-bar { background: #000; padding: 8px 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .asset-chip { padding: 6px 15px; background: #1a1d26; border-radius: 6px; font-size: 11px; font-weight: 800; white-space: nowrap; border: 1px solid var(--border); transition: 0.2s; }
+        .asset-chip { padding: 6px 15px; background: #1a1d26; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid var(--border); }
         .asset-chip.active { border-color: var(--brand); color: var(--brand); background: rgba(255,0,184,0.1); }
 
-        #chart-half { height: 35vh; background: #000; position: relative; flex-shrink: 0; }
-        
+        #chart-half { height: 35vh; background: #000; flex-shrink: 0; }
         .pos-summary-bar { background: #0c0f1a; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; flex-shrink: 0; }
-        
-        /* التعديل هنا لضمان السكرول */
-        #manage-half { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
 
+        /* Navigation & Tabs */
+        #manage-half { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .tabs-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 12px; text-transform: uppercase; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; font-weight: 800; font-size: 11px; text-transform: uppercase; }
         .tab-btn.active { color: var(--brand); border-bottom: 3px solid var(--brand); }
 
-        /* تفعيل السكرول داخل التابات */
         .tab-content { flex: 1; overflow-y: auto; padding: 15px; display: none; -webkit-overflow-scrolling: touch; }
         .tab-content.active { display: block; }
 
-        .slider-box { margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px; }
+        /* Trading UI */
+        .slider-box { margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
         .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 8px; }
         .slider-label b { color: #fff; font-size: 14px; }
-        .range-slider { width: 100%; -webkit-appearance: none; height: 8px; border-radius: 10px; background: #222; outline: none; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); border: 3px solid #fff; cursor: pointer; }
+        .range-slider { width: 100%; -webkit-appearance: none; height: 6px; border-radius: 10px; background: #222; outline: none; }
+        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); border: 2px solid #fff; }
 
-        .btns-row { display: flex; gap: 10px; margin-top: 10px; padding-bottom: 10px; }
-        .btn-trade { flex: 1; padding: 18px; border: none; border-radius: 10px; font-weight: 900; color: #fff; font-size: 15px; letter-spacing: 1px; }
-        .bg-up { background: var(--up); }
-        .bg-down { background: var(--down); }
+        .btns-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-trade { flex: 1; padding: 16px; border: none; border-radius: 10px; font-weight: 900; color: #fff; font-size: 15px; }
+        .bg-up { background: var(--up); } .bg-down { background: var(--down); }
 
-        #positions-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
-        .pos-card { background: #161922; border-radius: 12px; padding: 15px; border-left: 5px solid var(--brand); border: 1px solid var(--border); }
-        .pnl-val { font-size: 24px; font-weight: 900; margin: 5px 0; }
-        .close-pos-btn { width: 100%; background: #2a2d37; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 12px; }
+        /* List Styling */
+        .pos-card, .hist-item { background: #161922; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); border-left: 4px solid var(--brand); }
+        .pnl-val { font-size: 22px; font-weight: 900; margin: 8px 0; }
         
-        #history-list { padding-bottom: 20px; }
-        .hist-item { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; color: #888; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+        .info-grid b { color: #ddd; }
+
+        .close-pos-btn { width: 100%; background: #2a2d37; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; font-weight: 800; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1>AMANA <span>ELITE+</span></h1>
-        <div class="bal-display">
-            <small>AVAILABLE MARGIN</small>
-            <b id="walletBal">0.00</b>
-        </div>
+        <div class="bal-display"><small style="font-size:9px;color:#888;">BALANCE</small><b id="walletBal">0.00</b></div>
     </header>
 
     <div class="asset-bar" id="assetBar">
@@ -78,49 +73,40 @@
         <div class="asset-chip" onclick="changeAsset('XRPUSDT')">XRP</div>
     </div>
 
-    <section id="chart-half">
-        <div id="tv_widget" style="height: 100%;"></div>
-    </section>
+    <section id="chart-half"><div id="tv_widget" style="height: 100%;"></div></section>
 
     <div class="pos-summary-bar">
-        <span>Active Positions: <b id="pos-count" style="color:var(--brand)">0</b></span>
+        <span>Positions: <b id="pos-count" style="color:var(--brand)">0</b></span>
         <span>Total PNL: <b id="total-pnl">0.00 USDT</b></span>
     </div>
 
     <section id="manage-half">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('trade', this)">Execution</button>
-            <button class="tab-btn" onclick="switchTab('positions', this)">Open Orders</button>
+            <button class="tab-btn active" onclick="switchTab('trade', this)">Trade</button>
+            <button class="tab-btn" onclick="switchTab('positions', this)">Orders</button>
             <button class="tab-btn" onclick="switchTab('hist', this)">History</button>
         </div>
 
         <div id="tab-trade" class="tab-content active">
             <div class="slider-box">
-                <div class="slider-label">Amount Size: <b id="amt-val">0.00 USDT</b></div>
+                <div class="slider-label">Margin Amount: <b id="amt-val">0.00 USDT</b></div>
                 <input type="range" min="0" max="100" value="0" class="range-slider" id="amt-slider">
             </div>
-            <div class="slider-box" style="border-left: 3px solid var(--accent);">
-                <div class="slider-label">Leverage Multiplier: <b id="lev-val">10x</b></div>
+            <div class="slider-box">
+                <div class="slider-label">Leverage: <b id="lev-val">10x</b></div>
                 <input type="range" min="1" max="75" value="10" class="range-slider" id="lev-slider">
             </div>
-            <div style="font-size: 10px; color: #666; text-align: center; margin-bottom: 10px;">
-                Estimated Entry Fee (2.5%): <span id="fee-est">0.00</span> USDT
+            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 10px;">
+                Open Fee (2.5%): <span id="fee-est" style="color:var(--down)">0.00</span> USDT
             </div>
             <div class="btns-row">
-                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SHORT</button>
-                <button class="btn-trade bg-up" onclick="executeTrade('LONG')">LONG</button>
+                <button class="btn-trade bg-down" onclick="executeTrade('SHORT')">SELL / SHORT</button>
+                <button class="btn-trade bg-up" onclick="executeTrade('LONG')">BUY / LONG</button>
             </div>
         </div>
 
-        <div id="tab-positions" class="tab-content">
-            <div id="positions-list">
-                <div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>
-            </div>
-        </div>
-
-        <div id="tab-hist" class="tab-content">
-            <div id="history-list"></div>
-        </div>
+        <div id="tab-positions" class="tab-content"><div id="positions-list"></div></div>
+        <div id="tab-hist" class="tab-content"><div id="history-list"></div></div>
     </section>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -150,7 +136,7 @@
                 onSnapshot(doc(db, "users", uID), (s) => {
                     const data = s.data() || {};
                     uBal = data.balance || 0;
-                    document.getElementById('walletBal').textContent = uBal.toFixed(2);
+                    document.getElementById('walletBal').textContent = uBal.toLocaleString();
                     positions = data.activePositions || [];
                     renderPositions();
                     renderHistory(data.history || []);
@@ -160,7 +146,6 @@
 
         const amtSlider = document.getElementById('amt-slider');
         const levSlider = document.getElementById('lev-slider');
-        
         amtSlider.oninput = () => {
             const val = ((amtSlider.value/100)*uBal).toFixed(2);
             document.getElementById('amt-val').textContent = val + " USDT";
@@ -182,8 +167,7 @@
         function initPriceFeed(sym) {
             const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${sym.toLowerCase()}@ticker`);
             ws.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                prices[sym] = parseFloat(data.c);
+                prices[sym] = parseFloat(JSON.parse(e.data).c);
                 updateLiveUI();
             };
         }
@@ -192,11 +176,12 @@
         window.executeTrade = async (side) => {
             const amt = (amtSlider.value / 100) * uBal;
             const lev = parseInt(levSlider.value);
-            const entryFee = amt * 0.025;
-            if(amt < 5) return alert("Min trade 5 USDT");
-            if(amt + entryFee > uBal) return alert("Low balance");
-            const newPos = { id: Date.now(), symbol, side, entry: prices[symbol], amt, lev, entryFee, liq: side === 'LONG' ? prices[symbol]*(1-(0.7/lev)) : prices[symbol]*(1+(0.7/lev)) };
-            await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + entryFee)), activePositions: arrayUnion(newPos) });
+            const openFee = amt * 0.025;
+            if(amt < 5) return alert("Min 5 USDT");
+            if(amt + openFee > uBal) return alert("Insufficient Balance");
+            const newPos = { id: Date.now(), symbol, side, entry: prices[symbol], amt, lev, openFee, liq: side === 'LONG' ? prices[symbol]*(1-(0.8/lev)) : prices[symbol]*(1+(0.8/lev)) };
+            await updateDoc(doc(db, "users", uID), { balance: increment(-(amt + openFee)), activePositions: arrayUnion(newPos) });
+            switchTab('positions', document.querySelectorAll('.tab-btn')[1]);
         };
 
         function updateLiveUI() {
@@ -223,7 +208,7 @@
 
         function renderPositions() {
             const container = document.getElementById('positions-list');
-            if(positions.length === 0) { container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No active positions</div>`; return; }
+            if(positions.length === 0) { container.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px;">No Active Orders</div>`; return; }
             container.innerHTML = positions.map(pos => `
                 <div class="pos-card">
                     <div style="display:flex; justify-content:space-between; font-size:12px;">
@@ -233,9 +218,13 @@
                     <div class="pnl-val" id="pnl-${pos.id}">...</div>
                     <div style="display:flex; justify-content:space-between; font-size:12px;">
                         <span id="roe-${pos.id}">0.00%</span>
-                        <span style="color:#666">Liq: <span style="color:var(--down)">${pos.liq.toFixed(2)}</span></span>
+                        <span style="color:#666">Liq Price: <span style="color:var(--down)">${pos.liq.toFixed(2)}</span></span>
                     </div>
-                    <button class="close-pos-btn" onclick="closePosition(${pos.id})">CLOSE POSITION</button>
+                    <div class="info-grid">
+                        <span>Margin: <b>${pos.amt.toFixed(2)}</b></span>
+                        <span>Open Fee: <b style="color:var(--down)">${pos.openFee.toFixed(2)}</b></span>
+                    </div>
+                    <button class="close-pos-btn" onclick="closePosition(${pos.id})">CLOSE (2% Exit Fee)</button>
                 </div>
             `).join('');
         }
@@ -246,20 +235,31 @@
             const curPrice = prices[pos.symbol] || pos.entry;
             let diff = pos.side === 'LONG' ? (curPrice - pos.entry) : (pos.entry - curPrice);
             let pnl = ((diff / pos.entry) * pos.lev) * pos.amt;
-            const record = { symbol: pos.symbol, side: pos.side, pnl: pnl.toFixed(2), fee: pos.entryFee.toFixed(2), time: new Date().toLocaleTimeString() };
-            await updateDoc(doc(db, "users", uID), { balance: increment(pos.amt + pnl), activePositions: arrayRemove(pos), history: arrayUnion(record) });
+            const exitFee = pos.amt * 0.02; // 2% Exit Fee
+            const totalFees = pos.openFee + exitFee;
+            const finalPnl = pnl - exitFee; 
+
+            const record = { 
+                symbol: pos.symbol, side: pos.side, pnl: finalPnl.toFixed(2), 
+                entry: pos.entry.toFixed(2), exit: curPrice.toFixed(2),
+                lev: pos.lev, fees: totalFees.toFixed(2), time: new Date().toLocaleString() 
+            };
+            await updateDoc(doc(db, "users", uID), { balance: increment(pos.amt + finalPnl), activePositions: arrayRemove(pos), history: arrayUnion(record) });
         };
 
         function renderHistory(history) {
             const container = document.getElementById('history-list');
-            container.innerHTML = [...history].reverse().map(h => `
-                <div class="hist-item">
-                    <div style="display:flex; justify-content:space-between">
-                        <b>${h.symbol} ${h.side}</b>
-                        <span style="color:${h.pnl>=0?'var(--up)':'var(--down)'}">${h.pnl>=0?'+':''}${h.pnl} USDT</span>
+            container.innerHTML = [...history].reverse().slice(0,30).map(h => `
+                <div class="hist-item" style="border-left-color: ${parseFloat(h.pnl)>=0?'var(--up)':'var(--down)'}">
+                    <div style="display:flex; justify-content:space-between; font-weight:800;">
+                        <span>${h.symbol} ${h.side} ${h.lev}x</span>
+                        <span style="color:${parseFloat(h.pnl)>=0?'var(--up)':'var(--down)'}">${parseFloat(h.pnl)>=0?'+':''}${h.pnl} USDT</span>
                     </div>
-                    <div style="font-size:10px; color:#555; margin-top:8px; display:flex; justify-content:space-between">
-                        <span>Fee: ${h.fee} USDT</span><span>${h.time}</span>
+                    <div class="info-grid">
+                        <span>Entry: <b>${h.entry}</b></span>
+                        <span>Exit: <b>${h.exit}</b></span>
+                        <span>Total Fees: <b style="color:var(--down)">${h.fees}</b></span>
+                        <span>Time: <b>${h.time.split(',')[1]}</b></span>
                     </div>
                 </div>
             `).join('');
