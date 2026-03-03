@@ -22,123 +22,124 @@
             background: radial-gradient(circle at center, #1a0b2e, #060914);
         }
 
+        /* --- Header / Balance --- */
         .top-bar {
             width: 100%; padding: 15px 20px; display: flex; justify-content: space-between;
             align-items: center; box-sizing: border-box; position: fixed; top: 0; z-index: 100;
-            background: rgba(6, 9, 20, 0.8); backdrop-filter: blur(10px);
+            background: rgba(6, 9, 20, 0.9); backdrop-filter: blur(10px);
         }
         .user-balance {
             background: rgba(255, 255, 255, 0.1); padding: 8px 15px;
             border-radius: 20px; border: 1px solid var(--brand);
-            font-weight: 800; color: var(--accent);
+            font-weight: 800; color: var(--accent); font-size: 14px;
         }
 
+        /* --- شريط الجوائز الطويل جداً --- */
         .rewards-slider-wrapper {
             width: 100%; padding: 80px 0 20px;
             background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.05);
             overflow: hidden; position: relative;
         }
-        .slider-title { position: absolute; top: 65px; left: 20px; font-size: 9px; color: #888; letter-spacing: 2px; }
+        .slider-title { position: absolute; top: 65px; left: 20px; font-size: 8px; color: #666; letter-spacing: 2px; }
         
         .rewards-track {
-            display: flex; gap: 12px; padding: 10px 20px;
-            overflow-x: auto; scroll-behavior: smooth;
+            display: flex; gap: 10px; padding: 10px 20px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
         }
-        .rewards-track::-webkit-scrollbar { height: 4px; }
-        .rewards-track::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 10px; }
+        .rewards-track::-webkit-scrollbar { height: 2px; }
         
         .reward-item {
-            min-width: 90px; height: 110px; background: var(--card);
-            border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
+            min-width: 85px; height: 100px; background: var(--card);
+            border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; font-size: 10px; text-align: center;
-            transition: 0.3s;
+            justify-content: center; font-size: 9px; text-align: center; opacity: 0.8;
         }
-        .reward-item i { font-size: 26px; margin-bottom: 8px; }
-        .reward-item.highlight { border-color: var(--brand); box-shadow: 0 0 15px var(--brand); transform: scale(1.05); }
-        .reward-item b { display: block; margin-top: 4px; color: var(--accent); }
+        .reward-item i { font-size: 22px; margin-bottom: 6px; }
+        .reward-item b { color: var(--accent); margin-top: 3px; }
+        .reward-item.legendary { border-color: var(--gold); background: rgba(255, 215, 0, 0.05); opacity: 1; }
 
-        .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 40px 20px; margin-top: 20px; }
-        #box-visual { font-size: 110px; color: var(--accent); margin-bottom: 25px; transition: 0.5s; }
+        /* --- منطقة الفتح --- */
+        .unbox-container { text-align: center; width: 100%; max-width: 400px; padding: 30px 20px; margin-top: 20px; }
+        #box-visual { font-size: 100px; color: var(--accent); margin-bottom: 20px; transition: 0.5s; filter: drop-shadow(0 0 20px rgba(0,242,255,0.2)); }
         
-        .box-title { font-size: 26px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
-        .box-info { color: #888; margin-bottom: 35px; font-size: 14px; }
+        .box-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .box-info { color: #888; margin-bottom: 30px; font-size: 13px; }
 
         .action-btn {
-            width: 100%; padding: 18px; border-radius: 18px; border: none;
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
             font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
         .buy-btn { background: linear-gradient(45deg, var(--brand), #b000ff); color: #fff; }
-        .buy-btn:disabled { background: #333; cursor: not-allowed; opacity: 0.6; }
         .sell-btn { background: #22c55e; color: #fff; display: none; margin-top: 15px; }
 
-        .shake { animation: shake 0.4s infinite; }
-        @keyframes shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
-        .reveal { animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1.1); opacity: 1; } }
-
-        .back-btn { color: #fff; font-size: 20px; text-decoration: none; }
+        .shake { animation: shake 0.3s infinite; }
+        @keyframes shake { 0% {transform:rotate(0)} 25% {transform:rotate(4deg)} 75% {transform:rotate(-4deg)} }
+        .reveal { animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27) forwards; }
+        @keyframes zoomIn { from {transform:scale(0);opacity:0} to {transform:scale(1.1);opacity:1} }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="mystery-box.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="mystery-box.html" style="color:#fff"><i class="fa-solid fa-arrow-left"></i></a>
         <div class="user-balance"><i class="fa-solid fa-wallet"></i> $<span id="balance-val">0.00</span></div>
     </div>
 
     <div class="rewards-slider-wrapper">
-        <span class="slider-title">ITEMS IN THIS CHEST</span>
+        <span class="slider-title">ITEMS IN THIS BOX</span>
         <div class="rewards-track" id="rewards-track"></div>
     </div>
 
     <div class="unbox-container">
         <div id="box-visual"><i class="fa-solid fa-box-open"></i></div>
         <div class="box-title" id="display-name">...</div>
-        <div class="box-info">Cost: <span id="display-price" style="color: #fff;">$0</span></div>
+        <div class="box-info">Entry Fee: <span id="display-price" style="color: #fff;">$0</span></div>
         
         <button class="action-btn buy-btn" id="main-btn" onclick="startUnboxing()">OPEN BOX</button>
-        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">SELL ITEM (+$<span id="win-val">0</span>)</button>
+        <button class="action-btn sell-btn" id="sell-btn" onclick="sellItem()">SELL & COLLECT (+$<span id="win-val">0</span>)</button>
         
-        <p id="status-text" style="margin-top: 25px; color: #888; font-size: 13px;"></p>
+        <p id="status-text" style="margin-top: 20px; color: #888; font-size: 12px; height: 20px;"></p>
     </div>
 
 <script>
-    // --- إعدادات Firebase الوهمية (يجب ربطها فعلياً بـ Database) ---
-    let userBalance = 1000.00; 
+    // --- سيستم الجوائز (كثيرة جداً) ---
+    const pools = {
+        low: [ // صناديق (5$ - 25$)
+            { n: 'Rusty Key', v: 0.05, i: 'fa-key', p: 40 },
+            { n: 'Plastic Bag', v: 0.10, i: 'fa-bag-shopping', p: 30 },
+            { n: 'Old Battery', v: 0.50, i: 'fa-battery-quarter', p: 15 },
+            { n: 'Copper Wire', v: 2.00, i: 'fa-bolt', p: 8 },
+            { n: 'Silver Coin', v: 10.0, i: 'fa-coins', p: 4 },
+            { n: 'Gold Ring', v: 50.0, i: 'fa-ring', p: 2.5 },
+            { n: 'Rare NFT', v: 200.0, i: 'fa-image', p: 0.4 },
+            { n: 'JACKPOT', v: 1000.0, i: 'fa-crown', p: 0.1 }
+        ],
+        high: [ // صناديق (40$ - 100$)
+            { n: 'Digital Trash', v: 1.00, i: 'fa-trash', p: 45 },
+            { n: 'Empty Wallet', v: 2.50, i: 'fa-wallet', p: 25 },
+            { n: 'Used GPU', v: 15.0, i: 'fa-microchip', p: 15 },
+            { n: 'ETH Shard', v: 80.0, i: 'fa-brands fa-ethereum', p: 9 },
+            { n: 'Golden Bar', v: 400.0, i: 'fa-bars', p: 4 },
+            { n: 'Cyber Truck', v: 5000.0, i: 'fa-truck-monster', p: 1.5 },
+            { n: 'BTC Whole', v: 60000.0, i: 'fa-brands fa-bitcoin', p: 0.4 },
+            { n: 'THE ISLAND', v: 500000.0, i: 'fa-island-tropical', p: 0.1 }
+        ]
+    };
 
+    let userBalance = 1000.00; // سيتم ربطها بـ Firebase لاحقاً
     const urlParams = new URLSearchParams(window.location.search);
     const price = parseInt(urlParams.get('price')) || 0;
     const boxName = urlParams.get('name') || "Mystery Box";
+    const currentPool = (price >= 40) ? pools.high : pools.low;
 
     document.getElementById('display-name').innerText = boxName;
     document.getElementById('display-price').innerText = `$${price}`;
     
-    // تعريف مكتبة الجوائز لكل نوع من الصناديق
-    const allPossibleItems = {
-        low: [ // للصناديق من 5$ لـ 25$
-            { n: 'Rusty Nail', v: 0.1, i: 'fa-screwdriver', prob: 60 },
-            { n: 'Old Coin', v: 1.5, i: 'fa-coins', prob: 25 },
-            { n: 'Basic Chip', v: 5.0, i: 'fa-microchip', prob: 10 },
-            { n: 'Silver Ring', v: 30.0, i: 'fa-ring', prob: 5 }
-        ],
-        high: [ // للصناديق من 40$ لـ 100$
-            { n: 'Broken Glass', v: 2.0, i: 'fa-wine-glass-empty', prob: 65 },
-            { n: 'Cyber Watch', v: 20.0, i: 'fa-stopwatch', prob: 20 },
-            { n: 'Gold Ingot', v: 150.0, i: 'fa-bars', prob: 10 },
-            { n: 'Bitcoin Core', v: 1500.0, i: 'fa-brands fa-bitcoin', prob: 4.5 },
-            { n: 'Lamborghini', v: 250000.0, i: 'fa-car-side', prob: 0.5 }
-        ]
-    };
-
-    // اختيار القائمة المناسبة حسب السعر
-    const currentPool = (price >= 40) ? allPossibleItems.high : allPossibleItems.low;
+    // تعبئة الشريط
     const track = document.getElementById('rewards-track');
-
-    // عرض الجوائز في الشريط العلوي
-    currentPool.forEach((item, index) => {
+    currentPool.forEach(item => {
         track.innerHTML += `
-            <div class="reward-item" id="item-${index}">
+            <div class="reward-item ${item.p < 1 ? 'legendary' : ''}">
                 <i class="fa-solid ${item.i}"></i>
                 <span>${item.n}</span>
                 <b>$${item.v.toFixed(2)}</b>
@@ -156,8 +157,7 @@
 
     function startUnboxing() {
         if (userBalance < price) return;
-        
-        userBalance -= price; // سحب الرصيد عند الشراء
+        userBalance -= price;
         updateBalanceDisplay();
 
         const btn = document.getElementById('main-btn');
@@ -166,45 +166,38 @@
 
         btn.style.display = 'none';
         box.classList.add('shake');
-        status.innerText = "Generating secure hash...";
+        status.innerText = "Rolling probabilities...";
 
-        // منطق الاحتمالات (Probability Logic)
+        // منطق الحظ السيء (Weighted Random)
         let rand = Math.random() * 100;
         let cumulative = 0;
-        
         for (let item of currentPool) {
-            cumulative += item.prob;
+            cumulative += item.p;
             if (rand <= cumulative) {
                 wonItem = item;
                 break;
             }
         }
+        if (!wonItem) wonItem = currentPool[0]; // Fail-safe
 
         setTimeout(() => {
             box.classList.remove('shake');
             box.classList.add('reveal');
-            
-            // عرض الجائزة التي خرجت من الصندوق
-            box.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color: ${wonItem.v > price ? '#ffd700' : '#fff'}"></i>`;
-            status.innerText = `YOU GOT: ${wonItem.n}`;
-            
+            box.innerHTML = `<i class="fa-solid ${wonItem.i}" style="color:${wonItem.v > price ? '#ffd700':'#fff'}"></i>`;
+            status.innerText = `YOU UNLOCKED: ${wonItem.n}`;
             document.getElementById('win-val').innerText = wonItem.v.toFixed(2);
             document.getElementById('sell-btn').style.display = 'block';
         }, 2500);
     }
 
     function sellItem() {
-        userBalance += wonItem.v; // إضافة ثمن الجائزة للرصيد
+        userBalance += wonItem.v;
         updateBalanceDisplay();
-        
-        alert(`Sold for $${wonItem.v.toFixed(2)}`);
-        
-        // إعادة تصفير الحالة للشراء مرة أخرى
         document.getElementById('sell-btn').style.display = 'none';
         document.getElementById('main-btn').style.display = 'block';
         document.getElementById('box-visual').classList.remove('reveal');
         document.getElementById('box-visual').innerHTML = '<i class="fa-solid fa-box-open"></i>';
-        document.getElementById('status-text').innerText = "";
+        document.getElementById('status-text').innerText = "Sold! Want to try again?";
     }
 </script>
 </body>
