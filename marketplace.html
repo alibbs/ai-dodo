@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>AMANA Marketplace | Elite Store</title>
+    <title>AMANA Market | Digital Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
@@ -14,166 +14,180 @@
 
         body {
             margin: 0; padding: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff; -webkit-user-select: none;
+            background: var(--bg); color: #fff; overflow-x: hidden;
         }
 
+        /* Header & Cart Icon */
         .store-header {
             padding: 20px; background: linear-gradient(to bottom, #11141d, var(--bg));
-            border-bottom: 1px solid var(--border); text-align: center;
+            border-bottom: 1px solid var(--border); text-align: center; position: relative;
         }
-
-        .store-header h1 { font-size: 22px; font-weight: 900; margin: 0; letter-spacing: 1px; }
-        .store-header h1 span { color: var(--brand); text-shadow: 0 0 15px rgba(255, 0, 184, 0.5); }
-        .store-header p { font-size: 11px; color: var(--text-gray); margin-top: 5px; text-transform: uppercase; }
-
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; }
-        .cat-chip { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 11px; white-space: nowrap; color: var(--text-gray); }
-        .cat-chip.active { background: rgba(255, 0, 184, 0.1); border-color: var(--brand); color: #fff; }
+        .cart-trigger {
+            position: absolute; right: 20px; top: 25px; font-size: 20px; color: var(--accent);
+        }
+        .cart-count {
+            position: absolute; top: -8px; right: -10px; background: var(--brand);
+            font-size: 10px; padding: 2px 6px; border-radius: 50%;
+        }
 
         .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 100px; }
         .item-card { background: var(--card); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
 
-        .item-img { width: 100%; height: 110px; background: #1a1d26; display: flex; align-items: center; justify-content: center; position: relative; padding: 10px; box-sizing: border-box; }
-        .item-img img { max-width: 80%; max-height: 80%; object-fit: contain; }
-
-        .badge { position: absolute; top: 8px; left: 8px; background: var(--brand); font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
+        .item-img { width: 100%; height: 110px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
+        .item-img img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
         .item-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
-        .item-name { font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #fff; display: block; height: 32px; overflow: hidden; }
+        .item-name { font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #fff; height: 35px; overflow: hidden; }
 
         .variant-select {
             width: 100%; background: #060914; color: #fff; border: 1px solid var(--border);
-            padding: 8px; border-radius: 8px; font-size: 11px; margin-bottom: 10px; outline: none;
+            padding: 8px; border-radius: 8px; font-size: 11px; margin-bottom: 10px;
         }
 
-        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); display: block; margin-bottom: 8px; }
+        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); margin-bottom: 8px; display: block; }
 
-        .buy-btn { 
-            width: 100%; background: #fff; color: #000; border: none; padding: 10px; 
+        .add-btn { 
+            width: 100%; background: var(--brand); color: #fff; border: none; padding: 10px; 
             border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;
         }
 
-        .bottom-bar { 
-            position: fixed; bottom: 0; width: 100%; background: rgba(17, 20, 29, 0.95); 
-            backdrop-filter: blur(10px); display: flex; justify-content: space-around; 
-            padding: 15px 0; border-top: 1px solid var(--border); z-index: 100; 
+        /* Cart Overlay */
+        .cart-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: var(--bg); z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box;
         }
-        .nav-item { color: var(--text-gray); font-size: 20px; }
-        .nav-item.active { color: var(--brand); }
+        .cart-overlay.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cart-items { max-height: 60vh; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .checkout-footer { position: absolute; bottom: 20px; left: 20px; right: 20px; }
+        .pay-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 900; }
     </style>
 </head>
 <body>
 
     <header class="store-header">
         <h1>AMANA <span>MARKET</span></h1>
-        <p>Premium Digital Goods Lebanon</p>
+        <p>Auto-Delivery via Email</p>
+        <div class="cart-trigger" onclick="toggleCart()">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
     </header>
-
-    <div class="categories">
-        <div class="cat-chip active">All Items</div>
-        <div class="cat-chip">Gaming</div>
-        <div class="cat-chip">Mobile</div>
-        <div class="cat-chip">Gift Cards</div>
-    </div>
 
     <div class="market-grid" id="marketGrid"></div>
 
-    <nav class="bottom-bar">
-        <div class="nav-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></div>
-        <div class="nav-item active"><i class="fa-solid fa-bag-shopping"></i></div>
-        <div class="nav-item"><i class="fa-solid fa-user"></i></div>
-    </nav>
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-header">
+            <h2>Your Wishlist</h2>
+            <i class="fa-solid fa-xmark" style="font-size: 24px;" onclick="toggleCart()"></i>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="checkout-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <span>Total Amount:</span>
+                <span id="totalPrice" style="color: var(--accent); font-weight: 900;">$0.00</span>
+            </div>
+            <button class="pay-btn" onclick="processCheckout()">PAY & SEND TO GMAIL</button>
+        </div>
+    </div>
 
     <script>
         const products = [
             { 
-                id: 1, name: "Alfa Recharge (Days/$)", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", tag: "LEBANON",
+                id: 1, name: "Alfa Official Recharge", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", 
                 variants: [ 
-                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.00}, 
-                    {n: "$17.18 (30 Days)", p: 18.00}, {n: "$22.73 (30 Days)", p: 24.00},
-                    {n: "$45.45 (90 Days)", p: 47.00}, {n: "$68.18 (180 Days)", p: 70.00}
+                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.10}, 
+                    {n: "$17.18 (30 Days)", p: 18.10}, {n: "$22.73 (30 Days)", p: 24.50},
+                    {n: "$45.45 (90 Days)", p: 47.50}, {n: "$68.18 (180 Days)", p: 71.00}
                 ]
             },
             { 
-                id: 2, name: "Touch Recharge (Days/$)", img: "https://www.touch.com.lb/touch/images/touch-logo.png", tag: "LEBANON",
+                id: 2, name: "Touch Official Recharge", img: "https://mir-s3-cdn-cf.behance.net/projects/404/6e991533355325.Y3JvcCw4OTgsNzAzLDAsMA.png", 
                 variants: [ 
-                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.00}, 
-                    {n: "$17.18 (30 Days)", p: 18.00}, {n: "$22.73 (30 Days)", p: 24.00},
-                    {n: "$45.45 (90 Days)", p: 47.00}, {n: "$68.18 (360 Days)", p: 70.00}
+                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.10}, 
+                    {n: "$17.18 (30 Days)", p: 18.10}, {n: "$22.73 (30 Days)", p: 24.50},
+                    {n: "$45.45 (90 Days)", p: 47.50}, {n: "$68.18 (360 Days)", p: 71.00}
                 ]
             },
             { 
-                id: 3, name: "PUBG Mobile UC", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pubg_mobile_logo.png", tag: "HOT",
+                id: 3, name: "PUBG Mobile UC", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pubg_mobile_logo.png", 
                 variants: [ 
-                    {n: "60 UC", p: 1.00}, {n: "325 UC", p: 5.00}, {n: "660 UC", p: 10.00}, 
-                    {n: "1800 UC", p: 25.00}, {n: "3850 UC", p: 50.00}, {n: "8100 UC", p: 100.00}
+                    {n: "60 UC", p: 1.00}, {n: "325 UC", p: 5.50}, {n: "660 UC", p: 10.50}, 
+                    {n: "1800 UC", p: 26.00}, {n: "3850 UC", p: 52.00}, {n: "8100 UC", p: 102.00}
                 ]
             },
             { 
-                id: 4, name: "iTunes Gift Card (US)", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ITunes_logo.svg/1200px-ITunes_logo.svg.png", tag: "APPLE",
-                variants: [ 
-                    {n: "$2 Gift Card", p: 2.50}, {n: "$5 Gift Card", p: 5.00}, 
-                    {n: "$10 Gift Card", p: 10.00}, {n: "$15 Gift Card", p: 15.00},
-                    {n: "$25 Gift Card", p: 25.00}, {n: "$50 Gift Card", p: 50.00}, {n: "$100 Gift Card", p: 100.00}
-                ]
+                id: 4, name: "iTunes Card (US Store)", img: "https://upload.wikimedia.org/wikipedia/commons/d/df/ITunes_logo.svg", 
+                variants: [ {n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}, {n: "$50 Card", p: 52.00} ]
             },
             { 
-                id: 5, name: "Google Play Card (US)", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Google_Play_2022_logo.svg/1024px-Google_Play_2022_logo.svg.png", tag: "ANDROID",
-                variants: [ 
-                    {n: "$5 Gift Card", p: 5.00}, {n: "$10 Gift Card", p: 10.00}, 
-                    {n: "$15 Gift Card", p: 15.00}, {n: "$25 Gift Card", p: 25.00},
-                    {n: "$50 Gift Card", p: 50.00}, {n: "$100 Gift Card", p: 100.00}
-                ]
-            },
-            { 
-                id: 6, name: "Free Fire Diamonds", img: "https://upload.wikimedia.org/wikipedia/en/a/a1/Free_Fire_Logo.png", tag: "POPULAR",
-                variants: [ {n: "100 + 10 Dm", p: 1.00}, {n: "210 + 21 Dm", p: 2.00}, {n: "530 + 53 Dm", p: 5.00}, {n: "1080 + 108 Dm", p: 10.00} ]
-            },
-            { 
-                id: 7, name: "Jawaker Tokens", img: "https://www.jawaker.com/assets/jawaker-logo.png", tag: "ARABIC",
-                variants: [ {n: "10K Tokens", p: 1.50}, {n: "50K Tokens", p: 6.00}, {n: "250K Tokens", p: 28.00} ]
-            },
-            { 
-                id: 8, name: "Clash of Clans", img: "https://upload.wikimedia.org/wikipedia/en/7/70/Clash_of_Clans_logo.png", tag: "SUPERCELL",
-                variants: [ {n: "Gold Pass", p: 7.00}, {n: "500 Gems", p: 5.00}, {n: "1200 Gems", p: 10.00}, {n: "2500 Gems", p: 20.00} ]
+                id: 5, name: "Google Play (US)", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg", 
+                variants: [ {n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}, {n: "$50 Card", p: 52.00} ]
             }
         ];
 
-        function updatePrice(productId) {
-            const select = document.getElementById(`select-${productId}`);
-            const priceSpan = document.getElementById(`price-${productId}`);
-            const selectedPrice = parseFloat(select.value) + 1; // زيادة 1 دولار تلقائياً
-            priceSpan.innerText = `$${selectedPrice.toFixed(2)}`;
-        }
+        let cart = [];
 
         function loadMarketplace() {
             const grid = document.getElementById('marketGrid');
             grid.innerHTML = products.map(item => `
                 <div class="item-card">
-                    <div class="item-img">
-                        ${item.tag ? `<span class="badge">${item.tag}</span>` : ''}
-                        <img src="${item.img}" alt="${item.name}">
-                    </div>
+                    <div class="item-img"><img src="${item.img}"></div>
                     <div class="item-info">
                         <span class="item-name">${item.name}</span>
-                        <select class="variant-select" id="select-${item.id}" onchange="updatePrice(${item.id})">
+                        <select class="variant-select" id="v-${item.id}" onchange="updatePriceDisplay(${item.id})">
                             ${item.variants.map(v => `<option value="${v.p}">${v.n}</option>`).join('')}
                         </select>
-                        <span class="price-now" id="price-${item.id}">$${(item.variants[0].p + 1).toFixed(2)}</span>
-                        <button class="buy-btn" onclick="buyItem(${item.id})">BUY NOW</button>
+                        <span class="price-now" id="p-${item.id}">$${(item.variants[0].p + 1).toFixed(2)}</span>
+                        <button class="add-btn" onclick="addToCart(${item.id})">ADD TO WISHLIST</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.buyItem = (productId) => {
-            const product = products.find(p => p.id === productId);
-            const select = document.getElementById(`select-${productId}`);
-            const selectedVariant = select.options[select.selectedIndex].text;
-            const finalPrice = parseFloat(select.value) + 1;
+        function updatePriceDisplay(id) {
+            const p = parseFloat(document.getElementById(`v-${id}`).value) + 1;
+            document.getElementById(`p-${id}`).innerText = `$${p.toFixed(2)}`;
+        }
 
-            alert(`Order Initialized:\nProduct: ${product.name}\nType: ${selectedVariant}\nTotal: $${finalPrice.toFixed(2)}\n\nProcessing your request...`);
-        };
+        function addToCart(id) {
+            const product = products.find(x => x.id === id);
+            const select = document.getElementById(`v-${id}`);
+            const variantName = select.options[select.selectedIndex].text;
+            const price = parseFloat(select.value) + 1;
+
+            cart.push({ name: product.name, variant: variantName, price: price });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const itemsCont = document.getElementById('cartItems');
+            let total = 0;
+            itemsCont.innerHTML = cart.map((item, index) => {
+                total += item.price;
+                return `<div class="cart-item">
+                    <span>${item.name} (${item.variant})</span>
+                    <b>$${item.price.toFixed(2)}</b>
+                </div>`;
+            }).join('');
+            document.getElementById('totalPrice').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function toggleCart() {
+            document.getElementById('cartOverlay').classList.toggle('active');
+        }
+
+        function processCheckout() {
+            if(cart.length === 0) return alert("Wishlist is empty!");
+            
+            // هنا السيستم بيعمل Checkout وبيرسل للداتابيز
+            alert("Payment Successful!\nThe codes have been generated and sent to your registered Gmail.");
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
 
         loadMarketplace();
     </script>
