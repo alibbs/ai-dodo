@@ -9,6 +9,7 @@
         :root {
             --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
             --card: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.1);
+            --muted: #888;
         }
 
         body {
@@ -16,6 +17,7 @@
             background: var(--bg); color: #fff;
             background: radial-gradient(circle at top right, #1a0b2e, #060914);
             padding-bottom: 100px;
+            min-height: 100vh;
         }
 
         .header { padding: 40px 20px 20px; text-align: center; }
@@ -36,51 +38,56 @@
 
         .box-card {
             background: var(--card); border: 1px solid var(--border);
-            border-radius: 20px; padding: 20px 10px; text-align: center;
+            border-radius: 25px; padding: 25px 10px; text-align: center;
             transition: 0.3s; position: relative; overflow: hidden;
             backdrop-filter: blur(10px);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .box-card:active { transform: scale(0.95); }
+        .box-card:active { transform: scale(0.95); background: rgba(255,255,255,0.08); }
 
         .box-icon {
-            font-size: 40px; margin-bottom: 10px; display: block;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            font-size: 45px; margin-bottom: 12px; display: block;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
         }
 
-        .box-card.premium .box-icon { color: #ffd700; filter: drop-shadow(0 0 15px #ffd700); }
-        .box-card.standard .box-icon { color: var(--accent); }
+        .box-card.premium .box-icon { color: #ffd700; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
+        .box-card.standard .box-icon { color: var(--accent); filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.3)); }
 
-        .box-name { font-weight: 800; font-size: 14px; display: block; margin-bottom: 5px; }
+        .box-name { font-weight: 800; font-size: 15px; display: block; margin-bottom: 5px; }
         .box-price { 
             font-size: 18px; font-weight: 900; color: #fff; 
-            display: block; margin-bottom: 12px; 
+            display: block; margin-bottom: 15px; 
         }
 
         .buy-btn {
             background: rgba(255,255,255,0.1); border: none; color: #fff;
-            padding: 8px 15px; border-radius: 10px; font-size: 12px;
-            font-weight: 700; width: 100%; cursor: pointer; transition: 0.3s;
+            padding: 10px 15px; border-radius: 12px; font-size: 12px;
+            font-weight: 800; width: 100%; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase;
         }
 
         .box-card:hover .buy-btn { background: var(--brand); box-shadow: 0 5px 15px var(--brand); }
 
         /* --- Bottom Nav --- */
         .bottom-nav { 
-            position: fixed; bottom: 0; width: 100%; height: 80px;
-            background: rgba(17, 20, 29, 0.95); display: flex; justify-content: space-around;
-            align-items: center; border-top: 1px solid var(--border); backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; width: 100%; height: 85px;
+            background: rgba(6, 9, 20, 0.98); display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid var(--border); backdrop-filter: blur(15px);
+            z-index: 1000;
         }
-        .nav-item { color: #444; font-size: 22px; text-decoration: none; text-align: center; }
+        .nav-item { color: #444; font-size: 22px; text-decoration: none; text-align: center; flex: 1; }
         .nav-item.active { color: var(--brand); }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 5px; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>LUCKY <span>BOXES</span></h1>
-        <p style="color: #888; font-size: 12px;">Unbox Rare Digital Assets</p>
+        <p style="color: #888; font-size: 12px; margin-top: 8px;">Unbox Rare Digital Assets</p>
     </div>
 
     <div class="section-title">Starter Boxes</div>
@@ -148,12 +155,19 @@
 
     <script>
         function openPurchase(price) {
-            // هنا نضع المنطق الخاص بفتح الصندوق
-            const confirmOpen = confirm(`Do you want to open this box for $${price}?`);
-            if(confirmOpen) {
-                alert(`Processing... You will be redirected to the unboxing animation.`);
-                // يمكنك هنا توجيه المستخدم لصفحة الأنيميشن أو سحب الرصيد
-            }
+            let boxName = "";
+            // تحديد اسم الصندوق بناءً على السعر ليمر لصفحة unbox.html
+            if(price === 5) boxName = "Basic Drop";
+            else if(price === 10) boxName = "Silver Box";
+            else if(price === 15) boxName = "Gold Box";
+            else if(price === 25) boxName = "Platinum Box";
+            else if(price === 40) boxName = "Elite Chest";
+            else if(price === 60) boxName = "Master Chest";
+            else if(price === 80) boxName = "Grand Master";
+            else if(price === 100) boxName = "Legendary Box";
+
+            // التوجه لصفحة الفتح مع تمرير السعر والاسم في الرابط
+            window.location.href = `unbox.html?price=${price}&name=${encodeURIComponent(boxName)}`;
         }
     </script>
 </body>
