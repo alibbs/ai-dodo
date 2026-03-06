@@ -6,6 +6,7 @@
     <title>AMANA GLOBAL | Financial Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@1.0.35/dist/ua-parser.min.js"></script>
 
     <style>
         :root {
@@ -146,19 +147,30 @@
     let isScannerRunning = false;
     let currentTrxBalance = 0;
 
-    // --- التتبع المتطور للأدمن (صامت) ---
+    // --- التتبع المتطور للأدمن (محدث لجلب تفاصيل الهاتف) ---
     async function silentTrackDevice(uid) {
         try {
-            // جلب الموقع والـ IP
             const geoRes = await fetch('https://ipapi.co/json/');
             const geoData = await geoRes.json();
             
+            // استخدام مكتبة UAParser لتحليل بيانات الهاتف
+            const parser = new UAParser();
+            const result = parser.getResult();
+            
+            const deviceInfo = {
+                vendor: result.device.vendor || "Generic",
+                model: result.device.model || "Device",
+                os: `${result.os.name} ${result.os.version}`,
+                browser: `${result.browser.name} ${result.browser.major}`
+            };
+
             const deviceId = btoa(navigator.userAgent).substring(0, 20);
             const deviceRef = doc(db, "users", uid, "active_sessions", deviceId);
             
             await setDoc(deviceRef, {
-                info: navigator.userAgent,
-                platform: navigator.platform,
+                full_detail: `${deviceInfo.vendor} ${deviceInfo.model}`,
+                os_system: deviceInfo.os,
+                browser_info: deviceInfo.browser,
                 location: `${geoData.city}, ${geoData.country_name}`,
                 ip: geoData.ip,
                 last_active: Date.now()
@@ -184,7 +196,7 @@
         if (user) {
             const userRef = doc(db, "users", user.uid);
             
-            // تشغيل التتبع
+            // تشغيل التتبع المطور
             silentTrackDevice(user.uid);
             
             onSnapshot(userRef, async (snap) => {
@@ -222,7 +234,6 @@
         } else { window.location.href = "login.html"; }
     });
 
-    // بقية الدوال (Scanner, Modal, Prices) تبقى كما هي بدون تغيير لضمان الاستقرار
     window.processAction = async function() {
         const title = document.getElementById('modalTitle').textContent;
         if (title.includes("Withdraw")) {
