@@ -2,35 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | User Devices</title>
+    <title>Admin Panel | Live Tracking</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        body { background: #060914; color: white; font-family: sans-serif; padding: 20px; }
-        .admin-container { max-width: 800px; margin: auto; }
-        h1 { color: #ff00b8; border-bottom: 2px solid #222; padding-bottom: 10px; }
+        body { background: #05070a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; padding: 30px; }
+        .container { max-width: 1100px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff00b8; padding-bottom: 15px; margin-bottom: 30px; }
+        h1 { color: #ff00b8; margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 2px; }
+        
         .user-card { 
-            background: rgba(255,255,255,0.05); border: 1px solid #333; 
-            border-radius: 15px; padding: 15px; margin-bottom: 15px;
+            background: #0f121d; border: 1px solid #1f263d; border-radius: 15px; 
+            margin-bottom: 20px; overflow: hidden; animation: fadeIn 0.5s ease;
         }
-        .user-header { display: flex; justify-content: space-between; align-items: center; }
-        .user-email { font-weight: bold; color: #00f2ff; }
-        .device-list { margin-top: 10px; padding-left: 10px; border-left: 2px solid #ff00b8; }
-        .device-item { font-size: 12px; color: #aaa; margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px; }
-        .device-count { background: #ff00b8; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
-        .status-tag { font-size: 10px; color: #00ff96; text-transform: uppercase; }
+        .user-info { background: #161b2e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f263d; }
+        .user-email { color: #00f2ff; font-weight: bold; font-size: 16px; }
+        
+        .session-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .session-table th { text-align: left; padding: 12px 20px; color: #666; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #1f263d; }
+        .session-table td { padding: 12px 20px; border-bottom: 1px solid #14192b; }
+        
+        .device-tag { color: #fff; background: #333; padding: 3px 8px; border-radius: 5px; font-size: 11px; }
+        .loc-tag { color: #00ff96; font-weight: 600; }
+        .ip-tag { color: #aaa; font-family: monospace; }
+        .time-tag { color: #ffb800; font-size: 11px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .live-dot { height: 8px; width: 8px; background-color: #00ff96; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 8px #00ff96; }
     </style>
 </head>
 <body>
 
-<div class="admin-container">
-    <h1><i class="fa-solid fa-shield-halved"></i> Admin Control</h1>
-    <div id="usersList">Loading Users Data...</div>
+<div class="container">
+    <div class="header">
+        <h1><i class="fa-solid fa-microchip"></i> Live Surveillance</h1>
+        <div id="status"><span class="live-dot"></span> System Online</div>
+    </div>
+
+    <div id="monitorBody">
+        </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
@@ -44,51 +58,60 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // دالة لجلب الجلسات (الأجهزة) لكل مستخدم
-    async function getUserDevices(uid) {
-        const sessionsRef = collection(db, "users", uid, "active_sessions");
-        const snap = await getDocs(sessionsRef);
-        let devices = [];
-        snap.forEach(doc => {
-            devices.push(doc.data());
-        });
-        return devices;
-    }
+    onSnapshot(collection(db, "users"), (snapshot) => {
+        const monitorBody = document.getElementById('monitorBody');
+        monitorBody.innerHTML = '';
 
-    // مراقبة المستخدمين بشكل مباشر
-    onSnapshot(collection(db, "users"), async (snapshot) => {
-        const listDiv = document.getElementById('usersList');
-        listDiv.innerHTML = '';
-
-        for (const userDoc of snapshot.docs) {
+        snapshot.forEach((userDoc) => {
             const userData = userDoc.data();
-            const devices = await getUserDevices(userDoc.id);
+            const userId = userDoc.id;
 
             const card = document.createElement('div');
             card.className = 'user-card';
-            
-            let devicesHtml = devices.map(d => `
-                <div class="device-item">
-                    <i class="fa-solid fa-laptop-code"></i> <b>Platform:</b> ${d.platform} <br>
-                    <i class="fa-solid fa-clock"></i> <b>Last Active:</b> ${new Date(d.last_active).toLocaleString()} <br>
-                    <small>${d.info.substring(0, 50)}...</small>
-                </div>
-            `).join('');
-
             card.innerHTML = `
-                <div class="user-header">
-                    <div>
-                        <span class="user-email">${userData.email || 'No Email'}</span>
-                        <div class="status-tag">${userData.username || 'User'}</div>
-                    </div>
-                    <span class="device-count">${devices.length} Devices</span>
+                <div class="user-info">
+                    <span class="user-email"><i class="fa-solid fa-user-shield"></i> ${userData.email || 'No Email'}</span>
+                    <span style="font-size:12px; color:#555">UID: ${userId}</span>
                 </div>
-                <div class="device-list">
-                    ${devices.length > 0 ? devicesHtml : '<span style="color:#555">No active sessions tracked yet.</span>'}
+                <div id="sessions-${userId}">
+                    <table class="session-table">
+                        <thead>
+                            <tr>
+                                <th>Device / OS</th>
+                                <th>Location</th>
+                                <th>IP Address</th>
+                                <th>Last Seen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-${userId}">
+                            <tr><td colspan="4" style="text-align:center; color:#444;">Scanning active sessions...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             `;
-            listDiv.appendChild(card);
-        }
+            monitorBody.appendChild(card);
+
+            // جلب الأجهزة والموقع لكل مستخدم
+            onSnapshot(collection(db, "users", userId, "active_sessions"), (sSnap) => {
+                const tbody = document.getElementById(`tbody-${userId}`);
+                if (!sSnap.empty) {
+                    tbody.innerHTML = '';
+                    sSnap.forEach(doc => {
+                        const s = doc.data();
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="device-tag">${s.platform}</span> <br> <small style="color:#555">${s.vendor || ''}</small></td>
+                                <td><span class="loc-tag"><i class="fa-solid fa-location-dot"></i> ${s.location || 'Unknown'}</span></td>
+                                <td><span class="ip-tag">${s.ip || '0.0.0.0'}</span></td>
+                                <td><span class="time-tag">${new Date(s.last_active).toLocaleTimeString()}</span></td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#444;">No device data available</td></tr>';
+                }
+            });
+        });
     });
 </script>
 
