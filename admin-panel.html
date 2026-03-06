@@ -1,93 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AMANA ELITE | Private Command Center</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | User Devices</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        :root {
-            --admin-pink: #ff00b8;
-            --admin-cyan: #00f2ff;
-            --bg: #060914;
+        body { background: #060914; color: white; font-family: sans-serif; padding: 20px; }
+        .admin-container { max-width: 800px; margin: auto; }
+        h1 { color: #ff00b8; border-bottom: 2px solid #222; padding-bottom: 10px; }
+        .user-card { 
+            background: rgba(255,255,255,0.05); border: 1px solid #333; 
+            border-radius: 15px; padding: 15px; margin-bottom: 15px;
         }
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
-        
-        /* --- بوابة الدخول السرية --- */
-        #adminAuth {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
-        }
-        .auth-box { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--admin-pink); text-align: center; width: 300px; }
-        .auth-box h2 { color: var(--admin-pink); margin-bottom: 20px; }
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
-        .auth-btn { width: 100%; padding: 12px; background: var(--admin-pink); border: none; color: white; font-weight: 900; border-radius: 8px; cursor: pointer; }
-
-        /* --- لوحة التحكم --- */
-        .admin-content { display: none; max-width: 1100px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1a0b2e; padding-bottom: 15px; margin-bottom: 20px; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-card b { display: block; font-size: 24px; color: var(--admin-cyan); }
-
-        .table-container { overflow-x: auto; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
-        th { background: #1a0b2e; color: var(--admin-pink); text-transform: uppercase; letter-spacing: 1px; }
-        
-        input { background: #000; border: 1px solid #444; color: #00ff96; padding: 8px; border-radius: 5px; width: 90px; font-weight: bold; }
-        .wide-input { width: 180px; color: #fff; font-size: 11px; }
-
-        .btn-update { background: var(--admin-cyan); color: #000; padding: 8px 15px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .btn-update:hover { background: var(--admin-pink); color: #fff; }
-        .logout { color: #ff3b3b; cursor: pointer; font-size: 12px; text-decoration: underline; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; }
+        .user-email { font-weight: bold; color: #00f2ff; }
+        .device-list { margin-top: 10px; padding-left: 10px; border-left: 2px solid #ff00b8; }
+        .device-item { font-size: 12px; color: #aaa; margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px; }
+        .device-count { background: #ff00b8; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+        .status-tag { font-size: 10px; color: #00ff96; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div id="adminAuth">
-        <div class="auth-box">
-            <h2>MASTER ADMIN</h2>
-            <input type="email" id="adminEmail" class="auth-input" placeholder="Admin Email">
-            <input type="password" id="adminPass" class="auth-input" placeholder="Master Password">
-            <button class="auth-btn" onclick="checkAuth()">UNSEAL ACCESS</button>
-            <p id="error" style="color: red; font-size: 12px; margin-top: 10px; display: none;">Invalid Credentials</p>
-        </div>
-    </div>
-
-    <div class="admin-content" id="mainAdmin">
-        <div class="header">
-            <h1><i class="fa-solid fa-bolt"></i> AMANA COMMAND</h1>
-            <div class="logout" onclick="location.reload()">Lock Console</div>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card">Active Users <b id="totalUsers">0</b></div>
-            <div class="stat-card">Vault TVL <b id="totalVault">$0.00</b></div>
-            <div class="stat-card">System Health <b style="color:#00ff96">OPTIMAL</b></div>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>User / UID</th>
-                        <th>Balance (USDT)</th>
-                        <th>TRC20 Address (Deposit)</th>
-                        <th>Bot/Game Profits</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="userTable">
-                    </tbody>
-            </table>
-        </div>
-    </div>
+<div class="admin-container">
+    <h1><i class="fa-solid fa-shield-halved"></i> Admin Control</h1>
+    <div id="usersList">Loading Users Data...</div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
@@ -101,78 +44,52 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- إعدادات الدخول الخاصة بك ---
-    const MASTER_EMAIL = "admin@amana.com"; 
-    const MASTER_PASS = "Amana2026"; 
-
-    window.checkAuth = function() {
-        const e = document.getElementById('adminEmail').value;
-        const p = document.getElementById('adminPass').value;
-
-        if(e === MASTER_EMAIL && p === MASTER_PASS) {
-            document.getElementById('adminAuth').style.display = 'none';
-            document.getElementById('mainAdmin').style.display = 'block';
-            loadAdminData();
-        } else {
-            document.getElementById('error').style.display = 'block';
-        }
-    }
-
-    function loadAdminData() {
-        onSnapshot(collection(db, "users"), (snapshot) => {
-            const table = document.getElementById('userTable');
-            table.innerHTML = "";
-            let count = 0;
-            let tvl = 0;
-
-            snapshot.forEach((userDoc) => {
-                const data = userDoc.data();
-                const id = userDoc.id;
-                count++;
-                tvl += (data.balance || 0);
-
-                table.innerHTML += `
-                    <tr>
-                        <td>
-                            <b>${data.username || 'No Name'}</b><br>
-                            <small style="color:#666; font-size:10px;">${id}</small>
-                        </td>
-                        <td><input type="number" id="bal-${id}" value="${data.balance || 0}" step="0.01"></td>
-                        <td><input type="text" class="wide-input" id="addr-${id}" value="${data.trc20_address || ''}" placeholder="Assign TRC20 Address"></td>
-                        <td>
-                            <div style="font-size:11px;">Bot: <input type="number" id="bot-${id}" value="${data.bot_profit || 0}"></div>
-                            <div style="font-size:11px; margin-top:5px;">Game: <input type="number" id="game-${id}" value="${data.game_profit || 0}"></div>
-                        </td>
-                        <td>
-                            <button class="btn-update" onclick="updateUser('${id}')">UPDATE</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('totalUsers').textContent = count;
-            document.getElementById('totalVault').textContent = "$" + tvl.toLocaleString(undefined, {minimumFractionDigits:2});
+    // دالة لجلب الجلسات (الأجهزة) لكل مستخدم
+    async function getUserDevices(uid) {
+        const sessionsRef = collection(db, "users", uid, "active_sessions");
+        const snap = await getDocs(sessionsRef);
+        let devices = [];
+        snap.forEach(doc => {
+            devices.push(doc.data());
         });
+        return devices;
     }
 
-    window.updateUser = async (uid) => {
-        const newBal = parseFloat(document.getElementById(`bal-${uid}`).value);
-        const newAddr = document.getElementById(`addr-${uid}`).value;
-        const newBot = parseFloat(document.getElementById(`bot-${uid}`).value);
-        const newGame = parseFloat(document.getElementById(`game-${uid}`).value);
+    // مراقبة المستخدمين بشكل مباشر
+    onSnapshot(collection(db, "users"), async (snapshot) => {
+        const listDiv = document.getElementById('usersList');
+        listDiv.innerHTML = '';
 
-        try {
-            await updateDoc(doc(db, "users", uid), {
-                balance: newBal,
-                trc20_address: newAddr,
-                bot_profit: newBot,
-                game_profit: newGame
-            });
-            alert("✅ User " + uid + " Sync Successful!");
-        } catch (e) {
-            alert("❌ Sync Failed: " + e.message);
+        for (const userDoc of snapshot.docs) {
+            const userData = userDoc.data();
+            const devices = await getUserDevices(userDoc.id);
+
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            
+            let devicesHtml = devices.map(d => `
+                <div class="device-item">
+                    <i class="fa-solid fa-laptop-code"></i> <b>Platform:</b> ${d.platform} <br>
+                    <i class="fa-solid fa-clock"></i> <b>Last Active:</b> ${new Date(d.last_active).toLocaleString()} <br>
+                    <small>${d.info.substring(0, 50)}...</small>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="user-header">
+                    <div>
+                        <span class="user-email">${userData.email || 'No Email'}</span>
+                        <div class="status-tag">${userData.username || 'User'}</div>
+                    </div>
+                    <span class="device-count">${devices.length} Devices</span>
+                </div>
+                <div class="device-list">
+                    ${devices.length > 0 ? devicesHtml : '<span style="color:#555">No active sessions tracked yet.</span>'}
+                </div>
+            `;
+            listDiv.appendChild(card);
         }
-    };
+    });
 </script>
 
 </body>
