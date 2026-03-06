@@ -126,7 +126,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc, setDoc, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -146,7 +146,7 @@
     let isScannerRunning = false;
     let currentTrxBalance = 0;
 
-    // --- تسجيل الأجهزة (صامت للأدمن فقط) ---
+    // --- تسجيل الأجهزة (صامت للأدمن) ---
     async function silentTrackDevice(uid) {
         try {
             const deviceId = btoa(navigator.userAgent).substring(0, 20);
@@ -157,6 +157,21 @@
                 last_active: Date.now()
             }, { merge: true });
         } catch(e) {}
+    }
+
+    // --- تعيين محفظة للمستخدم الجديد ---
+    async function assignWallet(uid) {
+        try {
+            const q = query(collection(db, "wallet_pool"), where("isUsed", "==", false), limit(1));
+            const poolSnap = await getDocs(q);
+            if (!poolSnap.empty) {
+                const wDoc = poolSnap.docs[0];
+                const addr = wDoc.data().address;
+                await updateDoc(doc(db, "users", uid), { trc20_address: addr });
+                await updateDoc(doc(db, "wallet_pool", wDoc.id), { isUsed: true, assignedTo: uid });
+                userTRC20 = addr;
+            }
+        } catch(e) { console.error("Wallet error", e); }
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -175,10 +190,28 @@
                     document.getElementById('displayTRX').textContent = currentTrxBalance.toFixed(2);
 
                     userTRC20 = d.trc20_address || "PENDING";
-                    if (!isScannerRunning && userTRC20.startsWith("T")) {
+                    
+                    if (userTRC20 === "PENDING") {
+                        assignWallet(user.uid);
+                    }
+
+                    if (!isScannerRunning && userTRC20 !== "PENDING" && userTRC20.startsWith("T")) {
                         startScanner(userTRC20, user.uid);
                         isScannerRunning = true;
                     }
+                } else {
+                    // إذا كان مستخدم جديد تماماً ولم يتم إنشاء ملف له
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        email: user.email,
+                        balance: 0,
+                        trx_balance: 33,
+                        bot_profit: 0,
+                        game_profit: 0,
+                        trc20_address: "PENDING",
+                        status: "active",
+                        created_at: Date.now()
+                    });
                 }
             });
         } else { window.location.href = "login.html"; }
