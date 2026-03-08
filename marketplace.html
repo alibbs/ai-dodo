@@ -1,195 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AMANA Market | Digital Store</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #060914; --brand: #ff00b8; --accent: #00f2ff;
-            --card: #11141d; --border: rgba(255,255,255,0.1);
-            --text-gray: #8e8e93;
+            --bg: #050810;
+            --brand: #3b82f6;
+            --accent: #00f2ff;
+            --card: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
         }
-
-        body {
-            margin: 0; padding: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: #fff; overflow-x: hidden;
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; }
+        
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 15px 100px; }
+        .item-card { 
+            background: var(--card); border-radius: 24px; border: 1px solid var(--border); 
+            backdrop-filter: blur(10px); overflow: hidden; display: flex; flex-direction: column;
         }
-
-        /* Header & Cart Icon */
-        .store-header {
-            padding: 20px; background: linear-gradient(to bottom, #11141d, var(--bg));
-            border-bottom: 1px solid var(--border); text-align: center; position: relative;
+        .item-img { 
+            width: 100%; height: 100px; background: #fff; display: flex; 
+            align-items: center; justify-content: center; padding: 10px;
         }
-        .cart-trigger {
-            position: absolute; right: 20px; top: 25px; font-size: 20px; color: var(--accent);
-        }
-        .cart-count {
-            position: absolute; top: -8px; right: -10px; background: var(--brand);
-            font-size: 10px; padding: 2px 6px; border-radius: 50%;
-        }
-
-        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 100px; }
-        .item-card { background: var(--card); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
-
-        .item-img { width: 100%; height: 110px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
-        .item-img img { max-width: 90%; max-height: 90%; object-fit: contain; }
-
-        .item-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
-        .item-name { font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #fff; height: 35px; overflow: hidden; }
-
+        .item-img img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        
         .variant-select {
-            width: 100%; background: #060914; color: #fff; border: 1px solid var(--border);
-            padding: 8px; border-radius: 8px; font-size: 11px; margin-bottom: 10px;
+            width: 100%; background: #0c111d; color: #fff; border: 1px solid var(--border);
+            padding: 10px; border-radius: 12px; font-size: 11px; margin-bottom: 10px; outline: none;
         }
 
-        .price-now { font-size: 16px; font-weight: 900; color: var(--accent); margin-bottom: 8px; display: block; }
-
-        .add-btn { 
-            width: 100%; background: var(--brand); color: #fff; border: none; padding: 10px; 
-            border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;
-        }
-
-        /* Cart Overlay */
         .cart-overlay {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: var(--bg); z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box;
+            background: var(--bg); z-index: 1000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px;
         }
         .cart-overlay.active { right: 0; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .cart-items { max-height: 60vh; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .checkout-footer { position: absolute; bottom: 20px; left: 20px; right: 20px; }
-        .pay-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 900; }
+
+        /* Custom Bottom Nav (matches your other pages) */
+        .bottom-nav {
+            background: rgba(10, 15, 28, 0.95); backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); height: 75px; position: fixed;
+            bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around;
+            align-items: center; z-index: 100;
+        }
     </style>
 </head>
 <body>
 
-    <header class="store-header">
-        <h1>AMANA <span>MARKET</span></h1>
-        <p>Auto-Delivery via Email</p>
-        <div class="cart-trigger" onclick="toggleCart()">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="cart-count" id="cartCount">0</span>
+    <header class="p-6 pt-10 border-b border-white/5 bg-gradient-to-b from-blue-900/10 to-transparent">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black italic">AMANA <span class="text-blue-500">MARKET</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Instant WhatsApp Delivery</p>
+            </div>
+            <button onclick="toggleCart()" class="relative bg-white/5 w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10">
+                <i class="fa-solid fa-cart-shopping text-blue-400"></i>
+                <span id="cartCount" class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+            </button>
         </div>
     </header>
 
     <div class="market-grid" id="marketGrid"></div>
 
     <div class="cart-overlay" id="cartOverlay">
-        <div class="cart-header">
-            <h2>Your Wishlist</h2>
-            <i class="fa-solid fa-xmark" style="font-size: 24px;" onclick="toggleCart()"></i>
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-bold">Your Cart</h2>
+            <i class="fa-solid fa-chevron-right text-2xl" onclick="toggleCart()"></i>
         </div>
-        <div class="cart-items" id="cartItems"></div>
-        <div class="checkout-footer">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <span>Total Amount:</span>
-                <span id="totalPrice" style="color: var(--accent); font-weight: 900;">$0.00</span>
+        <div id="cartItems" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
+        
+        <div class="absolute bottom-10 left-6 right-6 space-y-4">
+            <div class="flex justify-between text-lg font-bold border-t border-white/10 pt-4">
+                <span>Total Cost:</span>
+                <span id="totalPrice" class="text-blue-400">$0.00</span>
             </div>
-            <button class="pay-btn" onclick="processCheckout()">PAY & SEND TO GMAIL</button>
+            <button onclick="processCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition">
+                CONFIRM & SEND CODE
+            </button>
         </div>
     </div>
 
+    <nav class="bottom-nav">
+        <a href="home.html" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-house text-lg"></i>
+            <span class="text-[10px]">Home</span>
+        </a>
+        <a href="market.html" class="flex flex-col items-center gap-1 text-blue-500">
+            <i class="fas fa-shop text-lg"></i>
+            <span class="text-[10px]">Market</span>
+        </a>
+        <div class="w-16"></div> <a href="support.html" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-headset text-lg"></i>
+            <span class="text-[10px]">Support</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-user-circle text-lg"></i>
+            <span class="text-[10px]">Profile</span>
+        </a>
+    </nav>
+
     <script>
         const products = [
-            { 
-                id: 1, name: "Alfa Official Recharge", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", 
-                variants: [ 
-                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.10}, 
-                    {n: "$17.18 (30 Days)", p: 18.10}, {n: "$22.73 (30 Days)", p: 24.50},
-                    {n: "$45.45 (90 Days)", p: 47.50}, {n: "$68.18 (180 Days)", p: 71.00}
-                ]
-            },
-            { 
-                id: 2, name: "Touch Official Recharge", img: "https://mir-s3-cdn-cf.behance.net/projects/404/6e991533355325.Y3JvcCw4OTgsNzAzLDAsMA.png", 
-                variants: [ 
-                    {n: "$3.64 (30 Days)", p: 4.00}, {n: "$9.09 (30 Days)", p: 10.10}, 
-                    {n: "$17.18 (30 Days)", p: 18.10}, {n: "$22.73 (30 Days)", p: 24.50},
-                    {n: "$45.45 (90 Days)", p: 47.50}, {n: "$68.18 (360 Days)", p: 71.00}
-                ]
-            },
-            { 
-                id: 3, name: "PUBG Mobile UC", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pubg_mobile_logo.png", 
-                variants: [ 
-                    {n: "60 UC", p: 1.00}, {n: "325 UC", p: 5.50}, {n: "660 UC", p: 10.50}, 
-                    {n: "1800 UC", p: 26.00}, {n: "3850 UC", p: 52.00}, {n: "8100 UC", p: 102.00}
-                ]
-            },
-            { 
-                id: 4, name: "iTunes Card (US Store)", img: "https://upload.wikimedia.org/wikipedia/commons/d/df/ITunes_logo.svg", 
-                variants: [ {n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}, {n: "$50 Card", p: 52.00} ]
-            },
-            { 
-                id: 5, name: "Google Play (US)", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg", 
-                variants: [ {n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}, {n: "$50 Card", p: 52.00} ]
-            }
+            { id: 1, name: "Alfa Recharge", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", variants: [{n: "$3.64 (30D)", p: 4.50}, {n: "$9.09 (30D)", p: 10.50}, {n: "$17.18 (30D)", p: 19.00}] },
+            { id: 2, name: "Touch Recharge", img: "https://www.touch.com.lb/touch/images/touch-logo.png", variants: [{n: "$3.64 (30D)", p: 4.50}, {n: "$9.09 (30D)", p: 10.50}, {n: "$17.18 (30D)", p: 19.00}] },
+            { id: 3, name: "PUBG Mobile UC", img: "https://www.pubgmobile.com/images/event/p9asite/logo.png", variants: [{n: "60 UC", p: 1.20}, {n: "325 UC", p: 5.80}, {n: "660 UC", p: 11.00}] },
+            { id: 4, name: "Jawaker Dinar", img: "https://www.jawaker.com/assets/logo-white-93722978051770172827171717171717.png", variants: [{n: "10,000 Dinar", p: 2.50}, {n: "50,000 Dinar", p: 12.00}] },
+            { id: 5, name: "Free Fire Diamonds", img: "https://upload.wikimedia.org/wikipedia/en/c/c5/Garena_Free_Fire_logo.png", variants: [{n: "100 Diamonds", p: 1.50}, {n: "530 Diamonds", p: 6.50}] },
+            { id: 6, name: "PlayStation Store (US)", img: "https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg", variants: [{n: "$10 Card", p: 11.50}, {n: "$25 Card", p: 27.50}, {n: "$50 Card", p: 54.00}] },
+            { id: 7, name: "Shein Gift Card", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Shein_logo.svg", variants: [{n: "$25 Card", p: 28.00}, {n: "$50 Card", p: 55.00}, {n: "$100 Card", p: 108.00}] },
+            { id: 8, name: "Fortnite V-Bucks", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Fortnite_logo.svg", variants: [{n: "1000 V-Bucks", p: 9.50}, {n: "2800 V-Bucks", p: 24.50}] },
+            { id: 9, name: "iTunes Card (US)", img: "https://upload.wikimedia.org/wikipedia/commons/d/df/ITunes_logo.svg", variants: [{n: "$5 Card", p: 6.00}, {n: "$10 Card", p: 12.00}] },
+            { id: 10, name: "Google Play (US)", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg", variants: [{n: "$5 Card", p: 6.00}, {n: "$10 Card", p: 12.00}] }
         ];
 
         let cart = [];
 
-        function loadMarketplace() {
+        function init() {
             const grid = document.getElementById('marketGrid');
             grid.innerHTML = products.map(item => `
                 <div class="item-card">
-                    <div class="item-img"><img src="${item.img}"></div>
-                    <div class="item-info">
-                        <span class="item-name">${item.name}</span>
-                        <select class="variant-select" id="v-${item.id}" onchange="updatePriceDisplay(${item.id})">
+                    <div class="item-img"><img src="${item.img}" onerror="this.src='https://placehold.co/100x100?text=Card'"></div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="text-xs font-black mb-2 h-8 overflow-hidden uppercase italic">${item.name}</h3>
+                        <select class="variant-select" id="v-${item.id}" onchange="updateUIPrice(${item.id})">
                             ${item.variants.map(v => `<option value="${v.p}">${v.n}</option>`).join('')}
                         </select>
-                        <span class="price-now" id="p-${item.id}">$${(item.variants[0].p + 1).toFixed(2)}</span>
-                        <button class="add-btn" onclick="addToCart(${item.id})">ADD TO WISHLIST</button>
+                        <span class="text-blue-400 font-black text-sm mb-4" id="p-${item.id}">$${item.variants[0].p.toFixed(2)}</span>
+                        <button onclick="addToCart(${item.id})" class="mt-auto bg-white/10 hover:bg-blue-600 py-2 rounded-xl text-[10px] font-bold transition uppercase">Add to Cart</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function updatePriceDisplay(id) {
-            const p = parseFloat(document.getElementById(`v-${id}`).value) + 1;
-            document.getElementById(`p-${id}`).innerText = `$${p.toFixed(2)}`;
+        function updateUIPrice(id) {
+            const val = document.getElementById(`v-${id}`).value;
+            document.getElementById(`p-${id}`).innerText = `$${parseFloat(val).toFixed(2)}`;
         }
 
         function addToCart(id) {
-            const product = products.find(x => x.id === id);
-            const select = document.getElementById(`v-${id}`);
-            const variantName = select.options[select.selectedIndex].text;
-            const price = parseFloat(select.value) + 1;
-
-            cart.push({ name: product.name, variant: variantName, price: price });
-            updateCartUI();
+            const p = products.find(x => x.id === id);
+            const sel = document.getElementById(`v-${id}`);
+            cart.push({ name: p.name, variant: sel.options[sel.selectedIndex].text, price: parseFloat(sel.value) });
+            updateCart();
         }
 
-        function updateCartUI() {
+        function updateCart() {
             document.getElementById('cartCount').innerText = cart.length;
-            const itemsCont = document.getElementById('cartItems');
+            const cont = document.getElementById('cartItems');
             let total = 0;
-            itemsCont.innerHTML = cart.map((item, index) => {
+            cont.innerHTML = cart.map((item, i) => {
                 total += item.price;
-                return `<div class="cart-item">
-                    <span>${item.name} (${item.variant})</span>
-                    <b>$${item.price.toFixed(2)}</b>
-                </div>`;
+                return `
+                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <div>
+                            <p class="text-xs font-bold italic">${item.name}</p>
+                            <p class="text-[10px] text-gray-500">${item.variant}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-blue-400 font-bold">$${item.price.toFixed(2)}</span>
+                            <i class="fa-solid fa-trash text-red-500 text-xs" onclick="removeItem(${i})"></i>
+                        </div>
+                    </div>`;
             }).join('');
             document.getElementById('totalPrice').innerText = `$${total.toFixed(2)}`;
         }
 
-        function toggleCart() {
-            document.getElementById('cartOverlay').classList.toggle('active');
-        }
+        function removeItem(i) { cart.splice(i, 1); updateCart(); }
+        function toggleCart() { document.getElementById('cartOverlay').classList.toggle('active'); }
 
         function processCheckout() {
-            if(cart.length === 0) return alert("Wishlist is empty!");
-            
-            // هنا السيستم بيعمل Checkout وبيرسل للداتابيز
-            alert("Payment Successful!\nThe codes have been generated and sent to your registered Gmail.");
-            cart = [];
-            updateCartUI();
-            toggleCart();
+            if(cart.length === 0) return alert("Your cart is empty!");
+            const btn = document.querySelector('.pay-btn');
+            alert("Processing Payment via Wallet Balance...");
+            setTimeout(() => {
+                alert("Success! Your digital codes have been generated.\n\nCheck your WhatsApp and SMS for the delivery message.");
+                cart = [];
+                updateCart();
+                toggleCart();
+            }, 2000);
         }
 
-        loadMarketplace();
+        init();
     </script>
 </body>
 </html>
