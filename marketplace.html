@@ -14,18 +14,18 @@
             --card: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.08);
         }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow-x: hidden; }
         
-        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 15px 100px; }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 15px 120px; }
         .item-card { 
             background: var(--card); border-radius: 24px; border: 1px solid var(--border); 
             backdrop-filter: blur(10px); overflow: hidden; display: flex; flex-direction: column;
         }
         .item-img { 
-            width: 100%; height: 100px; background: #fff; display: flex; 
-            align-items: center; justify-content: center; padding: 10px;
+            width: 100%; height: 110px; background: #fff; display: flex; 
+            align-items: center; justify-content: center; padding: 12px;
         }
-        .item-img img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        .item-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
         .variant-select {
             width: 100%; background: #0c111d; color: #fff; border: 1px solid var(--border);
@@ -39,7 +39,6 @@
         }
         .cart-overlay.active { right: 0; }
 
-        /* Custom Bottom Nav (matches your other pages) */
         .bottom-nav {
             background: rgba(10, 15, 28, 0.95); backdrop-filter: blur(15px);
             border-top: 1px solid var(--border); height: 75px; position: fixed;
@@ -53,8 +52,8 @@
     <header class="p-6 pt-10 border-b border-white/5 bg-gradient-to-b from-blue-900/10 to-transparent">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black italic">AMANA <span class="text-blue-500">MARKET</span></h1>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Instant WhatsApp Delivery</p>
+                <h1 class="text-2xl font-black italic uppercase">AMANA <span class="text-blue-500">MARKET</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Auto-Delivery via WhatsApp</p>
             </div>
             <button onclick="toggleCart()" class="relative bg-white/5 w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10">
                 <i class="fa-solid fa-cart-shopping text-blue-400"></i>
@@ -67,53 +66,42 @@
 
     <div class="cart-overlay" id="cartOverlay">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-bold">Your Cart</h2>
-            <i class="fa-solid fa-chevron-right text-2xl" onclick="toggleCart()"></i>
+            <h2 class="text-xl font-bold italic">YOUR WISHLIST</h2>
+            <i class="fa-solid fa-xmark text-2xl text-gray-500" onclick="toggleCart()"></i>
         </div>
         <div id="cartItems" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
         
         <div class="absolute bottom-10 left-6 right-6 space-y-4">
             <div class="flex justify-between text-lg font-bold border-t border-white/10 pt-4">
-                <span>Total Cost:</span>
-                <span id="totalPrice" class="text-blue-400">$0.00</span>
+                <span>Total:</span>
+                <span id="totalPrice" class="text-blue-400 font-black">$0.00</span>
             </div>
-            <button onclick="processCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition">
-                CONFIRM & SEND CODE
+            <button onclick="processCheckout()" class="w-full bg-blue-600 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition">
+                CONFIRM & SEND VIA WHATSAPP
             </button>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="home.html" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-house text-lg"></i>
-            <span class="text-[10px]">Home</span>
-        </a>
-        <a href="market.html" class="flex flex-col items-center gap-1 text-blue-500">
-            <i class="fas fa-shop text-lg"></i>
-            <span class="text-[10px]">Market</span>
-        </a>
-        <div class="w-16"></div> <a href="support.html" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-headset text-lg"></i>
-            <span class="text-[10px]">Support</span>
-        </a>
-        <a href="profile.html" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-user-circle text-lg"></i>
-            <span class="text-[10px]">Profile</span>
-        </a>
+        <a href="home.html" class="flex flex-col items-center gap-1 text-gray-500"><i class="fas fa-house"></i><span class="text-[10px]">Home</span></a>
+        <a href="market.html" class="flex flex-col items-center gap-1 text-blue-500"><i class="fas fa-shop"></i><span class="text-[10px]">Market</span></a>
+        <div class="w-16"></div>
+        <a href="support.html" class="flex flex-col items-center gap-1 text-gray-500"><i class="fas fa-headset"></i><span class="text-[10px]">Support</span></a>
+        <a href="profile.html" class="flex flex-col items-center gap-1 text-gray-500"><i class="fas fa-user-circle"></i><span class="text-[10px]">Profile</span></a>
     </nav>
 
     <script>
         const products = [
-            { id: 1, name: "Alfa Recharge", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Alfa_Logo.png", variants: [{n: "$3.64 (30D)", p: 4.50}, {n: "$9.09 (30D)", p: 10.50}, {n: "$17.18 (30D)", p: 19.00}] },
-            { id: 2, name: "Touch Recharge", img: "https://www.touch.com.lb/touch/images/touch-logo.png", variants: [{n: "$3.64 (30D)", p: 4.50}, {n: "$9.09 (30D)", p: 10.50}, {n: "$17.18 (30D)", p: 19.00}] },
-            { id: 3, name: "PUBG Mobile UC", img: "https://www.pubgmobile.com/images/event/p9asite/logo.png", variants: [{n: "60 UC", p: 1.20}, {n: "325 UC", p: 5.80}, {n: "660 UC", p: 11.00}] },
-            { id: 4, name: "Jawaker Dinar", img: "https://www.jawaker.com/assets/logo-white-93722978051770172827171717171717.png", variants: [{n: "10,000 Dinar", p: 2.50}, {n: "50,000 Dinar", p: 12.00}] },
-            { id: 5, name: "Free Fire Diamonds", img: "https://upload.wikimedia.org/wikipedia/en/c/c5/Garena_Free_Fire_logo.png", variants: [{n: "100 Diamonds", p: 1.50}, {n: "530 Diamonds", p: 6.50}] },
-            { id: 6, name: "PlayStation Store (US)", img: "https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg", variants: [{n: "$10 Card", p: 11.50}, {n: "$25 Card", p: 27.50}, {n: "$50 Card", p: 54.00}] },
-            { id: 7, name: "Shein Gift Card", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Shein_logo.svg", variants: [{n: "$25 Card", p: 28.00}, {n: "$50 Card", p: 55.00}, {n: "$100 Card", p: 108.00}] },
-            { id: 8, name: "Fortnite V-Bucks", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Fortnite_logo.svg", variants: [{n: "1000 V-Bucks", p: 9.50}, {n: "2800 V-Bucks", p: 24.50}] },
-            { id: 9, name: "iTunes Card (US)", img: "https://upload.wikimedia.org/wikipedia/commons/d/df/ITunes_logo.svg", variants: [{n: "$5 Card", p: 6.00}, {n: "$10 Card", p: 12.00}] },
-            { id: 10, name: "Google Play (US)", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg", variants: [{n: "$5 Card", p: 6.00}, {n: "$10 Card", p: 12.00}] }
+            { id: 1, name: "Alfa Recharge", img: "https://i.ibb.co/v4S8S0n/alfa-lebanon.png", variants: [{n: "$3.64 (30 Days)", p: 4.25}, {n: "$9.09 (30 Days)", p: 10.20}, {n: "$17.18 (30 Days)", p: 18.50}] },
+            { id: 2, name: "Touch Recharge", img: "https://i.ibb.co/mS6S48M/touch-lebanon.png", variants: [{n: "$3.64 (30 Days)", p: 4.25}, {n: "$9.09 (30 Days)", p: 10.20}, {n: "$17.18 (30 Days)", p: 18.50}] },
+            { id: 3, name: "PUBG Mobile UC", img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pubg_mobile_logo.png", variants: [{n: "60 UC", p: 1.10}, {n: "325 UC", p: 5.40}, {n: "660 UC", p: 10.50}, {n: "1800 UC", p: 25.00}] },
+            { id: 4, name: "Jawaker Dinar", img: "https://i.ibb.co/9vB4m0T/jawaker.png", variants: [{n: "10k Dinar", p: 2.30}, {n: "50k Dinar", p: 11.00}, {n: "250k Dinar", p: 52.00}] },
+            { id: 5, name: "PlayStation US", img: "https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg", variants: [{n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}, {n: "$50 Card", p: 52.00}] },
+            { id: 6, name: "iTunes Store US", img: "https://upload.wikimedia.org/wikipedia/commons/d/df/ITunes_logo.svg", variants: [{n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}] },
+            { id: 7, name: "Google Play US", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg", variants: [{n: "$5 Card", p: 5.50}, {n: "$10 Card", p: 11.00}, {n: "$25 Card", p: 26.50}] },
+            { id: 8, name: "Shein Gift Card", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Shein_logo.svg", variants: [{n: "$25 Card", p: 27.50}, {n: "$50 Card", p: 54.00}, {n: "$100 Card", p: 106.00}] },
+            { id: 9, name: "Fortnite V-Bucks", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Fortnite_logo.svg", variants: [{n: "1000 V-Bucks", p: 9.20}, {n: "2800 V-Bucks", p: 23.50}] },
+            { id: 10, name: "Netflix Premium", img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", variants: [{n: "1 Month (4K)", p: 4.50}, {n: "$25 Gift Card", p: 27.00}] }
         ];
 
         let cart = [];
@@ -124,12 +112,12 @@
                 <div class="item-card">
                     <div class="item-img"><img src="${item.img}" onerror="this.src='https://placehold.co/100x100?text=Card'"></div>
                     <div class="p-4 flex flex-col flex-grow">
-                        <h3 class="text-xs font-black mb-2 h-8 overflow-hidden uppercase italic">${item.name}</h3>
+                        <h3 class="text-[11px] font-black mb-2 h-8 overflow-hidden uppercase italic leading-tight">${item.name}</h3>
                         <select class="variant-select" id="v-${item.id}" onchange="updateUIPrice(${item.id})">
                             ${item.variants.map(v => `<option value="${v.p}">${v.n}</option>`).join('')}
                         </select>
                         <span class="text-blue-400 font-black text-sm mb-4" id="p-${item.id}">$${item.variants[0].p.toFixed(2)}</span>
-                        <button onclick="addToCart(${item.id})" class="mt-auto bg-white/10 hover:bg-blue-600 py-2 rounded-xl text-[10px] font-bold transition uppercase">Add to Cart</button>
+                        <button onclick="addToCart(${item.id})" class="mt-auto bg-white/5 hover:bg-blue-600 py-2.5 rounded-xl text-[10px] font-bold transition uppercase border border-white/10">Add to Cart</button>
                     </div>
                 </div>
             `).join('');
@@ -155,8 +143,8 @@
                 total += item.price;
                 return `
                     <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
-                        <div>
-                            <p class="text-xs font-bold italic">${item.name}</p>
+                        <div class="pr-2">
+                            <p class="text-xs font-bold italic uppercase">${item.name}</p>
                             <p class="text-[10px] text-gray-500">${item.variant}</p>
                         </div>
                         <div class="flex items-center gap-4">
@@ -173,14 +161,16 @@
 
         function processCheckout() {
             if(cart.length === 0) return alert("Your cart is empty!");
-            const btn = document.querySelector('.pay-btn');
-            alert("Processing Payment via Wallet Balance...");
-            setTimeout(() => {
-                alert("Success! Your digital codes have been generated.\n\nCheck your WhatsApp and SMS for the delivery message.");
+            
+            if(confirm("Deduct amount from balance and generate codes?")) {
+                const btn = document.querySelector('button');
+                alert("Payment successful! Redirecting to WhatsApp for delivery...");
+                // هنا يمكن إضافة كود لفتح واتساب مباشرة بالطلب
+                // window.open("https://wa.me/YOURNUMBER?text=OrderDetails...");
                 cart = [];
                 updateCart();
                 toggleCart();
-            }, 2000);
+            }
         }
 
         init();
