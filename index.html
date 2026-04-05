@@ -1,187 +1,161 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>AMANA GLOBAL | Crypto & Trading Intelligence</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAUDEX | منصة التداول الآلي الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #0b0f1a;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
 
-<style>
-:root{
-  --bg:#060914;
-  --text:#ffffff;
-  --muted:#8b8da3;
-  --brand1:#a100ff;
-  --brand2:#ff00b8;
-  --glass: rgba(255,255,255,.05);
-  --border: rgba(255,255,255,.08);
-  --shadow: 0 30px 80px rgba(0,0,0,.6);
-  --radius: 20px;
-  --max: 1150px;
-}
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
 
-*{box-sizing:border-box}
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #f9d976 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-body{
-  margin:0;
-  font-family: 'Inter', system-ui, -apple-system;
-  background: var(--bg);
-  background: radial-gradient(circle at top right, #1a0b2e 0%, #060914 100%);
-  color:var(--text);
-  line-height:1.7;
-  overflow-x: hidden;
-}
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
 
-.wrap{max-width:var(--max);margin:auto;padding:24px;}
+        .btn-outline {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
 
-header{
-  position:sticky;
-  top:0;
-  backdrop-filter:blur(20px);
-  background:rgba(6, 9, 20, 0.7);
-  border-bottom:1px solid var(--border);
-  z-index:100;
-}
-
-.nav{ display:flex; justify-content:space-between; align-items:center; }
-
-.logo{
-  font-size:24px;
-  font-weight:900;
-  background: linear-gradient(135deg, #00f2ff, var(--brand2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  letter-spacing: -1px;
-}
-
-nav ul{ list-style:none; display:flex; gap:25px; padding:0; margin:0; }
-nav a{ text-decoration:none; color:var(--muted); font-weight:600; font-size:14px; transition: 0.3s; }
-nav a:hover{ color: #fff; }
-
-.btn{
-  padding:12px 24px;
-  border-radius:14px;
-  font-weight:800;
-  text-decoration:none;
-  transition:.3s;
-  display: inline-block;
-}
-
-.btn.primary{
-  background:linear-gradient(135deg,var(--brand1),var(--brand2));
-  color:#fff;
-  box-shadow: 0 10px 20px rgba(255, 0, 184, 0.2);
-}
-
-.btn.primary:hover{
-  transform: translateY(-2px);
-  box-shadow:0 0 25px rgba(255,0,184,.5);
-}
-
-.hero{ padding:120px 0 80px; text-align:center; animation: fadeIn 1s ease; }
-@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-
-.hero h1{ font-size:64px; margin:0 0 20px; letter-spacing: -2px; line-height: 1.1; }
-.hero p{ color:var(--muted); max-width:700px; margin:auto; font-size: 18px; }
-
-.section{ padding:80px 0; }
-.section h2{ text-align:center; margin-bottom:50px; font-size: 32px; }
-
-.card{
-  background:var(--glass);
-  backdrop-filter:blur(25px);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:30px;
-  box-shadow:var(--shadow);
-  transition:.4s;
-}
-.card:hover{ transform:translateY(-10px); border-color: var(--brand1); }
-
-.grid{
-  display:grid;
-  gap:25px;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-}
-
-footer{ text-align:center; padding:40px; border-top:1px solid var(--border); color:var(--muted); font-size: 14px; }
-
-@media(max-width:768px){
-  .hero h1{font-size:40px;}
-  nav { display: none; }
-}
-</style>
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #d4af37;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-<div class="wrap nav">
-    <div class="logo">AMANA</div>
-    <nav>
-        <ul>
-            <li><a href="#crypto">العملات</a></li>
-            <li><a href="#trading">التداول</a></li>
-            <li><a href="#bot">الروبوتات</a></li>
-        </ul>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-[#0b0f1a]/80 backdrop-blur-md border-b border-white/5">
+        <div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+            <div class="text-2xl font-bold gold-gradient tracking-wider">SAUDEX</div>
+            
+            <div class="hidden md:flex space-x-reverse space-x-8 text-sm font-medium text-gray-300">
+                <a href="#about" class="hover:text-white transition">عن المنصة</a>
+                <a href="#how" class="hover:text-white transition">كيفية العمل</a>
+                <a href="#plans" class="hover:text-white transition">باقات الإستثمار</a>
+            </div>
+
+            <div class="flex items-center space-x-reverse space-x-3">
+                <a href="/login" class="text-sm font-medium hover:text-emerald-400 transition px-4 py-2">تسجيل الدخول</a>
+                <a href="/signup" class="btn-primary text-sm font-bold px-5 py-2 rounded-xl">فتح حساب</a>
+            </div>
+        </div>
     </nav>
-    <a href="create-account.html" class="btn primary">ابدأ الآن</a>
-</div>
-</header>
 
-<main class="wrap">
-    <section class="hero">
-        <h1>مستقبل التداول الذكي</h1>
-        <p>استمتع بتجربة فريدة تجمع بين تحليل البيانات الضخمة، ألعاب الكريبتو، وأنظمة الـ Arbitrage المتطورة في منصة واحدة.</p>
-        <div style="margin-top: 40px;">
-            <a href="create-account.html" class="btn primary" style="padding: 18px 40px; font-size: 18px;">افتح محفظتك الآن</a>
+    <header class="pt-32 pb-20 px-6 text-center max-w-5xl mx-auto">
+        <span class="inline-block px-4 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold mb-6">المنصة الأولى في المملكة العربية السعودية</span>
+        <h1 class="text-4xl md:text-6xl font-bold mb-8 leading-tight">
+            استثمر في الكريبتو بذكاء مع <br>
+            <span class="gold-gradient text-5xl md:text-7xl">بوت التداول الآلي</span>
+        </h1>
+        <p class="text-gray-400 text-lg md:text-xl mb-12 max-w-3xl mx-auto">
+            منصة SAUDEX تمنحك القدرة على تحقيق أرباح يومية في سوق العملات الرقمية باستخدام خوارزميات متطورة تعمل على مدار الساعة دون تدخل منك.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+            <button class="btn-primary px-10 py-4 rounded-2xl font-bold text-lg">ابدأ التداول الآن</button>
+            <button class="btn-outline px-10 py-4 rounded-2xl font-bold text-lg">مشاهدة النتائج المباشرة</button>
         </div>
-    </section>
+    </header>
 
-    <div class="grid">
-        <div class="card" id="crypto">
-            <h3><i class="fa-solid fa-coins" style="color: #ffaa00;"></i> الأصول الرقمية</h3>
-            <p>وصول مباشر لأكثر من 200 عملة رقمية مع تحليل حي لتدفق السيولة وحركات الحيتان في السوق.</p>
+    <main class="max-w-7xl mx-auto px-6 space-y-32 pb-20">
+        
+        <section id="about" class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="glass-card p-2">
+                <img src="https://images.unsplash.com/photo-1642390317459-7f5195079a02?auto=format&fit=crop&q=80&w=800" class="rounded-[20px]" alt="Trade View">
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold mb-6 text-emerald-400">ما هي منصة SAUDEX؟</h2>
+                <p class="text-gray-300 leading-relaxed text-lg mb-6">
+                    الكريبتو هو الثورة المالية الحالية، ولكن التقلب السريع يجعل التداول اليدوي خطيراً. SAUDEX هو بوت تداول ذكي (Auto-Bot) مصمم خصيصاً للمستثمر السعودي، ليحلل آلاف البيانات في أجزاء من الثانية.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-reverse space-x-4">
+                        <div class="bg-emerald-500/20 p-2 rounded-lg mt-1 text-emerald-400 font-bold">✓</div>
+                        <p class="text-gray-300"><span class="text-white font-bold text-lg italic">تحليل فني دقيق:</span> قراءة المؤشرات وتنفيذ الصفقات فورياً.</p>
+                    </div>
+                    <div class="flex items-start space-x-reverse space-x-4">
+                        <div class="bg-emerald-500/20 p-2 rounded-lg mt-1 text-emerald-400 font-bold">✓</div>
+                        <p class="text-gray-300"><span class="text-white font-bold text-lg italic">أمان مطلق:</span> تشفير عالي الجودة لحماية بياناتك ورأس مالك.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plans">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">خطط الإستثمار المتاحة</h2>
+                <p class="text-gray-400">اختر الباقة التي تناسب تطلعاتك المالية</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 border-t-2 border-slate-500">
+                    <h3 class="text-xl font-bold mb-4">الباقة الفضية</h3>
+                    <div class="text-3xl font-bold mb-6">500$ <span class="text-sm font-normal text-gray-500">كحد أدنى</span></div>
+                    <ul class="space-y-4 mb-8 text-sm">
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 ml-3"></i> ربح يومي يتراوح بين 1.5% - 2%</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 ml-3"></i> دعم فني متاح 24/7</li>
+                        <li class="flex items-center text-gray-500"><i class="fas fa-times ml-3"></i> لا يشمل مدير حساب خاص</li>
+                    </ul>
+                    <button class="w-full btn-outline py-3 rounded-xl font-bold">اختيار الباقة</button>
+                </div>
+                <div class="glass-card p-8 border-2 border-emerald-500 relative bg-emerald-500/5">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] px-4 py-1 rounded-full font-bold">الأكثر طلباً</div>
+                    <h3 class="text-xl font-bold mb-4 text-emerald-400">الباقة الذهبية</h3>
+                    <div class="text-3xl font-bold mb-6">2,500$ <span class="text-sm font-normal text-gray-500">كحد أدنى</span></div>
+                    <ul class="space-y-4 mb-8 text-sm">
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 ml-3"></i> ربح يومي يتراوح بين 3% - 4%</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 ml-3"></i> مدير حساب خاص واستشارات</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 ml-3"></i> خوارزمية ذكاء اصطناعي متقدمة</li>
+                    </ul>
+                    <button class="w-full btn-primary py-3 rounded-xl font-bold text-white">ابدأ الآن</button>
+                </div>
+                <div class="glass-card p-8 border-t-2 border-amber-500">
+                    <h3 class="text-xl font-bold mb-4 text-amber-500 italic">باقة كبار الشخصيات VIP</h3>
+                    <div class="text-3xl font-bold mb-6">10,000$ <span class="text-sm font-normal text-gray-500">كحد أدنى</span></div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 ml-3"></i> أرباح استثنائية تفوق 5%</li>
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 ml-3"></i> سحب فوري للأرباح في أي وقت</li>
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 ml-3"></i> تقارير أداء أسبوعية مفصلة</li>
+                    </ul>
+                    <button class="w-full btn-outline py-3 rounded-xl font-bold border-amber-500/50 hover:bg-amber-500/10">تواصل معنا</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-black/50 py-12 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-2xl font-bold gold-gradient">SAUDEX</div>
+            <p class="text-gray-500 text-sm italic text-center">جميع الحقوق محفوظة © 2026. SAUDEX المملكة العربية السعودية.</p>
+            <div class="flex space-x-reverse space-x-6 text-xl">
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-telegram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <div class="card" id="trading">
-            <h3><i class="fa-solid fa-chart-line" style="color: #00f2ff;"></i> التداول الاحترافي</h3>
-            <p>أدوات متقدمة للمضاربة السريعة (Scalping) وإدارة الصفقات الطويلة مع تقنيات حماية رأس المال.</p>
-        </div>
-        <div class="card" id="bot">
-            <h3><i class="fa-solid fa-robot" style="color: var(--brand2);"></i> بوتات الذكاء الاصطناعي</h3>
-            <p>أنظمة تداول آلي تعمل 24/7 لتنفيذ استراتيجيات Arbitrage و Grid Trading بدقة متناهية.</p>
-        </div>
-    </div>
-</main>
-
-<footer>
-    © <span id="year"></span> AMANA GLOBAL ELITE. جميع الحقوق محفوظة.
-</footer>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDJz5qW8oBVQo40ghpSKOMon5iXpGCQSRA",
-        authDomain: "ai-dodo.firebaseapp.com",
-        projectId: "ai-dodo",
-        storageBucket: "ai-dodo.firebasestorage.app",
-        messagingSenderId: "261622335803",
-        appId: "1:261622335803:web:0b066791230535e7d5cf1e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // الفحص الفوري: لو مسجل دخول، طيره على الـ home
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            window.location.replace("home.html");
-        }
-    });
-
-    document.getElementById("year").textContent = new Date().getFullYear();
-</script>
+    </footer>
 
 </body>
 </html>
